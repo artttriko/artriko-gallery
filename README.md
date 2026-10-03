@@ -22,6 +22,7 @@
 | `VITE_SUPABASE_ANON_KEY` | המפתח הציבורי (publishable) של Supabase | לא, מוגן ע"י RLS |
 | `GEMINI_API_KEY` | מפתח מ־Google AI Studio | **כן** |
 | `GEMINI_MODEL` | לא חובה. שם מודל Gemini אחר | לא |
+| `OPENAI_API_KEY` | מפתח מ־platform.openai.com, להסרת רקע בהמחשה | **כן** |
 | `VISIT_SECRET` | סוד שמונע זיוף ספירת כניסות. זהה לערך בטבלה `private_config` | **כן** |
 | `IP_SALT` | ערך אקראי לגיבוב כתובות IP | **כן** |
 

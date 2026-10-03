@@ -18,6 +18,7 @@
   <header class="top">
     <a class="mark" href="#top">ARTRIKO</a>
     <div class="topnav">
+    <button class="lock lock-top" id="lockTop" type="button" aria-label="כניסת מנהל" title="כניסת מנהל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
     <a class="pill guide-link" href="#guide">המדריך לאספנים</a>
     <nav class="social" aria-label="רשתות">
       <a class="pill" id="igTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</a>
@@ -45,8 +46,8 @@
     <h2>הגלריה<small id="count"></small></h2>
     <div class="controls">
       <div class="seg" role="group" aria-label="תצוגה">
-        <button id="vRoom" aria-pressed="true">בחדר</button>
-        <button id="vFlat" aria-pressed="false">תמונה מקורית</button>
+        <button id="vFlat" aria-pressed="true">תמונה מקורית</button>
+        <button id="vRoom" aria-pressed="false">בחדר</button>
       </div>
       <div class="seg desk-only" role="group" aria-label="גודל">
         <button data-size="220">קטן</button><button data-size="300" aria-pressed="true">בינוני</button><button data-size="420">גדול</button>
@@ -300,21 +301,23 @@
     </form>
     </section>
     <section data-pane="room" hidden>
-    <h4>החדר שבו מוצגות היצירות</h4>
-    <p class="note">כדי שההמחשה תיראה אמיתית, העלה תמונה אמיתית של שידה או מדף בחדר חם. אותה תמונה תשמש לכל היצירות. אחר כך לחץ על התמונה בנקודה שבה הפסל צריך לעמוד.</p>
+    <h4>תמונת הרקע להמחשה</h4>
+    <p class="note">ההמחשה היא אופציה: בוחרים תמונה אחת של הפסל, ChatGPT מסיר לה את הרקע, והאתר מציב את הפסל על השידה שבתמונה הזו, בגודל שמחושב לפי הגובה שרשמת. כדי שהגודל יהיה נכון, סמן את השידה ורשום את הרוחב האמיתי שלה.</p>
     <div class="room-ed">
-      <div id="roomPrev"></div>
+      <div id="roomPrev" class="cal-prev"></div>
       <div class="side">
-        <button type="button" class="pill" id="roomPick">העלאת תמונת חדר</button>
+        <button type="button" class="pill" id="roomPick">העלאת תמונת רקע</button>
         <input type="file" id="roomFile" accept="image/*" hidden>
-        <label for="roomScale">גודל הפסל בחדר<input type="range" id="roomScale" min="40" max="220" value="100"></label>
+        <button type="button" class="pill small" id="calStart">סימון השידה (2 לחיצות)</button>
+        <label for="calCm">רוחב משטח השידה במציאות (ס"מ)<input type="number" id="calCm" min="10" max="500" step="1" value="110"></label>
+        <label for="roomScale">תיקון גודל עדין<input type="range" id="roomScale" min="70" max="130" value="100"></label>
         <label for="roomShadow">כיוון הצל<input type="range" id="roomShadow" min="-30" max="30" value="-12"></label>
         <button type="button" class="pill small" id="roomReset">חזרה לחדר המאויר</button>
         <span class="note" id="roomMsg"></span>
         <ul class="tips">
-          <li>צלם בגובה השידה, ישר מולה, באור חם בערב.</li>
-          <li>השאר מקום פנוי באמצע השידה.</li>
-          <li>צלם את הפסלים מאותה זווית ובאור דומה, מול רקע חלק, כדי שהסרת הרקע תהיה נקייה.</li>
+          <li>צלם את השידה ישר מולה, בגובה המשטח, באור חם.</li>
+          <li>את הפסל צלם מול רקע חלק ובלי ידיים: ChatGPT יסיר את הרקע נקי יותר.</li>
+          <li>צלם את הפסל מזווית דומה לזווית של תמונת השידה, כדי שההצבה תיראה טבעית.</li>
         </ul>
       </div>
     </div>

@@ -82,14 +82,22 @@ function drawRoom(W=1000,H=1250){
   return c.toDataURL("image/jpeg",.88);
 }
 const DRAWN_ROOM=drawRoom();
-let ROOM=null; // {img,x,y,scale,shadow,sep,br} when the admin uploaded a real photo
+let ROOM=null; // {img?,x1,x2,y,cm,scale,shadow,sep,br}; no img = the drawn room
+// Calibration: the dresser top runs from x1 to x2 (fractions of the picture width) at height y, and is cm wide in reality
+const CAL0={x1:.17,x2:.83,y:.634,cm:110};
+function cal(){
+  const R=ROOM||{};
+  if(R.x1!=null&&R.x2!=null)return {x1:R.x1,x2:R.x2,y:R.y??CAL0.y,cm:R.cm||110};
+  if(R.img)return {x1:(R.x??.5)-.3,x2:(R.x??.5)+.3,y:R.y??.62,cm:R.cm||110};
+  return {...CAL0,cm:R.cm||CAL0.cm};
+}
 function applyRoom(){
-  const r=document.documentElement.style,R=ROOM;
-  r.setProperty("--room",`url(${R?R.img:DRAWN_ROOM})`);
-  r.setProperty("--px",R?R.x:.5);r.setProperty("--py",R?R.y:.634);r.setProperty("--rs",R?R.scale:1);
-  r.setProperty("--sx",(R?R.shadow:-12)+"px");
-  r.setProperty("--glow",R?0:.65);r.setProperty("--glowh",R?0:1);
-  r.setProperty("--rsep",R?R.sep:.12);r.setProperty("--rbr",R?R.br:.98);
+  const r=document.documentElement.style,R=ROOM||{},c=cal(),photo=!!R.img;
+  r.setProperty("--room",`url(${photo?R.img:DRAWN_ROOM})`);
+  r.setProperty("--px",(c.x1+c.x2)/2);r.setProperty("--py",c.y);r.setProperty("--rs",Math.max(.7,Math.min(1.3,R.scale||1)));
+  r.setProperty("--sx",(R.shadow??-12)+"px");
+  r.setProperty("--glow",photo?0:.65);r.setProperty("--glowh",photo?0:1);
+  r.setProperty("--rsep",photo?(R.sep??.12):.12);r.setProperty("--rbr",photo?(R.br??.98):.98);
 }
 applyRoom();
 
@@ -188,14 +196,16 @@ function calcScale(refCm,modelCm){
 }
 
 /* ================= State ================= */
-const S={email:"",filter:{cat:"",tech:"",sale:false},works:[],view:"room",admin:false,history:[],editing:null,staged:[]};
+const S={email:"",filter:{cat:"",tech:"",sale:false},works:[],view:"flat",admin:false,history:[],editing:null,staged:[]};
 const firstImg=w=>w.media.find(m=>m.kind==="image");
-const heightFrac=cm=>Math.max(.16,Math.min(.5,(+cm||25)*.012));
+const heightFrac=cm=>{const c=cal();return Math.max(.02,Math.min(.95,(+cm||25)*((c.x2-c.x1)/c.cm)*.8))};
 
-function sceneHTML(w){
-  const im=firstImg(w); if(!im) return `<div class="vid-only">וידאו</div>`;
-  const cut=!!im.cut;
-  return `<div class="scene" style="--h:${heightFrac(w.heightCm)}"><div class="room"></div><div class="piece ${cut?"cut":"photo"}"><img src="${cut?im.cut:im.orig}" alt=""></div><div class="glow"></div></div>`;
+const illusOf=w=>w.media.find(m=>m.kind==="image"&&m.illus&&m.aiCut);
+// The in-room illustration is optional: shown only when the admin made a cutout and turned it on
+function sceneHTML(w,force){
+  const il=illusOf(w);
+  if(!il||(!il.sceneOn&&!force)) return flatHTML(w);
+  return `<div class="scene" style="--h:${heightFrac(w.heightCm)}"><div class="room"></div><div class="piece cut"><img src="${il.aiCut}" alt=""></div><div class="glow"></div></div>`;
 }
 function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">וידאו</div>`;return `<div class="flat"><img src="${im.orig}" alt="" loading="lazy"></div>`}
 
@@ -214,7 +224,7 @@ function render(){
       <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ'].filter(Boolean).join(" · ")}</span></div>
     </article>`).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
   if(!list.length&&all.length)$("#grid").innerHTML=`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
-  const top=all.find(firstImg); $("#heroScene").innerHTML=top?sceneHTML(top):"";
+  const top=all.find(firstImg); $("#heroScene").innerHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
   if(S.admin) renderAdminList();
 }
 
@@ -233,8 +243,8 @@ $("#grid").addEventListener("click",e=>{if(e.target.id==="clearF"){S.filter={cat
 
 /* ================= Gallery controls ================= */
 function press(group,btn){group.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"))}
-$("#vRoom").onclick=e=>{S.view="room";press(e.target.parentNode,e.target);render();save("view","room")};
-$("#vFlat").onclick=e=>{S.view="flat";press(e.target.parentNode,e.target);render();save("view","flat")};
+$("#vRoom").onclick=e=>{S.view="room";press(e.target.parentNode,e.target);render();save("view2","room")};
+$("#vFlat").onclick=e=>{S.view="flat";press(e.target.parentNode,e.target);render();save("view2","flat")};
 function setSize(px){document.documentElement.style.setProperty("--card-min",px+"px");$("#sizeRange").value=px;document.querySelectorAll("[data-size]").forEach(b=>b.setAttribute("aria-pressed",Math.abs(+b.dataset.size-px)<40?"true":"false"));save("size",px)}
 document.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>setSize(+b.dataset.size));
 $("#sizeRange").oninput=e=>setSize(+e.target.value);
@@ -258,8 +268,10 @@ if(CFG.whatsapp){$("#waBar").hidden=false;$("#waBar").href=wa("היי ARTRIKO, �
 let LB={w:null,slides:[],i:0};
 function openLB(id){
   const w=S.works.find(x=>x.id===id); if(!w) return;
-  const slides=[]; if(firstImg(w)) slides.push({kind:"room"});
+  const il=illusOf(w),showIl=!!(il&&il.sceneOn);
+  const slides=[]; if(showIl&&S.view==="room") slides.push({kind:"room"});
   w.media.forEach(m=>slides.push(m));
+  if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
     <span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span>
@@ -267,7 +279,7 @@ function openLB(id){
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
     <button class="pill contact-btn" id="lbContact">אני רוצה את זה!</button>
-    <p class="note">ההמחשה בחדר משתמשת באותו חדר לכל היצירות. הגודל על השידה מקורב לפי הגובה בס"מ.</p>`;
+    ${showIl?`<p class="note">בהמחשה בחדר הגודל על השידה מחושב לפי הגובה האמיתי של הפסל.</p>`:""}`;
   $("#lbContact").onclick=()=>openContact(w);
   showSlide(0); $("#lb").showModal();
 }
@@ -283,7 +295,7 @@ function showSlide(i){
     z.onmousemove=e=>{const r=z.getBoundingClientRect();z.style.transformOrigin=`${(e.clientX-r.left)/r.width*100}% ${(e.clientY-r.top)/r.height*100}%`};
     z.onmouseenter=()=>z.classList.add("on"); z.onmouseleave=()=>z.classList.remove("on");
   }
-  $("#lbThumbs").innerHTML=LB.slides.map((t,k)=>`<button aria-current="${k===LB.i}" data-k="${k}" aria-label="מדיה ${k+1}">${t.kind==="room"?`<span class="t-room">בחדר</span>`:t.kind==="image"?`<img src="${t.cut||t.orig}" alt="">`:`<video src="${t.url}" muted></video>`}</button>`).join("");
+  $("#lbThumbs").innerHTML=LB.slides.map((t,k)=>`<button aria-current="${k===LB.i}" data-k="${k}" aria-label="מדיה ${k+1}">${t.kind==="room"?`<span class="t-room">בחדר</span>`:t.kind==="image"?`<img src="${t.orig}" alt="">`:`<video src="${t.url}" muted></video>`}</button>`).join("");
   $("#lbPrev").hidden=$("#lbNext").hidden=n<2;
 }
 $("#lbThumbs").onclick=e=>{const b=e.target.closest("[data-k]");if(b)showSlide(+b.dataset.k)};
@@ -366,6 +378,7 @@ async function openAdmin(tab){
   if(S.admin){$("#whoAmI").textContent="מחובר: "+S.email;loadAdminData();showTab(tab||"work")}
 }
 $("#lockBtn").onclick=()=>openAdmin();
+$("#lockTop").onclick=()=>openAdmin();
 $("#loginForm").onsubmit=async e=>{
   e.preventDefault();const email=$("#lEmail").value.trim(),password=$("#lPass").value;
   if(!password){$("#lMsg").textContent="הזן סיסמה, או לחץ \"כניסה ראשונה / שכחתי סיסמה\" כדי לקבל קישור במייל.";return}
@@ -406,7 +419,7 @@ $("#fFiles").onchange=e=>{addFiles(e.target.files);e.target.value=""};
 let sid=0;
 function addFiles(files){[...files].forEach(f=>{
   const kind=f.type.startsWith("video")?"video":f.type.startsWith("image")?"image":null; if(!kind) return;
-  const it={sid:++sid,kind,name:f.name,progress:0,ready:false,cutOn:false,tol:60,ed:{...ED0},open:false};
+  const it={sid:++sid,kind,name:f.name,progress:0,ready:false,ed:{...ED0},open:false};
   S.staged.push(it); renderStaged();
   const fr=new FileReader();
   fr.onprogress=e=>{if(e.lengthComputable){it.progress=e.loaded/e.total;bar(it)}};
@@ -422,14 +435,14 @@ function bar(it){const el=document.querySelector(`[data-sid="${it.sid}"] .prog i
 async function process(it){
   const ticket=(it.ticket||0)+1;it.ticket=ticket;it.busy=true;paint(it);
   const orig=await applyEdits(it.raw,it.ed);
-  const cut=it.cutOn?await removeBg(orig,it.tol):null;
   if(it.ticket!==ticket) return; // a newer edit superseded this one
-  it.orig=orig;it.cut=cut;it.busy=false;paint(it);
+  it.orig=orig;it.busy=false;paint(it);
+  if(it.aiCut)it.cutMsg="התמונה השתנתה. כדאי להסיר רקע מחדש כדי שההמחשה תתאים.";
 }
 // Update only the previews of one item, so sliders keep working while dragging
 function paint(it){
   const st=document.querySelector(`.st[data-sid="${it.sid}"]`);if(!st)return;
-  const [a,b]=st.querySelectorAll(".pv img");if(a)a.src=it.orig;if(b){b.src=it.cut||it.orig;b.parentNode.className="piece "+(it.cut?"cut":"photo")}
+  const a=st.querySelector(".pv > img");if(a)a.src=it.orig;
   let bz=st.querySelector(".busy");if(it.busy&&!bz){bz=document.createElement("span");bz.className="busy";bz.textContent="מעבד…";st.querySelector(":scope > .row").before(bz)}if(!it.busy&&bz)bz.remove();
 }
 let edTimer=null;
@@ -448,9 +461,12 @@ function renderStaged(){
     <div class="st" data-sid="${it.sid}">
       <div class="prog"><i style="width:${it.progress*100}%"></i></div>
       ${!it.ready?`<span>טוען ${esc(it.name)}…</span>`:it.kind==="video"?`<div class="pv"><video src="${it.url}" muted controls playsinline></video></div><span>וידאו</span>`:`
-      <div class="pv"><img src="${it.orig}" alt=""><div class="scene" style="--h:${heightFrac(h)}"><div class="room"></div><div class="piece ${it.cut?"cut":"photo"}"><img src="${it.cut||it.orig}" alt=""></div><div class="glow"></div></div></div>
-      <label><input type="checkbox" data-a="cut" ${it.cutOn?"checked":""}> הסרת רקע (לשידה)</label>
-      ${it.cutOn?`<label>רגישות<input type="range" min="20" max="140" value="${it.tol}" data-a="tol"></label>`:""}
+      <div class="pv">${it.aiCut?`<img src="${it.orig}" alt=""><div class="scene" style="--h:${heightFrac(h)}"><div class="room"></div><div class="piece cut"><img src="${it.aiCut}" alt=""></div><div class="glow"></div></div>`:`<img src="${it.orig}" alt="">`}</div>
+      <label><input type="radio" name="illusPick" data-a="illus" ${it.illus?"checked":""}> התמונה להמחשה בחדר</label>
+      ${it.illus?`<button type="button" class="pill small ai-btn" data-a="cutout" ${it.cutBusy?"disabled":""}>${it.cutBusy?"מסיר רקע… (עד דקה)":it.aiCut?"✂️ הסרת רקע מחדש":"✂️ הסרת רקע (ChatGPT)"}</button>`:""}
+      ${it.illus&&it.aiCut?`<label><input type="checkbox" data-a="sceneOn" ${it.sceneOn?"checked":""}> להציג את ההמחשה באתר</label>`:""}
+      ${it.illus?`<button type="button" class="pill small" data-a="noillus">בלי המחשה</button>`:""}
+      ${it.cutMsg?`<span class="note">${esc(it.cutMsg)}</span>`:""}
       <button type="button" class="pill small" data-a="toggle" aria-expanded="${it.open}">${it.open?"סגירת העריכה":"עריכת תמונה"}</button>
       ${it.open?editorHTML(it):""}
       ${it.busy?`<span class="busy">מעבד…</span>`:""}`}
@@ -460,12 +476,14 @@ function renderStaged(){
 const stOf=el=>{const st=el.closest(".st");return st&&S.staged.find(s=>s.sid==st.dataset.sid)};
 $("#staged").addEventListener("input",e=>{const it=stOf(e.target);if(!it)return;const a=e.target.dataset.a;
   if(["b","c","s"].includes(a)){it.ed[a]=+e.target.value;processSoon(it)}
-  if(a==="tol"){it.tol=+e.target.value;processSoon(it)}});
-$("#staged").addEventListener("change",e=>{const it=stOf(e.target);if(!it)return;if(e.target.dataset.a==="cut"){it.cutOn=e.target.checked;renderStaged();process(it)}});
+});
+$("#staged").addEventListener("change",e=>{const it=stOf(e.target);if(!it)return;if(e.target.dataset.a==="illus"){S.staged.forEach(x=>{if(x!==it){x.illus=false;x.sceneOn=false}});it.illus=true;renderStaged()}if(e.target.dataset.a==="sceneOn"){it.sceneOn=e.target.checked}});
 $("#staged").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const it=stOf(b);const k=S.staged.indexOf(it);const a=b.dataset.a;
   if(a==="rm"){S.staged.splice(k,1);renderStaged();return}
   if(a==="first"){S.staged.unshift(...S.staged.splice(k,1));renderStaged();return}
   if(a==="toggle"){it.open=!it.open;renderStaged();return}
+  if(a==="cutout"){makeCutout(it);return}
+  if(a==="noillus"){it.illus=false;it.sceneOn=false;it.cutMsg="";renderStaged();return}
   if(a==="rotL")it.ed.rot-=90;if(a==="rotR")it.ed.rot+=90;if(a==="flip")it.ed.flip=!it.ed.flip;
   if(a==="auto")Object.assign(it.ed,{b:108,c:112,s:122});if(a==="reset")it.ed={...ED0};
   if(a==="auto"||a==="reset")renderStaged();
@@ -474,7 +492,7 @@ $("#fH").oninput=()=>renderStaged();
 
 $("#wf").onsubmit=async e=>{
   e.preventDefault();
-  if(S.staged.some(s=>!s.ready||s.busy)){$("#fMsg").textContent="מחכה שהקבצים יסיימו להיטען.";return}
+  if(S.staged.some(s=>!s.ready||s.busy||s.cutBusy)){$("#fMsg").textContent="מחכה שהקבצים יסיימו להיטען.";return}
   if(!S.staged.length){$("#fMsg").textContent="צריך לפחות תמונה או וידאו אחד.";return}
   const fromExample=S.editing&&String(S.editing).startsWith("ex-");
   const id=S.editing&&!fromExample?S.editing:crypto.randomUUID();
@@ -507,8 +525,7 @@ async function uploadMedia(id,items){
     const up=async(val,name)=>{if(!val||isRemote(val))return val||null;const b=b64Blob(val);return uploadBlob(`${pre}-${name}.${extOf(b.type)}`,b,prog)};
     const raw=await up(s.raw,"raw");
     const orig=s.orig===s.raw?raw:await up(s.orig,"img");
-    const cut=s.cut?(s.cut===s.orig?orig:await up(s.cut,"cut")):null;
-    out.push({kind:"image",raw,orig,cut,cutOn:!!s.cutOn,tol:s.tol,ed:s.ed});
+    out.push({kind:"image",raw,orig,illus:!!s.illus,aiCut:s.aiCut||null,sceneOn:!!(s.illus&&s.aiCut&&s.sceneOn),ed:s.ed});
   }
   return out;
 }
@@ -519,13 +536,13 @@ $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
   const list=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
-  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.cut||im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b><span>${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b><span>${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
   if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
-    S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,cut:m.cut,cutOn:!!m.cutOn||!!m.cut,tol:m.tol||60,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,blob:m.blob,url:m.url}));
+    S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url}));
     $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
   if(b.dataset.a==="no"){renderAdminList();return}
@@ -573,7 +590,7 @@ $("#vf").onsubmit=async e=>{e.preventDefault();VOICE={samples:$("#xVoice").value
 /* ================= AI title + summary suggestions ================= */
 let aiCtl=null,aiTimer=null;
 // Smaller JPEG copies for the AI request (keeps the request well under the upload limit)
-async function shrinkForAI(src){const i=await loadImg(src);const k=Math.min(1,1024/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.85)}
+async function shrinkForAI(src,max=1024){const i=await loadImg(src);const k=Math.min(1,max/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.85)}
 function queueSuggest(){clearTimeout(aiTimer);aiTimer=setTimeout(()=>{if(S.staged.some(s=>s.kind==="image"&&s.ready))suggest(false)},900)}
 function buildPrompt(withImages){
   const v=VOICE.samples?`\n\nכך האמן כותב בפוסטים שלו (חקה את הטון, אורך המשפטים, הסלנג והפנייה לקהל. אל תעתיק משפטים):\n"""\n${VOICE.samples.slice(0,5000)}\n"""`:"\n\nאין דוגמאות כתיבה של האמן, אז כתוב כמו יוצר פופ־ארט: אנרגטי, צבעוני, משפטים קצרים, קצת הומור.";
@@ -594,7 +611,7 @@ ${hint?`
 האמן לא כתב פרטים, אז הסתמך רק על התמונות.`}
 
 שלב 2: כתוב 3 הצעות שונות לכותרת ולתקציר בעברית. כל ההצעות מתמקדות בדמות.
-- כותרת: עד 5 מילים, קליטה, בסגנון פופ־ארט. משחק מילים על הדמות מצוין.
+- כותרת: עד 5 מילים בעברית, קליטה, בסגנון פופ־ארט. משחק מילים על הדמות מצוין. אל תכלול בכותרת את שם הדמות: האתר מוסיף אותו לבד בתחילת הכותרת, באנגלית ובאותיות גדולות.
 - תקציר: 2–3 משפטים, עד 280 תווים. חייב לכלול:
   1. עובדה אמיתית ומעניינת על הדמות (היסטוריה, מקור, רגע מפורסם). רק עובדות שאתה בטוח בהן.
   2. ${withImages?"פרט ויזואלי אחד שבאמת רואים בתמונות של הפסל.":"משהו על כך שזה פסל מודפס וצבוע ביד."}
@@ -614,7 +631,21 @@ SCALE: תן את הגובה האמיתי בס"מ של החלק שמוצג בפס
 TECH: FDM או Resin או FDM+Resin, לפי הטקסט של האמן או לפי רמזים ויזואליים: Resin לפרטים עדינים מאוד וחלקים קטנים, FDM לחלקים גדולים מאוד או לקווי שכבה נראים.
 
 החזר JSON בלבד בצורה:
-{"character":"שם הדמות או תיאור קצר אם לא זוהתה","confidence":"גבוה|בינוני|נמוך","seen":"משפט אחד על מה שרואים בתמונות","category":"Bust|Statue|Diorama|Miniature|Action Figure","referenceHeightCm":178,"referenceNote":"מה נמדד, למשל: גובה באטמן בקומיקס כ־188 ס\"מ","tech":"FDM|Resin|FDM+Resin","techReason":"משפט קצר","options":[{"title":"…","summary":"…"},{"title":"…","summary":"…"},{"title":"…","summary":"…"}]}`;
+{"character":"שם הדמות או תיאור קצר אם לא זוהתה","characterEn":"השם הרשמי של הדמות באנגלית, למשל BATMAN או SPIDER-MAN. מחרוזת ריקה אם הדמות לא זוהתה או שהיא אדם אמיתי שהאמן לא נתן את שמו","confidence":"גבוה|בינוני|נמוך","seen":"משפט אחד על מה שרואים בתמונות","category":"Bust|Statue|Diorama|Miniature|Action Figure","referenceHeightCm":178,"referenceNote":"מה נמדד, למשל: גובה באטמן בקומיקס כ־188 ס\"מ","tech":"FDM|Resin|FDM+Resin","techReason":"משפט קצר","options":[{"title":"…","summary":"…"},{"title":"…","summary":"…"},{"title":"…","summary":"…"}]}`;
+}
+// Uniform title format: the character's English name in capitals, then the Hebrew tagline
+function cleanEn(v){return String(v||"").replace(/\([^)]*\)/g," ").replace(/[^A-Za-z0-9 .'&:-]/g," ").replace(/\s+/g," ").trim().toUpperCase().slice(0,40)}
+const escRe=x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+function formatTitle(en,title,heName){
+  let t=String(title||"").trim();
+  if(!en)return t;
+  // also drop the Hebrew name if the title starts with it
+  const he=String(heName||"").split(/[(\-–—:,]/)[0].trim();
+  if(he)t=t.replace(new RegExp("^"+escRe(he)+"\\s*[-–—:|·]*\\s*"),"");
+  // drop the name if the model put it in anyway, plus any separator after it
+  const re=new RegExp("^"+escRe(en)+"\\s*[-–—:|·]*\\s*","i");
+  t=t.replace(re,"").replace(/^[-–—:|·\s]+/,"").trim();
+  return t?`${en} – ${t}`:en;
 }
 async function suggest(fresh){
   aiCtl?.abort();aiCtl=new AbortController();const my=aiCtl;
@@ -630,7 +661,8 @@ async function suggest(fresh){
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw {code:j.code||"upstream_error",message:j.error};
     let out=j.result||{};
-    const list=(Array.isArray(out.options)?out.options:[]).filter(o=>o&&o.title).slice(0,3);
+    const en=cleanEn(out.characterEn);
+    const list=(Array.isArray(out.options)?out.options:[]).filter(o=>o&&o.title).slice(0,3).map(o=>({...o,title:formatTitle(en,o.title,out.character)}));
     if(!list.length)throw{code:"invalid_json"};
     applyCategorization(out);
     const who=out.character?`<div class="opt-who"><span>הדמות: <b>${esc(out.character)}</b>${out.confidence?` · ביטחון ${esc(out.confidence)}`:""}</span>${out.seen?`<small>${esc(out.seen)}</small>`:""}<small>לא מדויק? כתוב את הדמות בשדה למעלה ולחץ "הצעות חדשות".</small></div>`:"";
@@ -678,14 +710,57 @@ function updateScale(note,techReason){
 }
 $("#fH").addEventListener("input",()=>{if(lastRef)updateScale()});
 
-/* ================= Room photo (admin) ================= */
-function renderRoomPrev(){
-  const w=[...S.works].sort((a,b)=>b.createdAt-a.createdAt).find(firstImg);
-  $("#roomPrev").innerHTML=w?sceneHTML(w).replace('<div class="glow"></div>','<div class="glow"></div><span class="pin"></span>'):`<div class="scene"><div class="room"></div><span class="pin"></span></div>`;
-  $("#roomScale").value=Math.round((ROOM?ROOM.scale:1)*100);$("#roomShadow").value=ROOM?ROOM.shadow:-12;
-  $("#roomScale").disabled=$("#roomShadow").disabled=$("#roomReset").disabled=!ROOM;
-  $("#roomMsg").textContent=ROOM?"לחץ על התמונה כדי להזיז את נקודת העמידה של הפסל.":"כרגע מוצג החדר המאויר.";
+/* ================= Background removal (OpenAI) for the in-room illustration ================= */
+const CUT_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח OpenAI לא מוגדר ב־Vercel (OPENAI_API_KEY).",bad_key:"מפתח OpenAI לא תקין. בדוק אותו ב־Vercel.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד דקה.",needs_billing:"בחשבון OpenAI צריך קרדיט או אמצעי תשלום (Billing) כדי להשתמש במודל התמונות.",needs_verification:"OpenAI דורשים אימות ארגון (Verify Organization) בחשבון כדי להשתמש במודל התמונות.",upload_failed:"שמירת התמונה נכשלה. נסה שוב.",refused:"OpenAI סירבו לעבד את התמונה הזו."};
+// Crops a transparent PNG to the statue itself, so its height in the picture equals the statue's real height
+async function trimAlpha(url){
+  const i=await loadImg(url);const c=document.createElement("canvas");c.width=i.width;c.height=i.height;const x=c.getContext("2d");x.drawImage(i,0,0);
+  const d=x.getImageData(0,0,c.width,c.height).data;let x0=c.width,y0=c.height,x1=-1,y1=-1;
+  for(let y=0;y<c.height;y++)for(let xx=0;xx<c.width;xx++){if(d[(y*c.width+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(y<y0)y0=y;if(y>y1)y1=y}}
+  if(x1<0)throw {code:"empty",message:"לא נשאר כלום אחרי הסרת הרקע"};
+  const o=document.createElement("canvas");o.width=x1-x0+1;o.height=y1-y0+1;o.getContext("2d").drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);
+  return new Promise(r=>o.toBlob(r,"image/png"));
 }
+async function makeCutout(it){
+  it.cutBusy=true;it.cutMsg="";renderStaged();
+  try{
+    const image=await shrinkForAI(it.orig,1536);
+    const {data:{session}}=await sb.auth.getSession();
+    const r=await fetch("/api/cutout",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify({image})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw {code:j.code,message:j.error};
+    const png=await trimAlpha(j.url);
+    it.aiCut=await uploadBlob(`cutouts/${crypto.randomUUID()}.png`,png);
+    it.sceneOn=false;
+    it.cutMsg="הרקע הוסר. ההמחשה מוצגת כרגע רק כאן. כדי שתופיע באתר, סמן \"להציג את ההמחשה באתר\" ושמור.";
+  }catch(e){it.cutMsg=CUT_ERR[e?.code]||("הסרת הרקע נכשלה"+(e?.message?": "+e.message:"")+". נסה שוב.")}
+  it.cutBusy=false;renderStaged();
+}
+
+/* ================= Room photo + scale calibration (admin) ================= */
+let calStep=0,calP1=null;
+function renderRoomPrev(){
+  const c=cal();
+  const w=[...S.works].sort((a,b)=>b.createdAt-a.createdAt).find(illusOf);
+  const marks=`<span class="cal-line" style="left:${c.x1*100}%;width:${(c.x2-c.x1)*100}%;top:${c.y*100}%"><b>${c.cm} ס"מ</b></span>${calP1?`<span class="cal-dot" style="left:${calP1.x*100}%;top:${calP1.y*100}%"></span>`:""}`;
+  $("#roomPrev").innerHTML=(w?sceneHTML(w,true):`<div class="scene"><div class="room"></div><div class="glow"></div></div>`).replace(/<\/div>$/,marks+"</div>");
+  $("#calCm").value=c.cm;
+  $("#roomScale").value=Math.round(Math.max(.7,Math.min(1.3,ROOM?.scale||1))*100);$("#roomShadow").value=ROOM?.shadow??-12;
+  $("#roomReset").disabled=!ROOM;
+  if(!calStep)$("#roomMsg").textContent=(ROOM?.img?"מוצגת תמונת הרקע שלך. ":"מוצג החדר המאויר. ")+(w?"בתצוגה: הפסל האחרון שיש לו המחשה.":"עוד אין פסל עם המחשה. הסר רקע לתמונה בטופס היצירה כדי לראות כאן דוגמה.");
+}
+function saveRoom(){applyRoom();renderRoomPrev();return putSetting("room",ROOM).catch(()=>toast("השמירה נכשלה"))}
+$("#calStart").onclick=()=>{calStep=1;calP1=null;$("#roomMsg").textContent="לחץ על הקצה השמאלי של משטח השידה (איפה שהפסל עומד).";};
+$("#roomPrev").addEventListener("click",e=>{
+  if(!calStep)return;const sc=e.target.closest(".scene");if(!sc)return;const r=sc.getBoundingClientRect();
+  const p={x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};
+  if(calStep===1){calP1=p;calStep=2;renderRoomPrev();$("#roomMsg").textContent="עכשיו לחץ על הקצה הימני של משטח השידה.";return}
+  const x1=Math.min(calP1.x,p.x),x2=Math.max(calP1.x,p.x);
+  if(x2-x1<.05){$("#roomMsg").textContent="שתי הנקודות קרובות מדי. לחץ שוב על \"סימון השידה\".";calStep=0;calP1=null;renderRoomPrev();return}
+  ROOM={...(ROOM||{}),x1:+x1.toFixed(4),x2:+x2.toFixed(4),y:+((calP1.y+p.y)/2).toFixed(4)};
+  calStep=0;calP1=null;saveRoom();$("#roomMsg").textContent="נשמר. הפסלים יעמדו במרכז השידה, בגודל שמחושב לפי הגובה שלהם.";
+});
+$("#calCm").onchange=e=>{const v=+e.target.value;if(!(v>=10&&v<=500))return;ROOM={...(ROOM||{}),cm:v};saveRoom()};
 async function cropRoom(src){
   const i=await loadImg(src);const W=1000,H=1250,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   const k=Math.max(W/i.width,H/i.height),dw=i.width*k,dh=i.height*k;x.drawImage(i,(W-dw)/2,(H-dh)/2,dw,dh);
@@ -695,12 +770,10 @@ async function cropRoom(src){
 }
 $("#roomPick").onclick=()=>$("#roomFile").click();
 $("#roomFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;$("#roomMsg").textContent="מעבד את התמונה…";
-  const fr=new FileReader();fr.onload=async()=>{try{const t=await cropRoom(fr.result);const url=await uploadBlob(`room/room-${Date.now()}.jpg`,b64Blob(t.img),(l,tt)=>{$("#roomMsg").textContent=`מעלה… ${Math.round(l/tt*100)}%`});ROOM={x:.5,y:.62,scale:1,shadow:-12,...(ROOM||{}),...t,img:url};applyRoom();await putSetting("room",ROOM);renderRoomPrev();}catch(err){$("#roomMsg").textContent="ההעלאה נכשלה: "+err.message;return}$("#roomMsg").textContent="עכשיו לחץ על התמונה בנקודה שבה הפסל צריך לעמוד."};fr.readAsDataURL(f)};
-$("#roomPrev").addEventListener("click",async e=>{if(!ROOM)return;const sc=e.target.closest(".scene");if(!sc)return;const r=sc.getBoundingClientRect();
-  ROOM.x=+((e.clientX-r.left)/r.width).toFixed(4);ROOM.y=+((e.clientY-r.top)/r.height).toFixed(4);applyRoom();await putSetting("room",ROOM);$("#roomMsg").textContent="נשמר. כל היצירות יעמדו בנקודה הזו."});
-$("#roomScale").oninput=e=>{if(!ROOM)return;ROOM.scale=+e.target.value/100;applyRoom()};
-$("#roomShadow").oninput=e=>{if(!ROOM)return;ROOM.shadow=+e.target.value;applyRoom()};
-["#roomScale","#roomShadow"].forEach(id=>$(id).onchange=()=>ROOM&&putSetting("room",ROOM).catch(()=>toast("השמירה נכשלה")));
+  const fr=new FileReader();fr.onload=async()=>{try{const t=await cropRoom(fr.result);const url=await uploadBlob(`room/room-${Date.now()}.jpg`,b64Blob(t.img),(l,tt)=>{$("#roomMsg").textContent=`מעלה… ${Math.round(l/tt*100)}%`});ROOM={scale:1,shadow:-12,...(ROOM||{}),...t,img:url,x1:null,x2:null};applyRoom();await putSetting("room",ROOM);renderRoomPrev();}catch(err){$("#roomMsg").textContent="ההעלאה נכשלה: "+err.message;return}$("#roomMsg").textContent="עכשיו לחץ \"סימון השידה\" וסמן את שני הקצוות של משטח השידה."};fr.readAsDataURL(f)};
+$("#roomScale").oninput=e=>{ROOM={...(ROOM||{}),scale:+e.target.value/100};applyRoom()};
+$("#roomShadow").oninput=e=>{ROOM={...(ROOM||{}),shadow:+e.target.value};applyRoom()};
+["#roomScale","#roomShadow"].forEach(id=>$(id).onchange=()=>saveRoom());
 $("#roomReset").onclick=async()=>{ROOM=null;applyRoom();await putSetting("room",null);renderRoomPrev()};
 
 /* ================= Collector guide ================= */
@@ -807,11 +880,11 @@ window.addEventListener("hashchange",route);route();
 
 /* ================= Boot ================= */
 (async()=>{
-  const v=load("view");if(v==="flat"){S.view="flat";press($("#vRoom").parentNode,$("#vFlat"))}
+  const v=load("view2");if(v==="room"){S.view="room";press($("#vRoom").parentNode,$("#vRoom"))}
   const sz=+load("size");setSize(sz||300);
   const cols=load("cols");if(cols){$("#grid").className="grid cols-"+cols;press(document.querySelector("[data-cols]").parentNode,document.querySelector(`[data-cols="${cols}"]`))}
   const t=await getSetting("texts");if(t)TEXTS={...DEFAULT_TEXTS,...t};renderTexts();fillTextForm();
-  const rm=await getSetting("room");if(rm&&rm.img){ROOM=rm;applyRoom()}
+  const rm=await getSetting("room");if(rm){ROOM=rm;applyRoom()}
   const stored=await dbAll();
   if(stored&&stored.length) S.works=stored.map(hydrate);
   else S.works=SAMPLES.map(s=>{const png=drawSample(s.kind);return {...s,example:true,media:[{kind:"image",orig:png,raw:png,cut:png}]}});

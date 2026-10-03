@@ -47,7 +47,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .cta .big{font-size:17px;padding:12px 22px}
 .cta .big.solid{background:var(--pop);border-color:var(--pop);box-shadow:4px 4px 0 var(--sun)}
 .hero-art{position:relative;max-width:100%}
-.hero-art .scene{box-shadow:10px 10px 0 var(--sky);border:3px solid var(--paper)}
+.hero-art .scene,.hero-art .flat{box-shadow:10px 10px 0 var(--sky);border:3px solid var(--paper)}
 .burst{position:absolute;top:-14px;inset-inline-start:-14px;z-index:3;width:104px;height:104px;display:grid;place-items:center;text-align:center;font:700 22px/1 var(--f-display);color:var(--ink);background:var(--sun);clip-path:polygon(50% 0,61% 18%,82% 8%,79% 31%,100% 38%,84% 54%,96% 74%,73% 75%,68% 98%,50% 84%,32% 98%,27% 75%,4% 74%,16% 54%,0 38%,21% 31%,18% 8%,39% 18%);transform:rotate(-8deg)}
 
 /* ---------- Toolbar ---------- */
@@ -90,6 +90,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 .flat img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .card:hover .flat img{transform:scale(1.1)}
 .vid-only{display:grid;place-items:center;aspect-ratio:4/5;color:var(--muted);font-weight:700}
+
+/* AI showroom scene */
+.scene.ai{background:#0c0709}
+.scene.ai .sc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.card:hover .scene.ai .sc,.card:focus-visible .scene.ai .sc{transform:scale(1.08)}
+.scene.ai.empty{display:grid;place-items:center;color:var(--muted);font-weight:700;border:2px dashed var(--line)}
+.ai-btn{background:var(--sky);color:var(--ink);border-color:var(--sky);box-shadow:3px 3px 0 var(--pop)}
+.ai-btn:disabled{opacity:.7;cursor:progress}
+.cal-prev .scene{cursor:crosshair}
+.cal-line{position:absolute;z-index:6;height:0;border-top:3px dashed var(--sun);pointer-events:none}
+.cal-line::before,.cal-line::after{content:"";position:absolute;top:-9px;width:3px;height:15px;background:var(--sun)}
+.cal-line::before{left:0}.cal-line::after{right:0}
+.cal-line b{position:absolute;left:50%;top:6px;transform:translateX(-50%);background:var(--sun);color:var(--ink);font-size:12px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.cal-dot{position:absolute;z-index:7;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--pop);border:2px solid var(--paper);pointer-events:none}
 
 /* ---------- Dialogs ---------- */
 dialog{border:3px solid var(--paper);background:var(--ink-2);color:var(--paper);padding:0;max-width:min(1180px,calc(100vw - 24px));width:100%;max-height:calc(100dvh - 24px);box-shadow:10px 10px 0 var(--pop)}
@@ -208,6 +222,8 @@ dt{color:var(--muted);font-size:14px}dd{margin:0;font-weight:600;font-variant-nu
 footer{border-top:2px solid var(--line);padding-block:26px 90px;display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:14px}
 .lock{background:none;border:0;color:var(--line);cursor:pointer;padding:6px}
 .lock:hover{color:var(--muted)}
+.lock-top{color:var(--muted);border:2px solid var(--line);border-radius:50%;width:40px;height:40px;display:grid;place-items:center;padding:0}
+.lock-top:hover{color:var(--paper);border-color:var(--paper)}
 .lock svg{width:18px;height:18px}
 
 .mbar{display:none}
@@ -293,7 +309,7 @@ a.mark{text-decoration:none}
   body{font-size:16px}
   .hero{grid-template-columns:1fr;gap:22px;padding-block:8px 28px}
   .hero-art{order:-1;max-width:420px;margin-inline:auto;width:100%}
-  .burst{width:84px;height:84px;font-size:18px}
+  .burst{width:84px;height:84px;font-size:18px;top:-8px;inset-inline-start:-4px}
   .top .social{display:none}
   .desk-only{display:none}.mob-only{display:flex}
   .bar h2{font-size:36px}
@@ -312,5 +328,5 @@ a.mark{text-decoration:none}
   .mbar a{flex:1;justify-content:center;padding:13px;font-size:16px}
   .mbar a.ig{background:var(--pop);border-color:var(--pop);box-shadow:3px 3px 0 var(--sun)}
 }
-@media (hover:none){.card:hover .scene .room,.card:hover .scene .piece,.card:hover .flat img{transform:none}.card:hover .scene .piece{transform:translateX(-50%)}}
+@media (hover:none){.card:hover .scene.ai .sc{transform:none}.card:hover .scene .room,.card:hover .scene .piece,.card:hover .flat img{transform:none}.card:hover .scene .piece{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
