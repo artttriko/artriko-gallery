@@ -836,11 +836,10 @@ async function makeCutout(it){
 }
 
 /* ================= Background video (admin) ================= */
-let STUDIO={clips:[],on:true,opacity:.45},vDraft=null,vBusy=false;
-const V_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח Gemini לא מוגדר ב־Vercel.",needs_billing:"יצירת וידאו ב־Veo דורשת חיוב פעיל (Billing) בחשבון Google של מפתח Gemini.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד כמה דקות.",filtered:"Google סינן את הקטע הזה. נסה שוב, או בחר צבע או מודל אחר.",failed:"היצירה נכשלה. נסה שוב.",upload_failed:"שמירת הסרטון נכשלה. נסה שוב.",download_failed:"הורדת הסרטון מ־Google נכשלה. נסה שוב."};
+let STUDIO={clips:[],on:true,opacity:.45},vDraft=null;
 async function saveStudio(){try{await putSetting("studio",STUDIO);setStudio(STUDIO);renderStudio()}catch(e){toast("השמירה נכשלה")}}
 function renderStudio(){
-  $("#vList").innerHTML=STUDIO.clips.length?STUDIO.clips.map((u,i)=>`<div class="v-item"><video src="${esc(u)}" muted loop playsinline preload="metadata"></video><div class="row">${i>0?`<button type="button" class="pill small" data-v="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-v="rm" data-i="${i}">הסרה</button></div></div>`).join(""):`<p class="note">עוד אין קטעים. צור קטע ב־AI או העלה סרטון.</p>`;
+  $("#vList").innerHTML=STUDIO.clips.length?STUDIO.clips.map((u,i)=>`<div class="v-item"><video src="${esc(u)}" muted loop playsinline preload="metadata"></video><div class="row">${i>0?`<button type="button" class="pill small" data-v="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-v="rm" data-i="${i}">הסרה</button></div></div>`).join(""):`<p class="note">עוד אין סרטון. העלה סרטון כדי שיופיע ברקע.</p>`;
   $("#vOn").checked=STUDIO.on!==false;$("#vOp").value=Math.round((STUDIO.opacity??.45)*100);
 }
 $("#vList").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;const i=+b.dataset.i;
@@ -857,34 +856,12 @@ function showDraft(url){
   $("#vAdd").onclick=()=>{STUDIO.clips.push(vDraft);vDraft=null;$("#vDraft").hidden=true;saveStudio();toast("הקטע נוסף לרקע")};
   $("#vSkip").onclick=()=>{vDraft=null;$("#vDraft").hidden=true};
 }
-async function videoApi(body){
-  const {data:{session}}=await sb.auth.getSession();
-  const r=await fetch("/api/video",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify(body)});
-  const j=await r.json().catch(()=>({}));
-  if(!r.ok)throw {code:j.code,message:j.error};
-  return j;
-}
-$("#vGen").onclick=async()=>{
-  if(vBusy)return;vBusy=true;$("#vGen").disabled=true;const t0=Date.now();
-  try{
-    $("#vMsg").textContent="שולח ל־Veo…";
-    const {op}=await videoApi({action:"start",color:$("#vColor").value,piece:$("#vPiece").value,tool:$("#vTool").value});
-    for(;;){
-      await new Promise(r=>setTimeout(r,10000));
-      const sec=Math.round((Date.now()-t0)/1000);
-      $("#vMsg").textContent=`יוצר את הקטע… ${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")} (בדרך כלל 1–5 דקות. אפשר להמשיך לעבוד בלשוניות אחרות)`;
-      const j=await videoApi({action:"poll",op});
-      if(j.done){$("#vMsg").textContent="הקטע מוכן. אם הוא טוב, הוסף אותו לרקע.";showDraft(j.url);break}
-      if(Date.now()-t0>9*60*1000)throw {code:"failed",message:"timeout"};
-    }
-  }catch(e){$("#vMsg").textContent=V_ERR[e?.code]||("היצירה נכשלה"+(e?.message?": "+e.message:""))}
-  vBusy=false;$("#vGen").disabled=false;
-};
+$("#vCopy").onclick=async()=>{try{await navigator.clipboard.writeText($("#vPrompt").value);toast("הפרומפט הועתק")}catch{$("#vPrompt").select()}};
 $("#vUp").onclick=()=>$("#vFile").click();
 $("#vFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
-  if(f.size>48*1024*1024){$("#vMsg").textContent="הסרטון גדול מ־48MB. קצר אותו ל־10–20 שניות או דחוס אותו.";return}
-  try{const url=await uploadBlob(`studio/own-${crypto.randomUUID()}.${extOf(f.type)}`,f,(l,t)=>{$("#vMsg").textContent=`מעלה… ${Math.round(l/t*100)}%`});$("#vMsg").textContent="הסרטון עלה.";showDraft(url)}
-  catch(err){$("#vMsg").textContent="ההעלאה נכשלה: "+err.message}};
+  if(f.size>48*1024*1024){$("#vsMsg").textContent="הסרטון גדול מ־48MB. קצר אותו ל־10–20 שניות או דחוס אותו.";return}
+  try{const url=await uploadBlob(`studio/own-${crypto.randomUUID()}.${extOf(f.type)}`,f,(l,t)=>{$("#vsMsg").textContent=`מעלה… ${Math.round(l/t*100)}%`});$("#vsMsg").textContent="הסרטון עלה.";showDraft(url)}
+  catch(err){$("#vsMsg").textContent="ההעלאה נכשלה: "+err.message}};
 
 /* ================= Collector guide ================= */
 const INK="#f6ead8",SUN="#ffd23f",POP="#ff3b5c",SKY="#2ec4ff",LINE="#3a2a30",DIM="#bfae9c";

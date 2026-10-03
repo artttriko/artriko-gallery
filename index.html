@@ -313,13 +313,10 @@
     </section>
     <section data-pane="studio" hidden>
     <h4>וידאו רקע</h4>
-    <p class="note">סרטון קצר של צייר עם קפוצ'ון, מצולם מאחור, שמתנגן ברקע האתר בשקיפות. אפשר ליצור קטעים ב־AI (מודל Veo של Google, דרך מפתח Gemini, בתשלום לפי שימוש) או להעלות סרטון שצילמת בעצמך. כמה קטעים מתחלפים אחד אחרי השני.</p>
-    <div class="form">
-      <label>צבע הצבע<select id="vColor"><option value="yellow">צהוב</option><option value="red">ורוד־אדום</option><option value="cyan">תכלת</option><option value="purple">סגול</option><option value="green">ירוק</option><option value="orange">כתום</option></select></label>
-      <label>המודל שנצבע<select id="vPiece"><option value="bust">באסט</option><option value="statue">פסל עם גלימה</option><option value="helmet">קסדה</option><option value="creature">יצור עם קרניים</option></select></label>
-      <label>כלי<select id="vTool"><option value="airbrush">איירבראש</option><option value="brush">מכחול</option></select></label>
-      <div class="full toolrow"><button type="button" class="pill ai-btn" id="vGen">✨ יצירת קטע ב־AI</button><button type="button" class="pill" id="vUp">העלאת סרטון שלי</button><input type="file" id="vFile" accept="video/mp4,video/webm,video/quicktime" hidden><span class="note" id="vMsg"></span></div>
-    </div>
+    <p class="note">סרטון קצר שמתנגן ברקע האתר בשקיפות. צור אותו פעם אחת ב־Gemini (או צלם בעצמך), הורד את הקובץ והעלה אותו כאן.</p>
+    <label class="note" for="vPrompt">פרומפט מוכן ל־Gemini (אפשר לשנות את הצבע, את הדגם או את הכלי)</label>
+    <textarea id="vPrompt" rows="6" dir="ltr" readonly style="width:100%">Realistic cinematic footage filmed from behind and slightly over the right shoulder of an artist sitting on a wooden stool at a workbench in a dark, quiet hobby studio at night. The artist carefully hand-paints a small collectible figurine bust held in the left hand, using an airbrush in the right hand that sprays a fine mist of paint. The artist wears a dark hoodie with the hood up and a black half-face respirator; the face is never visible, we only see the back of the hood and shoulders. A single soft spotlight from above lights only the figurine; the rest of the room is in deep shadow. Shallow depth of field, slow subtle handheld camera drift, natural film grain, 35mm. The whole image is black and white, except the fresh paint and the paint mist, which are vivid sunflower yellow. Calm, focused mood. No text, no logos, no watermark. 16:9.</textarea>
+    <div class="toolrow"><button type="button" class="pill small" id="vCopy">העתקת הפרומפט</button><button type="button" class="pill" id="vUp" style="background:var(--pop);border-color:var(--pop)">העלאת הסרטון</button><input type="file" id="vFile" accept="video/mp4,video/webm,video/quicktime" hidden><span class="note" id="vsMsg"></span></div>
     <div id="vDraft" class="v-draft" hidden></div>
     <h4>הקטעים ברקע</h4>
     <div id="vList" class="v-list"></div>
