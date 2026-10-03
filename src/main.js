@@ -319,8 +319,24 @@ document.querySelectorAll("dialog").forEach(d=>{
 });
 
 /* ================= Contact ================= */
+// Playful lines for a piece that is on display only (not for sale)
+const SOLD_TITLES=["אוי, איזה באסה!","אאוץ'. כמעט!","נו באמת, דווקא את זה?","שברון לב בפופ־ארט"];
+const SOLD_LINES=[
+  n=>`"${n}" כבר מצא בית חם, והוא לא מתכנן לעבור דירה. אבל אל דאגה: אני יכול להכין לך משהו באותה אנרגיה, רק שלך.`,
+  n=>`"${n}" כאן רק כדי שתתאהבו בו, והוא יודע את זה טוב מאוד. בוא נעשה לך אחד משלך?`,
+  n=>`"${n}" סגור עליו כמו כספת. הדבר הכי קרוב: יצירה מותאמת בדיוק בשבילך, עם אותה כמות צבע ושיגעון.`,
+  n=>`ניסיון יפה! "${n}" לא למכירה, הוא עובד פה כדוגמן. אבל אפשר להזמין ממני אח קטן (או גדול) בהזמנה אישית.`
+];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
 function openContact(w){
-  const t=w?`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`:"היי ARTRIKO, אשמח לשמוע עוד";
+  const notForSale=!!(w&&w.status!=="sale");
+  $("#ctTitle").textContent=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
+  $("#ctSold").hidden=!notForSale;
+  if(notForSale)$("#ctSold").textContent=pick(SOLD_LINES)(w.name);
+  $("#ctNote").textContent=notForSale?"רוצה הזמנה אישית בסגנון? ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:":"ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:";
+  const t=!w?"היי ARTRIKO, אשמח לשמוע עוד"
+    :notForSale?`היי ARTRIKO, ראיתי את "${w.name}" ונדלקתי! אפשר להזמין ממך משהו בסגנון?`
+    :`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`;
   $("#ctMsg").textContent=t;
   if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
   $("#ct").showModal();

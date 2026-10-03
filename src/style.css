@@ -135,6 +135,7 @@ dt{color:var(--muted);font-size:14px}dd{margin:0;font-weight:600;font-variant-nu
 
 /* contact sheet */
 .sheet{max-width:520px;padding:28px 24px}
+.sheet .sold{font-size:18px;font-weight:600;line-height:1.5;margin:0 0 14px;padding:12px 14px;background:rgba(255,59,92,.12);border-inline-start:6px solid var(--pop)}
 .sheet h3{font:700 48px/1 var(--f-display);margin:0 0 12px;color:var(--sun)}
 .sheet .dm{background:var(--pop);border-color:var(--pop);box-shadow:3px 3px 0 var(--sun)}
 .msg{direction:rtl;unicode-bidi:plaintext;background:var(--ink);border:2px dashed var(--line);padding:14px;white-space:pre-wrap;user-select:all;margin:12px 0}
