@@ -22,7 +22,6 @@
     <a class="mark" href="#top">ARTRIKO</a>
     <div class="topnav">
     <button class="lock lock-top" id="lockTop" type="button" aria-label="כניסת מנהל" title="כניסת מנהל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
-    <a class="pill guide-link" href="#guide">המדריך לאספנים</a>
     <nav class="social" aria-label="רשתות">
       <a class="pill" id="igTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</a>
       <a class="pill" id="ttTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg>TikTok</a>
@@ -40,6 +39,7 @@
         <a class="pill big solid" id="igHero" target="_blank" rel="noopener"></a>
         <a class="pill big" id="ttHero" target="_blank" rel="noopener"></a>
         <a class="pill big" href="#gallery">לגלריה ↓</a>
+        <a class="pill big guide-link" href="#guide" id="guideHero">המדריך לאספנים</a>
         <a class="pill big learn-link" href="#learn" id="learnHero">ללמוד לצבוע ↓</a>
       </div>
     </div>
@@ -81,6 +81,7 @@
       <article class="ws-tool brush"><h3>מכחולים <small>Brushes</small></h3><ul id="wsBrush"></ul></article>
       <p class="ws-combo" id="wsCombo"></p>
     </div>
+    <div class="ws-photos" id="wsPhotos" hidden></div>
   </section>
   </div>
 
@@ -230,6 +231,13 @@
 </dialog>
 
 <!-- Contact -->
+<dialog id="wsLb" class="ws-lb" aria-label="תמונה מהסדנה">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <img id="wsLbImg" alt="">
+  <button class="arrow prev" id="wsLbPrev" type="button" aria-label="הקודמת">›</button>
+  <button class="arrow next" id="wsLbNext" type="button" aria-label="הבאה">‹</button>
+</dialog>
+
 <dialog id="ct" class="sheet">
   <button class="x" data-close aria-label="סגירה">✕</button>
   <h3 id="ctTitle">אני רוצה את זה!</h3>
@@ -258,7 +266,8 @@
   </div>
   <div id="adPanel" hidden>
     <h3>ניהול הגלריה</h3>
-    <div class="toolrow" style="margin:0 0 12px"><span class="note" id="whoAmI"></span><span class="note" id="visitStats"></span><button class="pill small" id="logoutBtn" type="button">יציאה</button></div>
+    <div class="toolrow" style="margin:0 0 12px"><span class="note" id="whoAmI"></span><button class="pill small" id="logoutBtn" type="button">יציאה</button></div>
+    <details class="ev-box" id="evBox"><summary>סטטיסטיקה <span class="note" id="visitStats"></span></summary><div id="evStats" class="ev-stats"></div><p class="note">כל כתובת נספרת פעם אחת בכל 10 דקות לכל אזור, וכניסות של מנהל לא נספרות. הספירה של האזורים התחילה ב־3.10.2026.</p></details>
     <div class="seg tabs" role="tablist">
       <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
       <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
@@ -330,6 +339,16 @@
       <label>טכניקות איירבראש (שורה לכל אחת)<textarea id="xWsAir" maxlength="600" style="min-height:140px"></textarea></label>
       <label>טכניקות מכחולים (שורה לכל אחת)<textarea id="xWsBrush" maxlength="600" style="min-height:140px"></textarea></label>
       <label class="full">משפט השילוב (להדגשה: **מילים**)<textarea id="xWsCombo" maxlength="400"></textarea></label>
+      <div class="full"><div class="toolrow"><button type="button" class="pill small" id="wsPhUp">הוספת תמונות מסדנאות</button><input type="file" id="wsPhFile" accept="image/*" multiple hidden><span class="note" id="wsPhMsg">התמונות נשמרות מיד ומופיעות בסקשן הסדנאות.</span></div><div id="wsPhList" class="ws-ph-admin"></div></div>
+      <h4 class="full" style="margin:10px 0 0">כפתורים</h4>
+      <div class="full btn-toggles">
+        <label><input type="checkbox" id="xBtnIg"> אינסטגרם</label>
+        <label><input type="checkbox" id="xBtnTt"> טיקטוק</label>
+        <label><input type="checkbox" id="xBtnWa"> וואטסאפ</label>
+        <label><input type="checkbox" id="xBtnLearn"> "ללמוד לצבוע" בראש העמוד</label>
+        <label><input type="checkbox" id="xBtnGuide"> "המדריך לאספנים" ליד הכפתורים</label>
+      </div>
+      <label>מספר וואטסאפ (בלי מספר, הכפתור לא יופיע)<input id="xWaNumber" maxlength="20" inputmode="tel" dir="ltr" placeholder="050-0000000"></label>
       <h4 class="full" style="margin:10px 0 0">משפטים מתחלפים</h4>
       <label class="full">משפט במסך הפתיחה (ARTRIKO הגדול). שורה לכל משפט, ובכל כניסה לאתר מוצג משפט אחר<textarea id="xIntro" maxlength="1200" style="min-height:120px"></textarea></label>
       <label class="full">כיתוב בחלון הצילום (REC). שורה לכל משפט, עם / בין השורה הראשית לשורה השנייה. בכל כניסה מוצג משפט אחר<textarea id="xStudio" maxlength="1500" style="min-height:150px"></textarea></label>

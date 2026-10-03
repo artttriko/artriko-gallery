@@ -76,3 +76,31 @@ create policy "admins delete gallery files" on storage.objects for delete to aut
 
 -- How a piece is shown in the size illustration: standing on the floor or hanging on the wall
 alter table public.works add column if not exists mount text not null default 'stand' check (mount in ('stand','wall'));
+
+-- Click counting per area (collector's guide, workshop request, "I want this", opening a piece, social links).
+-- Same visitor + same area is counted once per 10 minutes. Recorded through /api/visit with {kind}.
+create table if not exists public.events (id bigint generated always as identity primary key, kind text not null, ip_hash text not null, created_at timestamptz not null default now());
+alter table public.events enable row level security;
+create index if not exists events_ip_kind_time_idx on public.events (ip_hash, kind, created_at desc);
+create index if not exists events_kind_time_idx on public.events (kind, created_at desc);
+create or replace function public.record_event(p_secret text, p_ip_hash text, p_kind text) returns boolean
+language plpgsql security definer set search_path = '' as $$
+declare ok boolean;
+begin
+  select exists(select 1 from public.private_config c where c.key = 'visit_secret' and c.value = p_secret) into ok;
+  if not ok or p_ip_hash is null or length(p_ip_hash) < 16 then return false; end if;
+  if p_kind is null or p_kind not in ('guide','learn','want','work','ig','tt','wa') then return false; end if;
+  if exists (select 1 from public.events e where e.ip_hash = p_ip_hash and e.kind = p_kind and e.created_at > now() - interval '10 minutes') then return false; end if;
+  insert into public.events (kind, ip_hash) values (p_kind, p_ip_hash);
+  return true;
+end $$;
+create or replace function public.event_stats() returns json
+language plpgsql stable security definer set search_path = '' as $$
+declare d0 timestamptz := date_trunc('day', now() at time zone 'Asia/Jerusalem') at time zone 'Asia/Jerusalem';
+begin
+  if not public.is_admin() then return null; end if;
+  return coalesce((select json_object_agg(kind, json_build_object('today', t, 'week', w, 'total', a)) from (
+    select kind, count(*) filter (where created_at >= d0) t, count(*) filter (where created_at >= now() - interval '7 days') w, count(*) a
+    from public.events group by kind) s), '{}'::json);
+end $$;
+revoke execute on function public.event_stats() from anon, public;

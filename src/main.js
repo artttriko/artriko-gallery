@@ -342,11 +342,11 @@ $("#grid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList
 const wa=t=>CFG.whatsapp?`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(t||"")}`:"";
 ["#igTop","#igHero","#igBar","#ctIg"].forEach(s=>$(s).href=CFG.instagram);
 ["#ttTop","#ttHero","#ttBar","#ctTt"].forEach(s=>$(s).href=CFG.tiktok);
-if(CFG.whatsapp){$("#waBar").hidden=false;$("#waBar").href=wa("היי ARTRIKO, ראיתי את הגלריה ואשמח לשמוע עוד")}
 
 /* ================= Lightbox ================= */
 let LB={w:null,slides:[],i:0};
 function openLB(id){
+  track("work");
   const w=S.works.find(x=>x.id===id); if(!w) return;
   const il=illusOf(w),showIl=!!(il&&il.sceneOn);
   const slides=[]; if(showIl&&S.view==="room") slides.push({kind:"room"});
@@ -410,6 +410,8 @@ const SOLD_LINES=[
 ];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function openContact(w){
+  track(w==="learn"?"learn":"want");
+  $("#ctWa").hidden=true;
   if(w==="learn"){
     $("#ctTitle").textContent=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
     $("#ctSold").hidden=true;
@@ -433,6 +435,42 @@ function openContact(w){
 }
 document.querySelectorAll("#ct .dm").forEach(a=>a.addEventListener("click",()=>{navigator.clipboard?.writeText($("#ctMsg").textContent).then(()=>toast("ההודעה הועתקה, אפשר להדביק אותה בצ'אט"),()=>{})}));
 $("#wsCta").onclick=()=>openContact("learn");
+
+/* ================= Click counting (which areas visitors use) ================= */
+// Server counts each area once per visitor every 10 minutes; admins are not counted.
+function track(kind){if(S.admin)return;try{fetch("/api/visit",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({kind})})}catch(e){}}
+document.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a)return;const h=a.href;
+  if(/instagram\.com/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(/wa\.me/.test(h))track("wa")},true);
+const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
+async function loadStats(){
+  const [{data:v},{data:ev}]=await Promise.all([sb.rpc("visit_stats"),sb.rpc("event_stats")]);
+  const all={...(ev||{}),...(v?{visits:v}:{})};
+  if(v)$("#visitStats").textContent=`· היום ${v.today} כניסות`;
+  $("#evStats").innerHTML=`<table><thead><tr><th></th><th>היום</th><th>7 ימים</th><th>סה"כ</th></tr></thead><tbody>${EV_LABELS.map(([k,l])=>{const r=all[k]||{today:0,week:0,total:0};return `<tr><td>${esc(l)}</td><td>${r.today}</td><td>${r.week}</td><td>${r.total}</td></tr>`}).join("")}</tbody></table>`;
+}
+
+/* ================= Workshop photos ================= */
+let WSI=0;
+function showWs(i){const ph=TEXTS.wsPhotos||[];if(!ph.length)return;WSI=(i+ph.length)%ph.length;$("#wsLbImg").src=ph[WSI];$("#wsLbPrev").hidden=$("#wsLbNext").hidden=ph.length<2}
+$("#wsPhotos").addEventListener("click",e=>{const b=e.target.closest("[data-ph]");if(!b)return;showWs(+b.dataset.ph);$("#wsLb").showModal()});
+$("#wsLbPrev").onclick=()=>showWs(WSI-1);$("#wsLbNext").onclick=()=>showWs(WSI+1);
+function renderWsPhAdmin(){const ph=TEXTS.wsPhotos||[];
+  $("#wsPhList").innerHTML=ph.map((u,i)=>`<div class="ws-ph-item"><img src="${esc(u)}" alt=""><div class="row">${i>0?`<button type="button" class="pill small" data-wp="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-wp="rm" data-i="${i}">הסרה</button></div></div>`).join("")}
+async function saveWsPhotos(msg){try{await putSetting("texts",TEXTS);renderTexts();renderWsPhAdmin();if(msg)$("#wsPhMsg").textContent=msg}catch(e){$("#wsPhMsg").textContent="השמירה נכשלה: "+(e.message||e)}}
+$("#wsPhList").addEventListener("click",e=>{const b=e.target.closest("[data-wp]");if(!b)return;const i=+b.dataset.i,ph=TEXTS.wsPhotos=[...(TEXTS.wsPhotos||[])];
+  if(b.dataset.wp==="rm")ph.splice(i,1);if(b.dataset.wp==="up")ph.splice(i-1,0,...ph.splice(i,1));saveWsPhotos("נשמר.")});
+$("#wsPhUp").onclick=()=>$("#wsPhFile").click();
+$("#wsPhFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.startsWith("image"));e.target.value="";if(!files.length)return;
+  const ph=TEXTS.wsPhotos=[...(TEXTS.wsPhotos||[])];
+  for(const [k,f] of files.entries()){
+    try{
+      const data=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(f)});
+      const blob=b64Blob(await downscale(data,1800));
+      ph.push(await uploadBlob(`workshop/${crypto.randomUUID()}.jpg`,blob,(l,t)=>{$("#wsPhMsg").textContent=`מעלה תמונה ${k+1} מתוך ${files.length}… ${Math.round(l/t*100)}%`}));
+    }catch(err){$("#wsPhMsg").textContent="העלאה נכשלה: "+(err.message||err);return}
+  }
+  saveWsPhotos(files.length>1?`${files.length} תמונות נוספו לסקשן הסדנאות.`:"התמונה נוספה לסקשן הסדנאות.");
+};
 $("#ctCopy").onclick=async()=>{const t=$("#ctMsg").textContent;try{await navigator.clipboard.writeText(t);toast("ההודעה הועתקה")}catch(e){const r=document.createRange();r.selectNodeContents($("#ctMsg"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("ההודעה מסומנת, אפשר להעתיק אותה")}};
 
 /* ================= Image tools ================= */
@@ -515,8 +553,7 @@ async function loadAdminData(){
   renderAdminList();
   const st=await getSetting("studio");if(st)STUDIO={...STUDIO,...st};renderStudio();
   const vv=await getSetting("voice");if(vv){VOICE=vv;$("#xVoice").value=vv.samples||"";$("#xVoiceRules").value=vv.rules||""}
-  const {data}=await sb.rpc("visit_stats");
-  if(data)$("#visitStats").textContent=`כניסות: היום ${data.today} · 7 ימים ${data.week} · סה"כ ${data.total}`;
+  loadStats();
 }
 $("#drop").onclick=()=>$("#fFiles").click();
 $("#drop").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("#fFiles").click()}};
@@ -684,7 +721,8 @@ const DEFAULT_TEXTS={
   wsAir:"תפעול, ניקוי ותחזוקה\nדילול צבע ולחץ אוויר\nפריימר ושכבות בסיס\nמעברי צבע חלקים\nזניטל: אור וצל מלמעלה\nמיסוך ועבודה עם שבלונות",
   wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
   wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
-  wsCta:"אני רוצה לצבוע ככה!"
+  wsCta:"אני רוצה לצבוע ככה!",wsPhotos:[],
+  btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:""
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -706,13 +744,25 @@ function renderTexts(){
   $("#wsCombo").innerHTML=rich(T.wsCombo||"");
   $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
   const wsOn=!!String(T.wsText||"").trim();
-  $("#learn").hidden=!wsOn;$("#learnHero").hidden=!wsOn;
+  $("#learn").hidden=!wsOn;$("#learnHero").hidden=!wsOn||T.btnLearn===false;
+  const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
+  $("#wsPhotos").hidden=!ph.length;
+  $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהסדנה"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
+  // Buttons the admin chose to show
+  const vis=(sels,on)=>sels.forEach(x=>{const el=$(x);if(el)el.hidden=!on});
+  vis(["#igTop","#igHero","#igBar","#ctIg","#igGuide"],T.btnIg!==false);
+  vis(["#ttTop","#ttHero","#ttBar","#ctTt","#ttGuide"],T.btnTt!==false);
+  vis(["#guideHero"],T.btnGuide!==false);
+  let n=String(T.waNumber||"").replace(/\D/g,"");if(n.startsWith("0"))n="972"+n.slice(1);
+  CFG.whatsapp=T.btnWa!==false&&n.length>=9?n:"";
+  $("#waBar").hidden=!CFG.whatsapp;if(CFG.whatsapp)$("#waBar").href=wa("היי ARTRIKO, ראיתי את הגלריה ואשמח לשמוע עוד");
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",introLines:"#xIntro",studioLines:"#xStudio"};
-function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??""}
-$("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
+function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
+$("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
 $("#xReset").onclick=()=>{TEXTS={...TEXTS,...DEFAULT_TEXTS};fillTextForm();$("#xMsg").textContent="הטקסט המקורי חזר לטופס. לחץ שמירה כדי להחיל."};
 
 /* ================= Voice samples for the generator ================= */
@@ -992,6 +1042,7 @@ document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{S.filter={cat
 /* ================= Page routing (#guide) ================= */
 function route(){
   const g=location.hash==="#guide";
+  if(g)track("guide");
   $("#homePage").hidden=g;$("#guidePage").hidden=!g;
   if(g){window.scrollTo(0,0);return}
   const t=location.hash&&location.hash.length>1?document.getElementById(location.hash.slice(1)):null;
