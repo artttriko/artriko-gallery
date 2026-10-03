@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ARTRIKO</title>
+<meta name="description" content="ARTRIKO: פסלי אספנות מודפסים וצבועים ביד. גלריה, יצירות זמינות לרכישה ומדריך לפסלי אספנות.">
+<meta property="og:title" content="ARTRIKO">
+<meta property="og:description" content="פסלי אספנות מודפסים וצבועים ביד">
+<meta name="theme-color" content="#130d10">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Karantina:wght@400;700&family=Assistant:wght@400;600;800&display=swap">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#top">ARTRIKO</a>
+    <div class="topnav">
+    <a class="pill guide-link" href="#guide">המדריך לאספנים</a>
+    <nav class="social" aria-label="רשתות">
+      <a class="pill" id="igTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</a>
+      <a class="pill" id="ttTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg>TikTok</a>
+    </nav>
+    </div>
+  </header>
+
+  <div id="homePage">
+  <section class="hero">
+    <div>
+      <h1 id="tH1"></h1>
+      <p id="tP1"></p>
+      <p id="tP2"></p>
+      <div class="cta">
+        <a class="pill big solid" id="igHero" target="_blank" rel="noopener"></a>
+        <a class="pill big" id="ttHero" target="_blank" rel="noopener"></a>
+        <a class="pill big" href="#gallery">לגלריה ↓</a>
+      </div>
+    </div>
+    <div class="hero-art"><div class="burst" id="tBurst"></div><div id="heroScene"></div></div>
+  </section>
+
+  <div class="bar" id="gallery">
+    <h2>הגלריה<small id="count"></small></h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="תצוגה">
+        <button id="vRoom" aria-pressed="true">בחדר</button>
+        <button id="vFlat" aria-pressed="false">תמונה מקורית</button>
+      </div>
+      <div class="seg desk-only" role="group" aria-label="גודל">
+        <button data-size="220">קטן</button><button data-size="300" aria-pressed="true">בינוני</button><button data-size="420">גדול</button>
+      </div>
+      <label class="sizer desk-only" for="sizeRange">גודל<input type="range" id="sizeRange" min="200" max="480" step="10" value="300"></label>
+      <div class="seg mob-only" role="group" aria-label="עמודות">
+        <button data-cols="1">אחת בשורה</button><button data-cols="2" aria-pressed="true">שתיים</button>
+      </div>
+    </div>
+  </div>
+  <div class="filters" id="filters" aria-label="סינון"></div>
+  <main class="grid cols-2" id="grid"></main>
+  </div>
+
+  <main id="guidePage" class="guide" hidden>
+    <a class="back" href="#gallery">→ חזרה לגלריה</a>
+    <header class="g-hero">
+      <span class="eyebrow">ARTRIKO · מדריך</span>
+      <h1>המדריך <em>לפסלי</em> אספנות</h1>
+      <p>בעולם פסלי האספנות לכל פרט יש משמעות. ריכזתי כאן את המונחים המקצועיים, את ההבדלים בין סוגי הפסלים ואת שתי טכנולוגיות ההדפסה, כדי שתדעו בדיוק מה אתם רואים בגלריה ומה כדאי להזמין.</p>
+      <nav class="toc" aria-label="תוכן המדריך">
+        <a href="#g-types">סוגי פסלים</a><a href="#g-scale">סקייל</a><a href="#g-minis">מיניאטורות</a><a href="#g-tech">רזין או FDM</a><a href="#g-terms">מילון מונחים</a>
+      </nav>
+    </header>
+
+    <section id="g-types" class="g-sec">
+      <h2>סוגי הפסלים</h2>
+      <p class="lead">כל יצירה בגלריה מסווגת לאחד מהסוגים האלה, ואפשר לסנן לפיהם.</p>
+      <div class="types">
+        <article class="type"><div class="ill" data-ill="bust"></div><h3>באסט <small>Bust</small></h3><p>פסל של הראש, הכתפיים ולרוב החזה העליון. כל תשומת הלב הולכת להבעת הפנים ולפרטים הקטנים ביותר, בלי הסחות דעת.</p><button class="chip" data-goto="Bust">לבאסטים בגלריה</button></article>
+        <article class="type"><div class="ill" data-ill="statue"></div><h3>פסל מלא <small>Statue</small></h3><p>דמות בגוף מלא בתנוחה קבועה, בלי מפרקים. היא עומדת על בסיס פשוט או מעוצב, והפוקוס כולו על הדמות והפוזה שלה.</p><button class="chip" data-goto="Statue">לפסלים בגלריה</button></article>
+        <article class="type"><div class="ill" data-ill="diorama"></div><h3>דיורמה <small>Diorama</small></h3><p>סצנה שמספרת סיפור: סביבה מפורטת כמו מבנה, רחוב או שדה קרב, לעיתים כמה דמויות באינטראקציה, ואפקטים כמו פיצוצים או מים.</p><button class="chip" data-goto="Diorama">לדיורמות בגלריה</button></article>
+        <article class="type"><div class="ill" data-ill="mini"></div><h3>מיניאטורה <small>Miniature</small></h3><p>דמויות קטנות, לרוב בגובה 3 עד 6 ס"מ, בערך פי שניים מקובייה רגילה. הן נפוצות במשחקי שולחן כמו מבוכים ודרקונים, ודורשות צביעה ברמה מיקרוסקופית ודיוק כירורגי.</p><button class="chip" data-goto="Miniature">למיניאטורות בגלריה</button></article>
+        <article class="type muted"><div class="ill" data-ill="action"></div><h3>דמות מפרקית <small>Action Figure</small></h3><p>דמות עם מפרקים (נקודות ארטיקולציה) שמאפשרים לשנות את התנוחה בכל רגע. <strong>כרגע אני לא מייצר דמויות מהסוג הזה.</strong></p></article>
+      </div>
+    </section>
+
+    <section id="g-scale" class="g-sec">
+      <h2>מה זה סקייל?</h2>
+      <p class="lead">סקייל (Scale) הוא היחס בין גודל הפסל לגודל האמיתי של הדמות, במציאות או בקומיקס ובסרט. ב־1:6, כל סנטימטר בפסל שווה שישה סנטימטרים במציאות.</p>
+      <div class="callout"><strong>חשוב לדעת:</strong> הסקייל מתייחס לדמות עצמה, לא לגובה הכולל עם הבסיס. לדוגמה, פסל באטמן בסקייל 1:3 של Prime 1 Studio מגיע לכ־105 ס"מ, כי הוא עומד על בסיס גבוה בצורת מבנה גותי.</div>
+      <figure class="chart"><div id="scaleChart"></div><figcaption>דמות אדם בגובה 180 ס"מ בכל סקייל, באותו קנה מידה.</figcaption></figure>
+      <div class="tbl"><table>
+        <thead><tr><th>סקייל</th><th>שם</th><th>אדם ממוצע</th><th>איפה פוגשים את זה</th></tr></thead>
+        <tbody>
+          <tr><td>1:1</td><td>Life Size, גודל טבעי</td><td>כ־180 ס"מ</td><td>הפסל בגודל האמיתי של הדמות. פיקאצ'ו בגודל טבעי הוא כ־40 ס"מ בלבד.</td></tr>
+          <tr><td>1:2</td><td>Half Scale, חצי</td><td>כ־90 ס"מ</td><td>פסלי ענק לתצוגה.</td></tr>
+          <tr><td>1:3</td><td>שליש</td><td>כ־60 ס"מ</td><td>פסלי פרימיום גדולים, למשל סדרת Museum Masterline של Prime 1 Studio.</td></tr>
+          <tr><td>1:4</td><td>Quarter Scale, רבע</td><td>כ־45 ס"מ</td><td>הגודל הקלאסי לפסלי פרימיום, למשל Premium Format של Sideshow. עם הבסיס, לרוב 45–60 ס"מ.</td></tr>
+          <tr><td>1:6</td><td>שישית</td><td>כ־30 ס"מ</td><td>גודל נפוץ מאוד לדמויות ולפסלי אספנות.</td></tr>
+          <tr><td>1:10</td><td>Art Scale</td><td>כ־18 ס"מ</td><td>פסלים קומפקטיים למדף. השם Art Scale מגיע מסדרה של Iron Studios.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="calc">
+        <h3>מחשבון סקייל</h3>
+        <div class="calc-row">
+          <label for="cReal">גובה הדמות במציאות (ס"מ)<input id="cReal" type="number" min="1" value="188"></label>
+          <label for="cModel">גובה הדמות בפסל, בלי הבסיס (ס"מ)<input id="cModel" type="number" min="0.5" step="0.5" value="31"></label>
+        </div>
+        <p class="calc-out" id="cOut"></p>
+      </div>
+    </section>
+
+    <section id="g-minis" class="g-sec">
+      <h2>הסקייל של מיניאטורות</h2>
+      <p class="lead">במיניאטורות לא כותבים יחס אלא מילימטרים: בערך הגובה של דמות אדם רגילה. יצרנים מודדים קצת אחרת (עד העיניים או עד קודקוד הראש), אז מתייחסים למספר כהערכה.</p>
+      <div class="minis">
+        <div><b>28 מ"מ</b><span>הסטנדרט הקלאסי למשחקי שולחן. בערך 1:56.</span></div>
+        <div><b>32 מ"מ</b><span>Heroic. קצת גדול יותר ומאפשר יותר פרטים. היום זה הגודל הנפוץ במשחקים ובמודלים להדפסה.</span></div>
+        <div><b>54 מ"מ</b><span>בעיקר לתצוגה ולאספנות, עם מקום לצביעה מרשימה יותר.</span></div>
+        <div><b>75 מ"מ</b><span>גודל תצוגה ותחרויות צביעה. נפוץ גם לבאסטים קטנים.</span></div>
+      </div>
+    </section>
+
+    <section id="g-tech" class="g-sec">
+      <h2>רזין או FDM?</h2>
+      <p class="lead">בסטודיו אני מדפיס, מכין וצובע בשתי טכנולוגיות. לכל אחת תפקיד משלה.</p>
+      <div class="techs">
+        <article class="tech">
+          <div class="ill wide" data-ill="resin"></div>
+          <h3>הדפסת רזין <small>Resin</small></h3>
+          <p>אור UV מקשה שרף נוזלי שכבה אחרי שכבה, ברזולוציה מיקרוסקופית.</p>
+          <dl><dt>היתרון</dt><dd>פירוט מטורף: טקסטורת עור, קמטים בבד ופרטים זעירים. פני השטח יוצאים חלקים כמעט בלי קווי שכבות.</dd>
+          <dt>מתאים ל</dt><dd>פסלים בסקייל 1:10 עד 1:4, באסטים עתירי פרטים ומיניאטורות.</dd>
+          <dt>למה זה יקר יותר</dt><dd>השרף יקר יותר, והעבודה אחרי ההדפסה ארוכה ומלכלכת.</dd></dl>
+          <h4>העבודה אחרי ההדפסה</h4>
+          <ol class="steps"><li>שטיפה כפולה באלכוהול איזופרופילי</li><li>ניקוי ידני מדוקדק</li><li>ייבוש והקשחה סופית בתא UV</li><li>חורי ניקוז בחלקים חלולים, כדי שנוזל לא יצטבר בפנים</li><li>שיוף עדין של נקודות התמיכה (Supports)</li></ol>
+        </article>
+        <article class="tech">
+          <div class="ill wide" data-ill="fdm"></div>
+          <h3>הדפסת FDM <small>Fused Deposition Modeling</small></h3>
+          <p>חוט פלסטיק כמו PLA, PETG או ABS נמס בראש ההדפסה ומונח שכבה על שכבה.</p>
+          <dl><dt>היתרון</dt><dd>חוזק, משקל נמוך יחסית וגדלים ענקיים. החומר זול יותר.</dd>
+          <dt>מתאים ל</dt><dd>סקיילים גדולים (1:2 וגודל טבעי), בסיסים מסיביים לדיורמות, אביזרי קוספליי ופרופס.</dd>
+          <dt>מה צריך לדעת</dt><dd>מקרוב אפשר לראות קווי שכבות, ולכן צריך החלקה לפני צביעה.</dd></dl>
+          <h4>העבודה אחרי ההדפסה</h4>
+          <ol class="steps"><li>הסרת תמיכות</li><li>מילוי עם חומרים כמו Apoxie או Bondo</li><li>שיוף ידני קפדני</li><li>פריימר, ובדיקה שהמשטח חלק לפני צבע</li></ol>
+        </article>
+      </div>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>רזין</th><th>FDM</th></tr></thead>
+        <tbody>
+          <tr><td>רמת פירוט</td><td>גבוהה מאוד</td><td>טובה, עם קווי שכבות</td></tr>
+          <tr><td>גודל מקסימלי</td><td>בינוני, חלקים מחוברים</td><td>גדול מאוד</td></tr>
+          <tr><td>חוזק</td><td>קשיח, עלול להישבר בנפילה</td><td>חזק וגמיש יותר</td></tr>
+          <tr><td>עלות חומר</td><td>גבוהה</td><td>נמוכה</td></tr>
+          <tr><td>הכי טוב ל</td><td>באסטים, 1:10–1:4, מיניאטורות</td><td>1:2, גודל טבעי, בסיסים ופרופס</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="g-terms" class="g-sec">
+      <h2>מילון מונחים</h2>
+      <dl class="terms">
+        <dt>בסיס (Base)</dt><dd>מה שהפסל עומד עליו. יכול להיות עיגול פשוט או חלק מעוצב מהסיפור של הדמות.</dd>
+        <dt>לור (Lore)</dt><dd>העולם והסיפור של הדמות: הקומיקס, הסרט או המשחק. לפיו קובעים את הגובה "האמיתי" לחישוב הסקייל.</dd>
+        <dt>תמיכות (Supports)</dt><dd>עמודים דקים שמחזיקים חלקים בזמן ההדפסה ומוסרים אחריה.</dd>
+        <dt>קווי שכבה (Layer Lines)</dt><dd>הפסים הדקים שנוצרים כשמדפיסים שכבה על שכבה. בולטים יותר ב־FDM.</dd>
+        <dt>פריימר (Primer)</dt><dd>שכבת יסוד לפני הצבע. היא חושפת פגמים ועוזרת לצבע להיצמד.</dd>
+        <dt>ראשים וחלקים מתחלפים (Swap Parts)</dt><dd>חלקים נוספים שמאפשרים לשנות הבעה או תנוחה של פסל קבוע.</dd>
+        <dt>מהדורה מוגבלת (Limited Edition)</dt><dd>פסל שמיוצר במספר עותקים קבוע. בעולם המסחרי זה משפיע מאוד על הערך.</dd>
+        <dt>פוליסטון (Polystone)</dt><dd>חומר יציקה כבד שנפוץ בפסלים מסחריים. פסלים מודפסים, כמו שלי, מיוצרים ברזין או בפלסטיק.</dd>
+      </dl>
+    </section>
+
+    <section class="g-sec g-cta">
+      <h2>מצאתם משהו שאתם רוצים?</h2>
+      <p>כל יצירה אצלי נעשית ביד. ספרו לי מה אתם מחפשים: דמות, גודל וסוג, ונבנה את זה יחד.</p>
+      <div class="row"><a class="pill big solid" href="#gallery">לגלריה</a><a class="pill big" id="igGuide" target="_blank" rel="noopener">לכתוב לי באינסטגרם</a><a class="pill big" id="ttGuide" target="_blank" rel="noopener">טיקטוק</a></div>
+    </section>
+  </main>
+
+
+  <footer>
+    <span>© ARTRIKO · <a class="flink" href="#guide">המדריך לפסלי אספנות</a></span>
+    <button class="lock" id="lockBtn" aria-label="כניסת מנהל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+  </footer>
+</div>
+
+<div class="mbar">
+  <a class="pill" id="waBar" target="_blank" rel="noopener" hidden>WhatsApp</a>
+  <a class="pill ig" id="igBar" target="_blank" rel="noopener">Instagram</a>
+  <a class="pill" id="ttBar" target="_blank" rel="noopener">TikTok</a>
+</div>
+
+<!-- Lightbox -->
+<dialog id="lb" aria-label="פרטי יצירה">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <div class="lb">
+    <div class="stage">
+      <div class="main" id="lbMain"></div>
+      <button class="arrow prev" id="lbPrev" aria-label="הקודם">›</button>
+      <button class="arrow next" id="lbNext" aria-label="הבא">‹</button>
+      <div class="thumbs" id="lbThumbs"></div>
+    </div>
+    <div class="info" id="lbInfo"></div>
+  </div>
+</dialog>
+
+<!-- Contact -->
+<dialog id="ct" class="sheet">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <h3>אני רוצה את זה!</h3>
+  <p class="note">ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:</p>
+  <div class="msg" id="ctMsg"></div>
+  <div class="row">
+    <button class="pill" id="ctCopy">העתקת ההודעה</button>
+    <a class="pill" id="ctWa" target="_blank" rel="noopener" hidden>WhatsApp</a>
+    <a class="pill dm" id="ctIg" target="_blank" rel="noopener">לשלוח באינסטגרם</a>
+    <a class="pill dm" id="ctTt" target="_blank" rel="noopener">לשלוח בטיקטוק</a>
+  </div>
+</dialog>
+
+<!-- Admin -->
+<dialog id="ad" class="admin">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <div id="adLogin">
+    <h3>כניסת מנהל</h3>
+    <form class="form" id="loginForm" autocomplete="on">
+      <label class="full">אימייל<input id="lEmail" type="email" autocomplete="username" required></label>
+      <label class="full">סיסמה<input id="lPass" type="password" autocomplete="current-password"></label>
+      <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">כניסה</button><button class="pill" type="button" id="lMagic">כניסה ראשונה / שכחתי סיסמה</button></div>
+      <p class="note full" id="lMsg"></p>
+    </form>
+  </div>
+  <div id="adPanel" hidden>
+    <h3>ניהול הגלריה</h3>
+    <div class="toolrow" style="margin:0 0 12px"><span class="note" id="whoAmI"></span><span class="note" id="visitStats"></span><button class="pill small" id="logoutBtn" type="button">יציאה</button></div>
+    <div class="seg tabs" role="tablist">
+      <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
+      <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
+      <button type="button" data-tab="texts" aria-pressed="false">טקסטים בדף</button>
+      <button type="button" data-tab="room" aria-pressed="false">החדר</button>
+      <button type="button" data-tab="voice" aria-pressed="false">הקול שלך</button>
+      <button type="button" data-tab="account" aria-pressed="false">סיסמה</button>
+    </div>
+    <section data-pane="work">
+    <h4 id="formTitle">יצירה חדשה</h4>
+    <form class="form" id="wf" autocomplete="off">
+      <label>שם היצירה<input id="fName" required maxlength="80"></label>
+      <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
+      <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק"></label>
+      <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד</option></select></label>
+      <div class="full cat-box">
+        <div class="cat-head"><strong>סיווג לפילטרים</strong><span class="note" id="catState">יתמלא אוטומטית אחרי ניתוח התמונות. אפשר לשנות ידנית.</span></div>
+        <div class="form cat-grid">
+          <label>דמות<input id="fChar" maxlength="80" placeholder="למשל: באטמן"></label>
+          <label>קטגוריה<select id="fCat"><option value="">—</option></select></label>
+          <label>קנה מידה<input id="fScale" maxlength="30" placeholder="למשל: 1:6"></label>
+          <label>טכנולוגיה<select id="fTech"><option value="">—</option><option value="FDM">FDM</option><option value="Resin">שרף (Resin)</option><option value="FDM+Resin">FDM + שרף</option></select></label>
+        </div>
+        <p class="note" id="scaleWhy"></p>
+      </div>
+      <label class="full">תקציר<textarea id="fSum" maxlength="400"></textarea></label>
+      <div class="drop" id="drop" role="button" tabindex="0"><strong>בחירת תמונות ווידאו</strong>מהגלריה בטלפון או מהמחשב, כמה קבצים יחד. אפשר גם לגרור לכאן.</div>
+      <input type="file" id="fFiles" accept="image/*,video/*" multiple hidden>
+      <div class="staged" id="staged"></div>
+      <div class="ai full" id="ai">
+        <div class="ai-head"><strong>הצעות לכותרת ולתיאור</strong><span class="note" id="aiState">יופיעו אוטומטית אחרי העלאת תמונה.</span></div>
+        <label for="aiHint" class="note">פרטים על הדמות (לא חובה). ההצעות מתבססות קודם כל על התמונות, ומה שתכתוב כאן מתווסף אליהן.</label>
+        <input id="aiHint" placeholder="למשל: באטמן מהסרט של 1989, מתנה ליום הולדת 40">
+        <div class="ai-opts" id="aiOpts"></div>
+        <div class="ai-picked" id="aiPicked" hidden><span id="aiPickedText"></span><button type="button" class="pill small" id="aiSeeForm">לראות בטופס ↑</button></div>
+        <div class="toolrow"><button type="button" class="pill small" id="aiRun">הצעות חדשות</button><button type="button" class="pill small" id="aiStop" hidden>עצירה</button></div>
+      </div>
+      <div class="full toolrow">
+        <button class="pill solid" type="submit" id="fSave" style="background:var(--pop);border-color:var(--pop)">שמירה בגלריה</button>
+        <button class="pill" type="button" id="fCancel" hidden>ביטול עריכה</button>
+        <span class="note" id="fMsg"></span>
+      </div>
+    </form>
+    </section>
+    <section data-pane="list" hidden>
+    <h4>יצירות בגלריה</h4>
+    <div class="toolrow" style="margin:0 0 10px"><button class="pill small" id="undoBtn" disabled>ביטול פעולה אחרונה</button><span class="note" id="undoNote"></span></div>
+    <div class="list" id="adList"></div>
+    </section>
+    <section data-pane="texts" hidden>
+    <h4>טקסטים בדף הנחיתה</h4>
+    <p class="note">כדי להדגיש מילים בפסקה, עטוף אותן בשתי כוכביות: **כמו כאן**.</p>
+    <form class="form" id="tf">
+      <label>כותרת, תחילת שורה 1<input id="xH1a" maxlength="40"></label>
+      <label>מילה בצהוב<input id="xH1hl" maxlength="30"></label>
+      <label>כותרת, שורה 2<input id="xH1b" maxlength="40"></label>
+      <label>סיום באדום<input id="xH1red" maxlength="30"></label>
+      <label class="full">פסקה ראשונה<textarea id="xP1" maxlength="600"></textarea></label>
+      <label class="full">פסקה שנייה<textarea id="xP2" maxlength="600"></textarea></label>
+      <label>מדבקה צהובה (שורה לכל מילה)<textarea id="xBurst" maxlength="40" style="min-height:70px"></textarea></label>
+      <div style="display:grid;gap:12px"><label>כפתור אינסטגרם<input id="xIg" maxlength="30"></label><label>כפתור טיקטוק<input id="xTt" maxlength="30"></label></div>
+      <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת הטקסטים</button><button class="pill" type="button" id="xReset">חזרה לטקסט המקורי</button><span class="note" id="xMsg"></span></div>
+    </form>
+    </section>
+    <section data-pane="room" hidden>
+    <h4>החדר שבו מוצגות היצירות</h4>
+    <p class="note">כדי שההמחשה תיראה אמיתית, העלה תמונה אמיתית של שידה או מדף בחדר חם. אותה תמונה תשמש לכל היצירות. אחר כך לחץ על התמונה בנקודה שבה הפסל צריך לעמוד.</p>
+    <div class="room-ed">
+      <div id="roomPrev"></div>
+      <div class="side">
+        <button type="button" class="pill" id="roomPick">העלאת תמונת חדר</button>
+        <input type="file" id="roomFile" accept="image/*" hidden>
+        <label for="roomScale">גודל הפסל בחדר<input type="range" id="roomScale" min="40" max="220" value="100"></label>
+        <label for="roomShadow">כיוון הצל<input type="range" id="roomShadow" min="-30" max="30" value="-12"></label>
+        <button type="button" class="pill small" id="roomReset">חזרה לחדר המאויר</button>
+        <span class="note" id="roomMsg"></span>
+        <ul class="tips">
+          <li>צלם בגובה השידה, ישר מולה, באור חם בערב.</li>
+          <li>השאר מקום פנוי באמצע השידה.</li>
+          <li>צלם את הפסלים מאותה זווית ובאור דומה, מול רקע חלק, כדי שהסרת הרקע תהיה נקייה.</li>
+        </ul>
+      </div>
+    </div>
+    </section>
+    <section data-pane="account" hidden>
+    <h4>סיסמה</h4>
+    <p class="note">אחרי כניסה דרך קישור במייל, הגדר כאן סיסמה. בפעם הבאה תיכנס עם אימייל וסיסמה.</p>
+    <form class="form" id="pwForm">
+      <label>סיסמה חדשה<input id="pw1" type="password" minlength="8" autocomplete="new-password" required></label>
+      <label>הסיסמה שוב<input id="pw2" type="password" minlength="8" autocomplete="new-password" required></label>
+      <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת סיסמה</button><span class="note" id="pwMsg"></span></div>
+    </form>
+    </section>
+    <section data-pane="voice" hidden>
+    <h4>הקול שלך</h4>
+    <p class="note">הדבק כאן 3–6 כיתובים אמיתיים מהפוסטים שלך באינסטגרם ובטיקטוק. מחולל ההצעות ילמד מהם את הסגנון, את אורך המשפטים ואת הסלנג שלך. בלי דוגמאות, הוא יכתוב כמו יוצר פופ־ארט.</p>
+    <form class="form" id="vf">
+      <label class="full">כיתובים מהפוסטים שלי<textarea id="xVoice" style="min-height:180px" maxlength="6000" placeholder="כיתוב 1&#10;---&#10;כיתוב 2&#10;---&#10;כיתוב 3"></textarea></label>
+      <label class="full">הנחיות נוספות (לא חובה)<input id="xVoiceRules" maxlength="300" placeholder="למשל: בלי אימוג'ים, לפנות בלשון רבים, לסיים בשאלה"></label>
+      <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירה</button><span class="note" id="vMsg"></span></div>
+    </form>
+    </section>
+  </div>
+</dialog>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
