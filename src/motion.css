@@ -148,41 +148,10 @@
 .sb-logo{font:400 30px/1 var(--f-mark);color:var(--ink);text-shadow:2px 2px 0 var(--pop);transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
 .side-badge:hover .sb-logo{transform:rotateY(360deg)}
 
-/* Mascot */
-.mascot{position:fixed;left:0;top:0;z-index:95;width:84px;height:100px;margin:-50px 0 0 -42px;cursor:pointer;
-  --c1:#ffd23f;--c2:#ff3b5c;--c3:#130d10;transition:opacity .3s,width .4s,height .4s,margin .4s;will-change:transform}
-.mascot.docked{width:66px;height:80px;margin:-40px 0 0 -33px}
-.mascot.away{opacity:0;pointer-events:none}
-.m-wrap{width:100%;height:100%;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.45))}
-.m-wrap svg{width:100%;height:100%;display:block;overflow:visible}
-.m-cape{transform-origin:50px 60px;transition:transform .12s linear}
-.m-head{transition:transform .2s ease-out}
-.mascot.docked .m-wrap{animation:float 3.2s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-6px)}}
-.m-wrap.poof{animation:poof .45s cubic-bezier(.2,1.6,.4,1)}
-@keyframes poof{0%{transform:scale(1)}35%{transform:scale(.4,1.4) rotate(12deg)}70%{transform:scale(1.2,.85)}100%{transform:scale(1)}}
-.mascot:hover .m-mouth{d:path("M41 53 Q50 63 59 53")}
-.m-bubble{position:absolute;bottom:92%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--paper);color:var(--ink);
-  font:700 20px/1 var(--f-display);padding:6px 12px;border:3px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--pop)}
-.m-bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--ink)}
-.m-bubble.pop{animation:bubblePop .4s cubic-bezier(.2,1.6,.4,1)}
-@keyframes bubblePop{from{transform:translateX(-50%) scale(0)}}
-
-/* Comic bursts */
-.pow{position:fixed;z-index:240;width:120px;height:120px;margin:-60px 0 0 -60px;pointer-events:none;display:grid;place-items:center;
-  animation:powIn .85s cubic-bezier(.2,1.5,.4,1) forwards}
-.pow.small{width:76px;height:76px;margin:-38px 0 0 -38px}
-.pow svg{position:absolute;inset:0;width:100%;height:100%}
-.pow b{position:relative;font:400 22px/1 var(--f-mark);transform:rotate(var(--rot));text-shadow:2px 2px 0 rgba(255,255,255,.6)}
-.pow.small b{font-size:13px}
-@keyframes powIn{0%{transform:scale(0) rotate(-30deg);opacity:1}35%{transform:scale(1.12) rotate(var(--rot))}70%{transform:scale(1) rotate(var(--rot));opacity:1}100%{transform:scale(.9) rotate(var(--rot));opacity:0}}
-
 @media (max-width:760px){
   .side-badge{width:66px;height:66px;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   .sb-logo{font-size:18px}
-  .mascot.docked{width:52px;height:62px;margin:-31px 0 0 -26px}
-  .m-bubble{font-size:16px}
 }
-@media (prefers-reduced-motion:reduce){.hero-art::before{display:none}.pow{display:none}}
+@media (prefers-reduced-motion:reduce){.hero-art::before{display:none}}
 /* decorative layers (rays, bands) must never widen the page */
 html,body{overflow-x:clip}
