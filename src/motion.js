@@ -1,3 +1,5 @@
+import { pickLine, cachedLines, DEFAULT_INTRO } from "./lines.js";
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 // ARTRIKO motion layer: intro, word reveals, marquee bands, scroll reveals,
 // 3D tilt + cursor + magnetic buttons on desktop, sheet lightbox + swipe-follow on phones,
 // and a colour wipe between the home page and the guide. Respects reduced motion.
@@ -18,7 +20,7 @@ if (!RM) root.classList.add("motion");
   const el = document.createElement("div");
   el.className = "intro";
   el.setAttribute("aria-hidden", "true");
-  el.innerHTML = `<div class="intro-word">${"ARTRIKO".split("").map((c, i) => `<span style="--i:${i}">${c}</span>`).join("")}</div><div class="intro-sub">פסלי אספנות · צבועים ביד</div>`;
+  el.innerHTML = `<div class="intro-word">${"ARTRIKO".split("").map((c, i) => `<span style="--i:${i}">${c}</span>`).join("")}</div><div class="intro-sub">${esc(pickLine("intro", cachedLines("intro", DEFAULT_INTRO)))}</div>`;
   document.body.appendChild(el);
   const out = () => { el.classList.add("out"); setTimeout(() => el.remove(), 800); };
   el.addEventListener("click", out);

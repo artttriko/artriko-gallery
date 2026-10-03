@@ -2,7 +2,8 @@ import "./style.css";
 import "./motion.css";
 import "./motion.js";
 import "./heroes.js";
-import { setStudio, STUDIO_DEFAULT } from "./studio.js";
+import { setStudio, STUDIO_DEFAULT, setCaption } from "./studio.js";
+import { pickLine, cacheLines, DEFAULT_INTRO, DEFAULT_STUDIO } from "./lines.js";
 import { createClient } from "@supabase/supabase-js";
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -664,7 +665,8 @@ const DEFAULT_TEXTS={
   h1a:"כל פסל",h1hl:"נולד",h1b:"מהלב.",h1red:"בהדפסה.",
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
-  burst:"יד\nאחת\nפסל אחד",ctaIg:"לעקוב באינסטגרם",ctaTt:"לצפות בטיקטוק"
+  burst:"יד\nאחת\nפסל אחד",ctaIg:"לעקוב באינסטגרם",ctaTt:"לצפות בטיקטוק",
+  introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -674,9 +676,11 @@ function renderTexts(){
   $("#tP1").innerHTML=rich(T.p1);$("#tP2").innerHTML=rich(T.p2);$("#tP2").hidden=!T.p2;
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
   $("#igHero").textContent=T.ctaIg||"Instagram";$("#ttHero").textContent=T.ctaTt||"TikTok";
+  setCaption(pickLine("studio",T.studioLines));
+  cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt"};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",introLines:"#xIntro",studioLines:"#xStudio"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??""}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
 $("#xReset").onclick=()=>{TEXTS={...TEXTS,...DEFAULT_TEXTS};fillTextForm();$("#xMsg").textContent="הטקסט המקורי חזר לטופס. לחץ שמירה כדי להחיל."};

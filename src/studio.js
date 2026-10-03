@@ -30,8 +30,9 @@ function build() {
     win = document.createElement("section");
     win.className = "studio-window";
     win.innerHTML = `<div class="sw-rec" aria-hidden="true"><i></i>REC <span class="sw-tc">00:00:00</span></div>
-      <p class="sw-cap">כל פסל נצבע ביד.<br><span>שכבה אחרי שכבה.</span></p>`;
+      <p class="sw-cap"></p>`;
     hero.after(win);
+    applyCaption();
     const tc = win.querySelector(".sw-tc"), start = Date.now();
     setInterval(() => {
       const s = Math.floor((Date.now() - start) / 1000);
@@ -66,6 +67,18 @@ function play(clips) {
     if (isFinite(cur.duration) && cur.duration > 1) schedule(); else cur.addEventListener("loadedmetadata", schedule, { once: true });
   };
   if (isFinite(cur.duration) && cur.duration > 1) schedule(); else cur.addEventListener("loadedmetadata", schedule, { once: true });
+}
+
+// Caption in the camera window: "line one / line two" (the second line is softer).
+let caption = "";
+export function setCaption(line) { caption = line || ""; applyCaption(); }
+function applyCaption() {
+  const el = win?.querySelector(".sw-cap"); if (!el) return;
+  const [a, b] = caption.split("/").map(x => x.trim());
+  el.textContent = "";
+  el.append(a || "");
+  if (b) { el.append(document.createElement("br")); const s = document.createElement("span"); s.textContent = b; el.append(s); }
+  el.hidden = !caption;
 }
 
 function teardown() {
