@@ -241,6 +241,7 @@
       <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
       <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
       <button type="button" data-tab="texts" aria-pressed="false">טקסטים בדף</button>
+      <button type="button" data-tab="studio" aria-pressed="false">וידאו רקע</button>
       <button type="button" data-tab="voice" aria-pressed="false">הקול שלך</button>
       <button type="button" data-tab="account" aria-pressed="false">סיסמה</button>
     </div>
@@ -309,6 +310,20 @@
       <label>הסיסמה שוב<input id="pw2" type="password" minlength="8" autocomplete="new-password" required></label>
       <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת סיסמה</button><span class="note" id="pwMsg"></span></div>
     </form>
+    </section>
+    <section data-pane="studio" hidden>
+    <h4>וידאו רקע</h4>
+    <p class="note">סרטון קצר של צייר עם קפוצ'ון, מצולם מאחור, שמתנגן ברקע האתר בשקיפות. אפשר ליצור קטעים ב־AI (מודל Veo של Google, דרך מפתח Gemini, בתשלום לפי שימוש) או להעלות סרטון שצילמת בעצמך. כמה קטעים מתחלפים אחד אחרי השני.</p>
+    <div class="form">
+      <label>צבע הצבע<select id="vColor"><option value="yellow">צהוב</option><option value="red">ורוד־אדום</option><option value="cyan">תכלת</option><option value="purple">סגול</option><option value="green">ירוק</option><option value="orange">כתום</option></select></label>
+      <label>המודל שנצבע<select id="vPiece"><option value="bust">באסט</option><option value="statue">פסל עם גלימה</option><option value="helmet">קסדה</option><option value="creature">יצור עם קרניים</option></select></label>
+      <label>כלי<select id="vTool"><option value="airbrush">איירבראש</option><option value="brush">מכחול</option></select></label>
+      <div class="full toolrow"><button type="button" class="pill ai-btn" id="vGen">✨ יצירת קטע ב־AI</button><button type="button" class="pill" id="vUp">העלאת סרטון שלי</button><input type="file" id="vFile" accept="video/mp4,video/webm,video/quicktime" hidden><span class="note" id="vMsg"></span></div>
+    </div>
+    <div id="vDraft" class="v-draft" hidden></div>
+    <h4>הקטעים ברקע</h4>
+    <div id="vList" class="v-list"></div>
+    <div class="toolrow"><label class="note"><input type="checkbox" id="vOn" checked> להציג את הווידאו באתר</label><label class="note" for="vOp">שקיפות <input type="range" id="vOp" min="15" max="80" value="45"></label></div>
     </section>
     <section data-pane="voice" hidden>
     <h4>הקול שלך</h4>

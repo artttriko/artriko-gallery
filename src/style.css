@@ -342,3 +342,10 @@ a.mark{text-decoration:none}
 .ref-pick .chip{font-size:13px;padding:4px 11px;background:rgba(19,13,16,.7)}
 .ref-pick .chip[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:var(--sun)}
 @media (max-width:760px){.sz-wrap .scene{height:auto;width:100%}}
+
+/* ---------- Background video (admin) ---------- */
+.v-draft{margin:14px 0;display:flex;flex-direction:column;gap:8px}
+.v-draft video{width:100%;max-width:640px;aspect-ratio:16/9;background:#000;border:2px solid var(--line)}
+.v-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.v-item{display:flex;flex-direction:column;gap:6px;border:2px solid var(--line);padding:8px}
+.v-item video{width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}

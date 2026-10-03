@@ -2,7 +2,7 @@ import "./style.css";
 import "./motion.css";
 import "./motion.js";
 import "./heroes.js";
-import "./studio.js";
+import { setStudio } from "./studio.js";
 import { createClient } from "@supabase/supabase-js";
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -502,6 +502,7 @@ $("#pwForm").onsubmit=async e=>{
 };
 async function loadAdminData(){
   renderAdminList();
+  const st=await getSetting("studio");if(st)STUDIO={...STUDIO,...st};renderStudio();
   const vv=await getSetting("voice");if(vv){VOICE=vv;$("#xVoice").value=vv.samples||"";$("#xVoiceRules").value=vv.rules||""}
   const {data}=await sb.rpc("visit_stats");
   if(data)$("#visitStats").textContent=`כניסות: היום ${data.today} · 7 ימים ${data.week} · סה"כ ${data.total}`;
@@ -834,6 +835,57 @@ async function makeCutout(it){
   it.cutBusy=false;renderStaged();
 }
 
+/* ================= Background video (admin) ================= */
+let STUDIO={clips:[],on:true,opacity:.45},vDraft=null,vBusy=false;
+const V_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח Gemini לא מוגדר ב־Vercel.",needs_billing:"יצירת וידאו ב־Veo דורשת חיוב פעיל (Billing) בחשבון Google של מפתח Gemini.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד כמה דקות.",filtered:"Google סינן את הקטע הזה. נסה שוב, או בחר צבע או מודל אחר.",failed:"היצירה נכשלה. נסה שוב.",upload_failed:"שמירת הסרטון נכשלה. נסה שוב.",download_failed:"הורדת הסרטון מ־Google נכשלה. נסה שוב."};
+async function saveStudio(){try{await putSetting("studio",STUDIO);setStudio(STUDIO);renderStudio()}catch(e){toast("השמירה נכשלה")}}
+function renderStudio(){
+  $("#vList").innerHTML=STUDIO.clips.length?STUDIO.clips.map((u,i)=>`<div class="v-item"><video src="${esc(u)}" muted loop playsinline preload="metadata"></video><div class="row">${i>0?`<button type="button" class="pill small" data-v="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-v="rm" data-i="${i}">הסרה</button></div></div>`).join(""):`<p class="note">עוד אין קטעים. צור קטע ב־AI או העלה סרטון.</p>`;
+  $("#vOn").checked=STUDIO.on!==false;$("#vOp").value=Math.round((STUDIO.opacity??.45)*100);
+}
+$("#vList").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;const i=+b.dataset.i;
+  if(b.dataset.v==="rm")STUDIO.clips.splice(i,1);
+  if(b.dataset.v==="up")STUDIO.clips.splice(i-1,0,...STUDIO.clips.splice(i,1));
+  saveStudio()});
+$("#vList").addEventListener("pointerover",e=>{const v=e.target.closest("video");if(v)v.play().catch(()=>{})});
+$("#vList").addEventListener("pointerout",e=>{const v=e.target.closest("video");if(v)v.pause()});
+$("#vOn").onchange=e=>{STUDIO.on=e.target.checked;saveStudio()};
+$("#vOp").onchange=e=>{STUDIO.opacity=+e.target.value/100;saveStudio()};
+function showDraft(url){
+  vDraft=url;$("#vDraft").hidden=false;
+  $("#vDraft").innerHTML=`<video src="${esc(url)}" muted loop playsinline autoplay controls></video><div class="toolrow"><button type="button" class="pill" id="vAdd" style="background:var(--pop);border-color:var(--pop)">הוספה לרקע</button><button type="button" class="pill small" id="vSkip">לא טוב, לוותר</button></div>`;
+  $("#vAdd").onclick=()=>{STUDIO.clips.push(vDraft);vDraft=null;$("#vDraft").hidden=true;saveStudio();toast("הקטע נוסף לרקע")};
+  $("#vSkip").onclick=()=>{vDraft=null;$("#vDraft").hidden=true};
+}
+async function videoApi(body){
+  const {data:{session}}=await sb.auth.getSession();
+  const r=await fetch("/api/video",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw {code:j.code,message:j.error};
+  return j;
+}
+$("#vGen").onclick=async()=>{
+  if(vBusy)return;vBusy=true;$("#vGen").disabled=true;const t0=Date.now();
+  try{
+    $("#vMsg").textContent="שולח ל־Veo…";
+    const {op}=await videoApi({action:"start",color:$("#vColor").value,piece:$("#vPiece").value,tool:$("#vTool").value});
+    for(;;){
+      await new Promise(r=>setTimeout(r,10000));
+      const sec=Math.round((Date.now()-t0)/1000);
+      $("#vMsg").textContent=`יוצר את הקטע… ${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")} (בדרך כלל 1–5 דקות. אפשר להמשיך לעבוד בלשוניות אחרות)`;
+      const j=await videoApi({action:"poll",op});
+      if(j.done){$("#vMsg").textContent="הקטע מוכן. אם הוא טוב, הוסף אותו לרקע.";showDraft(j.url);break}
+      if(Date.now()-t0>9*60*1000)throw {code:"failed",message:"timeout"};
+    }
+  }catch(e){$("#vMsg").textContent=V_ERR[e?.code]||("היצירה נכשלה"+(e?.message?": "+e.message:""))}
+  vBusy=false;$("#vGen").disabled=false;
+};
+$("#vUp").onclick=()=>$("#vFile").click();
+$("#vFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  if(f.size>48*1024*1024){$("#vMsg").textContent="הסרטון גדול מ־48MB. קצר אותו ל־10–20 שניות או דחוס אותו.";return}
+  try{const url=await uploadBlob(`studio/own-${crypto.randomUUID()}.${extOf(f.type)}`,f,(l,t)=>{$("#vMsg").textContent=`מעלה… ${Math.round(l/t*100)}%`});$("#vMsg").textContent="הסרטון עלה.";showDraft(url)}
+  catch(err){$("#vMsg").textContent="ההעלאה נכשלה: "+err.message}};
+
 /* ================= Collector guide ================= */
 const INK="#f6ead8",SUN="#ffd23f",POP="#ff3b5c",SKY="#2ec4ff",LINE="#3a2a30",DIM="#bfae9c";
 // A simple standing figure: feet at (cx,fy), total height h
@@ -942,6 +994,7 @@ window.addEventListener("hashchange",route);route();
   const sz=+load("size");setSize(sz||300);
   const cols=load("cols");if(cols){$("#grid").className="grid cols-"+cols;press(document.querySelector("[data-cols]").parentNode,document.querySelector(`[data-cols="${cols}"]`))}
   const t=await getSetting("texts");if(t)TEXTS={...DEFAULT_TEXTS,...t};renderTexts();fillTextForm();
+  setStudio(await getSetting("studio"));
   const rm=await getSetting("room");if(rm){ROOM=rm;applyRoom()}
   const stored=await dbAll();
   if(stored&&stored.length) S.works=stored.map(hydrate);
