@@ -1,4 +1,7 @@
 import "./style.css";
+import "./motion.css";
+import "./motion.js";
+import "./heroes.js";
 import { createClient } from "@supabase/supabase-js";
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
