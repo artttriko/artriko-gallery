@@ -479,7 +479,7 @@ function renderStaged(){
       ${!it.ready?`<span>טוען ${esc(it.name)}…</span>`:it.kind==="video"?`<div class="pv"><video src="${it.url}" muted controls playsinline></video></div><span>וידאו</span>`:`
       <div class="pv">${it.aiCut?`<img src="${it.orig}" alt=""><div class="scene" style="--h:${heightFrac(h)}"><div class="room"></div><div class="piece cut"><img src="${it.aiCut}" alt=""></div><div class="glow"></div></div>`:`<img src="${it.orig}" alt="">`}</div>
       <label><input type="radio" name="illusPick" data-a="illus" ${it.illus?"checked":""}> התמונה להמחשה בחדר</label>
-      ${it.illus?`<button type="button" class="pill small ai-btn" data-a="cutout" ${it.cutBusy?"disabled":""}>${it.cutBusy?"מסיר רקע… (עד דקה)":it.aiCut?"✂️ הסרת רקע מחדש":"✂️ הסרת רקע (ChatGPT)"}</button>`:""}
+      ${it.illus?`<button type="button" class="pill small ai-btn" data-a="cutout" ${it.cutBusy?"disabled":""}>${it.cutBusy?"מסיר רקע… (עד דקה)":it.aiCut?"✂️ הסרת רקע מחדש":"✂️ הסרת רקע"}</button>`:""}
       ${it.illus&&it.aiCut?`<label><input type="checkbox" data-a="sceneOn" ${it.sceneOn?"checked":""}> להציג את ההמחשה באתר</label>`:""}
       ${it.illus?`<button type="button" class="pill small" data-a="noillus">בלי המחשה</button>`:""}
       ${it.cutMsg?`<span class="note">${esc(it.cutMsg)}</span>`:""}
@@ -726,8 +726,8 @@ function updateScale(note,techReason){
 }
 $("#fH").addEventListener("input",()=>{if(lastRef)updateScale()});
 
-/* ================= Background removal (OpenAI) for the in-room illustration ================= */
-const CUT_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח OpenAI לא מוגדר ב־Vercel (OPENAI_API_KEY).",bad_key:"מפתח OpenAI לא תקין. בדוק אותו ב־Vercel.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד דקה.",needs_billing:"בחשבון OpenAI צריך קרדיט או אמצעי תשלום (Billing) כדי להשתמש במודל התמונות.",needs_verification:"OpenAI דורשים אימות ארגון (Verify Organization) בחשבון כדי להשתמש במודל התמונות.",upload_failed:"שמירת התמונה נכשלה. נסה שוב.",refused:"OpenAI סירבו לעבד את התמונה הזו."};
+/* ================= Background removal (remove.bg) for the in-room illustration ================= */
+const CUT_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח remove.bg לא מוגדר ב־Vercel (REMOVEBG_API_KEY).",bad_key:"המפתח של שירות הסרת הרקע לא תקין. בדוק אותו ב־Vercel.",needs_credits:"נגמרו הקרדיטים החינמיים של remove.bg לחודש הזה. הם מתחדשים בתחילת החודש הבא, או שאפשר לקנות עוד באתר שלהם.",no_subject:"השירות לא הצליח לזהות את הפסל בתמונה. נסה תמונה עם רקע נקי יותר.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד דקה.",needs_billing:"בחשבון OpenAI צריך קרדיט או אמצעי תשלום (Billing) כדי להשתמש במודל התמונות.",needs_verification:"OpenAI דורשים אימות ארגון (Verify Organization) בחשבון כדי להשתמש במודל התמונות.",upload_failed:"שמירת התמונה נכשלה. נסה שוב.",refused:"OpenAI סירבו לעבד את התמונה הזו."};
 // Crops a transparent PNG to the statue itself, so its height in the picture equals the statue's real height
 async function trimAlpha(url){
   const i=await loadImg(url);const c=document.createElement("canvas");c.width=i.width;c.height=i.height;const x=c.getContext("2d");x.drawImage(i,0,0);
