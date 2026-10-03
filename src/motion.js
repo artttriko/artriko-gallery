@@ -151,7 +151,7 @@ if (grid) {
 /* generic scroll reveals for the guide page and section headings */
 function prepReveals() {
   if (RM) return;
-  const sel = ".g-sec h2, .g-sec .lead, .type, .tech, .minis > div, .g-sec .tbl, .calc, .chart, .callout, .terms, .g-cta";
+  const sel = ".ws-head, .ws-tool, .ws-combo, .g-sec h2, .g-sec .lead, .type, .tech, .minis > div, .g-sec .tbl, .calc, .chart, .callout, .terms, .g-cta";
   const groups = new Map();
   qa(sel).forEach(el => {
     if (el.dataset.sr) return;

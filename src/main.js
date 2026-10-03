@@ -404,17 +404,26 @@ document.querySelectorAll("dialog").forEach(d=>{
 const SOLD_TITLES=["אוי, איזה באסה!","אאוץ'. כמעט!","נו באמת, דווקא את זה?","שברון לב בפופ־ארט"];
 const SOLD_LINES=[
   n=>`"${n}" כבר מצא בית חם, והוא לא מתכנן לעבור דירה. אבל אל דאגה: אני יכול להכין לך משהו באותה אנרגיה, רק שלך.`,
-  n=>`"${n}" כאן רק כדי שתתאהבו בו, והוא יודע את זה טוב מאוד. בוא נעשה לך אחד משלך?`,
+  n=>`"${n}" כאן רק כדי שתתאהבו בו, והוא יודע את זה טוב מאוד. נעשה לך אחד משלך?`,
   n=>`"${n}" סגור עליו כמו כספת. הדבר הכי קרוב: יצירה מותאמת בדיוק בשבילך, עם אותה כמות צבע ושיגעון.`,
   n=>`ניסיון יפה! "${n}" לא למכירה, הוא עובד פה כדוגמן. אבל אפשר להזמין ממני אח קטן (או גדול) בהזמנה אישית.`
 ];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function openContact(w){
+  if(w==="learn"){
+    $("#ctTitle").textContent=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
+    $("#ctSold").hidden=true;
+    $("#ctNote").textContent="ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית. כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה:";
+    const t="היי ARTRIKO, אני רוצה ללמוד לצבוע! אשמח לשמוע על הדרכה אישית או סדנה (איירבראש ומכחולים).";
+    $("#ctMsg").textContent=t;
+    if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
+    $("#ct").showModal();return;
+  }
   const notForSale=!!(w&&w.status!=="sale");
   $("#ctTitle").textContent=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
   $("#ctSold").hidden=!notForSale;
   if(notForSale)$("#ctSold").textContent=pick(SOLD_LINES)(w.name);
-  $("#ctNote").textContent=notForSale?"רוצה הזמנה אישית בסגנון? ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:":"ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:";
+  $("#ctNote").textContent=notForSale?"בא לך הזמנה אישית בסגנון? ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:":"ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:";
   const t=!w?"היי ARTRIKO, אשמח לשמוע עוד"
     :notForSale?`היי ARTRIKO, ראיתי את "${w.name}" ונדלקתי! אפשר להזמין ממך משהו בסגנון?`
     :`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`;
@@ -422,8 +431,9 @@ function openContact(w){
   if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
   $("#ct").showModal();
 }
-document.querySelectorAll("#ct .dm").forEach(a=>a.addEventListener("click",()=>{navigator.clipboard?.writeText($("#ctMsg").textContent).then(()=>toast("ההודעה הועתקה, הדבק אותה בצ'אט"),()=>{})}));
-$("#ctCopy").onclick=async()=>{const t=$("#ctMsg").textContent;try{await navigator.clipboard.writeText(t);toast("ההודעה הועתקה")}catch(e){const r=document.createRange();r.selectNodeContents($("#ctMsg"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("ההודעה מסומנת, העתק אותה")}};
+document.querySelectorAll("#ct .dm").forEach(a=>a.addEventListener("click",()=>{navigator.clipboard?.writeText($("#ctMsg").textContent).then(()=>toast("ההודעה הועתקה, אפשר להדביק אותה בצ'אט"),()=>{})}));
+$("#wsCta").onclick=()=>openContact("learn");
+$("#ctCopy").onclick=async()=>{const t=$("#ctMsg").textContent;try{await navigator.clipboard.writeText(t);toast("ההודעה הועתקה")}catch(e){const r=document.createRange();r.selectNodeContents($("#ctMsg"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("ההודעה מסומנת, אפשר להעתיק אותה")}};
 
 /* ================= Image tools ================= */
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();if(isRemote(src))i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=src})}
@@ -666,7 +676,15 @@ const DEFAULT_TEXTS={
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
   burst:"יד\nאחת\nפסל אחד",ctaIg:"לעקוב באינסטגרם",ctaTt:"לצפות בטיקטוק",
-  introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO
+  introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
+  wsEyebrow:"סדנאות והדרכות צביעה",
+  wsTitle:"מכחול ביד אחת. / איירבראש ביד השנייה.",
+  wsText:"מעבר לפסלים, אני מעביר **הדרכות אישיות וסדנאות** בצביעת פסלים ומיניאטורות. איך מחזיקים, מדללים ומכוונים, ולמה כל שכבה נמצאת בדיוק במקום שלה. מתאים גם למי שעוד לא החזיק איירבראש ביד, וגם למי שכבר צובע ורוצה לעלות רמה.",
+  wsFormats:"הדרכה אישית, אחד על אחד\nסדנה בקבוצה קטנה\nמהצעד הראשון ועד רמה מתקדמת",
+  wsAir:"תפעול, ניקוי ותחזוקה\nדילול צבע ולחץ אוויר\nפריימר ושכבות בסיס\nמעברי צבע חלקים\nזניטל: אור וצל מלמעלה\nמיסוך ועבודה עם שבלונות",
+  wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
+  wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
+  wsCta:"אני רוצה לצבוע ככה!"
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -677,10 +695,22 @@ function renderTexts(){
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
   $("#igHero").textContent=T.ctaIg||"Instagram";$("#ttHero").textContent=T.ctaTt||"TikTok";
   setCaption(pickLine("studio",T.studioLines));
+  const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
+  const [wa1,wa2]=String(T.wsTitle||"").split("/").map(x=>x.trim());
+  $("#wsEyebrow").textContent=T.wsEyebrow||"";
+  $("#wsTitle").innerHTML=`${esc(wa1||"")}${wa2?`<br><span>${esc(wa2)}</span>`:""}`;
+  $("#wsText").innerHTML=rich(T.wsText||"");
+  $("#wsFormats").innerHTML=lines(T.wsFormats).map(x=>`<li>${esc(x)}</li>`).join("");
+  $("#wsAir").innerHTML=lines(T.wsAir).map(x=>`<li>${esc(x)}</li>`).join("");
+  $("#wsBrush").innerHTML=lines(T.wsBrush).map(x=>`<li>${esc(x)}</li>`).join("");
+  $("#wsCombo").innerHTML=rich(T.wsCombo||"");
+  $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
+  const wsOn=!!String(T.wsText||"").trim();
+  $("#learn").hidden=!wsOn;$("#learnHero").hidden=!wsOn;
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",introLines:"#xIntro",studioLines:"#xStudio"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??""}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
 $("#xReset").onclick=()=>{TEXTS={...TEXTS,...DEFAULT_TEXTS};fillTextForm();$("#xMsg").textContent="הטקסט המקורי חזר לטופס. לחץ שמירה כדי להחיל."};

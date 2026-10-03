@@ -23,7 +23,7 @@ function build() {
   layer = document.createElement("div");
   layer.className = "studio-bg";
   layer.setAttribute("aria-hidden", "true");
-  layer.innerHTML = `<video muted playsinline preload="auto"></video><video muted playsinline preload="auto"></video>`;
+  layer.innerHTML = `<video muted playsinline preload="auto"></video><video muted playsinline preload="none"></video>`;
   document.body.prepend(layer);
   const hero = document.querySelector(".hero");
   if (hero) {

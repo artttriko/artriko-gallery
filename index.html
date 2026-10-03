@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ARTRIKO</title>
-<meta name="description" content="ARTRIKO: פסלי אספנות מודפסים וצבועים ביד. גלריה, יצירות זמינות לרכישה ומדריך לפסלי אספנות.">
+<meta name="description" content="ARTRIKO: פסלי אספנות מודפסים וצבועים ביד. גלריה, יצירות זמינות לרכישה, סדנאות והדרכות צביעה באיירבראש ובמכחולים, ומדריך לפסלי אספנות.">
 <meta property="og:title" content="ARTRIKO">
 <meta property="og:description" content="פסלי אספנות מודפסים וצבועים ביד">
+<meta property="og:image" content="https://artriko-gallery.vercel.app/studio/painter.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#130d10">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,11 +40,13 @@
         <a class="pill big solid" id="igHero" target="_blank" rel="noopener"></a>
         <a class="pill big" id="ttHero" target="_blank" rel="noopener"></a>
         <a class="pill big" href="#gallery">לגלריה ↓</a>
+        <a class="pill big learn-link" href="#learn" id="learnHero">ללמוד לצבוע ↓</a>
       </div>
     </div>
     <div class="hero-art"><div class="burst" id="tBurst"></div><div id="heroScene"></div></div>
   </section>
 
+  <div class="gal-wrap">
   <div class="bar" id="gallery">
     <h2>הגלריה<small id="count"></small></h2>
     <div class="controls">
@@ -60,6 +65,23 @@
   </div>
   <div class="filters" id="filters" aria-label="סינון"></div>
   <main class="grid cols-2" id="grid"></main>
+  </div>
+
+  <section class="ws" id="learn" aria-labelledby="wsTitle">
+    <div class="ws-head">
+      <span class="ws-eyebrow" id="wsEyebrow"></span>
+      <h2 class="ws-title" id="wsTitle"></h2>
+      <p class="ws-text" id="wsText"></p>
+      <ul class="ws-formats" id="wsFormats"></ul>
+      <button class="pill big solid ws-cta" id="wsCta" type="button"></button>
+    </div>
+    <div class="ws-tools">
+      <article class="ws-tool air"><h3>איירבראש <small>Airbrush</small></h3><ul id="wsAir"></ul></article>
+      <div class="ws-plus" aria-hidden="true">+</div>
+      <article class="ws-tool brush"><h3>מכחולים <small>Brushes</small></h3><ul id="wsBrush"></ul></article>
+      <p class="ws-combo" id="wsCombo"></p>
+    </div>
+  </section>
   </div>
 
   <main id="guidePage" class="guide" hidden>
@@ -212,7 +234,7 @@
   <button class="x" data-close aria-label="סגירה">✕</button>
   <h3 id="ctTitle">אני רוצה את זה!</h3>
   <p class="sold" id="ctSold" hidden></p>
-  <p class="note" id="ctNote">ההודעה הזו תועתק כשתלחץ על אחד הכפתורים. הדבק אותה בהודעה פרטית:</p>
+  <p class="note" id="ctNote">ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:</p>
   <div class="msg" id="ctMsg"></div>
   <div class="row">
     <button class="pill" id="ctCopy">העתקת ההודעה</button>
@@ -299,6 +321,16 @@
       <label class="full">פסקה שנייה<textarea id="xP2" maxlength="600"></textarea></label>
       <label>מדבקה צהובה (שורה לכל מילה)<textarea id="xBurst" maxlength="40" style="min-height:70px"></textarea></label>
       <div style="display:grid;gap:12px"><label>כפתור אינסטגרם<input id="xIg" maxlength="30"></label><label>כפתור טיקטוק<input id="xTt" maxlength="30"></label></div>
+      <h4 class="full" style="margin:10px 0 0">סדנאות והדרכות צביעה</h4>
+      <label>כותרת קטנה<input id="xWsEyebrow" maxlength="60"></label>
+      <label>כותרת (עם / בין השורה הלבנה לצהובה)<input id="xWsTitle" maxlength="90"></label>
+      <label class="full">פסקה (להדגשה: **מילים**). ריק = הסקשן מוסתר<textarea id="xWsText" maxlength="700"></textarea></label>
+      <label>מסגרות (שורה לכל אחת)<textarea id="xWsFormats" maxlength="300" style="min-height:90px"></textarea></label>
+      <label>כפתור<input id="xWsCta" maxlength="40"></label>
+      <label>טכניקות איירבראש (שורה לכל אחת)<textarea id="xWsAir" maxlength="600" style="min-height:140px"></textarea></label>
+      <label>טכניקות מכחולים (שורה לכל אחת)<textarea id="xWsBrush" maxlength="600" style="min-height:140px"></textarea></label>
+      <label class="full">משפט השילוב (להדגשה: **מילים**)<textarea id="xWsCombo" maxlength="400"></textarea></label>
+      <h4 class="full" style="margin:10px 0 0">משפטים מתחלפים</h4>
       <label class="full">משפט במסך הפתיחה (ARTRIKO הגדול). שורה לכל משפט, ובכל כניסה לאתר מוצג משפט אחר<textarea id="xIntro" maxlength="1200" style="min-height:120px"></textarea></label>
       <label class="full">כיתוב בחלון הצילום (REC). שורה לכל משפט, עם / בין השורה הראשית לשורה השנייה. בכל כניסה מוצג משפט אחר<textarea id="xStudio" maxlength="1500" style="min-height:150px"></textarea></label>
       <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת הטקסטים</button><button class="pill" type="button" id="xReset">חזרה לטקסט המקורי</button><span class="note" id="xMsg"></span></div>
