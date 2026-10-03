@@ -1,7 +1,7 @@
 // ARTRIKO superhero layer (cosmetic):
 // - a spinning side badge with the logo that speeds up with scrolling
-// - an original mascot, "Captain Artriko", that follows the mouse on desktop,
-//   watches your taps on phones, and swaps costume on click (or every few seconds)
+// - an original mascot, "Captain Artriko", that lives next to the badge
+//   and swaps costume on click (or every few seconds)
 // - comic "POW!" bursts on empty clicks, and a bouncy wordmark
 // Nothing here is needed to use the site; with reduced motion it stays still.
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -89,26 +89,15 @@ function swap() {
 }
 mascot.addEventListener("click", e => { e.stopPropagation(); swap(); });
 
-/* position: follow the mouse on desktop, live by the badge on phones / when idle */
-let mx = innerWidth * 0.2, my = innerHeight * 0.7, px = mx, py = my, vx = 0, vy = 0;
-let tx = mx, ty = my, lastMove = 0, docked = true;
-let lookX = innerWidth / 2, lookY = innerHeight / 2;
+/* position: always docked next to the badge */
+let mx = 0, my = 0, px = 0, py = 0, vx = 0, vy = 0;
+{ const h0 = badge.getBoundingClientRect(); px = mx = h0.left + h0.width / 2; py = my = h0.top - 40; }
+let tx = mx, ty = my;
 function homePos() {
   const r = badge.getBoundingClientRect();
-  return { x: r.left + r.width / 2, y: r.top - (FINE ? 46 : 34) };
+  return { x: r.left + r.width / 2, y: r.top - (FINE ? 40 : 34) };
 }
 function mascotCenter() { return { x: px, y: py }; }
-if (FINE && !RM) {
-  addEventListener("pointermove", e => {
-    lastMove = performance.now();
-    lookX = e.clientX; lookY = e.clientY;
-    // trail a little below-left of the pointer, never on top of it
-    tx = Math.min(innerWidth - 50, Math.max(50, e.clientX - 74));
-    ty = Math.min(innerHeight - 60, Math.max(60, e.clientY + 70));
-  }, { passive: true });
-} else {
-  addEventListener("pointerdown", e => { lookX = e.clientX; lookY = e.clientY; lastMove = performance.now(); }, { passive: true });
-}
 setInterval(() => { if (!document.hidden && !q("dialog[open]")) swap(); }, 9000);
 
 let last = performance.now();
@@ -116,9 +105,8 @@ function tick(t) {
   const dt = Math.min(48, t - last) / 16.7; last = t;
   const hidden = !!q("dialog[open]") || location.hash === "#guide" && !FINE;
   mascot.classList.toggle("away", hidden);
-  const idle = !FINE || RM || t - lastMove > 5000;
-  if (idle) { const h = homePos(); tx = h.x; ty = h.y; }
-  if (idle !== docked) { docked = idle; mascot.classList.toggle("docked", docked); }
+  // the mascot always stays home by the badge (it never follows the pointer)
+  const h = homePos(); tx = h.x; ty = h.y;
   // spring
   const k = RM ? 1 : 0.075, damp = 0.78;
   vx = (vx + (tx - px) * k * dt) * damp; vy = (vy + (ty - py) * k * dt) * damp;
@@ -127,10 +115,6 @@ function tick(t) {
   mascot.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) rotate(${tilt.toFixed(1)}deg)`;
   // cape flutters with speed, head and eyes look at the pointer
   cape.style.transform = `skewX(${Math.max(-22, Math.min(22, -vx * 2)).toFixed(1)}deg)`;
-  const dx = lookX - px, dy = lookY - (py - 20), d = Math.hypot(dx, dy) || 1;
-  const ex = (dx / d) * Math.min(3.2, d / 40), ey = (dy / d) * Math.min(2.4, d / 40);
-  pupils.setAttribute("transform", `translate(${ex.toFixed(2)} ${ey.toFixed(2)})`);
-  head.setAttribute("transform", `rotate(${Math.max(-10, Math.min(10, dx / 60)).toFixed(1)} 50 40)`);
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
