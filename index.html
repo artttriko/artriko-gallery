@@ -241,7 +241,6 @@
       <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
       <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
       <button type="button" data-tab="texts" aria-pressed="false">טקסטים בדף</button>
-      <button type="button" data-tab="room" aria-pressed="false">החדר</button>
       <button type="button" data-tab="voice" aria-pressed="false">הקול שלך</button>
       <button type="button" data-tab="account" aria-pressed="false">סיסמה</button>
     </div>
@@ -252,6 +251,7 @@
       <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
       <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק"></label>
       <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד</option></select></label>
+      <label>הצגה בהמחשת גודל<select id="fMount"><option value="stand">עומד על הרצפה</option><option value="wall">תלוי על הקיר</option></select></label>
       <div class="full cat-box">
         <div class="cat-head"><strong>סיווג לפילטרים</strong><span class="note" id="catState">יתמלא אוטומטית אחרי ניתוח התמונות. אפשר לשנות ידנית.</span></div>
         <div class="form cat-grid">
@@ -300,28 +300,6 @@
       <div style="display:grid;gap:12px"><label>כפתור אינסטגרם<input id="xIg" maxlength="30"></label><label>כפתור טיקטוק<input id="xTt" maxlength="30"></label></div>
       <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת הטקסטים</button><button class="pill" type="button" id="xReset">חזרה לטקסט המקורי</button><span class="note" id="xMsg"></span></div>
     </form>
-    </section>
-    <section data-pane="room" hidden>
-    <h4>תמונת הרקע להמחשה</h4>
-    <p class="note">ההמחשה היא אופציה: בוחרים תמונה אחת של הפסל, שירות remove.bg מסיר לה את הרקע, והאתר מציב את הפסל על השידה שבתמונה הזו, בגודל שמחושב לפי הגובה שרשמת. כדי שהגודל יהיה נכון, סמן את השידה ורשום את הרוחב האמיתי שלה.</p>
-    <div class="room-ed">
-      <div id="roomPrev" class="cal-prev"></div>
-      <div class="side">
-        <button type="button" class="pill" id="roomPick">העלאת תמונת רקע</button>
-        <input type="file" id="roomFile" accept="image/*" hidden>
-        <button type="button" class="pill small" id="calStart">סימון השידה (2 לחיצות)</button>
-        <label for="calCm">רוחב משטח השידה במציאות (ס"מ)<input type="number" id="calCm" min="10" max="500" step="1" value="110"></label>
-        <label for="roomScale">תיקון גודל עדין<input type="range" id="roomScale" min="70" max="130" value="100"></label>
-        <label for="roomShadow">כיוון הצל<input type="range" id="roomShadow" min="-30" max="30" value="-12"></label>
-        <button type="button" class="pill small" id="roomReset">חזרה לחדר המאויר</button>
-        <span class="note" id="roomMsg"></span>
-        <ul class="tips">
-          <li>צלם את השידה ישר מולה, בגובה המשטח, באור חם.</li>
-          <li>את הפסל צלם מול רקע חלק ובלי ידיים, כך שהסרת הרקע תצא נקייה יותר.</li>
-          <li>צלם את הפסל מזווית דומה לזווית של תמונת השידה, כדי שההצבה תיראה טבעית.</li>
-        </ul>
-      </div>
-    </div>
     </section>
     <section data-pane="account" hidden>
     <h4>סיסמה</h4>

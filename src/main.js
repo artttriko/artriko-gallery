@@ -2,6 +2,7 @@ import "./style.css";
 import "./motion.css";
 import "./motion.js";
 import "./heroes.js";
+import "./studio.js";
 import { createClient } from "@supabase/supabase-js";
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -151,8 +152,8 @@ const SAMPLES=[
 ];
 
 /* ================= Data (Supabase) ================= */
-const toRow=w=>({id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
+const toRow=w=>({mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
+const fromRow=r=>({mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -204,11 +205,86 @@ const firstImg=w=>w.media.find(m=>m.kind==="image");
 const heightFrac=cm=>{const c=cal();return Math.max(.02,Math.min(.95,(+cm||25)*((c.x2-c.x1)/c.cm)*.8))};
 
 const illusOf=w=>w.media.find(m=>m.kind==="image"&&m.illus&&m.aiCut);
-// The in-room illustration is optional: shown only when the admin made a cutout and turned it on
+/* ================= Size illustration: a plain room with a height ruler and a familiar object ================= */
+// Everyday objects people know the size of (approximate real sizes in cm)
+const REFS={
+  can:{he:"פחית שתייה",h:12.2,w:6.6},
+  mug:{he:"ספל קפה",h:9.5,w:11},
+  phone:{he:"טלפון",h:14.7,w:7.1},
+  bottle:{he:"בקבוק 1.5 ליטר",h:31,w:9},
+  ball:{he:"כדורגל",h:22,w:22},
+  hand:{he:"כף יד",h:19,w:9.5}
+};
+let REF="can";try{const r=localStorage.getItem("artriko.ref");if(REFS[r])REF=r}catch(e){}
+function setRef(k){if(!REFS[k])return;REF=k;try{localStorage.setItem("artriko.ref",k)}catch(e){}}
+const niceCeil=v=>[20,25,30,40,50,60,80,100,120,150,200,250,300,400].find(n=>n>=v)||Math.ceil(v/100)*100;
+function refSVG(k,x,floor){ // object drawn in cm, standing on the floor, centred on x
+  const o=REFS[k],h=o.h,w=o.w,y=floor-h,L=x-w/2,ink="#130d10",lw=Math.max(.12,h*.012);
+  if(k==="can")return `<g><rect x="${L}" y="${y+.5}" width="${w}" height="${h-.8}" rx="${w*.12}" fill="#d8233a" stroke="${ink}" stroke-width="${lw}"/>
+    <rect x="${L}" y="${y}" width="${w}" height="${h*.07}" rx="${w*.1}" fill="#c9c9cf" stroke="${ink}" stroke-width="${lw}"/>
+    <rect x="${L}" y="${floor-h*.06}" width="${w}" height="${h*.06}" rx="${w*.1}" fill="#b9b9bf" stroke="${ink}" stroke-width="${lw}"/>
+    <rect x="${L+w*.16}" y="${y+h*.12}" width="${w*.12}" height="${h*.74}" rx="${w*.06}" fill="#fff" opacity=".35"/>
+    <path d="M${L} ${y+h*.55} q${w/2} ${-h*.12} ${w} 0" stroke="#fff" stroke-width="${h*.035}" fill="none" opacity=".85"/></g>`;
+  if(k==="mug")return `<g><path d="M${L+w*.74} ${y+h*.25} h${w*.08} a${w*.18} ${h*.22} 0 0 1 0 ${h*.44} h${-w*.14}" fill="none" stroke="#e9e2d6" stroke-width="${w*.08}"/>
+    <rect x="${L}" y="${y}" width="${w*.78}" height="${h}" rx="${w*.08}" fill="#efe8dc" stroke="${ink}" stroke-width="${lw}"/>
+    <ellipse cx="${L+w*.39}" cy="${y+h*.02}" rx="${w*.37}" ry="${h*.05}" fill="#3a2418"/></g>`;
+  if(k==="phone")return `<g><rect x="${L}" y="${y}" width="${w}" height="${h}" rx="${w*.14}" fill="#1b1b1f" stroke="#55555f" stroke-width="${lw*1.4}"/>
+    <rect x="${L+w*.07}" y="${y+h*.04}" width="${w*.86}" height="${h*.92}" rx="${w*.1}" fill="#2a3550"/>
+    <rect x="${L+w*.07}" y="${y+h*.04}" width="${w*.86}" height="${h*.92}" rx="${w*.1}" fill="url(#scrGlow)"/>
+    <rect x="${x-w*.14}" y="${y+h*.06}" width="${w*.28}" height="${h*.025}" rx="${h*.012}" fill="#000"/></g>`;
+  if(k==="bottle")return `<g><path d="M${x-w*.17} ${y} h${w*.34} v${h*.07} c0 ${h*.06} ${w*.33} ${h*.1} ${w*.33} ${h*.22} v${h*.67} a${w*.1} ${w*.1} 0 0 1 ${-w*.1} ${w*.1} h${-w*.8} a${w*.1} ${w*.1} 0 0 1 ${-w*.1} ${-w*.1} v${-h*.67} c0 ${-h*.12} ${w*.33} ${-h*.16} ${w*.33} ${-h*.22} z" fill="#9fd3ee" fill-opacity=".45" stroke="#cfeaf7" stroke-width="${lw}"/>
+    <rect x="${x-w*.2}" y="${y-h*.045}" width="${w*.4}" height="${h*.06}" rx="${w*.04}" fill="#2e7bd6" stroke="${ink}" stroke-width="${lw}"/>
+    <rect x="${L+w*.12}" y="${y+h*.45}" width="${w*.76}" height="${h*.16}" fill="#2e7bd6" opacity=".7"/></g>`;
+  if(k==="ball"){const r=w/2,cy=floor-r;return `<g><circle cx="${x}" cy="${cy}" r="${r}" fill="#f2f2f2" stroke="${ink}" stroke-width="${lw}"/>
+    <path d="M${x} ${cy-r*.32} l${r*.3} ${r*.22} l${-r*.12} ${r*.36} h${-r*.36} l${-r*.12} ${-r*.36} z" fill="${ink}"/>
+    <path d="M${x-r*.95} ${cy-r*.1} l${r*.3} ${-r*.18} l${r*.1} ${r*.3} l${-r*.25} ${r*.3} z M${x+r*.95} ${cy-r*.1} l${-r*.3} ${-r*.18} l${-r*.1} ${r*.3} l${r*.25} ${r*.3} z M${x-r*.2} ${cy+r*.95} l${r*.05} ${-r*.35} h${r*.3} l${r*.05} ${r*.35} z" fill="${ink}"/></g>`}
+  // hand, palm facing the viewer, fingers up
+  const fw=w*.17;return `<g fill="#e7b48f" stroke="${ink}" stroke-width="${lw}">
+    <rect x="${L+w*.08}" y="${y+h*.42}" width="${w*.78}" height="${h*.5}" rx="${w*.22}"/>
+    ${[0,1,2,3].map(i=>`<rect x="${L+w*.1+i*(fw+w*.03)}" y="${y+[.1,0,.04,.16][i]*h}" width="${fw}" height="${h*[.42,.5,.47,.36][i]}" rx="${fw/2}"/>`).join("")}
+    <rect x="${L+w*.62}" y="${y+h*.5}" width="${fw}" height="${h*.3}" rx="${fw/2}" transform="rotate(-38 ${L+w*.7} ${y+h*.75})"/>
+    <rect x="${L+w*.2}" y="${y+h*.88}" width="${w*.6}" height="${h*.12}" fill="#d9a07a"/></g>`;
+}
+// Builds the scene in centimetres so the statue, the object and the ruler share one real scale
+function scaleSVG(heightCm,mount,img,refKey){
+  const H=Math.max(1,+heightCm||25),ref=REFS[refKey]||REFS.can,wall=mount==="wall";
+  const lift=wall?Math.max(ref.h*1.25,H*.45,8):0;              // hanging pieces sit above the floor object
+  const R=niceCeil(Math.max((lift+H)*1.18,ref.h*1.45,20));
+  const SH=R/.86,SW=SH*.8,floor=SH*.9;
+  const major=R<=30?5:R<=150?10:R<=250?20:50,minor=R<=40?1:R<=150?5:10;
+  const rx=SW*.035,rw=SW*.07,fs=SH*.026;
+  let ticks="";
+  for(let c=0;c<=R;c+=minor){const y=floor-c,big=c%major===0;ticks+=`<line x1="${rx+rw}" x2="${rx+rw-(big?rw*.62:rw*.32)}" y1="${y}" y2="${y}" stroke="#130d10" stroke-width="${big?SH*.0035:SH*.002}"/>`;
+    if(big&&c>0)ticks+=`<text x="${rx+rw*.1}" y="${y+fs*.36}" font-size="${fs}" font-family="Assistant,Arial,sans-serif" font-weight="800" fill="#130d10">${c}</text><line x1="${rx+rw}" x2="${SW}" y1="${y}" y2="${y}" stroke="#f6ead8" stroke-opacity=".07" stroke-width="${SH*.002}"/>`}
+  const ox=rx+rw+SW*.04+ref.w/2;
+  const bx=ox+ref.w/2+SW*.05,bw=SW*.97-bx,cx=bx+bw/2,top=floor-lift-H;
+  return `<svg viewBox="0 0 ${SW.toFixed(2)} ${SH.toFixed(2)}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" direction="ltr" style="direction:ltr" role="img" aria-label="המחשת גודל: ${H} ס&quot;מ לצד ${ref.he}">
+  <defs><linearGradient id="wallG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1518"/><stop offset="1" stop-color="#2c2226"/></linearGradient>
+  <radialGradient id="spotG" cx="${(cx/SW).toFixed(3)}" cy="${((top+H*.4)/SH).toFixed(3)}" r=".55"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".2"/><stop offset="1" stop-color="#ffe2b0" stop-opacity="0"/></radialGradient>
+  <linearGradient id="floorG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2e2a"/><stop offset="1" stop-color="#140f10"/></linearGradient>
+  <linearGradient id="scrGlow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7aa7ff" stop-opacity=".5"/><stop offset="1" stop-color="#ff5c8a" stop-opacity=".25"/></linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${(SH*.006).toFixed(3)}"/></filter>
+  <filter id="wallSh" x="-20%" y="-20%" width="140%" height="140%"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 0"/><feGaussianBlur stdDeviation="${(SH*.008).toFixed(3)}"/></filter></defs>
+  <rect width="${SW}" height="${floor}" fill="url(#wallG)"/><rect width="${SW}" height="${floor}" fill="url(#spotG)"/>
+  <rect y="${floor}" width="${SW}" height="${SH-floor}" fill="url(#floorG)"/>
+  <rect y="${floor-SH*.004}" width="${SW}" height="${SH*.008}" fill="#f6ead8" opacity=".12"/>
+  <rect x="${rx}" y="${floor-R}" width="${rw}" height="${R}" fill="#f1e4cc" rx="${rw*.08}"/>${ticks}
+  <text x="${rx+rw/2}" y="${floor-R-fs*.6}" font-size="${fs*.9}" font-family="Assistant,Arial,sans-serif" font-weight="700" fill="#f6ead8" text-anchor="middle" opacity=".7">ס"מ</text>
+  <ellipse cx="${ox}" cy="${floor}" rx="${ref.w*.62}" ry="${SH*.008}" fill="#000" opacity=".5" filter="url(#soft)"/>
+  ${refSVG(refKey in REFS?refKey:"can",ox,floor)}
+  ${wall?`<image href="${img}" x="${bx+SW*.012}" y="${top+SH*.012}" width="${bw}" height="${H}" preserveAspectRatio="xMidYMax meet" filter="url(#wallSh)"/>
+    <circle cx="${cx}" cy="${top-SH*.006}" r="${SH*.005}" fill="#c9c9cf" stroke="#130d10" stroke-width="${SH*.0015}"/>`
+   :`<ellipse cx="${cx}" cy="${floor}" rx="${Math.min(bw*.42,H*.4)}" ry="${SH*.012}" fill="#000" opacity=".6" filter="url(#soft)"/>`}
+  <image href="${img}" x="${bx}" y="${top}" width="${bw}" height="${H}" preserveAspectRatio="xMidYMax meet"/>
+  <line x1="${rx+rw}" x2="${bx}" y1="${top}" y2="${top}" stroke="#ffd23f" stroke-width="${SH*.003}" stroke-dasharray="${SH*.012} ${SH*.008}"/>
+  <text x="${rx+rw+SW*.015}" y="${top-fs*.45}" font-size="${fs*1.15}" font-family="Assistant,Arial,sans-serif" font-weight="800" fill="#ffd23f">${H} ס"מ</text>
+  </svg>`;
+}
+// The illustration is optional: shown only when the admin made a cutout and turned it on
 function sceneHTML(w,force){
   const il=illusOf(w);
   if(!il||(!il.sceneOn&&!force)) return flatHTML(w);
-  return `<div class="scene" style="--h:${heightFrac(w.heightCm)}"><div class="room"></div><div class="piece cut"><img src="${il.aiCut}" alt=""></div><div class="glow"></div></div>`;
+  return `<div class="scene sz">${scaleSVG(w.heightCm,w.mount,il.aiCut,REF)}</div>`;
 }
 function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">וידאו</div>`;return `<div class="flat"><img src="${im.orig}" alt="" loading="lazy"></div>`}
 
@@ -289,7 +365,7 @@ function openLB(id){
 function showSlide(i){
   const n=LB.slides.length; LB.i=(i+n)%n; const s=LB.slides[LB.i], w=LB.w;
   const main=$("#lbMain");
-  if(s.kind==="room") main.innerHTML=sceneHTML(w);
+  if(s.kind==="room") main.innerHTML=`<div class="sz-wrap">${sceneHTML(w,true)}<div class="ref-pick" role="group" aria-label="השוואה לחפץ">${Object.entries(REFS).map(([k,o])=>`<button type="button" class="chip" data-ref="${k}" aria-pressed="${k===REF}">${o.he}</button>`).join("")}</div></div>`;
   else if(s.kind==="image") main.innerHTML=`<img class="zoomable" src="${s.orig}" alt="${esc(w.name)}">`;
   else main.innerHTML=`<video src="${s.url}" controls playsinline></video>`;
   const z=main.querySelector(".zoomable,.scene");
@@ -298,9 +374,10 @@ function showSlide(i){
     z.onmousemove=e=>{const r=z.getBoundingClientRect();z.style.transformOrigin=`${(e.clientX-r.left)/r.width*100}% ${(e.clientY-r.top)/r.height*100}%`};
     z.onmouseenter=()=>z.classList.add("on"); z.onmouseleave=()=>z.classList.remove("on");
   }
-  $("#lbThumbs").innerHTML=LB.slides.map((t,k)=>`<button aria-current="${k===LB.i}" data-k="${k}" aria-label="מדיה ${k+1}">${t.kind==="room"?`<span class="t-room">בחדר</span>`:t.kind==="image"?`<img src="${t.orig}" alt="">`:`<video src="${t.url}" muted></video>`}</button>`).join("");
+  $("#lbThumbs").innerHTML=LB.slides.map((t,k)=>`<button aria-current="${k===LB.i}" data-k="${k}" aria-label="מדיה ${k+1}">${t.kind==="room"?`<span class="t-room">גודל</span>`:t.kind==="image"?`<img src="${t.orig}" alt="">`:`<video src="${t.url}" muted></video>`}</button>`).join("");
   $("#lbPrev").hidden=$("#lbNext").hidden=n<2;
 }
+$("#lbMain").addEventListener("click",e=>{const b=e.target.closest("[data-ref]");if(!b)return;e.stopPropagation();setRef(b.dataset.ref);showSlide(LB.i);if(S.view==="room")render()});
 $("#lbThumbs").onclick=e=>{const b=e.target.closest("[data-k]");if(b)showSlide(+b.dataset.k)};
 $("#lbPrev").onclick=()=>showSlide(LB.i-1);$("#lbNext").onclick=()=>showSlide(LB.i+1);
 $("#lb").addEventListener("keydown",e=>{if(e.key==="ArrowLeft")showSlide(LB.i+1);if(e.key==="ArrowRight")showSlide(LB.i-1)});
@@ -480,8 +557,8 @@ function renderStaged(){
     <div class="st" data-sid="${it.sid}">
       <div class="prog"><i style="width:${it.progress*100}%"></i></div>
       ${!it.ready?`<span>טוען ${esc(it.name)}…</span>`:it.kind==="video"?`<div class="pv"><video src="${it.url}" muted controls playsinline></video></div><span>וידאו</span>`:`
-      <div class="pv">${it.aiCut?`<img src="${it.orig}" alt=""><div class="scene" style="--h:${heightFrac(h)}"><div class="room"></div><div class="piece cut"><img src="${it.aiCut}" alt=""></div><div class="glow"></div></div>`:`<img src="${it.orig}" alt="">`}</div>
-      <label><input type="radio" name="illusPick" data-a="illus" ${it.illus?"checked":""}> התמונה להמחשה בחדר</label>
+      <div class="pv">${it.aiCut?`<img src="${it.orig}" alt=""><div class="scene sz">${scaleSVG(h,$("#fMount").value,it.aiCut,REF)}</div>`:`<img src="${it.orig}" alt="">`}</div>
+      <label><input type="radio" name="illusPick" data-a="illus" ${it.illus?"checked":""}> התמונה להמחשת גודל</label>
       ${it.illus?`<button type="button" class="pill small ai-btn" data-a="cutout" ${it.cutBusy?"disabled":""}>${it.cutBusy?"מסיר רקע… (עד דקה)":it.aiCut?"✂️ הסרת רקע מחדש":"✂️ הסרת רקע"}</button>`:""}
       ${it.illus&&it.aiCut?`<label><input type="checkbox" data-a="sceneOn" ${it.sceneOn?"checked":""}> להציג את ההמחשה באתר</label>`:""}
       ${it.illus?`<button type="button" class="pill small" data-a="noillus">בלי המחשה</button>`:""}
@@ -508,6 +585,7 @@ $("#staged").addEventListener("click",e=>{const b=e.target.closest("button[data-
   if(a==="auto"||a==="reset")renderStaged();
   process(it)});
 $("#fH").oninput=()=>renderStaged();
+$("#fMount").onchange=()=>renderStaged();
 
 $("#wf").onsubmit=async e=>{
   e.preventDefault();
@@ -519,7 +597,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
     if(fromExample)S.works=S.works.filter(x=>x.id!==S.editing);
@@ -560,7 +638,7 @@ function renderAdminList(){
 }
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url}));
     $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -577,7 +655,7 @@ $("#undoBtn").onclick=async()=>{const h=S.history.pop();if(!h)return;
   }catch(err){S.history.push(h);toast("הביטול נכשל, נסה שוב")}};
 
 /* ================= Admin tabs ================= */
-function showTab(name){document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===name?"true":"false"));document.querySelectorAll("[data-pane]").forEach(p=>p.hidden=p.dataset.pane!==name);if(name==="list")renderAdminList();if(name==="room")renderRoomPrev()}
+function showTab(name){document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===name?"true":"false"));document.querySelectorAll("[data-pane]").forEach(p=>p.hidden=p.dataset.pane!==name);if(name==="list")renderAdminList();}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 
 /* ================= Landing texts (editable) ================= */
@@ -755,45 +833,6 @@ async function makeCutout(it){
   }catch(e){it.cutMsg=CUT_ERR[e?.code]||("הסרת הרקע נכשלה"+(e?.message?": "+e.message:"")+". נסה שוב.")}
   it.cutBusy=false;renderStaged();
 }
-
-/* ================= Room photo + scale calibration (admin) ================= */
-let calStep=0,calP1=null;
-function renderRoomPrev(){
-  const c=cal();
-  const w=[...S.works].sort((a,b)=>b.createdAt-a.createdAt).find(illusOf);
-  const marks=`<span class="cal-line" style="left:${c.x1*100}%;width:${(c.x2-c.x1)*100}%;top:${c.y*100}%"><b>${c.cm} ס"מ</b></span>${calP1?`<span class="cal-dot" style="left:${calP1.x*100}%;top:${calP1.y*100}%"></span>`:""}`;
-  $("#roomPrev").innerHTML=(w?sceneHTML(w,true):`<div class="scene"><div class="room"></div><div class="glow"></div></div>`).replace(/<\/div>$/,marks+"</div>");
-  $("#calCm").value=c.cm;
-  $("#roomScale").value=Math.round(Math.max(.7,Math.min(1.3,ROOM?.scale||1))*100);$("#roomShadow").value=ROOM?.shadow??-12;
-  $("#roomReset").disabled=!ROOM;
-  if(!calStep)$("#roomMsg").textContent=(ROOM?.img?"מוצגת תמונת הרקע שלך. ":"מוצג החדר המאויר. ")+(w?"בתצוגה: הפסל האחרון שיש לו המחשה.":"עוד אין פסל עם המחשה. הסר רקע לתמונה בטופס היצירה כדי לראות כאן דוגמה.");
-}
-function saveRoom(){applyRoom();renderRoomPrev();return putSetting("room",ROOM).catch(()=>toast("השמירה נכשלה"))}
-$("#calStart").onclick=()=>{calStep=1;calP1=null;$("#roomMsg").textContent="לחץ על הקצה השמאלי של משטח השידה (איפה שהפסל עומד).";};
-$("#roomPrev").addEventListener("click",e=>{
-  if(!calStep)return;const sc=e.target.closest(".scene");if(!sc)return;const r=sc.getBoundingClientRect();
-  const p={x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};
-  if(calStep===1){calP1=p;calStep=2;renderRoomPrev();$("#roomMsg").textContent="עכשיו לחץ על הקצה הימני של משטח השידה.";return}
-  const x1=Math.min(calP1.x,p.x),x2=Math.max(calP1.x,p.x);
-  if(x2-x1<.05){$("#roomMsg").textContent="שתי הנקודות קרובות מדי. לחץ שוב על \"סימון השידה\".";calStep=0;calP1=null;renderRoomPrev();return}
-  ROOM={...(ROOM||{}),x1:+x1.toFixed(4),x2:+x2.toFixed(4),y:+((calP1.y+p.y)/2).toFixed(4)};
-  calStep=0;calP1=null;saveRoom();$("#roomMsg").textContent="נשמר. הפסלים יעמדו במרכז השידה, בגודל שמחושב לפי הגובה שלהם.";
-});
-$("#calCm").onchange=e=>{const v=+e.target.value;if(!(v>=10&&v<=500))return;ROOM={...(ROOM||{}),cm:v};saveRoom()};
-async function cropRoom(src){
-  const i=await loadImg(src);const W=1000,H=1250,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  const k=Math.max(W/i.width,H/i.height),dw=i.width*k,dh=i.height*k;x.drawImage(i,(W-dw)/2,(H-dh)/2,dw,dh);
-  const d=x.getImageData(0,0,W,H).data;let r=0,g=0,b=0,n=0;for(let p=0;p<d.length;p+=4*37){r+=d[p];g+=d[p+1];b+=d[p+2];n++}r/=n;g/=n;b/=n;
-  const lum=(.299*r+.587*g+.114*b)/255,warm=(r-b)/255;
-  return {img:c.toDataURL("image/jpeg",.88),sep:Math.max(0,Math.min(.35,warm*.6)),br:Math.max(.7,Math.min(1.08,.6+lum*.8))};
-}
-$("#roomPick").onclick=()=>$("#roomFile").click();
-$("#roomFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;$("#roomMsg").textContent="מעבד את התמונה…";
-  const fr=new FileReader();fr.onload=async()=>{try{const t=await cropRoom(fr.result);const url=await uploadBlob(`room/room-${Date.now()}.jpg`,b64Blob(t.img),(l,tt)=>{$("#roomMsg").textContent=`מעלה… ${Math.round(l/tt*100)}%`});ROOM={scale:1,shadow:-12,...(ROOM||{}),...t,img:url,x1:null,x2:null};applyRoom();await putSetting("room",ROOM);renderRoomPrev();}catch(err){$("#roomMsg").textContent="ההעלאה נכשלה: "+err.message;return}$("#roomMsg").textContent="עכשיו לחץ \"סימון השידה\" וסמן את שני הקצוות של משטח השידה."};fr.readAsDataURL(f)};
-$("#roomScale").oninput=e=>{ROOM={...(ROOM||{}),scale:+e.target.value/100};applyRoom()};
-$("#roomShadow").oninput=e=>{ROOM={...(ROOM||{}),shadow:+e.target.value};applyRoom()};
-["#roomScale","#roomShadow"].forEach(id=>$(id).onchange=()=>saveRoom());
-$("#roomReset").onclick=async()=>{ROOM=null;applyRoom();await putSetting("room",null);renderRoomPrev()};
 
 /* ================= Collector guide ================= */
 const INK="#f6ead8",SUN="#ffd23f",POP="#ff3b5c",SKY="#2ec4ff",LINE="#3a2a30",DIM="#bfae9c";

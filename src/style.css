@@ -331,3 +331,14 @@ a.mark{text-decoration:none}
 }
 @media (hover:none){.card:hover .scene.ai .sc{transform:none}.card:hover .scene .room,.card:hover .scene .piece,.card:hover .flat img{transform:none}.card:hover .scene .piece{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- Size illustration ---------- */
+.scene.sz{background:#1c1518}
+.scene.sz svg{position:absolute;inset:0;width:100%;height:100%;display:block;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.card:hover .scene.sz svg{transform:scale(1.05)}
+.sz-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;max-height:76dvh}
+.sz-wrap .scene{height:min(68dvh,640px);width:auto;aspect-ratio:4/5}
+.ref-pick{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:0 10px}
+.ref-pick .chip{font-size:13px;padding:4px 11px;background:rgba(19,13,16,.7)}
+.ref-pick .chip[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:var(--sun)}
+@media (max-width:760px){.sz-wrap .scene{height:auto;width:100%}}

@@ -73,3 +73,6 @@ insert into storage.buckets (id, name, public, file_size_limit) values ('gallery
 create policy "admins upload gallery files" on storage.objects for insert to authenticated with check (bucket_id = 'gallery' and (select public.is_admin()));
 create policy "admins update gallery files" on storage.objects for update to authenticated using (bucket_id = 'gallery' and (select public.is_admin()));
 create policy "admins delete gallery files" on storage.objects for delete to authenticated using (bucket_id = 'gallery' and (select public.is_admin()));
+
+-- How a piece is shown in the size illustration: standing on the floor or hanging on the wall
+alter table public.works add column if not exists mount text not null default 'stand' check (mount in ('stand','wall'));
