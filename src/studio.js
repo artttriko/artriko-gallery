@@ -3,10 +3,15 @@
 // where it shows clearly. Several clips play one after another with a soft crossfade.
 // Nothing is shown until the admin turns a clip on.
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Built-in clip (slow motion, seamless boomerang loop, smoke and paint mist), used until the admin changes it.
+export const BUILTIN = "/studio/painter.mp4";
+export const STUDIO_DEFAULT = { clips: [BUILTIN], on: true, opacity: 0.45 };
+const SMALL = matchMedia("(max-width: 760px)").matches;
+const pick = u => (u === BUILTIN && SMALL ? "/studio/painter-m.mp4" : u);
 let layer = null, win = null, timer = null;
 
 export function setStudio(cfg) {
-  const clips = (cfg && cfg.on !== false && Array.isArray(cfg.clips)) ? cfg.clips.filter(c => typeof c === "string" && /^https:\/\//.test(c)) : [];
+  const clips = (cfg && cfg.on !== false && Array.isArray(cfg.clips)) ? cfg.clips.filter(c => typeof c === "string" && /^(https:\/\/|\/studio\/)/.test(c)).map(pick) : [];
   if (!clips.length) { teardown(); return; }
   if (!layer) build();
   layer.style.setProperty("--studio-o", String(cfg.opacity ?? 0.45));
@@ -45,6 +50,7 @@ function play(clips) {
   let i = 0, cur = a, next = b;
   const start = (v, src) => { v.src = src; v.currentTime = 0; const p = v.play(); if (p) p.catch(() => {}); };
   cur.loop = clips.length === 1; next.loop = false;
+  cur.poster = /\/studio\/painter/.test(clips[0]) ? "/studio/painter.jpg" : "";
   start(cur, clips[0]); cur.classList.add("on"); next.classList.remove("on");
   if (RM) { cur.pause(); return; }               // reduced motion: a still frame
   if (clips.length === 1) return;

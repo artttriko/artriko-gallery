@@ -2,7 +2,7 @@ import "./style.css";
 import "./motion.css";
 import "./motion.js";
 import "./heroes.js";
-import { setStudio } from "./studio.js";
+import { setStudio, STUDIO_DEFAULT } from "./studio.js";
 import { createClient } from "@supabase/supabase-js";
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -836,7 +836,7 @@ async function makeCutout(it){
 }
 
 /* ================= Background video (admin) ================= */
-let STUDIO={clips:[],on:true,opacity:.45},vDraft=null;
+let STUDIO={...STUDIO_DEFAULT,clips:[...STUDIO_DEFAULT.clips]},vDraft=null;
 async function saveStudio(){try{await putSetting("studio",STUDIO);setStudio(STUDIO);renderStudio()}catch(e){toast("השמירה נכשלה")}}
 function renderStudio(){
   $("#vList").innerHTML=STUDIO.clips.length?STUDIO.clips.map((u,i)=>`<div class="v-item"><video src="${esc(u)}" muted loop playsinline preload="metadata"></video><div class="row">${i>0?`<button type="button" class="pill small" data-v="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-v="rm" data-i="${i}">הסרה</button></div></div>`).join(""):`<p class="note">עוד אין סרטון. העלה סרטון כדי שיופיע ברקע.</p>`;
@@ -971,7 +971,7 @@ window.addEventListener("hashchange",route);route();
   const sz=+load("size");setSize(sz||300);
   const cols=load("cols");if(cols){$("#grid").className="grid cols-"+cols;press(document.querySelector("[data-cols]").parentNode,document.querySelector(`[data-cols="${cols}"]`))}
   const t=await getSetting("texts");if(t)TEXTS={...DEFAULT_TEXTS,...t};renderTexts();fillTextForm();
-  setStudio(await getSetting("studio"));
+  setStudio((await getSetting("studio"))??STUDIO_DEFAULT);
   const rm=await getSetting("room");if(rm){ROOM=rm;applyRoom()}
   const stored=await dbAll();
   if(stored&&stored.length) S.works=stored.map(hydrate);
