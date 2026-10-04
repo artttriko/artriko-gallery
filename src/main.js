@@ -860,6 +860,10 @@ const DEFAULT_TEXTS={
   giftEyebrow:"מתנות ייחודיות",giftTitle:"מתנה שאין / לאף אחד אחר.",
   giftText:"מעבר לפסלי האספנות, אני יוצר **מתנות אישיות אחת במינן**: ליום הולדת, לאירוע, לפרישה, לצוות, או למי שכבר יש לו הכול. מרעיון או תמונה ועד פריט מודפס וצבוע ביד.",
   giftCta:"אני רוצה מתנה כזו!",
+  nudgePiece:"וואו, איך זה יצא במציאות? תמונה אחת שווה אלף כוכבים.\nבלי תמונה זה לא קרה! איך זה נראה אחרי שהגיע?\nאיך הגיבו למתנה? תמונה של הרגע תשמח את כולם.\nצילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה באמת.\nתמונה אחת עוזרת למי שמתלבט יותר מכל מילה.",
+  nudgeLesson:"יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!\nהדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.\nתמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף.",
+  nudgeDone:"יש! 🔥 הרבה יותר שווה עם תמונה.\nמושלם, תודה על התמונה! 📸\nוואו, איזה יופי. תודה!",
+  rvThanks:"וואו, תודה על הזמן ועל המילים!\nתודה ענקית ששיתפת את החוויה! 🙏\nאיזה כיף לקרוא. תודה על כל מילה!\nתודה! זה באמת משמח אותי.",
   introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
   galNote:"התמונות בגלריה עוברות עריכה קלה של תאורה, צבע ורקע כדי להתאים לתצוגה באתר. ייתכנו הבדלי גוון קלים בין מסכים. הפסל עצמו, כמובן, צבוע ביד ונאמן לעבודה המקורית.",
   wsEyebrow:"סדנאות והדרכות צביעה",
@@ -914,7 +918,7 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
@@ -1311,17 +1315,15 @@ $("#wsRv").addEventListener("click",()=>{const b=$("#rvTabs").querySelector('[da
 /* ---- review form ---- */
 const RVF={kind:null,rates:{},photos:[],busy:false};
 // A friendly push to add a photo, different each time the form opens (worded for everyone)
-const RV_NUDGE={
-  piece:["וואו, איך הוא נראה על המדף? תמונה אחת שווה אלף כוכבים.","הגיע הביתה? מגיע לו רגע בפרונט. תמונה מהמדף עושה פה את כל ההבדל.","בלי תמונה זה לא קרה! איך זה יצא באור של הבית?","הפסל כבר מצא מקום? שווה להראות לכולם איפה.","איך הגיבו למתנה? תמונה של הרגע תשמח את כולם.","צילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה במציאות!"],
-  lesson:["יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!","הדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.","תמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף."]
-};
-const RV_NUDGE_DONE=["יש! 🔥 הרבה יותר שווה עם תמונה.","מושלם, תודה על התמונה! 📸","וואו, איזה יופי. תודה על התמונה!"];
+const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
+const pickOther=(list,last)=>{const pool=list.length>1?list.filter(x=>x!==last):list;return pool[Math.floor(Math.random()*pool.length)]||""};
 let rvNudgeLast="";
 function rvNudge(){const el=$("#rvNudge");if(!RVF.kind){el.hidden=true;return}
-  if(RVF.photos.length){el.textContent=RV_NUDGE_DONE[RVF.photos.length%RV_NUDGE_DONE.length];el.classList.add("ok");el.hidden=false;return}
+  if(RVF.photos.length){const d=lines(TEXTS.nudgeDone);el.textContent=d.length?d[(RVF.photos.length-1)%d.length]:"";el.classList.add("ok");el.hidden=!d.length;return}
   el.classList.remove("ok");
-  if(!RVF.nudge){const pool=RV_NUDGE[RVF.kind].filter(x=>x!==rvNudgeLast);RVF.nudge=pool[Math.floor(Math.random()*pool.length)];rvNudgeLast=RVF.nudge}
-  el.textContent="📸 "+RVF.nudge;el.hidden=false}
+  if(!RVF.nudge){RVF.nudge=pickOther(lines(RVF.kind==="lesson"?TEXTS.nudgeLesson:TEXTS.nudgePiece),rvNudgeLast);rvNudgeLast=RVF.nudge}
+  el.textContent=RVF.nudge?"📸 "+RVF.nudge:"";el.hidden=!RVF.nudge}
+let rvThanksLast="";
 function rvOpen(kind){
   Object.assign(RVF,{kind:null,rates:{},photos:[],busy:false,nudge:""});
   $("#rvForm").reset();$("#rvMsg").textContent="";$("#rvCount").textContent="0/700";rvPhotos();
@@ -1383,6 +1385,7 @@ $("#rvForm").onsubmit=async e=>{
       service:RVF.rates.service,reliable:RVF.rates.reliable,pro:RVF.rates.pro,photos:RVF.photos.map(p=>p.url),website:$("#rvWeb").value})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw {code:j.code};
+    rvThanksLast=pickOther(lines(TEXTS.rvThanks),rvThanksLast);$("#rvThanks").textContent=rvThanksLast||"תודה רבה!";
     $("#rvStep2").hidden=true;$("#rvDlgTitle").hidden=true;$("#rvDone").hidden=false;
     if(S.admin)loadReviews();
   }catch(err){$("#rvMsg").textContent=err?.code==="too_many"?"נשלחו כבר כמה המלצות מהמכשיר הזה היום. תודה! אפשר לנסות שוב מחר.":"השליחה לא הצליחה. אפשר לנסות שוב בעוד רגע."}

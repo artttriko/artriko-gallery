@@ -311,7 +311,7 @@
     </div>
     <div class="rv-step rv-done" id="rvDone" hidden>
       <div class="rv-done-ic" aria-hidden="true">★</div>
-      <h3>תודה רבה!</h3>
+      <h3 id="rvThanks">תודה רבה!</h3>
       <p>ההמלצה התקבלה ותופיע באתר אחרי אישור קצר.</p>
       <button class="pill" type="button" data-close>סגירה</button>
     </div>
@@ -424,6 +424,12 @@
       <label>מדבקה צהובה (שורה לכל מילה)<textarea id="xBurst" maxlength="40" style="min-height:70px"></textarea></label>
       <div style="display:grid;gap:12px"><label>כפתור ראשי<input id="xCtaMain" maxlength="30"></label><label>כפתור הזמנה<input id="xCtaOrder" maxlength="30"></label></div>
       <label class="full">הערה קטנה מתחת לגלריה (ריק = לא מוצגת)<textarea id="xGalNote" maxlength="300" style="min-height:60px"></textarea></label>
+      <h4 class="full" style="margin:10px 0 0">טופס ההמלצה</h4>
+      <p class="note full" style="margin:0">משפט לכל שורה. בכל פתיחה של הטופס מוצג משפט אחר מהרשימה. אפשר להוסיף, למחוק ולשנות.</p>
+      <label>עידוד להוסיף תמונה (פסל או מתנה)<textarea id="xNudgePiece" maxlength="1500" style="min-height:130px"></textarea></label>
+      <label>עידוד להוסיף תמונה (הדרכה)<textarea id="xNudgeLesson" maxlength="1000" style="min-height:130px"></textarea></label>
+      <label>אחרי שהוסיפו תמונה<textarea id="xNudgeDone" maxlength="800" style="min-height:90px"></textarea></label>
+      <label>תודה אחרי שליחת ההמלצה<textarea id="xRvThanks" maxlength="1000" style="min-height:90px"></textarea></label>
       <h4 class="full" style="margin:10px 0 0">מתנות ייחודיות</h4>
       <label>כותרת קטנה<input id="xGiftEyebrow" maxlength="60"></label>
       <label>כותרת (עם / בין השורה הלבנה לצבעונית)<input id="xGiftTitle" maxlength="90"></label>
