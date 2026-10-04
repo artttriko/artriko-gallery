@@ -757,6 +757,7 @@ const DEFAULT_TEXTS={
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
   burst:"יד\nאחת\nפסל אחד",ctaIg:"לעקוב באינסטגרם",ctaTt:"לצפות בטיקטוק",
   introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
+  galNote:"התמונות בגלריה עוברות עריכה קלה של תאורה, צבע ורקע כדי להתאים לתצוגה באתר. ייתכנו הבדלי גוון קלים בין מסכים. הפסל עצמו, כמובן, צבוע ביד ונאמן לעבודה המקורית.",
   wsEyebrow:"סדנאות והדרכות צביעה",
   wsTitle:"מכחול ביד אחת. / איירבראש ביד השנייה.",
   wsText:"מעבר לפסלים, אני מעביר **הדרכות אישיות וסדנאות** בצביעת פסלים ומיניאטורות. איך מחזיקים, מדללים ומכוונים, ולמה כל שכבה נמצאת בדיוק במקום שלה. מתאים גם למי שעוד לא החזיק איירבראש ביד, וגם למי שכבר צובע ורוצה לעלות רמה.",
@@ -776,6 +777,7 @@ function renderTexts(){
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
   $("#igHero").textContent=T.ctaIg||"Instagram";$("#ttHero").textContent=T.ctaTt||"TikTok";
   setCaption(pickLine("studio",T.studioLines));
+  $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();
   const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
   const [wa1,wa2]=String(T.wsTitle||"").split("/").map(x=>x.trim());
   $("#wsEyebrow").textContent=T.wsEyebrow||"";
@@ -802,7 +804,7 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};

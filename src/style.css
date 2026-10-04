@@ -422,3 +422,6 @@ a.mark{text-decoration:none}
 @media (max-width:600px){.an-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .an-seg{display:flex;flex-wrap:nowrap;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
 .an-seg button{white-space:nowrap;flex:none}
+.gal-note{margin:18px 0 0;font-size:13px;line-height:1.6;color:var(--muted);max-width:80ch;opacity:.85}
+.gal-note::before{content:"* ";color:var(--sun);font-weight:800}
+.gal-note[hidden]{display:none}
