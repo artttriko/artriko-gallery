@@ -294,6 +294,7 @@ function cardHTML(w){return `
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
         ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
         ${w.example?`<span class="example">דוגמה</span>`:""}
+        ${S.admin&&hasWm(w)?`<span class="wm-tag on-card" title="${esc(wmText(w))}">⚠️ סימן מים · רק אתה רואה</span>`:""}
       </div>
       <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
     </article>`}
@@ -765,7 +766,7 @@ function addFiles(files){[...files].forEach(f=>{
   fr.onload=async()=>{
     if(kind==="image"){it.raw=await downscale(fr.result);it.orig=it.raw}
     else{it.blob=new Blob([fr.result],{type:f.type});it.url=URL.createObjectURL(it.blob)}
-    it.progress=1;it.ready=true;renderStaged();
+    it.progress=1;it.ready=true;renderStaged();if(kind==="image")wmQueue(it);
     if(kind==="image") queueSuggest();
   };
   kind==="image"?fr.readAsDataURL(f):fr.readAsArrayBuffer(f);
@@ -775,7 +776,7 @@ async function process(it){
   const ticket=(it.ticket||0)+1;it.ticket=ticket;it.busy=true;paint(it);
   const orig=await applyEdits(it.raw,it.ed);
   if(it.ticket!==ticket) return; // a newer edit superseded this one
-  it.orig=orig;it.busy=false;paint(it);
+  it.orig=orig;it.busy=false;paint(it);wmQueue(it);
   if(it.aiCut)it.cutMsg="התמונה השתנתה. כדאי להסיר רקע מחדש כדי שההמחשה תתאים.";
 }
 // Update only the previews of one item, so sliders keep working while dragging
@@ -801,6 +802,7 @@ function renderStaged(){
       <div class="prog"><i style="width:${it.progress*100}%"></i></div>
       ${!it.ready?`<span>טוען ${esc(it.name)}…</span>`:it.kind==="video"?`<div class="pv"><video src="${it.url}" muted controls playsinline></video></div><span>וידאו</span>`:`
       <div class="pv">${it.aiCut?`<img src="${it.orig}" alt=""><div class="scene sz">${scaleSVG(h,$("#fMount").value,it.aiCut,REF)}</div>`:`<img src="${it.orig}" alt="">`}</div>
+      <div class="wm-slot">${wmBadge(it)}</div>
       <label><input type="radio" name="illusPick" data-a="illus" ${it.illus?"checked":""}> התמונה להמחשת גודל</label>
       ${it.illus?`<button type="button" class="pill small ai-btn" data-a="cutout" ${it.cutBusy?"disabled":""}>${it.cutBusy?"מסיר רקע… (עד דקה)":it.aiCut?"✂️ הסרת רקע מחדש":"✂️ הסרת רקע"}</button>`:""}
       ${it.illus&&it.aiCut?`<label><input type="checkbox" data-a="sceneOn" ${it.sceneOn?"checked":""}> להציג את ההמחשה באתר</label>`:""}
@@ -876,7 +878,7 @@ async function uploadMedia(id,items){
     const up=async(val,name)=>{if(!val||isRemote(val))return val||null;const b=b64Blob(val);return uploadBlob(`${pre}-${name}.${extOf(b.type)}`,b,prog)};
     const raw=await up(s.raw,"raw");
     const orig=s.orig===s.raw?raw:await up(s.orig,"img");
-    out.push({kind:"image",raw,orig,illus:!!s.illus,aiCut:s.aiCut||null,sceneOn:!!(s.illus&&s.aiCut&&s.sceneOn),ed:s.ed});
+    out.push({kind:"image",raw,orig,illus:!!s.illus,aiCut:s.aiCut||null,sceneOn:!!(s.illus&&s.aiCut&&s.sceneOn),ed:s.ed,wm:s.wm||null});
   }
   return out;
 }
@@ -887,13 +889,13 @@ $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
   const list=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
-  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b><span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
   if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
-    S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url}));
+    S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url,wm:m.wm||null}));
     $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
   if(b.dataset.a==="no"){renderAdminList();return}
@@ -1316,6 +1318,59 @@ window.addEventListener("hashchange",route);route();
   addEventListener("hashchange",()=>{if(location.hash==="#guide")links.forEach(a=>a.classList.remove("on"));document.querySelector("#navGuide")?.classList.toggle("on",location.hash==="#guide")});
 })();
 
+/* ================= Watermark check (admin only) ================= */
+// Every uploaded photo is checked by the AI for a leftover watermark (e.g. "CapCut AI", an app logo, @name).
+// The result is shown only in the admin panel (and on gallery cards while the admin is signed in).
+const WM_WHERE={"top-left":"בפינה השמאלית העליונה","top-right":"בפינה הימנית העליונה","bottom-left":"בפינה השמאלית התחתונה","bottom-right":"בפינה הימנית התחתונה","top":"למעלה","bottom":"למטה","left":"בצד שמאל","right":"בצד ימין","center":"במרכז","tiled":"על כל התמונה"};
+const WM_PROMPT=`Look at this photo of a hand-painted figurine. Is there a WATERMARK added on top of the photo? That means an overlaid logo or text stamp such as "CapCut", "CapCut AI", "Meitu", "Remini", "PicsArt", "InShot", a TikTok/Instagram logo or @username, a website address, "Made with ...", "AI generated", a stock-photo mark, or a semi-transparent repeated pattern.
+Do NOT count text that physically exists in the scene: labels on paint bottles, printing on products or boxes, text on a computer screen, writing on the figurine itself.
+Return only JSON: {"watermark": true or false, "text": "the watermark text if readable, else empty", "where": "top-left|top-right|bottom-left|bottom-right|top|bottom|left|right|center|tiled|"}`;
+const hasWm=w=>(w.media||[]).some(m=>m.wm&&m.wm.found);
+const wmText=w=>(w.media||[]).filter(m=>m.wm&&m.wm.found).map(m=>(m.wm.text||"סימן מים")+(m.wm.where?" "+(WM_WHERE[m.wm.where]||""):"")).join(" · ");
+function wmBadge(it){
+  if(it.kind!=="image")return"";
+  if(it.wmBusy)return `<span class="wm-chk">בודק סימני מים…</span>`;
+  if(!it.wm)return"";
+  if(it.wm.found)return `<span class="wm-tag big">⚠️ זוהה סימן מים${it.wm.text?`: <b>${esc(it.wm.text)}</b>`:""}${it.wm.where?` ${WM_WHERE[it.wm.where]||""}`:""}. אפשר לחתוך אותו ב"עריכת תמונה ← חיתוך ויישור".</span>`;
+  return `<span class="wm-ok">✓ לא נמצא סימן מים</span>`;
+}
+async function wmCheck(src){
+  const img=await shrinkForAI(src,900);
+  const {data:{session}}=await sb.auth.getSession();
+  const r=await fetch("/api/suggest",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify({prompt:WM_PROMPT,images:[img]})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw {code:j.code||"failed"};
+  const o=j.result||{};
+  return {found:o.watermark===true||o.watermark==="true",text:String(o.text||"").slice(0,60),where:String(o.where||"").toLowerCase(),src:String(src).slice(-80),at:Date.now()};
+}
+const wmTimers=new Map();
+function wmQueue(it){
+  if(!S.admin||it.kind!=="image"||!it.orig)return;
+  if(it.wm&&it.wm.src===String(it.orig).slice(-80))return; // this exact picture was already checked
+  clearTimeout(wmTimers.get(it.sid));
+  wmTimers.set(it.sid,setTimeout(async()=>{
+    const slot=()=>document.querySelector(`.st[data-sid="${it.sid}"] .wm-slot`);
+    it.wmBusy=true;if(slot())slot().innerHTML=wmBadge(it);
+    try{it.wm=await wmCheck(it.orig)}catch(e){it.wm=null}
+    it.wmBusy=false;if(slot())slot().innerHTML=wmBadge(it);
+  },1200));
+}
+$("#wmScan").onclick=async()=>{
+  const b=$("#wmScan");if(b.disabled)return;b.disabled=true;
+  const works=S.works.filter(w=>!w.example);let n=0,found=0,total=works.reduce((t,w)=>t+(w.media||[]).filter(m=>m.kind==="image").length,0);
+  for(const w of works){
+    let changed=false;
+    for(const m of (w.media||[]).filter(m=>m.kind==="image")){
+      n++;$("#wmMsg").textContent=`בודק תמונה ${n} מתוך ${total}…`;
+      if(m.wm&&m.wm.src===String(m.orig).slice(-80)){if(m.wm.found)found++;continue}
+      try{m.wm=await wmCheck(m.orig);changed=true;if(m.wm.found)found++}catch(e){if(e?.code==="rate_limited"){$("#wmMsg").textContent="ה־AI עמוס כרגע. אפשר להמשיך בעוד דקה, מה שנבדק נשמר.";if(changed)await dbPut(w).catch(()=>{});b.disabled=false;render();return}}
+    }
+    if(changed)await dbPut(w).catch(()=>{});
+  }
+  b.disabled=false;render();renderAdminList();
+  $("#wmMsg").textContent=found?`נמצאו ${found} תמונות עם סימן מים. הן מסומנות ב־⚠️ ברשימה.`:"✓ לא נמצאו סימני מים.";
+};
+
 /* ================= Reviews ================= */
 // Customers (a piece or gift) and students (lesson or workshop) rate service, reliability and
 // professionalism, and may add a few words and up to 3 photos. Reviews appear after admin approval.
@@ -1489,7 +1544,7 @@ loadReviews();
   if(stored&&stored.length) S.works=stored.map(hydrate);
   else S.works=SAMPLES.map(s=>{const png=drawSample(s.kind);return {...s,example:true,media:[{kind:"image",orig:png,raw:png,cut:png}]}});
   render();
-  const isAdmin=await checkAdmin();
+  const isAdmin=await checkAdmin();if(isAdmin)render();
   const q=new URLSearchParams(location.search);
   if(q.has("admin")){history.replaceState(null,"",location.pathname+location.hash);if(isAdmin)openAdmin("account");else if((await sb.auth.getSession()).data.session)toast("המשתמש הזה לא מוגדר כמנהל")}
   // Count the visit (the server ignores repeats from the same IP within 10 minutes); admins are not counted
