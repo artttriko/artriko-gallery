@@ -438,14 +438,57 @@ $("#wsCta").onclick=()=>openContact("learn");
 
 /* ================= Click counting (which areas visitors use) ================= */
 // Server counts each area once per visitor every 10 minutes; admins are not counted.
-function track(kind){if(S.admin)return;try{fetch("/api/visit",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({kind})})}catch(e){}}
+// A random id kept on this device only, so two people on one Wi-Fi count as two, and one person counts once.
+function visitorId(){try{let v=localStorage.getItem("artriko.vid");if(!v){v=crypto.randomUUID();localStorage.setItem("artriko.vid",v)}return v}catch(e){return null}}
+function ping(kind){try{fetch("/api/visit",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(kind?{kind,vid:visitorId()}:{vid:visitorId()})})}catch(e){}}
+function track(kind){if(!S.admin)ping(kind)}
 document.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a)return;const h=a.href;
   if(/instagram\.com/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(/wa\.me/.test(h))track("wa")},true);
 const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
+/* Activity over time: unique visitors per day / month, busiest hours and weekdays (Israel time) */
+const HE_DAYS=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+const HE_MONTHS=["ינו׳","פבר׳","מרץ","אפר׳","מאי","יוני","יולי","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"];
+let AN=null,AN_VIEW="days";
+function anSeries(view){
+  if(!AN)return [];
+  if(view==="days")return (AN.days||[]).map(r=>{const d=new Date(r.d.slice(0,10)+"T12:00:00");return {label:`${d.getDate()}.${d.getMonth()+1}`,full:`${HE_DAYS[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}`,v:r.uniques,sub:r.visits}});
+  if(view==="months")return (AN.months||[]).map(r=>{const [y,m]=r.m.split("-");return {label:HE_MONTHS[+m-1],full:`${HE_MONTHS[+m-1]} ${y}`,v:r.uniques,sub:r.visits}});
+  if(view==="hours")return (AN.hours||[]).map(r=>({label:String(r.h),full:`\u2066${String(r.h).padStart(2,"0")}:00–${String((r.h+1)%24).padStart(2,"0")}:00\u2069`,v:r.visits}));
+  return (AN.weekdays||[]).map(r=>({label:HE_DAYS[r.w].slice(0,2)+"׳",full:`יום ${HE_DAYS[r.w]}`,v:r.visits}));
+}
+function renderAnalytics(){
+  if(!AN)return;
+  const u=AN.uniques||{};
+  $("#anTiles").innerHTML=[["היום",u.today],["7 ימים",u.week],["30 ימים",u.month],["מאז ההתחלה",u.total]].map(([l,n])=>`<div class="an-tile"><b>${n??0}</b><span>${l}</span></div>`).join("")+`<p class="an-cap">מבקרים ייחודיים</p>`;
+  const rows=anSeries(AN_VIEW),max=Math.max(1,...rows.map(r=>r.v));
+  const unit=AN_VIEW==="days"||AN_VIEW==="months"?"מבקרים ייחודיים":"כניסות";
+  $("#anTitle").textContent=AN_VIEW==="days"?"מבקרים ייחודיים בכל יום, 30 הימים האחרונים":AN_VIEW==="months"?"מבקרים ייחודיים בכל חודש, 12 החודשים האחרונים":AN_VIEW==="hours"?"כניסות לפי שעה ביום (שעון ישראל), 30 הימים האחרונים":"כניסות לפי יום בשבוע, 30 הימים האחרונים";
+  const every=rows.length>24?5:rows.length>12?3:1;
+  $("#anChart").setAttribute("aria-label",$("#anTitle").textContent);
+  $("#anChart").innerHTML=`<div class="an-grid"><span>${max}</span><span>${Math.round(max/2)}</span><span>0</span></div><div class="an-bars">${rows.map((r,i)=>`<div class="an-col" data-i="${i}"><div class="an-bar" style="height:${r.v?`max(3px,calc((100% - 20px) * ${(r.v/max).toFixed(4)}))`:"0"}"></div><span class="an-x">${i%every===0||i===rows.length-1?esc(r.label):""}</span></div>`).join("")}</div>`;
+  const tip=$("#anTip"),chart=$("#anChart");
+  const show=e=>{const c=e.target.closest(".an-col");if(!c){tip.hidden=true;return}const r=rows[+c.dataset.i];
+    tip.innerHTML=`<b>${esc(r.full)}</b><br>${r.v} ${unit}${r.sub!=null?` · ${r.sub} כניסות`:""}`;tip.hidden=false;
+    const b=chart.getBoundingClientRect(),cb=c.getBoundingClientRect(),host=chart.parentElement.getBoundingClientRect();
+    tip.style.left=Math.min(host.width-170,Math.max(0,cb.left-host.left+cb.width/2-80))+"px";tip.style.top=(b.top-host.top-6)+"px";
+    chart.querySelectorAll(".an-col.on").forEach(x=>x.classList.remove("on"));c.classList.add("on")};
+  chart.onpointermove=show;chart.onpointerdown=show;chart.onpointerleave=()=>{tip.hidden=true;chart.querySelectorAll(".an-col.on").forEach(x=>x.classList.remove("on"))};
+  // Plain-language highlights
+  const ins=[],top=(arr)=>arr.reduce((a,b)=>b.v>a.v?b:a,arr[0]||{v:0});
+  const hs=anSeries("hours"),ws=anSeries("weekdays"),ds=anSeries("days"),ms=anSeries("months");
+  const sum=a=>a.reduce((t,r)=>t+r.v,0);
+  if(sum(hs)){const h=top(hs);ins.push(`השעות הכי פעילות: <b>${h.full}</b>`)}
+  if(sum(ws)){const w=top(ws);ins.push(`היום בשבוע הכי פעיל: <b>${w.full}</b>`)}
+  if(sum(ds)){const d=top(ds);ins.push(`היום הכי עמוס בחודש האחרון: <b>${d.full}</b> (${d.v} מבקרים)`)}
+  const nm=ms.length;if(nm>1&&(ms[nm-2].v||ms[nm-1].v)){const a=ms[nm-2].v,b=ms[nm-1].v;ins.push(a?`החודש עד עכשיו: <b>${b}</b> מבקרים, לעומת ${a} בחודש שעבר (\u2066${b>=a?"+":""}${Math.round((b-a)/a*100)}%\u2069)`:`החודש עד עכשיו: <b>${b}</b> מבקרים`)}
+  $("#anIns").innerHTML=ins.map(x=>`<li>${x}</li>`).join("")||`<li>עוד אין מספיק נתונים.</li>`;
+}
+$("#anSeg").addEventListener("click",e=>{const b=e.target.closest("[data-an]");if(!b)return;AN_VIEW=b.dataset.an;$("#anSeg").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderAnalytics()});
 async function loadStats(){
-  const [{data:v},{data:ev}]=await Promise.all([sb.rpc("visit_stats"),sb.rpc("event_stats")]);
+  const [{data:v},{data:ev},{data:an}]=await Promise.all([sb.rpc("visit_stats"),sb.rpc("event_stats"),sb.rpc("visit_analytics",{p_days:30})]);
+  AN=an||null;renderAnalytics();
   const all={...(ev||{}),...(v?{visits:v}:{})};
-  if(v)$("#visitStats").textContent=`· היום ${v.today} כניסות`;
+  if(v)$("#visitStats").textContent=`· היום ${an?.uniques?.today??"–"} מבקרים, ${v.today} כניסות`;
   $("#evStats").innerHTML=`<table><thead><tr><th></th><th>היום</th><th>7 ימים</th><th>סה"כ</th></tr></thead><tbody>${EV_LABELS.map(([k,l])=>{const r=all[k]||{today:0,week:0,total:0};return `<tr><td>${esc(l)}</td><td>${r.today}</td><td>${r.week}</td><td>${r.total}</td></tr>`}).join("")}</tbody></table>`;
 }
 
@@ -1066,6 +1109,6 @@ window.addEventListener("hashchange",route);route();
   const q=new URLSearchParams(location.search);
   if(q.has("admin")){history.replaceState(null,"",location.pathname+location.hash);if(isAdmin)openAdmin("account");else if((await sb.auth.getSession()).data.session)toast("המשתמש הזה לא מוגדר כמנהל")}
   // Count the visit (the server ignores repeats from the same IP within 10 minutes); admins are not counted
-  if(!isAdmin){try{fetch("/api/visit",{method:"POST",keepalive:true})}catch(e){}}
+  if(!isAdmin)ping();
 })();
 sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY")openAdmin("account")});

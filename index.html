@@ -267,7 +267,18 @@
   <div id="adPanel" hidden>
     <h3>ניהול הגלריה</h3>
     <div class="toolrow" style="margin:0 0 12px"><span class="note" id="whoAmI"></span><button class="pill small" id="logoutBtn" type="button">יציאה</button></div>
-    <details class="ev-box" id="evBox"><summary>סטטיסטיקה <span class="note" id="visitStats"></span></summary><div id="evStats" class="ev-stats"></div><p class="note">כל כתובת נספרת פעם אחת בכל 10 דקות לכל אזור, וכניסות של מנהל לא נספרות. הספירה של האזורים התחילה ב־3.10.2026.</p></details>
+    <details class="ev-box" id="evBox"><summary>סטטיסטיקה <span class="note" id="visitStats"></span></summary><div class="an" id="an">
+      <div class="an-tiles" id="anTiles"></div>
+      <div class="seg an-seg" id="anSeg" role="tablist" aria-label="תצוגת פעילות">
+        <button type="button" data-an="days" aria-pressed="true">30 ימים</button><button type="button" data-an="months" aria-pressed="false">חודשים</button><button type="button" data-an="hours" aria-pressed="false">שעות ביום</button><button type="button" data-an="weekdays" aria-pressed="false">ימים בשבוע</button>
+      </div>
+      <p class="an-title" id="anTitle"></p>
+      <div class="an-chart" id="anChart" role="img"></div>
+      <div class="an-tip" id="anTip" hidden></div>
+      <ul class="an-ins" id="anIns"></ul>
+    </div>
+    <h5 class="an-h">לחיצות לפי אזור</h5>
+    <div id="evStats" class="ev-stats"></div><p class="note"><b>כניסה</b> = ביקור באתר (אותו מבקר נספר שוב רק אחרי 10 דקות). <b>מבקר ייחודי</b> = אדם אחד, גם אם נכנס כמה פעמים. מנהל מחובר לא נספר. מבקרים ייחודיים מדויקים יותר מ־4.10.2026, ולחיצות לפי אזור נספרות מ־3.10.2026.</p></details>
     <div class="seg tabs" role="tablist">
       <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
       <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
