@@ -239,6 +239,20 @@
   <button class="arrow next" id="wsLbNext" type="button" aria-label="הבאה">‹</button>
 </dialog>
 
+<dialog id="cropDlg" class="crop-dlg" aria-label="חיתוך ויישור">
+  <div class="cr-top"><button type="button" class="pill small" id="crCancel">ביטול</button><b>חיתוך ויישור</b><button type="button" class="pill small solid" id="crSave">שמירה</button></div>
+  <div class="cr-stage" id="crStage"><div class="cr-wrap" id="crWrap"><canvas id="crCanvas"></canvas>
+    <div class="cr-box" id="crBox"><i class="g"></i><span data-h="nw"></span><span data-h="n"></span><span data-h="ne"></span><span data-h="e"></span><span data-h="se"></span><span data-h="s"></span><span data-h="sw"></span><span data-h="w"></span></div>
+  </div></div>
+  <div class="cr-ratios" id="crRatios"><button type="button" data-r="free" aria-pressed="true">חופשי</button><button type="button" data-r="orig">מקורי</button><button type="button" data-r="1">1:1</button><button type="button" data-r="0.8">4:5</button><button type="button" data-r="0.75">3:4</button><button type="button" data-r="1.7778">16:9</button></div>
+  <div class="cr-angle">
+    <button type="button" class="pill small" data-c="-0.1" aria-label="0.1 מעלות שמאלה">−0.1°</button>
+    <div class="cr-dial"><output id="crDeg">0.0°</output><input type="range" id="crAngle" min="-45" max="45" step="0.1" value="0" aria-label="זווית יישור"></div>
+    <button type="button" class="pill small" data-c="0.1" aria-label="0.1 מעלות ימינה">+0.1°</button>
+  </div>
+  <div class="cr-tools"><button type="button" class="pill small" data-c="rotL">↺ 90°</button><button type="button" class="pill small" data-c="rotR">↻ 90°</button><button type="button" class="pill small" data-c="flip">היפוך</button><button type="button" class="pill small" data-c="reset">איפוס</button></div>
+</dialog>
+
 <dialog id="ct" class="sheet">
   <button class="x" data-close aria-label="סגירה">✕</button>
   <h3 id="ctTitle">אני רוצה את זה!</h3>

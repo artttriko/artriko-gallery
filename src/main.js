@@ -519,16 +519,90 @@ $("#ctCopy").onclick=async()=>{const t=$("#ctMsg").textContent;try{await navigat
 /* ================= Image tools ================= */
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();if(isRemote(src))i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 async function downscale(src,max=1600){const i=await loadImg(src);const k=Math.min(1,max/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext("2d").drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.9)}
-const ED0={rot:0,flip:false,b:100,c:100,s:100};
-const isPlain=e=>!e||(!e.rot&&!e.flip&&e.b==100&&e.c==100&&e.s==100);
-async function applyEdits(src,e){
-  if(isPlain(e)) return src;
-  const i=await loadImg(src);const r=((e.rot%360)+360)%360,side=r===90||r===270;
-  const c=document.createElement("canvas");c.width=side?i.height:i.width;c.height=side?i.width:i.height;const x=c.getContext("2d");
+const ED0={rot:0,flip:false,b:100,c:100,s:100,angle:0,crop:null};
+const fullCrop=c=>!c||(c.x<=0.001&&c.y<=0.001&&c.w>=0.999&&c.h>=0.999);
+const isPlain=e=>!e||(!e.rot&&!e.flip&&e.b==100&&e.c==100&&e.s==100&&!e.angle&&fullCrop(e.crop));
+// Zoom needed so a W×H image rotated by `deg` still fills a W×H frame (no empty corners), like phone galleries
+function coverScale(W,H,deg){const t=Math.abs(deg)*Math.PI/180,c=Math.cos(t),s=Math.sin(t);return Math.max((W*c+H*s)/W,(W*s+H*c)/H)}
+// Step 1: 90° turns, mirror and colour. Step 2: fine straightening. Step 3: crop.
+function baseCanvas(i,e,max){
+  const k=max?Math.min(1,max/Math.max(i.width,i.height)):1,iw=Math.round(i.width*k),ih=Math.round(i.height*k);
+  const r=((e.rot%360)+360)%360,side=r===90||r===270;
+  const c=document.createElement("canvas");c.width=side?ih:iw;c.height=side?iw:ih;const x=c.getContext("2d");
   x.translate(c.width/2,c.height/2);x.rotate(r*Math.PI/180);if(e.flip)x.scale(-1,1);
   x.filter=`brightness(${e.b/100}) contrast(${e.c/100}) saturate(${e.s/100})`;
-  x.drawImage(i,-i.width/2,-i.height/2);return c.toDataURL("image/jpeg",.92);
+  x.drawImage(i,-iw/2,-ih/2,iw,ih);return c;
 }
+function straighten(src,deg,out){
+  const W=src.width,H=src.height,c=out||document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  x.save();x.fillStyle="#000";x.fillRect(0,0,W,H);x.translate(W/2,H/2);x.rotate(deg*Math.PI/180);const k=coverScale(W,H,deg);x.scale(k,k);
+  x.imageSmoothingQuality="high";x.drawImage(src,-W/2,-H/2);x.restore();return c;
+}
+async function applyEdits(src,e){
+  if(isPlain(e)) return src;
+  const i=await loadImg(src);
+  let c=baseCanvas(i,e);
+  if(e.angle)c=straighten(c,e.angle);
+  if(!fullCrop(e.crop)){const q=e.crop,W=c.width,H=c.height,sx=Math.round(q.x*W),sy=Math.round(q.y*H),sw=Math.max(1,Math.round(q.w*W)),sh=Math.max(1,Math.round(q.h*H));
+    const o=document.createElement("canvas");o.width=sw;o.height=sh;o.getContext("2d").drawImage(c,sx,sy,sw,sh,0,0,sw,sh);c=o}
+  return c.toDataURL("image/jpeg",.92);
+}
+
+/* ---------- Crop & straighten editor (free angle, like a phone gallery) ---------- */
+const CR={it:null,img:null,ed:null,base:null,ratio:null,drag:null};
+async function openCrop(it){
+  CR.it=it;CR.ed={...ED0,...it.ed,crop:it.ed.crop?{...it.ed.crop}:{x:0,y:0,w:1,h:1}};CR.ratio=null;
+  CR.img=await loadImg(it.raw);crBase();
+  $("#crRatios").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.r==="free"));
+  $("#cropDlg").showModal();crDraw();crBox();
+}
+function crBase(){CR.base=baseCanvas(CR.img,CR.ed,1400)}
+function crDraw(){
+  const cv=$("#crCanvas");straighten(CR.base,CR.ed.angle||0,cv);
+  const a=CR.ed.angle||0;$("#crAngle").value=a;$("#crDeg").textContent=`${a>0?"+":""}${a.toFixed(1)}°`;
+  $("#crBox").classList.toggle("turning",!!CR.turning);
+}
+function crBox(){const q=CR.ed.crop,b=$("#crBox");b.style.left=q.x*100+"%";b.style.top=q.y*100+"%";b.style.width=q.w*100+"%";b.style.height=q.h*100+"%"}
+// aspect ratio in pixels → normalized height for a given normalized width
+const crAR=()=>CR.base.width/CR.base.height;
+function crFitRatio(r){
+  if(!r){CR.ratio=null;return}
+  CR.ratio=r;const A=crAR();let w=1,h=w*A/r;if(h>1){h=1;w=h*r/A}
+  CR.ed.crop={x:(1-w)/2,y:(1-h)/2,w,h};crBox();
+}
+$("#crRatios").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;
+  $("#crRatios").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  const r=b.dataset.r;crFitRatio(r==="free"?null:r==="orig"?crAR():+r)});
+$("#crAngle").addEventListener("input",e=>{CR.ed.angle=Math.round(+e.target.value*10)/10;CR.turning=true;crDraw()});
+$("#crAngle").addEventListener("change",()=>{CR.turning=false;crDraw()});
+$("#cropDlg").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(!b)return;const c=b.dataset.c;
+  if(c==="-0.1"||c==="0.1"){CR.ed.angle=Math.max(-45,Math.min(45,Math.round(((CR.ed.angle||0)+ +c)*10)/10));crDraw();return}
+  if(c==="rotL"||c==="rotR"){CR.ed.rot+=c==="rotL"?-90:90;CR.ed.crop={x:0,y:0,w:1,h:1};crBase();if(CR.ratio)crFitRatio(CR.ratio);crDraw();crBox();return}
+  if(c==="flip"){CR.ed.flip=!CR.ed.flip;crBase();crDraw();return}
+  if(c==="reset"){Object.assign(CR.ed,{rot:0,flip:false,angle:0,crop:{x:0,y:0,w:1,h:1}});CR.ratio=null;$("#crRatios").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.r==="free"));crBase();crDraw();crBox()}});
+// drag the frame or its handles
+$("#crBox").addEventListener("pointerdown",e=>{e.preventDefault();const r=$("#crWrap").getBoundingClientRect();
+  CR.drag={h:e.target.dataset.h||"move",x0:e.clientX,y0:e.clientY,W:r.width,H:r.height,q:{...CR.ed.crop}};$("#crBox").setPointerCapture(e.pointerId)});
+$("#crBox").addEventListener("pointermove",e=>{const d=CR.drag;if(!d)return;
+  const dx=(e.clientX-d.x0)/d.W,dy=(e.clientY-d.y0)/d.H,q={...d.q},MIN=.08,h=d.h;
+  if(h==="move"){q.x=Math.min(1-q.w,Math.max(0,q.x+dx));q.y=Math.min(1-q.h,Math.max(0,q.y+dy))}
+  else{
+    if(h.includes("w")){const nx=Math.min(q.x+q.w-MIN,Math.max(0,q.x+dx));q.w+=q.x-nx;q.x=nx}
+    if(h.includes("e")){q.w=Math.min(1-q.x,Math.max(MIN,q.w+dx))}
+    if(h.includes("n")){const ny=Math.min(q.y+q.h-MIN,Math.max(0,q.y+dy));q.h+=q.y-ny;q.y=ny}
+    if(h.includes("s")){q.h=Math.min(1-q.y,Math.max(MIN,q.h+dy))}
+    if(CR.ratio){const A=crAR();
+      if(h==="n"||h==="s"){const w=q.h*CR.ratio/A,cx=q.x+q.w/2;q.w=w;q.x=cx-w/2}
+      else{const nh=q.w*A/CR.ratio;if(h.includes("n"))q.y=q.y+q.h-nh;else if(!h.includes("s")){q.y=q.y+(q.h-nh)/2}q.h=nh}
+      if(q.x<-.0001||q.y<-.0001||q.x+q.w>1.0001||q.y+q.h>1.0001||q.w<MIN||q.h<MIN)return;
+    }
+  }
+  CR.ed.crop=q;crBox()});
+const crEnd=()=>{CR.drag=null};
+$("#crBox").addEventListener("pointerup",crEnd);$("#crBox").addEventListener("pointercancel",crEnd);
+$("#crCancel").onclick=()=>$("#cropDlg").close();
+$("#crSave").onclick=()=>{const it=CR.it;if(!it)return;it.ed={...it.ed,rot:CR.ed.rot,flip:CR.ed.flip,angle:CR.ed.angle||0,crop:fullCrop(CR.ed.crop)?null:CR.ed.crop};
+  $("#cropDlg").close();process(it);toast("החיתוך והיישור נשמרו")};
 function b64Blob(dataURL){const [h,b]=dataURL.split(",");const bin=atob(b);const u=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);return new Blob([u],{type:h.slice(5).split(";")[0]})}
 // Background removal: flood-fills the backdrop from the photo's edges, then trims to the sculpture.
 async function removeBg(src,tol){
@@ -637,7 +711,7 @@ let edTimer=null;
 function processSoon(it){clearTimeout(edTimer);edTimer=setTimeout(()=>process(it),250)}
 function editorHTML(it){const e=it.ed;return `
   <div class="ed">
-    <div class="row"><button type="button" class="pill small" data-a="rotL">↺ סיבוב</button><button type="button" class="pill small" data-a="rotR">↻ סיבוב</button><button type="button" class="pill small" data-a="flip">היפוך</button></div>
+    <div class="row"><button type="button" class="pill small solid" data-a="crop">✂️ חיתוך ויישור</button><button type="button" class="pill small" data-a="rotL">↺ סיבוב</button><button type="button" class="pill small" data-a="rotR">↻ סיבוב</button><button type="button" class="pill small" data-a="flip">היפוך</button></div>
     <label>בהירות<input type="range" min="50" max="160" value="${e.b}" data-a="b"></label>
     <label>ניגודיות<input type="range" min="50" max="160" value="${e.c}" data-a="c"></label>
     <label>רוויה<input type="range" min="0" max="200" value="${e.s}" data-a="s"></label>
@@ -671,8 +745,9 @@ $("#staged").addEventListener("click",e=>{const b=e.target.closest("button[data-
   if(a==="first"){S.staged.unshift(...S.staged.splice(k,1));renderStaged();return}
   if(a==="toggle"){it.open=!it.open;renderStaged();return}
   if(a==="cutout"){makeCutout(it);return}
+  if(a==="crop"){openCrop(it);return}
   if(a==="noillus"){it.illus=false;it.sceneOn=false;it.cutMsg="";renderStaged();return}
-  if(a==="rotL")it.ed.rot-=90;if(a==="rotR")it.ed.rot+=90;if(a==="flip")it.ed.flip=!it.ed.flip;
+  if(a==="rotL"||a==="rotR"){it.ed.rot+=a==="rotL"?-90:90;it.ed.crop=null}if(a==="flip")it.ed.flip=!it.ed.flip;
   if(a==="auto")Object.assign(it.ed,{b:108,c:112,s:122});if(a==="reset")it.ed={...ED0};
   if(a==="auto"||a==="reset")renderStaged();
   process(it)});
