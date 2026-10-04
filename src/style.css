@@ -655,3 +655,18 @@ a.mark{text-decoration:none}
 @keyframes navShine{0%{transform:translateX(130%)}12%,100%{transform:translateX(-130%)}}
 @media (prefers-reduced-motion:reduce){.secnav a::after{animation:none;display:none}#heroScene:empty{animation:none}}
 .secnav a{flex:none}
+
+/* ---------- Character search ---------- */
+.search{position:relative;display:flex;align-items:center;max-width:520px;margin:6px 0 4px}
+.search svg{position:absolute;inset-inline-start:14px;width:20px;height:20px;color:var(--sun);pointer-events:none}
+.search input{width:100%;font:inherit;font-size:16px;color:var(--paper);background:rgba(19,13,16,.85);border:2px solid var(--line);border-radius:999px;padding:11px 46px 11px 44px;padding-inline-start:46px;padding-inline-end:44px;transition:border-color .15s,box-shadow .15s}
+.search input::placeholder{color:var(--muted);opacity:.8}
+.search input:focus{outline:none;border-color:var(--sun);box-shadow:0 0 0 4px rgba(255,210,63,.15)}
+.search input::-webkit-search-cancel-button{display:none}
+.search button{position:absolute;inset-inline-end:8px;width:30px;height:30px;border-radius:50%;border:0;background:var(--line);color:var(--paper);cursor:pointer;font-size:13px}
+.search button[hidden]{display:none}
+.q-empty{grid-column:1/-1;border:2px dashed var(--line);padding:22px;text-align:center}
+.q-empty p{margin:0 0 12px;font-size:17px}
+.q-empty b{color:var(--sun)}
+.q-empty .row{justify-content:center}
+@media (max-width:760px){.search{max-width:none}}

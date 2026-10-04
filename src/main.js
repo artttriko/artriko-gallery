@@ -201,7 +201,7 @@ function calcScale(refCm,modelCm){
 }
 
 /* ================= State ================= */
-const S={email:"",filter:{cat:"",tech:"",sale:false},works:[],view:"flat",admin:false,history:[],editing:null,staged:[]};
+const S={email:"",q:"",filter:{cat:"",tech:"",sale:false},works:[],view:"flat",admin:false,history:[],editing:null,staged:[]};
 const firstImg=w=>w.media.find(m=>m.kind==="image");
 const heightFrac=cm=>{const c=cal();return Math.max(.02,Math.min(.95,(+cm||25)*((c.x2-c.x1)/c.cm)*.8))};
 
@@ -307,10 +307,13 @@ function render(){
   const all=[...S.works].filter(w=>w.section!=="gift").sort((a,b)=>b.createdAt-a.createdAt);
   renderFilters(all);
   const F=S.filter;
-  const list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
+  let list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
+  if(S.q.trim()){const sc=new Map(list.map(w=>[w,searchScore(w,S.q)]));list=list.filter(w=>sc.get(w)>0).sort((a,b)=>sc.get(b)-sc.get(a))}
   $("#count").textContent=`${list.length} יצירות`;
   $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
-  if(!list.length&&all.length)$("#grid").innerHTML=`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
+  if(!list.length&&all.length)$("#grid").innerHTML=S.q.trim()
+    ?`<div class="q-empty"><p>עוד אין כאן <b>${esc(S.q.trim())}</b>, אבל אפשר להזמין בדיוק את הדמות הזו.</p><div class="row"><button class="pill solid" type="button" id="qOrder">להזמנה אישית</button><button class="chip" type="button" id="clearF">ניקוי החיפוש</button></div></div>`
+    :`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
   // Hero picture: only replace it when it actually changes (re-inserting the same image made the page jump)
   const top=all.find(firstImg),heroHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
   if($("#heroScene").dataset.k!==heroHTML){$("#heroScene").innerHTML=heroHTML;$("#heroScene").dataset.k=heroHTML;
@@ -329,7 +332,52 @@ function renderFilters(all){
 }
 $("#filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;if(b.dataset.f==="cat")S.filter.cat=b.dataset.v;if(b.dataset.f==="sale")S.filter.sale=!S.filter.sale;render()});
 $("#filters").addEventListener("change",e=>{if(e.target.id==="techF"){S.filter.tech=e.target.value;render()}});
-$("#grid").addEventListener("click",e=>{if(e.target.id==="clearF"){S.filter={cat:"",tech:"",sale:false};render()}});
+$("#grid").addEventListener("click",e=>{if(e.target.id==="clearF"){S.filter={cat:"",tech:"",sale:false};S.q="";$("#q").value="";$("#qClear").hidden=true;render()}
+  if(e.target.id==="qOrder")openContact("order")});
+
+/* ================= Character search (Hebrew or English) ================= */
+// Finds a character whether it is typed in Hebrew or English, with or without spaces/hyphens,
+// and with common Hebrew spelling variations (באטמן / בטמן, ספיידר מן / ספיידרמן).
+const NIQQUD=/[\u0591-\u05C7]/g;
+const norm=t=>String(t||"").toLowerCase().replace(NIQQUD,"").replace(/[׳״'"`´.,:;!?()\[\]{}\-–—_/\\|·*]/g," ").replace(/\s+/g," ").trim();
+const tight=t=>norm(t).replace(/ /g,"");
+const looseHe=t=>tight(t).replace(/[ויאהע]/g,"");
+// Consonant "sound skeleton", the same for BATMAN and באטמן
+function skel(t){
+  let s=String(t||"").toLowerCase().replace(NIQQUD,"");
+  // Hebrew letters with geresh first (ג' ז' צ' ת')
+  s=s.replace(/ג['׳]/g,"g").replace(/ז['׳]/g,"z").replace(/צ['׳]/g,"c").replace(/ת['׳]/g,"t");
+  const he={"א":"","ב":"b","ג":"g","ד":"d","ה":"","ו":"b","ז":"z","ח":"c","ט":"t","י":"","כ":"k","ך":"k","ל":"l","מ":"m","ם":"m","נ":"n","ן":"n","ס":"s","ע":"","פ":"p","ף":"p","צ":"ts","ץ":"ts","ק":"k","ר":"r","ש":"s","ת":"t"};
+  s=s.replace(/[\u05D0-\u05EA]/g,c=>he[c]??"");
+  s=s.replace(/ph/g,"p").replace(/th/g,"t").replace(/sh/g,"s").replace(/ch/g,"c").replace(/ck/g,"k").replace(/c(?=[eiy])/g,"s").replace(/c/g,"k")
+     .replace(/q/g,"k").replace(/x/g,"ks").replace(/j/g,"g").replace(/[vw]/g,"b").replace(/f/g,"p").replace(/z/g,"z");
+  // in Hebrew ח/צ' both became "c"; English "ch" too
+  s=s.replace(/[^a-z]/g,"").replace(/[aeiouyh]/g,"");
+  return s.replace(/(.)\1+/g,"$1");
+}
+function searchScore(w,q){
+  const nq=norm(q);if(!nq)return 1;
+  const tq=nq.replace(/ /g,""),lq=looseHe(q),kq=skel(q);
+  const fields=[[w.name,6],[w.character,6],[catHe(w.category||""),3],[w.summary,1]];
+  // add the English name for a Hebrew character (and the reverse) from the built-in list
+  const enOf=Object.entries(EN_NAMES);
+  const extra=[];for(const [he,en] of enOf){if(tight(he).includes(tq)||tq.includes(tight(he))&&tq.length>2)extra.push(en.toLowerCase());if(tight(en).includes(tq))extra.push(he)}
+  let best=0;
+  for(const [f,wgt] of fields){
+    if(!f)continue;
+    const nf=norm(f),tf=nf.replace(/ /g,"");
+    if(nf.includes(nq)||tf.includes(tq))best=Math.max(best,wgt*3);
+    else if(lq.length>=3&&looseHe(f).split(/\s+/).length&&norm(f).split(" ").some((_,i,ws)=>looseHe(ws.slice(i).join("")).startsWith(lq)))best=Math.max(best,wgt*2);
+    else if(extra.some(x=>tf.includes(tight(x))))best=Math.max(best,wgt*2);
+    else if(wgt>1&&kq.length>=3){const ws=norm(f).split(" ").map(skel);if(ws.some((_,i)=>ws.slice(i).join("").startsWith(kq)))best=Math.max(best,wgt)}
+  }
+  return best;
+}
+let qT=null;
+$("#q").addEventListener("input",e=>{clearTimeout(qT);const v=e.target.value;$("#qClear").hidden=!v;qT=setTimeout(()=>{S.q=v;render();if(v.trim().length>2)track("search")},140)});
+$("#q").addEventListener("keydown",e=>{if(e.key==="Escape"){e.target.value="";S.q="";$("#qClear").hidden=true;render()}if(e.key==="Enter")e.target.blur()});
+$("#qClear").onclick=()=>{$("#q").value="";S.q="";$("#qClear").hidden=true;render();$("#q").focus()};
+addEventListener("keydown",e=>{if(e.key==="/"&&!/input|textarea|select/i.test(document.activeElement?.tagName||"")&&!document.querySelector("dialog[open]")){e.preventDefault();$("#gallery").scrollIntoView({behavior:"smooth"});$("#q").focus()}});
 
 /* ================= Gallery controls ================= */
 function press(group,btn){group.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"))}
@@ -470,7 +518,7 @@ function ping(kind){try{fetch("/api/visit",{method:"POST",keepalive:true,headers
 function track(kind){if(!S.admin)ping(kind)}
 document.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a)return;const h=a.href;
   if(/instagram\.com/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(/wa\.me/.test(h))track("wa")},true);
-const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
+const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["search","שימוש בחיפוש"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
 /* Activity over time: unique visitors per day / month, busiest hours and weekdays (Israel time) */
 const HE_DAYS=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
 const HE_MONTHS=["ינו׳","פבר׳","מרץ","אפר׳","מאי","יוני","יולי","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"];
