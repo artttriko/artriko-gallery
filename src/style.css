@@ -639,3 +639,19 @@ a.mark{text-decoration:none}
 .rv-nudge[hidden]{display:none}
 .rv-add{width:96px;height:96px;border-color:var(--sun);font-size:30px}
 .rv-th{width:96px;height:96px}
+
+/* Hold the hero picture's space from the first paint, so nothing jumps while it loads */
+#heroScene{aspect-ratio:4/5;position:relative}
+#heroScene:empty{background:linear-gradient(110deg,var(--ink-2) 30%,#2a1d22 50%,var(--ink-2) 70%) 0 0/250% 100%;border:3px solid var(--line);animation:heroWait 1.4s linear infinite}
+@keyframes heroWait{to{background-position:-250% 0}}
+#heroScene>.flat,#heroScene>.scene{height:100%;width:100%}
+
+/* Top navigation: each section gets its own colour frame, a soft sweep of light now and then */
+.secnav a{--c:var(--sun);position:relative;overflow:hidden;border:2px solid var(--c);color:var(--paper);background:color-mix(in srgb,var(--c) 14%,transparent);font-weight:800}
+.secnav a:nth-child(1){--c:var(--sun);--i:0}.secnav a:nth-child(2){--c:var(--pop);--i:1}.secnav a:nth-child(3){--c:var(--sky);--i:2}.secnav a:nth-child(4){--c:#b388ff;--i:3}.secnav a:nth-child(5){--c:#3ddc84;--i:4}
+.secnav a:hover,.secnav a:focus-visible{background:color-mix(in srgb,var(--c) 28%,transparent);color:var(--paper)}
+.secnav a.on{background:var(--c);color:var(--ink);box-shadow:3px 3px 0 var(--paper)}
+.secnav a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.38) 50%,transparent 65%);transform:translateX(130%);animation:navShine 8s ease-in-out infinite;animation-delay:calc(1.2s + var(--i,0) * .18s)}
+@keyframes navShine{0%{transform:translateX(130%)}12%,100%{transform:translateX(-130%)}}
+@media (prefers-reduced-motion:reduce){.secnav a::after{animation:none;display:none}#heroScene:empty{animation:none}}
+.secnav a{flex:none}

@@ -311,7 +311,10 @@ function render(){
   $("#count").textContent=`${list.length} יצירות`;
   $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
   if(!list.length&&all.length)$("#grid").innerHTML=`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
-  const top=all.find(firstImg); $("#heroScene").innerHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
+  // Hero picture: only replace it when it actually changes (re-inserting the same image made the page jump)
+  const top=all.find(firstImg),heroHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
+  if($("#heroScene").dataset.k!==heroHTML){$("#heroScene").innerHTML=heroHTML;$("#heroScene").dataset.k=heroHTML;
+    const im=top&&firstImg(top);if(im&&!top.example&&/^https?:/.test(im.orig))save("heroImg",im.orig)}
   if(S.admin) renderAdminList();
 }
 
@@ -1416,6 +1419,7 @@ $("#rvAdmList").addEventListener("click",async e=>{
 
 loadReviews();
 
+{const hi=load("heroImg");if(hi&&/^https:\/\//.test(hi)&&!$("#heroScene").innerHTML)$("#heroScene").innerHTML=`<div class="flat"><img src="${esc(hi)}" alt="" fetchpriority="high"></div>`}
 (async()=>{
   const v=load("view2");if(v==="room"){S.view="room";press($("#vRoom").parentNode,$("#vRoom"))}
   const sz=+load("size");setSize(sz||300);
