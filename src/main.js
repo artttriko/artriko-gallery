@@ -829,6 +829,16 @@ $("#staged").addEventListener("click",e=>{const b=e.target.closest("button[data-
   if(a==="auto"||a==="reset")renderStaged();
   process(it)});
 $("#fH").oninput=()=>renderStaged();
+// Technology is picked automatically from the materials (other materials like wood or metal are ignored)
+function techFromMaterials(t){
+  const v=String(t||"").toLowerCase();
+  const resin=/שרף|רזין|resin|\bsla\b|msla|\bdlp\b|\blcd\b/.test(v);
+  const fdm=/\bfdm\b|\bpla\b|petg|\babs\b|\basa\b|\btpu\b|פילמנט|filament|nylon|ניילון|פי.?אל.?איי/.test(v);
+  return resin&&fdm?"FDM+Resin":resin?"Resin":fdm?"FDM":"";
+}
+function autoTech(){const t=techFromMaterials($("#fMat").value);
+  if(t){$("#fTech").value=t;$("#techAuto").textContent="· נבחר לפי החומרים"}else $("#techAuto").textContent="";}
+$("#fMat").addEventListener("input",autoTech);
 $("#fMount").onchange=()=>renderStaged();
 
 $("#wf").onsubmit=async e=>{
@@ -841,7 +851,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
     if(fromExample)S.works=S.works.filter(x=>x.id!==S.editing);
@@ -872,7 +882,7 @@ async function uploadMedia(id,items){
 }
 function structuredCloneSafe(w){return w?{...w,media:w.media.map(m=>({...m}))}:null}
 function upsert(w){const i=S.works.findIndex(x=>x.id===w.id);if(i>=0)S.works[i]=w;else S.works.push(w)}
-function resetForm(){$("#wf").reset();$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
+function resetForm(){$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
@@ -882,7 +892,7 @@ function renderAdminList(){
 }
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url}));
     $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -1121,7 +1131,7 @@ function applyCategorization(o){
   if(!o)return;
   if(o.character)setAi("#fChar",String(o.character).slice(0,80));
   if(CATS.some(c=>c.v===o.category))setAi("#fCat",o.category);
-  if(["FDM","Resin","FDM+Resin"].includes(o.tech))setAi("#fTech",o.tech);
+  if(["FDM","Resin","FDM+Resin"].includes(o.tech)&&!techFromMaterials($("#fMat").value))setAi("#fTech",o.tech);
   lastRef=+o.referenceHeightCm||null;
   updateScale(o.referenceNote,o.techReason);
   $("#catState").textContent="מולא על ידי AI (מסומן בכחול). בדוק ושנה אם צריך.";

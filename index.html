@@ -378,7 +378,7 @@
     <form class="form" id="wf" autocomplete="off">
       <label>שם היצירה<input id="fName" required maxlength="80"></label>
       <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
-      <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק"></label>
+      <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק, עץ…"></label>
       <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד</option></select></label>
       <label>איפה מוצג<select id="fSection"><option value="collect">גלריית הפסלים</option><option value="gift">מתנות ייחודיות</option></select></label>
       <label>הצגה בהמחשת גודל<select id="fMount"><option value="stand">עומד על הרצפה</option><option value="wall">תלוי על הקיר</option></select></label>
@@ -388,7 +388,7 @@
           <label>דמות<input id="fChar" maxlength="80" placeholder="למשל: באטמן"></label>
           <label>קטגוריה<select id="fCat"><option value="">—</option></select></label>
           <label>קנה מידה<input id="fScale" maxlength="30" placeholder="למשל: 1:6"></label>
-          <label>טכנולוגיה<select id="fTech"><option value="">—</option><option value="FDM">FDM</option><option value="Resin">שרף (Resin)</option><option value="FDM+Resin">FDM + שרף</option></select></label>
+          <label>טכנולוגיה <small class="note" id="techAuto"></small><select id="fTech"><option value="">—</option><option value="FDM">FDM</option><option value="Resin">שרף (Resin)</option><option value="FDM+Resin">FDM + שרף</option></select></label>
         </div>
         <p class="note" id="scaleWhy"></p>
       </div>
