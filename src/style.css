@@ -634,3 +634,8 @@ a.mark{text-decoration:none}
 .rv-list{align-items:start}
 .gift-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
 @media (max-width:760px){.gift-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gift-grid .spec{display:none}.gift-grid .card h3{font-size:20px}}
+.rv-nudge{margin:0 0 6px;padding:10px 12px;border:2px dashed var(--sun);background:rgba(255,210,63,.08);color:var(--paper);font-weight:700;font-size:15px;line-height:1.45}
+.rv-nudge.ok{border-style:solid;border-color:#3ddc84;background:rgba(61,220,132,.08)}
+.rv-nudge[hidden]{display:none}
+.rv-add{width:96px;height:96px;border-color:var(--sun);font-size:30px}
+.rv-th{width:96px;height:96px}

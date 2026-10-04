@@ -1310,15 +1310,27 @@ $("#wsRv").addEventListener("click",()=>{const b=$("#rvTabs").querySelector('[da
 
 /* ---- review form ---- */
 const RVF={kind:null,rates:{},photos:[],busy:false};
+// A friendly push to add a photo, different each time the form opens (worded for everyone)
+const RV_NUDGE={
+  piece:["וואו, איך הוא נראה על המדף? תמונה אחת שווה אלף כוכבים.","הגיע הביתה? מגיע לו רגע בפרונט. תמונה מהמדף עושה פה את כל ההבדל.","בלי תמונה זה לא קרה! איך זה יצא באור של הבית?","הפסל כבר מצא מקום? שווה להראות לכולם איפה.","איך הגיבו למתנה? תמונה של הרגע תשמח את כולם.","צילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה במציאות!"],
+  lesson:["יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!","הדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.","תמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף."]
+};
+const RV_NUDGE_DONE=["יש! 🔥 הרבה יותר שווה עם תמונה.","מושלם, תודה על התמונה! 📸","וואו, איזה יופי. תודה על התמונה!"];
+let rvNudgeLast="";
+function rvNudge(){const el=$("#rvNudge");if(!RVF.kind){el.hidden=true;return}
+  if(RVF.photos.length){el.textContent=RV_NUDGE_DONE[RVF.photos.length%RV_NUDGE_DONE.length];el.classList.add("ok");el.hidden=false;return}
+  el.classList.remove("ok");
+  if(!RVF.nudge){const pool=RV_NUDGE[RVF.kind].filter(x=>x!==rvNudgeLast);RVF.nudge=pool[Math.floor(Math.random()*pool.length)];rvNudgeLast=RVF.nudge}
+  el.textContent="📸 "+RVF.nudge;el.hidden=false}
 function rvOpen(kind){
-  Object.assign(RVF,{kind:null,rates:{},photos:[],busy:false});
+  Object.assign(RVF,{kind:null,rates:{},photos:[],busy:false,nudge:""});
   $("#rvForm").reset();$("#rvMsg").textContent="";$("#rvCount").textContent="0/700";rvPhotos();
   $("#rvStep1").hidden=false;$("#rvStep2").hidden=true;$("#rvDone").hidden=true;$("#rvDlgTitle").hidden=false;
   if(kind)rvKind(kind);
   $("#rvDlg").showModal();
 }
 function rvKind(k){
-  RVF.kind=k;RVF.rates={};
+  RVF.kind=k;RVF.rates={};RVF.nudge="";rvNudge();
   $("#rvStep1").hidden=true;$("#rvStep2").hidden=false;$("#rvKindLbl").textContent=RV_KIND[k];
   $("#rvSubjLbl").innerHTML=(k==="lesson"?"איזו הדרכה?":"איזה פסל או מתנה?")+" <small>(לא חובה)</small>";
   $("#rvSubj").placeholder=k==="lesson"?"למשל: איירבראש למתחילים":"למשל: באסט של באטמן";
@@ -1340,6 +1352,7 @@ function rvPhotos(){
   const box=$("#rvPhotos");box.querySelectorAll(".rv-th").forEach(x=>x.remove());
   RVF.photos.forEach((p,i)=>{const d=document.createElement("div");d.className="rv-th";d.innerHTML=`<img src="${p.preview}" alt="">${p.url?"":`<span class="rv-up">מעלה…</span>`}<button type="button" data-rm="${i}" aria-label="הסרת התמונה">✕</button>`;box.insertBefore(d,$("#rvAddPh"))});
   $("#rvAddPh").hidden=RVF.photos.length>=3;
+  rvNudge();
 }
 $("#rvAddPh").onclick=()=>$("#rvFile").click();
 $("#rvPhotos").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(!b)return;RVF.photos.splice(+b.dataset.rm,1);rvPhotos()});
