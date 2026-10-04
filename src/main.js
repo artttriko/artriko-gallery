@@ -153,8 +153,8 @@ const SAMPLES=[
 ];
 
 /* ================= Data (Supabase) ================= */
-const toRow=w=>({mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
+const toRow=w=>({section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
+const fromRow=r=>({section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -289,20 +289,27 @@ function sceneHTML(w,force){
 }
 function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">וידאו</div>`;return `<div class="flat"><img src="${im.orig}" alt="" loading="lazy"></div>`}
 
+function cardHTML(w){return `
+    <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
+      <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
+        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
+        ${w.example?`<span class="example">דוגמה</span>`:""}
+      </div>
+      <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
+    </article>`}
+function renderGifts(){
+  const gifts=[...S.works].filter(w=>w.section==="gift").sort((a,b)=>b.createdAt-a.createdAt);
+  $("#giftGrid").innerHTML=gifts.map(cardHTML).join("");
+  $("#giftGrid").hidden=!gifts.length;
+}
 function render(){
-  const all=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
+  renderGifts();
+  const all=[...S.works].filter(w=>w.section!=="gift").sort((a,b)=>b.createdAt-a.createdAt);
   renderFilters(all);
   const F=S.filter;
   const list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
   $("#count").textContent=`${list.length} יצירות`;
-  $("#grid").innerHTML=list.map(w=>`
-    <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
-      <div class="frame">${S.view==="room"?sceneHTML(w):flatHTML(w)}
-        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
-        ${w.example?`<span class="example">דוגמה</span>`:""}
-      </div>
-      <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ'].filter(Boolean).join(" · ")}</span></div>
-    </article>`).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
+  $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
   if(!list.length&&all.length)$("#grid").innerHTML=`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
   const top=all.find(firstImg); $("#heroScene").innerHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
   if(S.admin) renderAdminList();
@@ -336,12 +343,19 @@ $("#grid").addEventListener("click",e=>{
   const buy=e.target.closest("[data-buy]"); if(buy){e.stopPropagation();openContact(S.works.find(w=>w.id===buy.dataset.buy));return}
   const card=e.target.closest(".card"); if(card) openLB(card.dataset.id);
 });
+$("#giftGrid").addEventListener("click",e=>{
+  const buy=e.target.closest("[data-buy]"); if(buy){e.stopPropagation();openContact(S.works.find(w=>w.id===buy.dataset.buy));return}
+  const card=e.target.closest(".card"); if(card) openLB(card.dataset.id);
+});
+$("#giftGrid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList.contains("card"))openLB(e.target.dataset.id)});
 $("#grid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList.contains("card"))openLB(e.target.dataset.id)});
 
 /* ================= Links ================= */
 const wa=t=>CFG.whatsapp?`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(t||"")}`:"";
-["#igTop","#igHero","#igBar","#ctIg"].forEach(s=>$(s).href=CFG.instagram);
-["#ttTop","#ttHero","#ttBar","#ctTt"].forEach(s=>$(s).href=CFG.tiktok);
+["#igTop","#igBar","#ctIg"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
+["#ttTop","#ttBar","#ctTt"].forEach(s=>{const el=$(s);if(el)el.href=CFG.tiktok});
+$("#ctaOrder").onclick=()=>openContact("order");$("#orderBar").onclick=()=>openContact("order");
+$("#giftCta").onclick=()=>openContact("gift");
 
 /* ================= Lightbox ================= */
 let LB={w:null,slides:[],i:0};
@@ -412,6 +426,15 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 function openContact(w){
   track(w==="learn"?"learn":"want");
   $("#ctWa").hidden=true;
+  if(w==="order"||w==="gift"){
+    $("#ctTitle").textContent=w==="gift"?(TEXTS.giftCta||"אני רוצה מתנה כזו!"):"הזמנה אישית";
+    $("#ctSold").hidden=true;
+    $("#ctNote").textContent="ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית. כדאי לצרף תמונה או רפרנס:";
+    const t=w==="gift"?"היי ARTRIKO, אשמח לשמוע על מתנה מיוחדת בהתאמה אישית.":"היי ARTRIKO, אשמח להזמין פסל בהתאמה אישית. הדמות שאני רוצה:";
+    $("#ctMsg").textContent=t;
+    if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
+    $("#ct").showModal();return;
+  }
   if(w==="learn"){
     $("#ctTitle").textContent=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
     $("#ctSold").hidden=true;
@@ -493,9 +516,11 @@ async function loadStats(){
 }
 
 /* ================= Workshop photos ================= */
-let WSI=0;
-function showWs(i){const ph=TEXTS.wsPhotos||[];if(!ph.length)return;WSI=(i+ph.length)%ph.length;$("#wsLbImg").src=ph[WSI];$("#wsLbPrev").hidden=$("#wsLbNext").hidden=ph.length<2}
-$("#wsPhotos").addEventListener("click",e=>{const b=e.target.closest("[data-ph]");if(!b)return;showWs(+b.dataset.ph);$("#wsLb").showModal()});
+// One simple photo viewer for workshop photos and review photos
+let WSI=0,VIEW=[];
+function showWs(i){const ph=VIEW;if(!ph.length)return;WSI=(i+ph.length)%ph.length;$("#wsLbImg").src=ph[WSI];$("#wsLbPrev").hidden=$("#wsLbNext").hidden=ph.length<2}
+function openViewer(urls,i){VIEW=urls||[];showWs(i||0);$("#wsLb").showModal()}
+$("#wsPhotos").addEventListener("click",e=>{const b=e.target.closest("[data-ph]");if(!b)return;openViewer(TEXTS.wsPhotos||[],+b.dataset.ph)});
 $("#wsLbPrev").onclick=()=>showWs(WSI-1);$("#wsLbNext").onclick=()=>showWs(WSI+1);
 function renderWsPhAdmin(){const ph=TEXTS.wsPhotos||[];
   $("#wsPhList").innerHTML=ph.map((u,i)=>`<div class="ws-ph-item"><img src="${esc(u)}" alt=""><div class="row">${i>0?`<button type="button" class="pill small" data-wp="up" data-i="${i}">↑</button>`:""}<button type="button" class="pill small danger" data-wp="rm" data-i="${i}">הסרה</button></div></div>`).join("")}
@@ -668,6 +693,7 @@ $("#pwForm").onsubmit=async e=>{
 };
 async function loadAdminData(){
   renderAdminList();
+  loadReviews();
   const st=await getSetting("studio");if(st)STUDIO={...STUDIO,...st};renderStudio();
   const vv=await getSetting("voice");if(vv){VOICE=vv;$("#xVoice").value=vv.samples||"";$("#xVoiceRules").value=vv.rules||""}
   loadStats();
@@ -764,7 +790,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
     if(fromExample)S.works=S.works.filter(x=>x.id!==S.editing);
@@ -800,12 +826,12 @@ $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
   const list=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
-  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b><span>${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b><span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url}));
     $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -830,7 +856,10 @@ const DEFAULT_TEXTS={
   h1a:"כל פסל",h1hl:"נולד",h1b:"מהלב.",h1red:"בהדפסה.",
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
-  burst:"יד\nאחת\nפסל אחד",ctaIg:"לעקוב באינסטגרם",ctaTt:"לצפות בטיקטוק",
+  burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ↓",ctaOrder:"להזמנה אישית",
+  giftEyebrow:"מתנות ייחודיות",giftTitle:"מתנה שאין / לאף אחד אחר.",
+  giftText:"מעבר לפסלי האספנות, אני יוצר **מתנות אישיות אחת במינן**: ליום הולדת, לאירוע, לפרישה, לצוות, או למי שכבר יש לו הכול. מרעיון או תמונה ועד פריט מודפס וצבוע ביד.",
+  giftCta:"אני רוצה מתנה כזו!",
   introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
   galNote:"התמונות בגלריה עוברות עריכה קלה של תאורה, צבע ורקע כדי להתאים לתצוגה באתר. ייתכנו הבדלי גוון קלים בין מסכים. הפסל עצמו, כמובן, צבוע ביד ונאמן לעבודה המקורית.",
   wsEyebrow:"סדנאות והדרכות צביעה",
@@ -850,7 +879,13 @@ function renderTexts(){
   $("#tH1").innerHTML=`${esc(T.h1a)} ${T.h1hl?`<em>${esc(T.h1hl)}</em>`:""}<br>${esc(T.h1b)} ${T.h1red?`<b>${esc(T.h1red)}</b>`:""}`;
   $("#tP1").innerHTML=rich(T.p1);$("#tP2").innerHTML=rich(T.p2);$("#tP2").hidden=!T.p2;
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
-  $("#igHero").textContent=T.ctaIg||"Instagram";$("#ttHero").textContent=T.ctaTt||"TikTok";
+  $("#ctaMain").textContent=T.ctaMain||"לגלריה ↓";$("#ctaOrder").textContent=T.ctaOrder||"להזמנה אישית";$("#orderBar").textContent=T.ctaOrder||"להזמנה אישית";
+  const [g1,g2]=String(T.giftTitle||"").split("/").map(x=>x.trim());
+  $("#giftEyebrow").textContent=T.giftEyebrow||"";
+  $("#giftTitle").innerHTML=`${esc(g1||"")}${g2?`<br><span>${esc(g2)}</span>`:""}`;
+  $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=T.giftCta||"אני רוצה מתנה כזו!";
+  const giftOn=!!String(T.giftText||"").trim();
+  ["#gifts","#navGifts","#giftHero"].forEach(x=>$(x).hidden=!giftOn);
   setCaption(pickLine("studio",T.studioLines));
   $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();
   const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
@@ -864,22 +899,22 @@ function renderTexts(){
   $("#wsCombo").innerHTML=rich(T.wsCombo||"");
   $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
   const wsOn=!!String(T.wsText||"").trim();
-  $("#learn").hidden=!wsOn;$("#learnHero").hidden=!wsOn||T.btnLearn===false;
+  $("#learn").hidden=!wsOn;$("#learnHero").hidden=$("#navLearn").hidden=!wsOn||T.btnLearn===false;
   const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
   $("#wsPhotos").hidden=!ph.length;
   $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהסדנה"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
   // Buttons the admin chose to show
   const vis=(sels,on)=>sels.forEach(x=>{const el=$(x);if(el)el.hidden=!on});
-  vis(["#igTop","#igHero","#igBar","#ctIg","#igGuide"],T.btnIg!==false);
-  vis(["#ttTop","#ttHero","#ttBar","#ctTt","#ttGuide"],T.btnTt!==false);
-  vis(["#guideHero"],T.btnGuide!==false);
+  vis(["#igTop","#igBar","#ctIg","#igGuide"],T.btnIg!==false);
+  vis(["#ttTop","#ttBar","#ctTt","#ttGuide"],T.btnTt!==false);
+  vis(["#guideHero","#navGuide"],T.btnGuide!==false);
   let n=String(T.waNumber||"").replace(/\D/g,"");if(n.startsWith("0"))n="972"+n.slice(1);
   CFG.whatsapp=T.btnWa!==false&&n.length>=9?n:"";
   $("#waBar").hidden=!CFG.whatsapp;if(CFG.whatsapp)$("#waBar").href=wa("היי ARTRIKO, ראיתי את הגלריה ואשמח לשמוע עוד");
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaIg:"#xIg",ctaTt:"#xTt",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
@@ -1205,6 +1240,166 @@ function route(){
 window.addEventListener("hashchange",route);route();
 
 /* ================= Boot ================= */
+
+/* Highlight the section in view in the top navigation */
+(()=>{const links=[...document.querySelectorAll("#secnav a[href^='#']")].filter(a=>a.getAttribute("href")!=="#guide");
+  const map=new Map(links.map(a=>[a.getAttribute("href")==="#gallery"?document.querySelector(".gal-wrap"):document.querySelector(a.getAttribute("href")),a]).filter(([el])=>el));
+  const seen=new Map();
+  const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target,e.isIntersecting?e.intersectionRatio:0));
+    let best=null,br=0;seen.forEach((r,el)=>{if(r>br){br=r;best=el}});links.forEach(a=>a.classList.toggle("on",!!best&&map.get(best)===a))},{threshold:[0,.15,.3,.5]});
+  map.forEach((a,el)=>io.observe(el));
+  addEventListener("hashchange",()=>{if(location.hash==="#guide")links.forEach(a=>a.classList.remove("on"));document.querySelector("#navGuide")?.classList.toggle("on",location.hash==="#guide")});
+})();
+
+/* ================= Reviews ================= */
+// Customers (a piece or gift) and students (lesson or workshop) rate service, reliability and
+// professionalism, and may add a few words and up to 3 photos. Reviews appear after admin approval.
+const RV_CRIT={
+  piece:[["service","שירות","זמינות, תקשורת ויחס"],["reliable","אמינות","עמידה בזמנים ובמה שסוכם"],["pro","מקצועיות","איכות ההדפסה והצביעה"]],
+  lesson:[["service","שירות","יחס, סבלנות וזמינות"],["reliable","אמינות","עמידה בזמנים ובמה שהובטח"],["pro","מקצועיות","ידע ויכולת להסביר"]]
+};
+const RV_KIND={piece:"פסל או מתנה",lesson:"הדרכה או סדנה"};
+const RV_MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+let REVIEWS=[],RV_TAB="",RV_SHOW=6,RV_ADM="pending";
+const rvAvg=r=>(r.r_service+r.r_reliable+r.r_pro)/3;
+const starsHTML=(v,cls="")=>`<span class="stars ${cls}" role="img" aria-label="${v.toFixed(1)} מתוך 5"><span class="st-bg">★★★★★</span><span class="st-fg" style="width:${Math.max(0,Math.min(100,v/5*100))}%">★★★★★</span></span>`;
+async function loadReviews(){
+  const {data,error}=await sb.from("reviews").select("id,kind,name,subject,r_service,r_reliable,r_pro,body,photos,status,created_at").order("created_at",{ascending:false});
+  if(error){console.error(error);return}
+  REVIEWS=(data||[]).map(r=>({...r,photos:Array.isArray(r.photos)?r.photos:[]}));
+  renderReviews();if(S.admin)renderReviewsAdmin();
+}
+function renderReviews(){
+  const pub=REVIEWS.filter(r=>r.status==="approved");
+  const avg=a=>a.length?a.reduce((t,r)=>t+rvAvg(r),0)/a.length:0;
+  const crit=(k)=>pub.length?pub.reduce((t,r)=>t+r["r_"+k],0)/pub.length:0;
+  // summary
+  if(pub.length){
+    const A=avg(pub);
+    $("#rvSummary").innerHTML=`<div class="rv-score"><b>${A.toFixed(1)}</b>${starsHTML(A,"lg")}<span>${pub.length===1?"המלצה אחת":pub.length+" המלצות"}</span></div>
+      <div class="rv-crits">${[["service","שירות"],["reliable","אמינות"],["pro","מקצועיות"]].map(([k,l])=>{const v=crit(k);return `<div class="rv-crit"><span>${l}</span><i><em style="width:${v/5*100}%"></em></i><b>${v.toFixed(1)}</b></div>`}).join("")}</div>`;
+    $("#heroRating").hidden=false;$("#heroRating").innerHTML=`${starsHTML(A)} <b>${A.toFixed(1)}</b> · ${pub.length===1?"המלצה אחת":pub.length+" המלצות"}`;
+  }else{
+    $("#rvSummary").innerHTML=`<p class="rv-empty-s">עוד אין כאן המלצות. אפשר להיות הראשונים לכתוב.</p>`;
+    $("#heroRating").hidden=true;
+  }
+  const les=pub.filter(r=>r.kind==="lesson");
+  $("#wsRv").hidden=!les.length;if(les.length)$("#wsRv").innerHTML=`${starsHTML(avg(les))} מה אומרים על ההדרכות (${les.length})`;
+  // tabs only when both kinds exist
+  const both=pub.some(r=>r.kind==="piece")&&les.length>0;$("#rvTabs").hidden=!both;if(!both)RV_TAB="";
+  const list=pub.filter(r=>!RV_TAB||r.kind===RV_TAB);
+  $("#rvList").innerHTML=list.slice(0,RV_SHOW).map(r=>{
+    const d=new Date(r.created_at),v=rvAvg(r);
+    return `<article class="rv-card">
+      <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span></header>
+      <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(r.subject)}</span>`:""}</div>
+      ${r.body?`<p class="rv-body">${esc(r.body)}</p><button type="button" class="rv-more-t" hidden>עוד</button>`:""}
+      ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}" aria-label="תמונה ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
+      <details class="rv-det"><summary>פירוט הדירוג</summary>${RV_CRIT[r.kind].map(([k,l])=>`<div><span>${l}</span>${starsHTML(r["r_"+k])}</div>`).join("")}</details>
+    </article>`}).join("");
+  $("#rvMore").hidden=list.length<=RV_SHOW;
+  // show "more" only on long texts
+  requestAnimationFrame(()=>document.querySelectorAll("#rvList .rv-body").forEach(p=>{const b=p.nextElementSibling;if(b&&p.scrollHeight>p.clientHeight+4)b.hidden=false}));
+}
+$("#rvTabs").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;RV_TAB=b.dataset.k;RV_SHOW=6;$("#rvTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderReviews()});
+$("#rvMore").onclick=()=>{RV_SHOW+=6;renderReviews()};
+$("#rvList").addEventListener("click",e=>{
+  const t=e.target.closest(".rv-more-t");if(t){const p=t.previousElementSibling;p.classList.toggle("open");t.textContent=p.classList.contains("open")?"פחות":"עוד";return}
+  const ph=e.target.closest("[data-rvph]");if(ph){const r=REVIEWS.find(x=>x.id===ph.dataset.rvph);if(r)openViewer(r.photos,+ph.dataset.i)}});
+$("#wsRv").addEventListener("click",()=>{const b=$("#rvTabs").querySelector('[data-k="lesson"]');if(b&&!$("#rvTabs").hidden)b.click()});
+
+/* ---- review form ---- */
+const RVF={kind:null,rates:{},photos:[],busy:false};
+function rvOpen(kind){
+  Object.assign(RVF,{kind:null,rates:{},photos:[],busy:false});
+  $("#rvForm").reset();$("#rvMsg").textContent="";$("#rvCount").textContent="0/700";rvPhotos();
+  $("#rvStep1").hidden=false;$("#rvStep2").hidden=true;$("#rvDone").hidden=true;$("#rvDlgTitle").hidden=false;
+  if(kind)rvKind(kind);
+  $("#rvDlg").showModal();
+}
+function rvKind(k){
+  RVF.kind=k;RVF.rates={};
+  $("#rvStep1").hidden=true;$("#rvStep2").hidden=false;$("#rvKindLbl").textContent=RV_KIND[k];
+  $("#rvSubjLbl").innerHTML=(k==="lesson"?"איזו הדרכה?":"איזה פסל או מתנה?")+" <small>(לא חובה)</small>";
+  $("#rvSubj").placeholder=k==="lesson"?"למשל: איירבראש למתחילים":"למשל: באסט של באטמן";
+  $("#rvBody").placeholder=k==="lesson"?"מה היה הכי שווה בהדרכה?":"איך היה התהליך, ואיך הפסל נראה במציאות?";
+  $("#rvRates").innerHTML=RV_CRIT[k].map(([key,l,hint])=>`<div class="rv-rate-row" data-key="${key}"><div><b>${l}</b><small>${hint}</small></div>
+    <div class="rv-stars" role="radiogroup" aria-label="${l}">${[1,2,3,4,5].map(n=>`<button type="button" role="radio" aria-checked="false" data-n="${n}" aria-label="${n} מתוך 5">★</button>`).join("")}</div></div>`).join("");
+}
+function rvPaintRow(row,n){row.querySelectorAll("[data-n]").forEach(b=>{const on=+b.dataset.n<=n;b.classList.toggle("on",on);b.setAttribute("aria-checked",+b.dataset.n===n?"true":"false")})}
+$("#rvWrite").onclick=()=>rvOpen();
+$("#rvDlg").addEventListener("click",e=>{const k=e.target.closest("[data-kind]");if(k){rvKind(k.dataset.kind);return}});
+$("#rvBack").onclick=()=>{$("#rvStep1").hidden=false;$("#rvStep2").hidden=true};
+$("#rvRates").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b)return;const row=b.closest(".rv-rate-row");RVF.rates[row.dataset.key]=+b.dataset.n;rvPaintRow(row,+b.dataset.n);row.classList.remove("need")});
+$("#rvRates").addEventListener("pointerover",e=>{const b=e.target.closest("[data-n]");if(!b||e.pointerType!=="mouse")return;const row=b.closest(".rv-rate-row");row.querySelectorAll("[data-n]").forEach(x=>x.classList.toggle("hov",+x.dataset.n<=+b.dataset.n))});
+$("#rvRates").addEventListener("pointerout",e=>{const row=e.target.closest(".rv-rate-row");if(row)row.querySelectorAll(".hov").forEach(x=>x.classList.remove("hov"))});
+$("#rvRates").addEventListener("keydown",e=>{const b=e.target.closest("[data-n]");if(!b)return;const row=b.closest(".rv-rate-row");let n=RVF.rates[row.dataset.key]||0;
+  if(e.key==="ArrowLeft")n=Math.min(5,n+1);else if(e.key==="ArrowRight")n=Math.max(1,n-1);else return;e.preventDefault();RVF.rates[row.dataset.key]=n;rvPaintRow(row,n);row.querySelector(`[data-n="${n}"]`).focus()});
+$("#rvBody").addEventListener("input",e=>$("#rvCount").textContent=`${e.target.value.length}/700`);
+function rvPhotos(){
+  const box=$("#rvPhotos");box.querySelectorAll(".rv-th").forEach(x=>x.remove());
+  RVF.photos.forEach((p,i)=>{const d=document.createElement("div");d.className="rv-th";d.innerHTML=`<img src="${p.preview}" alt="">${p.url?"":`<span class="rv-up">מעלה…</span>`}<button type="button" data-rm="${i}" aria-label="הסרת התמונה">✕</button>`;box.insertBefore(d,$("#rvAddPh"))});
+  $("#rvAddPh").hidden=RVF.photos.length>=3;
+}
+$("#rvAddPh").onclick=()=>$("#rvFile").click();
+$("#rvPhotos").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(!b)return;RVF.photos.splice(+b.dataset.rm,1);rvPhotos()});
+$("#rvFile").onchange=async e=>{
+  const files=[...e.target.files].filter(f=>f.type.startsWith("image")).slice(0,3-RVF.photos.length);e.target.value="";
+  for(const f of files){
+    const p={preview:"",url:null};RVF.photos.push(p);
+    try{
+      const data=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(f)});
+      const small=await downscale(data,1600);p.preview=small;rvPhotos();
+      const path=`u/${crypto.randomUUID()}.jpg`;
+      const {error}=await sb.storage.from("reviews").upload(path,b64Blob(small),{contentType:"image/jpeg",upsert:false});
+      if(error)throw error;
+      p.url=`${SB_URL}/storage/v1/object/public/reviews/${path}`;rvPhotos();
+    }catch(err){console.error(err);RVF.photos.splice(RVF.photos.indexOf(p),1);rvPhotos();$("#rvMsg").textContent="לא הצלחנו להעלות את התמונה. אפשר לנסות שוב או לשלוח בלי."}
+  }
+};
+$("#rvForm").onsubmit=async e=>{
+  e.preventDefault();if(RVF.busy)return;
+  const miss=RV_CRIT[RVF.kind].filter(([k])=>!RVF.rates[k]);
+  miss.forEach(([k])=>$(`.rv-rate-row[data-key="${k}"]`).classList.add("need"));
+  const name=$("#rvName").value.trim();
+  if(miss.length||!name){$("#rvMsg").textContent=miss.length?"נשאר לסמן כוכבים בכל שלוש השורות.":"נשאר רק לכתוב שם שיוצג.";(miss.length?$(`.rv-rate-row[data-key="${miss[0][0]}"] [data-n]`):$("#rvName")).focus();return}
+  if(RVF.photos.some(p=>!p.url)){$("#rvMsg").textContent="רגע, התמונות עוד עולות…";return}
+  RVF.busy=true;$("#rvSend").disabled=true;$("#rvMsg").textContent="שולח…";
+  try{
+    const r=await fetch("/api/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind:RVF.kind,name,subject:$("#rvSubj").value,body:$("#rvBody").value,
+      service:RVF.rates.service,reliable:RVF.rates.reliable,pro:RVF.rates.pro,photos:RVF.photos.map(p=>p.url),website:$("#rvWeb").value})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw {code:j.code};
+    $("#rvStep2").hidden=true;$("#rvDlgTitle").hidden=true;$("#rvDone").hidden=false;
+    if(S.admin)loadReviews();
+  }catch(err){$("#rvMsg").textContent=err?.code==="too_many"?"נשלחו כבר כמה המלצות מהמכשיר הזה היום. תודה! אפשר לנסות שוב מחר.":"השליחה לא הצליחה. אפשר לנסות שוב בעוד רגע."}
+  finally{RVF.busy=false;$("#rvSend").disabled=false}
+};
+
+/* ---- admin: approve, hide, delete ---- */
+function renderReviewsAdmin(){
+  const n=REVIEWS.filter(r=>r.status==="pending").length;$("#rvPendN").hidden=!n;$("#rvPendN").textContent=n;
+  const list=REVIEWS.filter(r=>r.status===RV_ADM);
+  $("#rvAdmList").innerHTML=list.map(r=>`<div class="rv-adm-i" data-id="${esc(r.id)}">
+    <div class="rv-adm-h"><b>${esc(r.name)}</b><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span>${starsHTML(rvAvg(r))}<small>${new Date(r.created_at).toLocaleDateString("he-IL")}</small></div>
+    <small class="note">שירות ${r.r_service} · אמינות ${r.r_reliable} · מקצועיות ${r.r_pro}${r.subject?` · ${esc(r.subject)}`:""}</small>
+    ${r.body?`<p>${esc(r.body)}</p>`:""}
+    ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:""}
+    <div class="row">${r.status!=="approved"?`<button type="button" class="pill small solid" data-rv="approved">אישור ופרסום</button>`:""}${r.status!=="hidden"?`<button type="button" class="pill small" data-rv="hidden">הסתרה</button>`:""}<button type="button" class="pill small danger" data-rv="delete">מחיקה</button></div>
+  </div>`).join("")||`<p class="note">${RV_ADM==="pending"?"אין המלצות שמחכות לאישור.":"אין כאן המלצות."}</p>`;
+}
+$("#rvAdmTabs").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(!b)return;RV_ADM=b.dataset.s;$("#rvAdmTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderReviewsAdmin()});
+$("#rvAdmList").addEventListener("click",async e=>{
+  const ph=e.target.closest("[data-rvph]");if(ph){const r=REVIEWS.find(x=>x.id===ph.dataset.rvph);if(r)openViewer(r.photos,+ph.dataset.i);return}
+  const b=e.target.closest("[data-rv]");if(!b)return;const id=b.closest("[data-id]").dataset.id,a=b.dataset.rv;
+  if(a==="delete"){if(!confirm("למחוק את ההמלצה לצמיתות?"))return;const r=REVIEWS.find(x=>x.id===id);
+    const {error}=await sb.from("reviews").delete().eq("id",id);if(error){toast("המחיקה נכשלה");return}
+    const paths=(r?.photos||[]).map(u=>u.split("/object/public/reviews/")[1]).filter(Boolean);if(paths.length)sb.storage.from("reviews").remove(paths);
+  }else{const {error}=await sb.from("reviews").update({status:a}).eq("id",id);if(error){toast("השמירה נכשלה");return}}
+  toast(a==="approved"?"ההמלצה פורסמה באתר":a==="hidden"?"ההמלצה הוסתרה":"ההמלצה נמחקה");loadReviews()});
+
+loadReviews();
+
 (async()=>{
   const v=load("view2");if(v==="room"){S.view="room";press($("#vRoom").parentNode,$("#vRoom"))}
   const sz=+load("size");setSize(sz||300);

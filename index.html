@@ -20,12 +20,13 @@
 <div class="wrap">
   <header class="top">
     <a class="mark" href="#top">ARTRIKO</a>
-    <div class="topnav">
-    <button class="lock lock-top" id="lockTop" type="button" aria-label="כניסת מנהל" title="כניסת מנהל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
-    <nav class="social" aria-label="רשתות">
-      <a class="pill" id="igTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</a>
-      <a class="pill" id="ttTop" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg>TikTok</a>
+    <nav class="secnav" id="secnav" aria-label="ניווט באתר">
+      <a href="#gallery">גלריה</a><a href="#reviews" id="navReviews">המלצות</a><a href="#gifts" id="navGifts">מתנות</a><a href="#learn" id="navLearn">סדנאות</a><a href="#guide" id="navGuide">המדריך לאספנים</a>
     </nav>
+    <div class="topnav">
+      <a class="ico" id="igTop" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+      <a class="ico" id="ttTop" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg></a>
+      <button class="lock lock-top" id="lockTop" type="button" aria-label="כניסת מנהל" title="כניסת מנהל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
     </div>
   </header>
 
@@ -36,12 +37,13 @@
       <p id="tP1"></p>
       <p id="tP2"></p>
       <div class="cta">
-        <a class="pill big solid" id="igHero" target="_blank" rel="noopener"></a>
-        <a class="pill big" id="ttHero" target="_blank" rel="noopener"></a>
-        <a class="pill big" href="#gallery">לגלריה ↓</a>
-        <a class="pill big guide-link" href="#guide" id="guideHero">המדריך לאספנים</a>
-        <a class="pill big learn-link" href="#learn" id="learnHero">ללמוד לצבוע ↓</a>
+        <a class="pill big solid" href="#gallery" id="ctaMain">לגלריה ↓</a>
+        <button class="pill big" type="button" id="ctaOrder">להזמנה אישית</button>
       </div>
+      <a class="hero-rating" href="#reviews" id="heroRating" hidden></a>
+      <nav class="hero-links" aria-label="עוד באתר">
+        <a href="#guide" id="guideHero">המדריך לאספנים</a><a href="#learn" id="learnHero">סדנאות צביעה</a><a href="#gifts" id="giftHero">מתנות ייחודיות</a>
+      </nav>
     </div>
     <div class="hero-art"><div class="burst" id="tBurst"></div><div id="heroScene"></div></div>
   </section>
@@ -68,6 +70,32 @@
   <p class="gal-note" id="galNote"></p>
   </div>
 
+  <section class="rv" id="reviews" aria-labelledby="rvTitle">
+    <div class="rv-top">
+      <div>
+        <span class="ws-eyebrow">המלצות</span>
+        <h2 class="sec-title" id="rvTitle">מה אומרים<br><span>אחרי שהפסל הגיע הביתה.</span></h2>
+      </div>
+      <div class="rv-summary" id="rvSummary"></div>
+    </div>
+    <div class="rv-bar">
+      <div class="seg rv-tabs" id="rvTabs" role="group" aria-label="סוג ההמלצות"><button type="button" data-k="" aria-pressed="true">הכול</button><button type="button" data-k="piece" aria-pressed="false">פסלים ומתנות</button><button type="button" data-k="lesson" aria-pressed="false">הדרכות</button></div>
+      <button class="pill solid" type="button" id="rvWrite">✍️ לכתוב המלצה</button>
+    </div>
+    <div class="rv-list" id="rvList"></div>
+    <div class="rv-more"><button class="pill" type="button" id="rvMore" hidden>עוד המלצות</button></div>
+  </section>
+
+  <section class="gifts" id="gifts" aria-labelledby="giftTitle">
+    <div class="gift-head">
+      <span class="ws-eyebrow gift-eyebrow" id="giftEyebrow"></span>
+      <h2 class="sec-title" id="giftTitle"></h2>
+      <p class="ws-text" id="giftText"></p>
+      <button class="pill big solid" type="button" id="giftCta"></button>
+    </div>
+    <div class="grid gift-grid" id="giftGrid"></div>
+  </section>
+
   <section class="ws" id="learn" aria-labelledby="wsTitle">
     <div class="ws-head">
       <span class="ws-eyebrow" id="wsEyebrow"></span>
@@ -75,6 +103,7 @@
       <p class="ws-text" id="wsText"></p>
       <ul class="ws-formats" id="wsFormats"></ul>
       <button class="pill big solid ws-cta" id="wsCta" type="button"></button>
+      <a class="ws-rv" href="#reviews" id="wsRv" hidden></a>
     </div>
     <div class="ws-tools">
       <article class="ws-tool air"><h3>איירבראש <small>Airbrush</small></h3><ul id="wsAir"></ul></article>
@@ -212,9 +241,10 @@
 </div>
 
 <div class="mbar">
-  <a class="pill" id="waBar" target="_blank" rel="noopener" hidden>WhatsApp</a>
-  <a class="pill ig" id="igBar" target="_blank" rel="noopener">Instagram</a>
-  <a class="pill" id="ttBar" target="_blank" rel="noopener">TikTok</a>
+  <button class="pill solid" type="button" id="orderBar">להזמנה אישית</button>
+  <a class="ico" id="waBar" target="_blank" rel="noopener" hidden aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
+  <a class="ico" id="igBar" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+  <a class="ico" id="ttBar" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg></a>
 </div>
 
 <!-- Lightbox -->
@@ -251,6 +281,41 @@
     <button type="button" class="pill small" data-c="0.1" aria-label="0.1 מעלות ימינה">+0.1°</button>
   </div>
   <div class="cr-tools"><button type="button" class="pill small" data-c="rotL">↺ 90°</button><button type="button" class="pill small" data-c="rotR">↻ 90°</button><button type="button" class="pill small" data-c="flip">היפוך</button><button type="button" class="pill small" data-c="reset">איפוס</button></div>
+</dialog>
+
+<dialog id="rvDlg" class="sheet rv-dlg" aria-labelledby="rvDlgTitle">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <form id="rvForm" novalidate>
+    <h3 id="rvDlgTitle">לכתוב המלצה</h3>
+    <div class="rv-step" id="rvStep1">
+      <p class="note">על מה ההמלצה?</p>
+      <div class="rv-kinds">
+        <button type="button" class="rv-kind" data-kind="piece"><span aria-hidden="true">🗿</span><b>פסל או מתנה</b><small>יצירה שהזמנתי או קניתי</small></button>
+        <button type="button" class="rv-kind" data-kind="lesson"><span aria-hidden="true">🎨</span><b>הדרכה או סדנה</b><small>למדתי לצבוע</small></button>
+      </div>
+    </div>
+    <div class="rv-step" id="rvStep2" hidden>
+      <button type="button" class="rv-back" id="rvBack">→ <span id="rvKindLbl"></span> · שינוי</button>
+      <div class="rv-rates" id="rvRates"></div>
+      <label class="rv-f">שם שיוצג<input id="rvName" maxlength="40" autocomplete="given-name" placeholder="למשל: דנה מחיפה" required></label>
+      <label class="rv-f"><span id="rvSubjLbl"></span><input id="rvSubj" maxlength="60"></label>
+      <label class="rv-f">כמה מילים <small>(לא חובה)</small><textarea id="rvBody" maxlength="700" rows="3"></textarea><small class="rv-count" id="rvCount">0/700</small></label>
+      <div class="rv-f"><span>תמונות <small>(עד 3, לא חובה)</small></span>
+        <div class="rv-photos" id="rvPhotos"><button type="button" class="rv-add" id="rvAddPh" aria-label="הוספת תמונה">+<small>תמונה</small></button></div>
+        <input type="file" id="rvFile" accept="image/*" multiple hidden>
+      </div>
+      <input class="hp" id="rvWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="note rv-msg" id="rvMsg" role="status"></p>
+      <button class="pill big solid" type="submit" id="rvSend">שליחת ההמלצה</button>
+      <p class="note">ההמלצה תופיע באתר אחרי אישור קצר.</p>
+    </div>
+    <div class="rv-step rv-done" id="rvDone" hidden>
+      <div class="rv-done-ic" aria-hidden="true">★</div>
+      <h3>תודה רבה!</h3>
+      <p>ההמלצה התקבלה ותופיע באתר אחרי אישור קצר.</p>
+      <button class="pill" type="button" data-close>סגירה</button>
+    </div>
+  </form>
 </dialog>
 
 <dialog id="ct" class="sheet">
@@ -298,6 +363,7 @@
       <button type="button" data-tab="work" aria-pressed="true">יצירה</button>
       <button type="button" data-tab="list" aria-pressed="false">יצירות בגלריה</button>
       <button type="button" data-tab="texts" aria-pressed="false">טקסטים בדף</button>
+      <button type="button" data-tab="reviews" aria-pressed="false">המלצות <span class="tab-n" id="rvPendN" hidden></span></button>
       <button type="button" data-tab="studio" aria-pressed="false">וידאו רקע</button>
       <button type="button" data-tab="voice" aria-pressed="false">הקול שלך</button>
       <button type="button" data-tab="account" aria-pressed="false">סיסמה</button>
@@ -309,6 +375,7 @@
       <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
       <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק"></label>
       <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד</option></select></label>
+      <label>איפה מוצג<select id="fSection"><option value="collect">גלריית הפסלים</option><option value="gift">מתנות ייחודיות</option></select></label>
       <label>הצגה בהמחשת גודל<select id="fMount"><option value="stand">עומד על הרצפה</option><option value="wall">תלוי על הקיר</option></select></label>
       <div class="full cat-box">
         <div class="cat-head"><strong>סיווג לפילטרים</strong><span class="note" id="catState">יתמלא אוטומטית אחרי ניתוח התמונות. אפשר לשנות ידנית.</span></div>
@@ -355,8 +422,13 @@
       <label class="full">פסקה ראשונה<textarea id="xP1" maxlength="600"></textarea></label>
       <label class="full">פסקה שנייה<textarea id="xP2" maxlength="600"></textarea></label>
       <label>מדבקה צהובה (שורה לכל מילה)<textarea id="xBurst" maxlength="40" style="min-height:70px"></textarea></label>
-      <div style="display:grid;gap:12px"><label>כפתור אינסטגרם<input id="xIg" maxlength="30"></label><label>כפתור טיקטוק<input id="xTt" maxlength="30"></label></div>
+      <div style="display:grid;gap:12px"><label>כפתור ראשי<input id="xCtaMain" maxlength="30"></label><label>כפתור הזמנה<input id="xCtaOrder" maxlength="30"></label></div>
       <label class="full">הערה קטנה מתחת לגלריה (ריק = לא מוצגת)<textarea id="xGalNote" maxlength="300" style="min-height:60px"></textarea></label>
+      <h4 class="full" style="margin:10px 0 0">מתנות ייחודיות</h4>
+      <label>כותרת קטנה<input id="xGiftEyebrow" maxlength="60"></label>
+      <label>כותרת (עם / בין השורה הלבנה לצבעונית)<input id="xGiftTitle" maxlength="90"></label>
+      <label class="full">פסקה (להדגשה: **מילים**). ריק = הסקשן מוסתר<textarea id="xGiftText" maxlength="700"></textarea></label>
+      <label>כפתור<input id="xGiftCta" maxlength="40"></label>
       <h4 class="full" style="margin:10px 0 0">סדנאות והדרכות צביעה</h4>
       <label>כותרת קטנה<input id="xWsEyebrow" maxlength="60"></label>
       <label>כותרת (עם / בין השורה הלבנה לצהובה)<input id="xWsTitle" maxlength="90"></label>
@@ -382,6 +454,13 @@
       <div class="full toolrow"><button class="pill" type="submit" style="background:var(--pop);border-color:var(--pop)">שמירת הטקסטים</button><button class="pill" type="button" id="xReset">חזרה לטקסט המקורי</button><span class="note" id="xMsg"></span></div>
     </form>
     </section>
+    <section data-pane="reviews" hidden>
+    <h4>המלצות</h4>
+    <p class="note">המלצות חדשות מחכות כאן לאישור, ורק המאושרות מופיעות באתר.</p>
+    <div class="seg" id="rvAdmTabs" role="group"><button type="button" data-s="pending" aria-pressed="true">ממתינות</button><button type="button" data-s="approved" aria-pressed="false">באתר</button><button type="button" data-s="hidden" aria-pressed="false">מוסתרות</button></div>
+    <div id="rvAdmList" class="rv-adm"></div>
+    </section>
+
     <section data-pane="account" hidden>
     <h4>סיסמה</h4>
     <p class="note">אחרי כניסה דרך קישור במייל, הגדר כאן סיסמה. בפעם הבאה תיכנס עם אימייל וסיסמה.</p>
