@@ -104,3 +104,9 @@ begin
     from public.events group by kind) s), '{}'::json);
 end $$;
 revoke execute on function public.event_stats() from anon, public;
+
+-- 2026-10-04: anonymous device id (random, stored only as a salted hash) for unique visitors,
+-- plus visit_analytics(p_days) for the admin charts. Applied as migration "visitor_ids_and_analytics":
+-- visits/events get a visitor_hash column; record_visit(p_secret, p_ip_hash, p_visitor_hash) and
+-- record_event(p_secret, p_ip_hash, p_kind, p_visitor_hash) dedupe per visitor (or IP when no id);
+-- visit_analytics returns uniques (today/week/month/total), days, months, hours and weekdays in Israel time.
