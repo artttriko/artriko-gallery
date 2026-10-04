@@ -874,6 +874,36 @@ function formatTitle(en,title,heName){
   t=t.replace(re,"").replace(/^[-–—:|·\s]+/,"").trim();
   return t?`${en} – ${t}`:en;
 }
+/* Keyword-based suggestions: used when Gemini and OpenAI are both unavailable */
+const EN_NAMES={"באטמן":"BATMAN","בטמן":"BATMAN","ספיידרמן":"SPIDER-MAN","ספיידר מן":"SPIDER-MAN","סופרמן":"SUPERMAN","איירון מן":"IRON MAN","איירונמן":"IRON MAN","ג'וקר":"JOKER","גוקר":"JOKER","דדפול":"DEADPOOL","וונדר וומן":"WONDER WOMAN","האלק":"HULK","הענק הירוק":"HULK","תור":"THOR","לוקי":"LOKI","דארת' ויידר":"DARTH VADER","דארת ויידר":"DARTH VADER","יודה":"YODA","גרוט":"GROOT","ונום":"VENOM","וולברין":"WOLVERINE","קפטן אמריקה":"CAPTAIN AMERICA","טנוס":"THANOS","פיקאצ'ו":"PIKACHU","גוקו":"GOKU","נארוטו":"NARUTO","בלאק פנתר":"BLACK PANTHER","דוקטור סטריינג'":"DOCTOR STRANGE","הארלי קווין":"HARLEY QUINN","מנדלוריאן":"MANDALORIAN","פרדטור":"PREDATOR","חייזר":"ALIEN","גודזילה":"GODZILLA","שרק":"SHREK","סוניק":"SONIC","מריו":"MARIO","קרייטוס":"KRATOS","ווקר":"WALKER","גנדלף":"GANDALF","גולום":"GOLLUM"};
+const pickN=(a,n)=>[...a].sort(()=>Math.random()-.5).slice(0,n);
+function localSuggest(){
+  const hint=$("#aiHint").value.trim(),name=$("#fName").value.trim();
+  const parts=(hint||name).split(/[,،\n]/).map(x=>x.trim()).filter(Boolean);
+  let he=parts[0]||"";const extra=parts.slice(1).join(", ");
+  let en=cleanEn((he.match(/[A-Za-z][A-Za-z0-9 .'&:-]*/)||[""])[0]);
+  if(!en){const k=Object.keys(EN_NAMES).sort((a,b)=>b.length-a.length).find(k=>he.includes(k));if(k)en=EN_NAMES[k]}
+  if(/^[A-Za-z0-9 .'&:-]+$/.test(he))he=en||he;
+  const who=he||"הדמות הזו";
+  const T={
+    funny:{t:["צבוע ביד, מסוכן בעין","מגיע עם אגו מוכן","קטן בגודל, ענק באופי","מוכן לכבוש את המדף","עבר מהמסך אל המדף"],
+      s:[`${who} הגיע לסטודיו, ישב בסבלנות מול האיירבראש ויצא עם יותר סטייל ממה שנכנס. מודפס בתלת־ממד וצבוע ביד, שכבה אחרי שכבה. מקום על המדף כבר יש?`,`אזהרה: ${who} לא מסכים לעמוד ליד פסלים משעממים. הדפסה מדויקת, צביעה ידנית ואופי שאי אפשר לפספס. מחפש בית חדש.`]},
+    warm:{t:["כל שכבה מספרת סיפור","נולד מצבע וסבלנות","רגע אחד, לנצח על המדף","מהלב, ביד, לאט"],
+      s:[`יש דמויות שנשארות איתנו מהילדות. ${who} נבנה כאן בהדפסה מדויקת ונצבע ביד, עם תשומת לב לכל צל ולכל ניצוץ. פריט אחד במינו לאספנים שמרגישים את זה.`,`${who}, כמו שזוכרים אותו, רק קרוב יותר. כל משיכת מכחול כאן נעשתה ביד ובסבלנות, עד שהדמות התחילה לנשום. לפרטים, אפשר לכתוב לי.`]},
+    bold:{t:["אגדה בגימור מלא","שליט המדף החדש","בלי פשרות, רק צבע","נוכחות שאי אפשר להתעלם ממנה"],
+      s:[`${who} בגרסת ARTRIKO: הדפסה מדויקת, צביעה ידנית מלאה וגימור שלא מתפשר. יש רק אחד כזה. לפרטים ולהזמנה, אפשר לכתוב לי.`,`לא עוד פסל מהמדף בחנות. ${who} מודפס ונצבע ביד מאפס, עם עומק, צללים והדגשות שבונים נוכחות. לאספנים שמחפשים משהו אמיתי.`]}
+  };
+  const add=extra?` בגרסה הזו: ${extra}.`:"";
+  return ["funny","warm","bold"].map(k=>({title:formatTitle(en,pickN(T[k].t,1)[0],he),summary:withExtra(pickN(T[k].s,1)[0],add)}));
+}
+// put the artist's extra keywords just before the closing sentence
+function withExtra(text,add){if(!add)return text;const ss=text.match(/[^.?!]+[.?!]+/g)||[text];if(ss.length<2)return (text+add).trim();ss.splice(ss.length-1,0,add);return ss.join("").replace(/\s+/g," ").trim()}
+function showOptions(list,who,state){
+  $("#aiPicked").hidden=true;
+  $("#aiOpts").innerHTML=who+list.map((o,i)=>`<div class="opt" data-i="${i}"><b>${esc(o.title)}</b><p>${esc(o.summary||"")}</p><div class="row"><button type="button" class="pill small" data-use="${i}">להשתמש בזו</button></div></div>`).join("");
+  $("#aiOpts").dataset.json=JSON.stringify(list);
+  $("#aiState").textContent=state;
+}
 async function suggest(fresh){
   aiCtl?.abort();aiCtl=new AbortController();const my=aiCtl;
   const imgs=S.staged.filter(s=>s.kind==="image"&&s.ready).slice(0,3);
@@ -893,14 +923,18 @@ async function suggest(fresh){
     if(!list.length)throw{code:"invalid_json"};
     applyCategorization(out);
     const who=out.character?`<div class="opt-who"><span>הדמות: <b>${esc(out.character)}</b>${out.confidence?` · ביטחון ${esc(out.confidence)}`:""}</span>${out.seen?`<small>${esc(out.seen)}</small>`:""}<small>לא מדויק? כתוב את הדמות בשדה למעלה ולחץ "הצעות חדשות".</small></div>`:"";
-    $("#aiPicked").hidden=true;
-    $("#aiOpts").innerHTML=who+list.map((o,i)=>`<div class="opt" data-i="${i}"><b>${esc(o.title)}</b><p>${esc(o.summary||"")}</p><div class="row"><button type="button" class="pill small" data-use="${i}">להשתמש בזו</button></div></div>`).join("");
-    $("#aiOpts").dataset.json=JSON.stringify(list);
-    $("#aiState").textContent=(images.length?`נשלחו ${images.length} תמונות. `:"")+"בחר הצעה. אפשר לערוך אחרי שהיא נכנסת לטופס.";
+    const via=j.provider==="openai"?"Gemini היה עמוס, אז ההצעות הגיעו מ־OpenAI. ":"";
+    showOptions(list,who,via+(images.length?`נשלחו ${images.length} תמונות. `:"")+"בחר הצעה. אפשר לערוך אחרי שהיא נכנסת לטופס.");
   }catch(e){
     const code=e?.name==="AbortError"?"cancelled":e?.code;
-    const msg={cancelled:"נעצר.",no_key:"מפתח Gemini עוד לא הוגדר ב־Vercel (GEMINI_API_KEY).",not_admin:"צריך להיות מחובר כמנהל.",rate_limited:"יותר מדי בקשות ל־Gemini. נסה שוב בעוד דקה.",too_large:"התמונות גדולות מדי. נסה פחות תמונות.",invalid_json:"התשובה לא הגיעה בפורמט הנכון. לחץ \"הצעות חדשות\".",refused:"Gemini לא כתב הצעה לתמונות האלה. נסה להוסיף פרטים על הדמות."}[code]||"משהו השתבש. לחץ \"הצעות חדשות\" כדי לנסות שוב.";
-    if(my===aiCtl)$("#aiState").textContent=msg;
+    if(my!==aiCtl)return;
+    if(code==="cancelled"){$("#aiState").textContent="נעצר.";return}
+    if(code==="not_admin"){$("#aiState").textContent="צריך להיות מחובר כמנהל.";return}
+    // AI unavailable: offer quick suggestions built from the keywords instead
+    const why={rate_limited:"Gemini הגיע למגבלת השימוש",no_key:"מפתח ה־AI לא מוגדר",refused:"ה־AI לא כתב הצעה לתמונות האלה",invalid_json:"התשובה מה־AI לא הגיעה בפורמט הנכון"}[code]||"ה־AI לא זמין כרגע";
+    const hasWords=$("#aiHint").value.trim()||$("#fName").value.trim();
+    const list=localSuggest();
+    showOptions(list,`<div class="opt-who"><span>הצעות מהירות לפי מילות מפתח</span><small>${hasWords?"נבנו מהטקסט שכתבת. ":"כדאי לכתוב בשדה למעלה מי הדמות (למשל: באטמן, באסט, צבעים כהים) ולחץ \"הצעות חדשות\". "}לסיווג (קטגוריה, קנה מידה) צריך את ה־AI, אז כדאי לבדוק אותו ידנית.</small></div>`,`${why}, אז הנה הצעות מהירות לפי מילות המפתח. "הצעות חדשות" נותן גרסאות אחרות.`);
   }finally{if(my===aiCtl){$("#aiStop").hidden=true;$("#aiRun").disabled=false}}
 }
 $("#aiRun").onclick=()=>suggest(true);
