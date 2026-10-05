@@ -153,8 +153,8 @@ const SAMPLES=[
 ];
 
 /* ================= Data (Supabase) ================= */
-const toRow=w=>({section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
+const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
+const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -289,6 +289,8 @@ function sceneHTML(w,force){
 }
 function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">וידאו</div>`;return `<div class="flat"><img src="${im.orig}" alt="" loading="lazy"></div>`}
 
+// Display order: the admin's own order; works never placed yet (e.g. just added) come first, newest first
+const byOrder=(a,b)=>{const ao=a.order==null,bo=b.order==null;if(ao&&bo)return b.createdAt-a.createdAt;if(ao)return -1;if(bo)return 1;return a.order-b.order||b.createdAt-a.createdAt};
 function cardHTML(w){return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
@@ -299,7 +301,7 @@ function cardHTML(w){return `
       <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
     </article>`}
 function renderGifts(){
-  const gifts=[...S.works].filter(w=>w.section==="gift").sort((a,b)=>b.createdAt-a.createdAt);
+  const gifts=[...S.works].filter(w=>w.section==="gift").sort(byOrder);
   $("#giftGrid").innerHTML=gifts.map(cardHTML).join("");
   $("#giftGrid").hidden=!gifts.length;
 }
@@ -308,7 +310,7 @@ function renderGifts(){
 /* Home page: a taste of each world, each leading to its own page */
 function renderHome(){
   const box=$("#teasers");if(!box)return;
-  const T=TEXTS,works=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
+  const T=TEXTS,works=[...S.works].sort(byOrder);
   const col=works.filter(w=>w.section!=="gift"),gifts=works.filter(w=>w.section==="gift");
   const pub=(typeof REVIEWS!=="undefined"?REVIEWS:[]).filter(r=>r.status==="approved");
   const two=t=>{const [a,b]=String(t||"").split("/").map(x=>x.trim());return `${esc(a||"")}${b?`<br><span>${esc(b)}</span>`:""}`};
@@ -348,7 +350,7 @@ $("#teasers").addEventListener("click",e=>{
 });
 function render(){
   renderGifts();renderHome();
-  const all=[...S.works].filter(w=>w.section!=="gift").sort((a,b)=>b.createdAt-a.createdAt);
+  const all=[...S.works].filter(w=>w.section!=="gift").sort(byOrder);
   renderFilters(all);
   const F=S.filter;
   let list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
@@ -898,7 +900,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
     if(fromExample)S.works=S.works.filter(x=>x.id!==S.editing);
@@ -933,10 +935,34 @@ function resetForm(){$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
-  const list=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
-  $("#adList").innerHTML=list.map(w=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}">${im?`<img src="${im.orig}" alt="">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  const list=[...S.works].sort(byOrder);
+  $("#adList").innerHTML=list.map((w,i)=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
+/* ---- Reordering works: drag the ⠿ handle, or use ⤒ / ↑ / ↓ ---- */
+async function saveOrder(ids){
+  const changed=[];ids.forEach((id,i)=>{const w=S.works.find(x=>x.id===id);if(w&&w.order!==i){w.order=i;changed.push(w)}});
+  render();renderAdminList();
+  const real=changed.filter(w=>!w.example);if(!real.length)return;
+  const res=await Promise.all(real.map(w=>sb.from("works").update({sort_order:w.order}).eq("id",w.id)));
+  toast(res.some(r=>r.error)?"שמירת הסדר נכשלה":"הסדר נשמר");
+}
+const listIds=()=>[...document.querySelectorAll("#adList .li")].map(r=>r.dataset.id);
+$("#adList").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b||!["top","mup","mdown"].includes(b.dataset.a))return;
+  e.stopImmediatePropagation();const ids=listIds(),id=b.closest(".li").dataset.id,i=ids.indexOf(id);ids.splice(i,1);
+  ids.splice(b.dataset.a==="top"?0:b.dataset.a==="mup"?i-1:i+1,0,id);saveOrder(ids)},true);
+let DRAG=null;
+$("#adList").addEventListener("pointerdown",e=>{const h=e.target.closest(".drag");if(!h)return;e.preventDefault();
+  const row=h.closest(".li");DRAG={row,start:listIds().join()};row.classList.add("dragging");h.setPointerCapture(e.pointerId)});
+$("#adList").addEventListener("pointermove",e=>{if(!DRAG)return;
+  const scroller=$("#ad");const r=scroller.getBoundingClientRect();
+  if(e.clientY<r.top+70)scroller.scrollTop-=12;else if(e.clientY>r.bottom-70)scroller.scrollTop+=12;
+  const rows=[...document.querySelectorAll("#adList .li")].filter(x=>x!==DRAG.row);
+  const over=rows.find(x=>{const b=x.getBoundingClientRect();return e.clientY<b.top+b.height/2});
+  if(over){if(over.previousElementSibling!==DRAG.row)over.before(DRAG.row)}else $("#adList").appendChild(DRAG.row);
+  document.querySelectorAll("#adList .li-n").forEach((n,i)=>n.textContent=i+1)});
+const dragEnd=()=>{if(!DRAG)return;const ids=listIds(),moved=ids.join()!==DRAG.start;DRAG.row.classList.remove("dragging");DRAG=null;if(moved)saveOrder(ids)};
+$("#adList").addEventListener("pointerup",dragEnd);$("#adList").addEventListener("pointercancel",dragEnd);
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
   if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();

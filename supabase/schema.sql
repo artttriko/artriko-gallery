@@ -111,6 +111,7 @@ revoke execute on function public.event_stats() from anon, public;
 -- record_event(p_secret, p_ip_hash, p_kind, p_visitor_hash) dedupe per visitor (or IP when no id);
 -- visit_analytics returns uniques (today/week/month/total), days, months, hours and weekdays in Israel time.
 
+-- 2026-10-05: works.sort_order (double precision, null = not placed yet, shown first). Migration "works_sort_order".
 -- 2026-10-04: migration "gifts_and_reviews": works.section ('collect'|'gift'); reviews table (pending until the
 -- admin approves; public reads approved only); review_ips (salted IP hash, private, 3 reviews/day limit);
 -- submit_review(...) security-definer RPC called by /api/review; storage bucket "reviews" (public, images up to 4MB,

@@ -737,3 +737,11 @@ a.mark{text-decoration:none}
 .st-order{align-items:center;gap:6px}
 .st-n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sun);color:var(--ink);font-weight:800;font-size:13px}
 .st-order .pill[disabled]{opacity:.3;cursor:default}
+/* admin: reorder works */
+.li .drag{cursor:grab;font-size:22px;color:var(--muted);padding:6px 4px;touch-action:none;user-select:none;line-height:1}
+.li .drag:active{cursor:grabbing}
+.li-n{width:24px;text-align:center;color:var(--sun);font-weight:800;flex:none}
+.li.dragging{border-color:var(--sun);background:rgba(255,210,63,.08);box-shadow:0 8px 24px rgba(0,0,0,.5);position:relative;z-index:2}
+.li-mv{display:flex;gap:4px;flex:none}
+.li-mv .pill[disabled]{opacity:.3;cursor:default}
+@media (max-width:760px){.li{flex-wrap:wrap}.li .t{flex-basis:calc(100% - 140px)}.li-mv{order:5}}
