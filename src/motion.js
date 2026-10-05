@@ -220,7 +220,7 @@ if (lbMain && !RM) {
   lbMain.addEventListener("pointerup", end); lbMain.addEventListener("pointercancel", end);
 }
 
-/* ---------- 8. Colour wipe between the home page and the guide ---------- */
+/* ---------- 8. Colour wipe between pages ---------- */
 let wiping = false;
 function wipeTo(hash) {
   if (RM || wiping) { location.hash = hash; return; }
@@ -238,8 +238,9 @@ function wipeTo(hash) {
 document.addEventListener("click", e => {
   const a = e.target.closest('a[href^="#"]'); if (!a) return;
   const h = a.getAttribute("href");
-  const toGuide = h === "#guide", leavingGuide = location.hash === "#guide" && h !== "#guide";
-  if (!toGuide && !leavingGuide) return;
+  // wipe whenever the link leads to a different page of the site
+  const pg = window.pageOfHash;
+  if (!pg || pg(h) === pg(location.hash)) return;
   e.preventDefault();
   q("dialog[open]")?.close();
   wipeTo(h);

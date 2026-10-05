@@ -303,8 +303,51 @@ function renderGifts(){
   $("#giftGrid").innerHTML=gifts.map(cardHTML).join("");
   $("#giftGrid").hidden=!gifts.length;
 }
+// keep sticky bars below the floating header
+(()=>{const h=$(".top");if(!h)return;const set=()=>document.documentElement.style.setProperty("--hdr",h.offsetHeight+"px");set();new ResizeObserver(set).observe(h)})();
+/* Home page: a taste of each world, each leading to its own page */
+function renderHome(){
+  const box=$("#teasers");if(!box)return;
+  const T=TEXTS,works=[...S.works].sort((a,b)=>b.createdAt-a.createdAt);
+  const col=works.filter(w=>w.section!=="gift"),gifts=works.filter(w=>w.section==="gift");
+  const pub=(typeof REVIEWS!=="undefined"?REVIEWS:[]).filter(r=>r.status==="approved");
+  const two=t=>{const [a,b]=String(t||"").split("/").map(x=>x.trim());return `${esc(a||"")}${b?`<br><span>${esc(b)}</span>`:""}`};
+  const giftOn=!!String(T.giftText||"").trim(),wsOn=!!String(T.wsText||"").trim();
+  const first=t=>String(t||"").replace(/\*\*/g,"").split(/(?<=[.!?])\s/)[0];
+  let h=`<section class="tz tz-gal">
+    <div class="tz-head"><div><span class="ws-eyebrow">הגלריה</span><h2 class="sec-title">פסלי אספנות<br><span>שכבר יצאו מהסטודיו.</span></h2></div>
+      <a class="pill solid tz-go" href="#gallery">לכל הגלריה${col.length?` (${col.length})`:""} ←</a></div>
+    <div class="tz-row">${col.slice(0,6).map(cardHTML).join("")}</div></section>`;
+  if(typeof rvAvg==="function"){
+    const A=pub.length?pub.reduce((t,r)=>t+rvAvg(r),0)/pub.length:0;
+    h+=`<section class="tz tz-rv">
+      <div class="tz-head"><div><span class="ws-eyebrow">המלצות</span><h2 class="sec-title">מה אומרים<br><span>אחרי שהפסל הגיע הביתה.</span></h2>
+        ${pub.length?`<p class="tz-score">${starsHTML(A,"lg")} <b>${A.toFixed(1)}</b> · ${pub.length===1?"המלצה אחת":pub.length+" המלצות"}</p>`:`<p class="tz-text">עוד אין כאן המלצות. אפשר להיות הראשונים לכתוב.</p>`}</div>
+        <div class="tz-btns">${pub.length?`<a class="pill solid tz-go" href="#reviews">לכל ההמלצות ←</a>`:""}<button class="pill tz-go" type="button" data-rvwrite>✍️ לכתוב המלצה</button></div></div>
+      ${pub.length?`<div class="tz-row rv-row">${pub.slice(0,3).map(rvCard).join("")}</div>`:""}</section>`;
+  }
+  if(giftOn)h+=`<section class="tz tz-gift">
+      <div class="tz-head"><div><span class="ws-eyebrow gift-eyebrow">${esc(T.giftEyebrow||"מתנות ייחודיות")}</span><h2 class="sec-title">${two(T.giftTitle)}</h2><p class="tz-text">${esc(first(T.giftText))}</p></div>
+        <a class="pill solid tz-go" href="#gifts">למתנות ←</a></div>
+      ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(cardHTML).join("")}</div>`:""}</section>`;
+  if(wsOn){const ph=(T.wsPhotos||[]).slice(0,3);
+    h+=`<section class="tz tz-ws">
+      <div class="tz-head"><div><span class="ws-eyebrow">${esc(T.wsEyebrow||"סדנאות")}</span><h2 class="sec-title">${two(T.wsTitle)}</h2><p class="tz-text">${esc(first(T.wsText))}</p></div>
+        <a class="pill solid tz-go" href="#learn">לסדנאות ←</a></div>
+      ${ph.length?`<div class="tz-row tz-ph">${ph.map((u,i)=>`<button type="button" data-wsph="${i}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}</section>`}
+  if(T.btnGuide!==false)h+=`<a class="tz tz-guide" href="#guide"><span class="ws-eyebrow">המדריך לאספנים</span><b>באסט, דיורמה או פסל מלא? מה זה סקייל, ומה ההבדל בין רזין ל־FDM?</b><span class="tz-go-t">לקריאה במדריך ←</span></a>`;
+  box.innerHTML=h;
+}
+$("#teasers").addEventListener("click",e=>{
+  if(e.target.closest("[data-rvwrite]")){rvOpen();return}
+  const wp=e.target.closest("[data-wsph]");if(wp){openViewer(TEXTS.wsPhotos||[],+wp.dataset.wsph);return}
+  const ph=e.target.closest("[data-rvph]");if(ph){const r=REVIEWS.find(x=>x.id===ph.dataset.rvph);if(r)openViewer(r.photos,+ph.dataset.i);return}
+  const t=e.target.closest(".rv-more-t");if(t){const p=t.previousElementSibling;p.classList.toggle("open");t.textContent=p.classList.contains("open")?"פחות":"עוד";return}
+  const buy=e.target.closest("[data-buy]");if(buy){e.preventDefault();openContact(S.works.find(w=>w.id===buy.dataset.buy));return}
+  const card=e.target.closest(".card");if(card)openLB(card.dataset.id);
+});
 function render(){
-  renderGifts();
+  renderGifts();renderHome();
   const all=[...S.works].filter(w=>w.section!=="gift").sort((a,b)=>b.createdAt-a.createdAt);
   renderFilters(all);
   const F=S.filter;
@@ -919,7 +962,7 @@ const DEFAULT_TEXTS={
   h1a:"כל פסל",h1hl:"נולד",h1b:"מהלב.",h1red:"בהדפסה.",
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
-  burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ↓",ctaOrder:"להזמנה אישית",
+  burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ←",ctaOrder:"להזמנה אישית",
   giftEyebrow:"מתנות ייחודיות",giftTitle:"מתנה שאין / לאף אחד אחר.",
   giftText:"מעבר לפסלי האספנות, אני יוצר **מתנות אישיות אחת במינן**: ליום הולדת, לאירוע, לפרישה, לצוות, או למי שכבר יש לו הכול. מרעיון או תמונה ועד פריט מודפס וצבוע ביד.",
   giftCta:"אני רוצה מתנה כזו!",
@@ -946,13 +989,13 @@ function renderTexts(){
   $("#tH1").innerHTML=`${esc(T.h1a)} ${T.h1hl?`<em>${esc(T.h1hl)}</em>`:""}<br>${esc(T.h1b)} ${T.h1red?`<b>${esc(T.h1red)}</b>`:""}`;
   $("#tP1").innerHTML=rich(T.p1);$("#tP2").innerHTML=rich(T.p2);$("#tP2").hidden=!T.p2;
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
-  $("#ctaMain").textContent=T.ctaMain||"לגלריה ↓";$("#ctaOrder").textContent=T.ctaOrder||"להזמנה אישית";$("#orderBar").textContent=T.ctaOrder||"להזמנה אישית";
+  $("#ctaMain").textContent=String(T.ctaMain||"לגלריה ←").replace("↓","←");$("#ctaOrder").textContent=T.ctaOrder||"להזמנה אישית";$("#orderBar").textContent=T.ctaOrder||"להזמנה אישית";
   const [g1,g2]=String(T.giftTitle||"").split("/").map(x=>x.trim());
   $("#giftEyebrow").textContent=T.giftEyebrow||"";
   $("#giftTitle").innerHTML=`${esc(g1||"")}${g2?`<br><span>${esc(g2)}</span>`:""}`;
   $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=T.giftCta||"אני רוצה מתנה כזו!";
   const giftOn=!!String(T.giftText||"").trim();
-  ["#gifts","#navGifts","#giftHero"].forEach(x=>$(x).hidden=!giftOn);
+  ["#navGifts","#giftHero"].forEach(x=>$(x).hidden=!giftOn);
   setCaption(pickLine("studio",T.studioLines));
   $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();
   const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
@@ -966,7 +1009,8 @@ function renderTexts(){
   $("#wsCombo").innerHTML=rich(T.wsCombo||"");
   $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
   const wsOn=!!String(T.wsText||"").trim();
-  $("#learn").hidden=!wsOn;$("#learnHero").hidden=$("#navLearn").hidden=!wsOn||T.btnLearn===false;
+  $("#learnHero").hidden=$("#navLearn").hidden=!wsOn||T.btnLearn===false;
+  if(typeof renderHome==="function"&&S.works.length)renderHome();
   const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
   $("#wsPhotos").hidden=!ph.length;
   $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהסדנה"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
@@ -1295,28 +1339,26 @@ function calcGuide(){
 $("#igGuide").href=CFG.instagram;$("#ttGuide").href=CFG.tiktok;
 document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{S.filter={cat:b.dataset.goto,tech:"",sale:false};render();location.hash="gallery"});
 
-/* ================= Page routing (#guide) ================= */
+/* ================= Pages (hash routing) ================= */
+// The site is split into pages: home (a taste of everything), gallery, reviews, gifts, workshops, guide.
+const PAGE_EL={home:"#homePage",gallery:"#galleryPage",reviews:"#reviewsPage",gifts:"#giftsPage",learn:"#learnPage",guide:"#guidePage"};
+function pageOfHash(h){const id=String(h||"").replace(/^#/,"");if(PAGE_EL[id])return id;if(!id||id==="top")return"home";
+  const t=document.getElementById(id);const c=t&&t.closest(".page,#guidePage");return c?(Object.keys(PAGE_EL).find(k=>$(PAGE_EL[k])===c)||"home"):"home"}
+window.pageOfHash=pageOfHash;
 function route(){
-  const g=location.hash==="#guide";
-  if(g)track("guide");
-  $("#homePage").hidden=g;$("#guidePage").hidden=!g;
-  if(g){window.scrollTo(0,0);return}
-  const t=location.hash&&location.hash.length>1?document.getElementById(location.hash.slice(1)):null;
-  if(t&&t.id!=="top")requestAnimationFrame(()=>t.scrollIntoView());else window.scrollTo(0,0);
+  const id=location.hash.slice(1),page=pageOfHash(location.hash);
+  Object.entries(PAGE_EL).forEach(([k,sel])=>{$(sel).hidden=k!==page});
+  document.documentElement.dataset.page=page;
+  document.querySelectorAll("#secnav a").forEach(a=>a.classList.toggle("on",pageOfHash(a.getAttribute("href"))===page));
+  if(page==="guide")track("guide");
+  const t=id&&!PAGE_EL[id]&&id!=="top"?document.getElementById(id):null;
+  if(t)requestAnimationFrame(()=>t.scrollIntoView());else window.scrollTo(0,0);
 }
 window.addEventListener("hashchange",route);route();
 
 /* ================= Boot ================= */
 
-/* Highlight the section in view in the top navigation */
-(()=>{const links=[...document.querySelectorAll("#secnav a[href^='#']")].filter(a=>a.getAttribute("href")!=="#guide");
-  const map=new Map(links.map(a=>[a.getAttribute("href")==="#gallery"?document.querySelector(".gal-wrap"):document.querySelector(a.getAttribute("href")),a]).filter(([el])=>el));
-  const seen=new Map();
-  const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target,e.isIntersecting?e.intersectionRatio:0));
-    let best=null,br=0;seen.forEach((r,el)=>{if(r>br){br=r;best=el}});links.forEach(a=>a.classList.toggle("on",!!best&&map.get(best)===a))},{threshold:[0,.15,.3,.5]});
-  map.forEach((a,el)=>io.observe(el));
-  addEventListener("hashchange",()=>{if(location.hash==="#guide")links.forEach(a=>a.classList.remove("on"));document.querySelector("#navGuide")?.classList.toggle("on",location.hash==="#guide")});
-})();
+
 
 /* ================= Watermark check (admin only) ================= */
 // Every uploaded photo is checked by the AI for a leftover watermark (e.g. "CapCut AI", an app logo, @name).
@@ -1408,7 +1450,12 @@ function renderReviews(){
   // tabs only when both kinds exist
   const both=pub.some(r=>r.kind==="piece")&&les.length>0;$("#rvTabs").hidden=!both;if(!both)RV_TAB="";
   const list=pub.filter(r=>!RV_TAB||r.kind===RV_TAB);
-  $("#rvList").innerHTML=list.slice(0,RV_SHOW).map(r=>{
+  $("#rvList").innerHTML=list.slice(0,RV_SHOW).map(rvCard).join("");
+  $("#rvMore").hidden=list.length<=RV_SHOW;
+  requestAnimationFrame(()=>document.querySelectorAll(".rv-body").forEach(p=>{const b=p.nextElementSibling;if(b&&p.scrollHeight>p.clientHeight+4)b.hidden=false}));
+  renderHome();
+}
+function rvCard(r){
     const d=new Date(r.created_at),v=rvAvg(r);
     return `<article class="rv-card">
       <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span></header>
@@ -1416,11 +1463,7 @@ function renderReviews(){
       ${r.body?`<p class="rv-body">${esc(r.body)}</p><button type="button" class="rv-more-t" hidden>עוד</button>`:""}
       ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}" aria-label="תמונה ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
       <details class="rv-det"><summary>פירוט הדירוג</summary>${RV_CRIT[r.kind].map(([k,l])=>`<div><span>${l}</span>${starsHTML(r["r_"+k])}</div>`).join("")}</details>
-    </article>`}).join("");
-  $("#rvMore").hidden=list.length<=RV_SHOW;
-  // show "more" only on long texts
-  requestAnimationFrame(()=>document.querySelectorAll("#rvList .rv-body").forEach(p=>{const b=p.nextElementSibling;if(b&&p.scrollHeight>p.clientHeight+4)b.hidden=false}));
-}
+    </article>`}
 $("#rvTabs").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;RV_TAB=b.dataset.k;RV_SHOW=6;$("#rvTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderReviews()});
 $("#rvMore").onclick=()=>{RV_SHOW+=6;renderReviews()};
 $("#rvList").addEventListener("click",e=>{
