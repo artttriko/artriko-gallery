@@ -303,7 +303,13 @@ function cardHTML(w){return `
 function renderGifts(){
   const gifts=[...S.works].filter(w=>w.section==="gift").sort(byOrder);
   $("#giftGrid").innerHTML=gifts.map(cardHTML).join("");
-  $("#giftGrid").hidden=!gifts.length;
+  $("#giftGrid").hidden=!gifts.length;$("#giftWorks").hidden=!gifts.length;
+  // next to the title: up to 3 gift photos fanned out, or a drawn gift box until there are gifts
+  const ph=gifts.map(firstImg).filter(Boolean).slice(0,3);
+  const vk=ph.map(i=>i.orig).join("|")||"box";
+  if($("#giftVisual").dataset.k!==vk){$("#giftVisual").dataset.k=vk;
+    $("#giftVisual").innerHTML=ph.length?`<div class="gv-fan n${ph.length}">${ph.map(i=>`<img src="${esc(i.orig)}" alt="" loading="lazy">`).join("")}</div>`
+    :`<svg class="gv-box" viewBox="0 0 200 200"><g class="gv-lid"><rect x="34" y="64" width="132" height="30" rx="4" fill="var(--sky)" stroke="var(--paper)" stroke-width="4"/><rect x="90" y="64" width="20" height="30" fill="var(--pop)"/><path d="M100 64c-18-26-46-22-40-4 4 10 26 6 40 4zM100 64c18-26 46-22 40-4-4 10-26 6-40 4z" fill="var(--pop)" stroke="var(--paper)" stroke-width="4" stroke-linejoin="round"/></g><rect x="44" y="94" width="112" height="78" rx="4" fill="var(--sky)" stroke="var(--paper)" stroke-width="4"/><rect x="90" y="94" width="20" height="78" fill="var(--pop)"/><path d="M28 40l6 10M172 36l-8 10M100 18v12M18 110l12 2M182 112l-12 2" stroke="var(--sun)" stroke-width="5" stroke-linecap="round"/></svg>`}
 }
 // keep sticky bars below the floating header
 (()=>{const h=$(".top");if(!h)return;const set=()=>document.documentElement.style.setProperty("--hdr",h.offsetHeight+"px");set();new ResizeObserver(set).observe(h)})();
@@ -467,10 +473,11 @@ $("#grid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList
 
 /* ================= Links ================= */
 const wa=t=>CFG.whatsapp?`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(t||"")}`:"";
-["#igTop","#igBar","#ctIg"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
+["#igTop","#igBar"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
+$("#ctIg").href="https://ig.me/m/"+CFG.instagram.replace(/\/+$/,"").split("/").pop();
 ["#ttTop","#ttBar","#ctTt"].forEach(s=>{const el=$(s);if(el)el.href=CFG.tiktok});
 $("#ctaOrder").onclick=()=>openContact("order");$("#finaleOrder").onclick=()=>openContact("order");$("#orderBar").onclick=()=>openContact("order");
-$("#giftCta").onclick=()=>openContact("gift");
+$("#giftCta").onclick=$("#giftCta2").onclick=()=>openContact("gift");
 
 /* ================= Lightbox ================= */
 let LB={w:null,slides:[],i:0};
@@ -540,38 +547,39 @@ const SOLD_LINES=[
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function openContact(w){
   track(w==="learn"?"learn":"want");
-  $("#ctWa").hidden=true;
+  let title,note,t,sold="";
   if(w==="order"||w==="gift"){
-    $("#ctTitle").textContent=w==="gift"?(TEXTS.giftCta||"אני רוצה מתנה כזו!"):"הזמנה אישית";
-    $("#ctSold").hidden=true;
-    $("#ctNote").textContent="ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית. כדאי לצרף תמונה או רפרנס:";
-    const t=w==="gift"?"היי ARTRIKO, אשמח לשמוע על מתנה מיוחדת בהתאמה אישית.":"היי ARTRIKO, אשמח להזמין פסל בהתאמה אישית. הדמות שאני רוצה:";
-    $("#ctMsg").textContent=t;
-    if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
-    $("#ct").showModal();return;
+    title=w==="gift"?(TEXTS.giftCta||"אני רוצה מתנה כזו!"):"הזמנה אישית";
+    note=w==="gift"?"כמה מילים על המתנה: למי היא, לאיזה אירוע וכמה יחידות. אחר כך בוחרים איפה נוח לדבר.":"כמה מילים על הדמות שבא לך. אחר כך בוחרים איפה נוח לדבר, ואפשר לצרף שם תמונה או רפרנס.";
+    t=w==="gift"?"היי ARTRIKO, אשמח לשמוע על מתנה מיוחדת בהתאמה אישית. המתנה היא בשביל: ":"היי ARTRIKO, אשמח להזמין פסל בהתאמה אישית. הדמות שאני רוצה: ";
+  }else if(w==="learn"){
+    title=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
+    note="כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה. אחר כך בוחרים איפה נוח לדבר.";
+    t="היי ARTRIKO, אני רוצה ללמוד לצבוע! אשמח לשמוע על הדרכה אישית או סדנה (איירבראש ומכחולים).";
+  }else{
+    const notForSale=!!(w&&w.status!=="sale");
+    title=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
+    if(notForSale)sold=pick(SOLD_LINES)(w.name);
+    note=notForSale?"בא לך הזמנה אישית בסגנון? בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:":"בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:";
+    t=!w?"היי ARTRIKO, אשמח לשמוע עוד"
+      :notForSale?`היי ARTRIKO, ראיתי את "${w.name}" ונדלקתי! אפשר להזמין ממך משהו בסגנון?`
+      :`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`;
   }
-  if(w==="learn"){
-    $("#ctTitle").textContent=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
-    $("#ctSold").hidden=true;
-    $("#ctNote").textContent="ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית. כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה:";
-    const t="היי ARTRIKO, אני רוצה ללמוד לצבוע! אשמח לשמוע על הדרכה אישית או סדנה (איירבראש ומכחולים).";
-    $("#ctMsg").textContent=t;
-    if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
-    $("#ct").showModal();return;
-  }
-  const notForSale=!!(w&&w.status!=="sale");
-  $("#ctTitle").textContent=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
-  $("#ctSold").hidden=!notForSale;
-  if(notForSale)$("#ctSold").textContent=pick(SOLD_LINES)(w.name);
-  $("#ctNote").textContent=notForSale?"בא לך הזמנה אישית בסגנון? ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:":"ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:";
-  const t=!w?"היי ARTRIKO, אשמח לשמוע עוד"
-    :notForSale?`היי ARTRIKO, ראיתי את "${w.name}" ונדלקתי! אפשר להזמין ממך משהו בסגנון?`
-    :`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`;
-  $("#ctMsg").textContent=t;
-  if(CFG.whatsapp){$("#ctWa").hidden=false;$("#ctWa").href=wa(t)}
+  $("#ctTitle").textContent=title;$("#ctSold").hidden=!sold;$("#ctSold").textContent=sold;
+  $("#ctNote").textContent=note;$("#ctMsg").value=t;
+  $("#ctWa").hidden=!CFG.whatsapp;
   $("#ct").showModal();
+  if(w==="order"||w==="gift")setTimeout(()=>{const m=$("#ctMsg");if(matchMedia("(hover:hover)").matches){m.focus();m.setSelectionRange(m.value.length,m.value.length)}},60);
 }
-document.querySelectorAll("#ct .dm").forEach(a=>a.addEventListener("click",()=>{navigator.clipboard?.writeText($("#ctMsg").textContent).then(()=>toast("ההודעה הועתקה, אפשר להדביק אותה בצ'אט"),()=>{})}));
+/* Contact: WhatsApp opens the chat with the message already typed in.
+   Instagram and TikTok don't accept a ready message from a link, so it is copied and their chat opens. */
+$("#ctWa").addEventListener("click",e=>{const u=wa($("#ctMsg").value.trim());if(!u){e.preventDefault();return}e.currentTarget.href=u});
+$("#ct").querySelectorAll(".plat").forEach(a=>a.addEventListener("click",()=>setTimeout(()=>$("#ct").close(),400)));
+["#ctIg","#ctTt"].forEach(sel=>$(sel).addEventListener("click",()=>{
+  const t=$("#ctMsg").value.trim();
+  const done=()=>toast("ההודעה הועתקה. בצ'אט שנפתח, רק להדביק ולשלוח");
+  try{navigator.clipboard.writeText(t).then(done,()=>{})}catch(e){}
+}));
 $("#wsCta").onclick=()=>openContact("learn");
 
 /* ================= Click counting (which areas visitors use) ================= */
@@ -654,7 +662,6 @@ $("#wsPhFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.ty
   }
   saveWsPhotos(files.length>1?`${files.length} תמונות נוספו לסקשן הסדנאות.`:"התמונה נוספה לסקשן הסדנאות.");
 };
-$("#ctCopy").onclick=async()=>{const t=$("#ctMsg").textContent;try{await navigator.clipboard.writeText(t);toast("ההודעה הועתקה")}catch(e){const r=document.createRange();r.selectNodeContents($("#ctMsg"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("ההודעה מסומנת, אפשר להעתיק אותה")}};
 
 /* ================= Image tools ================= */
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();if(isRemote(src))i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=src})}
@@ -1018,6 +1025,11 @@ const DEFAULT_TEXTS={
   giftEyebrow:"מתנות ייחודיות",giftTitle:"מתנה שאין / לאף אחד אחר.",
   giftText:"מעבר לפסלי האספנות, אני יוצר **מתנות אישיות אחת במינן**: ליום הולדת, לאירוע, לפרישה, לצוות, או למי שכבר יש לו הכול. מרעיון או תמונה ועד פריט מודפס וצבוע ביד.",
   giftCta:"אני רוצה מתנה כזו!",
+  giftOcc:"🎂 | יום הולדת | מתנה שאף אחד אחר לא יביא\n🏅 | פרישה והוקרה | תודה על שנים של עשייה, שנשארת על המדף\n👥 | צוות ועובדים | כמה דגמים, כל אחד מותאם למי שמקבל\n🎓 | מורים ותלמידים | לסיום שנה, לכיתה או לקורס\n🎖️ | יחידה ואנשי ביטחון | סמל, דמות או רגע משותף, צבוע ביד\n💍 | רגע אישי | חתונה, יום נישואים, או סתם כי מגיע",
+  giftGroupT:"צריכים יותר מאחד? / אין בעיה.",
+  giftGroup:"לצוות, לכיתה, ליחידה או לאירוע: אפשר כמה דגמים שונים, וכל מתנה מותאמת אישית.",
+  giftSteps:"רעיון או תמונה | מספרים לי למי המתנה ומה הסיפור. אפשר לשלוח תמונה, דמות או השראה.\nעיצוב ואישור | מתכננים יחד את הדגם, הגודל והצבעים, ומאשרים לפני שמתחילים.\nהדפסה וצביעה ביד | הדגם מודפס בתלת־ממד, נצבע ביד ומגיע מוכן לרגע של הנתינה.",
+  giftEnd:"יש לך רעיון למתנה? בואו נהפוך אותו למשהו שאי אפשר לשכוח.",
   nudgePiece:"וואו, איך זה יצא במציאות? תמונה אחת שווה אלף כוכבים.\nבלי תמונה זה לא קרה! איך זה נראה אחרי שהגיע?\nאיך הגיבו למתנה? תמונה של הרגע תשמח את כולם.\nצילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה באמת.\nתמונה אחת עוזרת למי שמתלבט יותר מכל מילה.",
   nudgeLesson:"יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!\nהדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.\nתמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף.",
   nudgeDone:"יש! 🔥 הרבה יותר שווה עם תמונה.\nמושלם, תודה על התמונה! 📸\nוואו, איזה יופי. תודה!",
@@ -1032,7 +1044,7 @@ const DEFAULT_TEXTS={
   wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
   wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
   wsCta:"אני רוצה לצבוע ככה!",wsPhotos:[],
-  heroMode:"rotate",btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:"",navOrder:["home","gallery","reviews","gifts","learn","guide"]
+  heroMode:"rotate",btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:"+972508480968",navOrder:["home","gallery","reviews","gifts","learn","guide"]
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -1056,7 +1068,18 @@ function renderTexts(){
   const [g1,g2]=String(T.giftTitle||"").split("/").map(x=>x.trim());
   $("#giftEyebrow").textContent=T.giftEyebrow||"";
   $("#giftTitle").innerHTML=`${esc(g1||"")}${g2?`<br><span>${esc(g2)}</span>`:""}`;
-  $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=T.giftCta||"אני רוצה מתנה כזו!";
+  $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=$("#giftCta2").textContent=T.giftCta||"אני רוצה מתנה כזו!";
+  {const L=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean),P=x=>x.split("|").map(y=>y.trim());
+   const occ=L(T.giftOcc).slice(0,9);
+   $("#giftOcc").innerHTML=occ.map(x=>{const [e,h,d]=P(x);return `<div class="occ"><span class="occ-e">${esc(e||"")}</span><b>${esc(h||"")}</b>${d?`<span>${esc(d)}</span>`:""}</div>`}).join("");
+   $("#giftOcc").hidden=!occ.length;
+   const [gt1,gt2]=String(T.giftGroupT||"").split("/").map(x=>x.trim());
+   $("#giftGroup").innerHTML=`<h3>${esc(gt1||"")}${gt2?` <span>${esc(gt2)}</span>`:""}</h3><p>${rich(T.giftGroup||"")}</p>`;
+   $("#giftGroup").hidden=!String(T.giftGroup||"").trim();
+   const st=L(T.giftSteps).slice(0,5);
+   $("#giftSteps").innerHTML=st.map((x,i)=>{const [h,d]=P(x);return `<li><i>${i+1}</i><b>${esc(h||"")}</b>${d?`<span>${esc(d)}</span>`:""}</li>`}).join("");
+   $("#giftStepsWrap").hidden=!st.length;
+   $("#giftEndT").textContent=T.giftEnd||"";}
   const giftOn=!!String(T.giftText||"").trim();
   $("#navGifts").hidden=!giftOn;
   setCaption(pickLine("studio",T.studioLines));
@@ -1089,7 +1112,7 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={giftOcc:"#xGiftOcc",giftGroupT:"#xGiftGroupT",giftGroup:"#xGiftGroup",giftSteps:"#xGiftSteps",giftEnd:"#xGiftEnd",heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();if(before.heroMode!==TEXTS.heroMode){HERO_ID=null;render()}$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
@@ -1736,7 +1759,7 @@ loadReviews();
   const v=load("view2");if(v==="room"){S.view="room";press($("#vRoom").parentNode,$("#vRoom"))}
   const sz=+load("size");setSize(sz||300);
   const cols=load("cols");if(cols){$("#grid").className="grid cols-"+cols;press(document.querySelector("[data-cols]").parentNode,document.querySelector(`[data-cols="${cols}"]`))}
-  const t=await getSetting("texts");if(t)TEXTS={...DEFAULT_TEXTS,...t};renderTexts();fillTextForm();
+  const t=await getSetting("texts");if(t)TEXTS={...DEFAULT_TEXTS,...t};if(!String(TEXTS.waNumber||"").trim())TEXTS.waNumber=DEFAULT_TEXTS.waNumber;renderTexts();fillTextForm();
   setStudio((await getSetting("studio"))??STUDIO_DEFAULT);
   const rm=await getSetting("room");if(rm){ROOM=rm;applyRoom()}
   const stored=await dbAll();

@@ -116,12 +116,23 @@
 
   <div id="giftsPage" class="page" hidden>
   <section class="gifts" id="gifts" aria-labelledby="giftTitle">
-    <div class="gift-head">
-      <span class="ws-eyebrow gift-eyebrow" id="giftEyebrow"></span>
-      <h2 class="sec-title" id="giftTitle"></h2>
-      <p class="ws-text" id="giftText"></p>
-      <button class="pill big solid" type="button" id="giftCta"></button>
+    <div class="gift-hero">
+      <div class="gift-head">
+        <span class="ws-eyebrow gift-eyebrow" id="giftEyebrow"></span>
+        <h2 class="sec-title" id="giftTitle"></h2>
+        <p class="ws-text" id="giftText"></p>
+        <button class="pill big solid" type="button" id="giftCta"></button>
+      </div>
+      <div class="gift-visual" id="giftVisual" aria-hidden="true"></div>
     </div>
+    <div class="gift-occ" id="giftOcc"></div>
+    <div class="gift-group" id="giftGroup"></div>
+    <div class="gift-steps-wrap" id="giftStepsWrap"><h3 class="gift-h">איך זה עובד</h3><ol class="gift-steps" id="giftSteps"></ol></div>
+    <div id="giftWorks"><h3 class="gift-h">מתנות שכבר יצאו מהסטודיו</h3><div class="grid gift-grid" id="giftGrid"></div></div>
+    <div class="gift-end"><p class="gift-end-t" id="giftEndT"></p><button class="pill big solid" type="button" id="giftCta2"></button></div>
+  </section>
+
+  </div>
     <div class="grid gift-grid" id="giftGrid"></div>
   </section>
 
@@ -354,13 +365,14 @@
   <button class="x" data-close aria-label="סגירה">✕</button>
   <h3 id="ctTitle">אני רוצה את זה!</h3>
   <p class="sold" id="ctSold" hidden></p>
-  <p class="note" id="ctNote">ההודעה תועתק בלחיצה על אחד הכפתורים, ואז אפשר להדביק אותה בהודעה פרטית:</p>
-  <div class="msg" id="ctMsg"></div>
-  <div class="row">
-    <button class="pill" id="ctCopy">העתקת ההודעה</button>
-    <a class="pill" id="ctWa" target="_blank" rel="noopener" hidden>WhatsApp</a>
-    <a class="pill dm" id="ctIg" target="_blank" rel="noopener">לשלוח באינסטגרם</a>
-    <a class="pill dm" id="ctTt" target="_blank" rel="noopener">לשלוח בטיקטוק</a>
+  <p class="note" id="ctNote"></p>
+  <label class="ct-lbl" for="ctMsg">ההודעה שלך (אפשר לשנות לפני השליחה)</label>
+  <textarea class="ct-msg" id="ctMsg" rows="3" maxlength="600"></textarea>
+  <p class="ct-pick">איפה נוח לדבר?</p>
+  <div class="ct-plat">
+    <a class="plat wa" id="ctWa" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4a.5.5 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3z"/></svg><b>WhatsApp</b><small>ההודעה כבר תחכה בצ'אט</small></a>
+    <a class="plat ig" id="ctIg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><b>Instagram</b><small>ההודעה מועתקת, רק להדביק</small></a>
+    <a class="plat tt" id="ctTt" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg><b>TikTok</b><small>ההודעה מועתקת, רק להדביק</small></a>
   </div>
 </dialog>
 
@@ -478,6 +490,11 @@
       <label>כותרת (עם / בין השורה הלבנה לצבעונית)<input id="xGiftTitle" maxlength="90"></label>
       <label class="full">פסקה (להדגשה: **מילים**). ריק = הסקשן מוסתר<textarea id="xGiftText" maxlength="700"></textarea></label>
       <label>כפתור<input id="xGiftCta" maxlength="40"></label>
+      <label class="full">למי זה מתאים (שורה לכל אחד: אימוג'י | כותרת | הסבר קצר)<textarea id="xGiftOcc" maxlength="1200" style="min-height:140px"></textarea></label>
+      <label>מתנות לקבוצות: כותרת (/ מפריד בין השורות)<input id="xGiftGroupT" maxlength="80"></label>
+      <label>מתנות לקבוצות: טקסט (ריק = לא מוצג)<textarea id="xGiftGroup" maxlength="400" style="min-height:70px"></textarea></label>
+      <label class="full">איך זה עובד (שורה לכל שלב: כותרת | הסבר)<textarea id="xGiftSteps" maxlength="900" style="min-height:100px"></textarea></label>
+      <label class="full">משפט בתחתית עמוד המתנות<input id="xGiftEnd" maxlength="120"></label>
       <h4 class="full" style="margin:10px 0 0">סדנאות והדרכות צביעה</h4>
       <label>כותרת קטנה<input id="xWsEyebrow" maxlength="60"></label>
       <label>כותרת (עם / בין השורה הלבנה לצהובה)<input id="xWsTitle" maxlength="90"></label>
@@ -498,7 +515,7 @@
         <label><input type="checkbox" id="xBtnLearn"> "ללמוד לצבוע" בראש העמוד</label>
         <label><input type="checkbox" id="xBtnGuide"> "המדריך לאספנים" ליד הכפתורים</label>
       </div>
-      <label>מספר וואטסאפ (בלי מספר, הכפתור לא יופיע)<input id="xWaNumber" maxlength="20" inputmode="tel" dir="ltr" placeholder="050-0000000"></label>
+      <label>מספר וואטסאפ<input id="xWaNumber" maxlength="20" inputmode="tel" dir="ltr" placeholder="050-0000000"></label>
       <h4 class="full" style="margin:10px 0 0">משפטים מתחלפים</h4>
       <label class="full">משפט במסך הפתיחה (ARTRIKO הגדול). שורה לכל משפט, ובכל כניסה לאתר מוצג משפט אחר<textarea id="xIntro" maxlength="1200" style="min-height:120px"></textarea></label>
       <label class="full">כיתוב בחלון הצילום (REC). שורה לכל משפט, עם / בין השורה הראשית לשורה השנייה. בכל כניסה מוצג משפט אחר<textarea id="xStudio" maxlength="1500" style="min-height:150px"></textarea></label>
