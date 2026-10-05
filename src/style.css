@@ -918,3 +918,8 @@ a.mark{text-decoration:none}
   .spot-mark{font-size:110px;height:46px}
   .spot-fig blockquote{font-size:clamp(26px,7.4vw,32px)}
 }
+
+/* small photo disclaimer at the very bottom of every page */
+footer{flex-wrap:wrap}
+.foot-note{flex:0 0 100%;order:2;margin:2px 0 0;font-size:12px;line-height:1.6;color:var(--muted);opacity:.7}
+.foot-note[hidden]{display:none}

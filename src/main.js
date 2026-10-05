@@ -1060,7 +1060,7 @@ function renderTexts(){
   const giftOn=!!String(T.giftText||"").trim();
   $("#navGifts").hidden=!giftOn;
   setCaption(pickLine("studio",T.studioLines));
-  $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();
+  $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();$("#footNote").textContent=T.galNote?"* "+T.galNote:"";$("#footNote").hidden=!String(T.galNote||"").trim();
   const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
   const [wa1,wa2]=String(T.wsTitle||"").split("/").map(x=>x.trim());
   $("#wsEyebrow").textContent=T.wsEyebrow||"";
