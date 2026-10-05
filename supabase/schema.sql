@@ -116,3 +116,7 @@ revoke execute on function public.event_stats() from anon, public;
 -- admin approves; public reads approved only); review_ips (salted IP hash, private, 3 reviews/day limit);
 -- submit_review(...) security-definer RPC called by /api/review; storage bucket "reviews" (public, images up to 4MB,
 -- anyone may add under u/, only admins may delete).
+
+-- migration: works_process_photos
+-- Optional "behind the scenes" photos per work: [{url, cap}] (small JPEGs, shown in a uniform black frame).
+alter table public.works add column if not exists process jsonb not null default '[]'::jsonb;

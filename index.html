@@ -59,6 +59,11 @@
 
   <section class="teasers" id="teasers" aria-label="טעימה מכל העולמות"></section>
 
+  <section class="social-band" id="socialBand">
+    <div class="sb-txt"><span class="ws-eyebrow" id="socialEyebrow">עוקבים אחרי הסטודיו</span><h2 class="sec-title" id="socialTitle"></h2><p class="tz-text" id="socialText"></p></div>
+    <div class="sb-links"><a class="sb-link ig" id="igBand" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span><b>Instagram</b><small dir="ltr">@artttriko</small></span></a><a class="sb-link tt" id="ttBand" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3c.4 2.4 1.9 4 4.3 4.3v3.2c-1.6 0-3-.5-4.3-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.3a2.4 2.4 0 1 0 2.4 2.4V3H16z"/></svg><span><b>TikTok</b><small dir="ltr">@artttriko</small></span></a></div>
+  </section>
+
   <section class="finale" id="finale">
     <h2 class="finale-title" id="finaleTitle"></h2>
     <div class="cta"><button class="pill big solid" type="button" id="finaleOrder">להזמנה אישית</button><a class="pill big" href="#gallery">לגלריה ←</a></div>
@@ -304,6 +309,13 @@
   </div>
 </dialog>
 
+<dialog id="procDlg" class="proc-dlg" aria-label="מאחורי הקלעים">
+  <button class="x" data-close aria-label="סגירה">✕</button>
+  <div class="pd-head"><span class="ws-eyebrow">🛠️ מאחורי הקלעים</span><h3 id="pdTitle"></h3><p class="note" id="pdCount"></p></div>
+  <div class="pd-track" id="pdTrack"></div>
+  <div class="pd-nav"><button class="pd-arrow" id="pdPrev" type="button" aria-label="הקודם">›</button><div class="pd-dots" id="pdDots"></div><button class="pd-arrow" id="pdNext" type="button" aria-label="הבא">‹</button></div>
+</dialog>
+
 <!-- Contact -->
 <dialog id="wsLb" class="ws-lb" aria-label="תמונה מהסדנה">
   <button class="x" data-close aria-label="סגירה">✕</button>
@@ -435,6 +447,11 @@
       <div class="drop" id="drop" role="button" tabindex="0"><strong>בחירת תמונות ווידאו</strong>מהגלריה בטלפון או מהמחשב, כמה קבצים יחד. אפשר גם לגרור לכאן.</div>
       <input type="file" id="fFiles" accept="image/*,video/*" multiple hidden>
       <div class="staged" id="staged"></div>
+      <div class="proc-adm full" id="procAdm">
+        <div class="ai-head"><strong>🛠️ תהליך העבודה (לא חובה)</strong><span class="note">תמונות מהדרך: הדפסה, פריימר, צביעה. הן נשמרות בגודל קטן ומוצגות במסגרת שחורה אחידה. בלי תמונות, הכפתור "מאחורי הקלעים" פשוט לא מופיע.</span></div>
+        <div class="toolrow"><button type="button" class="pill small" id="procUp">הוספת תמונות תהליך</button><input type="file" id="procFile" accept="image/*" multiple hidden><span class="note" id="procMsg"></span></div>
+        <div class="proc-list" id="procList"></div>
+      </div>
       <div class="ai full" id="ai">
         <div class="ai-head"><strong>הצעות לכותרת ולתיאור</strong><span class="note" id="aiState">יופיעו אוטומטית אחרי העלאת תמונה.</span></div>
         <label for="aiHint" class="note">פרטים על הדמות (לא חובה). ההצעות מתבססות קודם כל על התמונות, ומה שתכתוב כאן מתווסף אליהן.</label>
@@ -477,6 +494,8 @@
       <label class="full">פסקה שנייה<textarea id="xP2" maxlength="600"></textarea></label>
       <label>מדבקה צהובה (שורה לכל מילה)<textarea id="xBurst" maxlength="40" style="min-height:70px"></textarea></label>
       <div style="display:grid;gap:12px"><label>כפתור ראשי<input id="xCtaMain" maxlength="30"></label><label>כפתור הזמנה<input id="xCtaOrder" maxlength="30"></label></div>
+      <label>רשתות חברתיות: כותרת (/ מפריד בין השורות)<input id="xSocialTitle" maxlength="80"></label>
+      <label>רשתות חברתיות: טקסט (ריק = הפס לא מוצג)<textarea id="xSocialText" maxlength="300" style="min-height:70px"></textarea></label>
       <label class="full">משפט הסיום בתחתית הדף הראשי (/ מפריד בין שתי השורות)<input id="xFinale" maxlength="100"></label>
       <label class="full">הערה קטנה מתחת לגלריה (ריק = לא מוצגת)<textarea id="xGalNote" maxlength="300" style="min-height:60px"></textarea></label>
       <h4 class="full" style="margin:10px 0 0">טופס ההמלצה</h4>

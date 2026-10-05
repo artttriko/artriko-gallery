@@ -1003,3 +1003,55 @@ footer{flex-wrap:wrap}
   .tz-gal .tz-row .card h3{font-size:20px}
 }
 .gift-group p strong{display:block;font-size:1.12em;margin-bottom:6px;color:var(--ink)}
+
+/* ================= Work process ("behind the scenes") ================= */
+.proc-tag{position:absolute;bottom:10px;inset-inline-start:10px;z-index:2;font-size:12px;font-weight:800;color:var(--paper);background:rgba(0,0,0,.72);border:1px solid rgba(246,234,216,.25);padding:3px 9px;border-radius:999px;pointer-events:none}
+.tz-row .proc-tag{display:none}
+.proc-btn{display:flex;align-items:center;gap:12px;width:100%;margin:6px 0 14px;padding:12px 14px;border-radius:14px;border:2px solid #000;background:#0a0a0a;color:var(--paper);cursor:pointer;text-align:start;font:inherit;box-shadow:4px 4px 0 var(--sun);transition:transform .15s,box-shadow .15s}
+.proc-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--sun)}
+.pb-ic{font-size:24px}.proc-btn b{display:block;font-size:16px}.proc-btn small{color:var(--muted);font-size:13px}
+.pb-go{margin-inline-start:auto;color:var(--sun);font-weight:800}
+.proc-dlg{max-width:min(980px,96vw);width:100%;padding:22px 0 18px;background:#050505;border:2px solid #1d1d1d}
+.pd-head{padding:0 22px 12px}
+.pd-head h3{font:400 clamp(26px,4vw,40px)/1 var(--f-mark);margin:10px 0 4px;color:var(--paper);direction:ltr;text-align:right}
+.pd-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 22px 10px;scrollbar-width:none}
+.pd-track::-webkit-scrollbar{display:none}
+.pf{flex:0 0 min(360px,78vw);margin:0;scroll-snap-align:center}
+.pf-in{position:relative;height:100%;background:#000;border:1px solid #2b2b2b;outline:6px solid #000;padding:12px 12px 14px;box-shadow:0 18px 40px -16px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.04)}
+.pf-step{position:absolute;top:20px;inset-inline-start:20px;z-index:1;font:400 12px/1 var(--f-mark);letter-spacing:.06em;color:#000;background:var(--sun);padding:5px 8px}
+.pf-img{aspect-ratio:4/5;background:#0b0b0b;display:grid;place-items:center;overflow:hidden}
+.pf-img img{width:100%;height:100%;object-fit:contain;display:block}
+.pf figcaption{margin-top:12px;color:var(--paper);font-weight:600;font-size:15px;line-height:1.4;min-height:1.4em}
+.pf-end .pf-in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:28px 22px}
+.pf-end-ic{font-size:40px}.pf-end b{font:700 34px/1 var(--f-display)}.pf-end p{color:var(--muted);margin:0;line-height:1.5}
+.pf-links{display:grid;gap:10px;width:100%;margin-top:8px}
+.pd-nav{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 22px 0}
+.pd-arrow{width:42px;height:42px;border-radius:50%;border:2px solid #2b2b2b;background:#000;color:var(--paper);font-size:22px;cursor:pointer}
+.pd-arrow:hover{border-color:var(--sun);color:var(--sun)}
+.pd-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pd-dots i{width:8px;height:8px;border-radius:50%;background:#333;cursor:pointer;transition:background .2s,transform .2s}
+.pd-dots i.on{background:var(--sun);transform:scale(1.3)}
+/* admin list of process photos */
+.proc-adm{margin-top:14px;padding:14px;border:2px dashed var(--line);border-radius:12px}
+.proc-list{display:grid;gap:8px;margin-top:10px}
+.proc-item{display:grid;grid-template-columns:auto 56px 1fr auto;gap:10px;align-items:center;background:var(--ink);padding:6px 8px;border-radius:10px}
+.proc-n{font-weight:800;color:var(--muted);min-width:18px;text-align:center}
+.proc-item img{width:56px;height:56px;object-fit:cover;border-radius:6px;background:#000}
+.proc-item .row{display:flex;gap:4px}
+@media (max-width:760px){.proc-item{grid-template-columns:auto 48px 1fr}.proc-item .row{grid-column:1/-1;justify-content:flex-end}}
+
+/* ================= Social band (tips and process on Instagram / TikTok) ================= */
+.social-band{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:24px 48px;align-items:center;margin:clamp(40px,6vw,72px) 0 0;padding:clamp(28px,4vw,48px);border-radius:26px;background:linear-gradient(135deg,rgba(225,48,108,.16),rgba(131,58,180,.14) 50%,rgba(37,244,238,.1));border:1px solid rgba(246,234,216,.12)}
+.social-band[hidden]{display:none}
+.social-band .sec-title{margin:12px 0 8px}
+.sb-links{display:grid;gap:12px}
+.sb-link{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;text-decoration:none;color:#fff;transition:transform .15s,box-shadow .15s}
+.sb-link[hidden]{display:none}
+.sb-link svg{width:30px;height:30px;flex:none}
+.sb-link b{display:block;font-size:18px}.sb-link small{font-size:14px;opacity:.85}
+.sb-link:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--paper)}
+.sb-link.ig{background:linear-gradient(45deg,#f9a03f,#e1306c 45%,#833ab4)}
+.sb-link.tt{background:#000;border:1px solid #2b2b2b}
+.sb-link.tt svg{filter:drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55)}
+.pf-links .sb-link{justify-content:center}
+@media (max-width:760px){.social-band{grid-template-columns:1fr;border-radius:20px}}

@@ -153,8 +153,8 @@ const SAMPLES=[
 ];
 
 /* ================= Data (Supabase) ================= */
-const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],createdAt:Date.parse(r.created_at)});
+const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
+const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -296,6 +296,7 @@ function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[�
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
         ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
         ${w.example?`<span class="example">דוגמה</span>`:""}
+        ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${S.admin&&hasWm(w)?`<span class="wm-tag on-card" title="${esc(wmText(w))}">⚠️ סימן מים · רק אתה רואה</span>`:""}
       </div>
       <div class="meta"><h3>${esc(nm)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
@@ -473,9 +474,9 @@ $("#grid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList
 
 /* ================= Links ================= */
 const wa=t=>CFG.whatsapp?`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(t||"")}`:"";
-["#igTop","#igBar"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
+["#igTop","#igBar","#igBand"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
 $("#ctIg").href="https://ig.me/m/"+CFG.instagram.replace(/\/+$/,"").split("/").pop();
-["#ttTop","#ttBar","#ctTt"].forEach(s=>{const el=$(s);if(el)el.href=CFG.tiktok});
+["#ttTop","#ttBar","#ctTt","#ttBand"].forEach(s=>{const el=$(s);if(el)el.href=CFG.tiktok});
 $("#ctaOrder").onclick=()=>openContact("order");$("#finaleOrder").onclick=()=>openContact("order");$("#orderBar").onclick=()=>openContact("order");
 $("#giftCta").onclick=$("#giftCta2").onclick=()=>openContact("gift");
 
@@ -494,9 +495,11 @@ function openLB(id){
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
+    ${w.process&&w.process.length?`<button class="proc-btn" id="lbProc" type="button"><span class="pb-ic">🛠️</span><span><b>מאחורי הקלעים</b><small>${w.process.length===1?"תמונה אחת":w.process.length+" תמונות"} מתהליך העבודה</small></span><span class="pb-go">←</span></button>`:""}
     <button class="pill contact-btn" id="lbContact">אני רוצה את זה!</button>
     ${showIl?`<p class="note">בהמחשה בחדר הגודל על השידה מחושב לפי הגובה האמיתי של הפסל.</p>`:""}`;
   $("#lbContact").onclick=()=>openContact(w);
+  if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
   showSlide(0); $("#lb").showModal();
 }
 function showSlide(i){
@@ -933,6 +936,7 @@ $("#wf").onsubmit=async e=>{
   try{
     const media=await uploadMedia(id,S.staged);
     const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
+    w.process=await uploadProc(id);
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
     if(fromExample)S.works=S.works.filter(x=>x.id!==S.editing);
@@ -961,9 +965,49 @@ async function uploadMedia(id,items){
   }
   return out;
 }
-function structuredCloneSafe(w){return w?{...w,media:w.media.map(m=>({...m}))}:null}
+/* ---- Process viewer: every photo in the same black frame, then an invitation to Instagram and TikTok ---- */
+function openProc(w){
+  const L=w.process||[],ig=TEXTS.btnIg!==false,tt=TEXTS.btnTt!==false;
+  $("#pdTitle").textContent=shortName(w);$("#pdCount").textContent=L.length===1?"תמונה אחת מהדרך":`${L.length} תמונות מהדרך, מההדפסה ועד הצבע`;
+  const end=(ig||tt)?`<div class="pf pf-end"><div class="pf-in"><span class="pf-end-ic">📲</span><b>רוצים לראות עוד?</b><p>${esc(TEXTS.socialText||"")}</p><div class="pf-links">${ig?`<a class="sb-link ig" href="${CFG.instagram}" target="_blank" rel="noopener"><b>Instagram</b></a>`:""}${tt?`<a class="sb-link tt" href="${CFG.tiktok}" target="_blank" rel="noopener"><b>TikTok</b></a>`:""}</div></div></div>`:"";
+  $("#pdTrack").innerHTML=L.map((p,i)=>`<figure class="pf"><div class="pf-in"><span class="pf-step">שלב ${i+1}/${L.length}</span><div class="pf-img"><img src="${esc(p.url)}" alt="${esc(p.cap||"שלב "+(i+1))}" loading="lazy"></div>${p.cap?`<figcaption>${esc(p.cap)}</figcaption>`:""}</div></figure>`).join("")+end;
+  const n=L.length+(end?1:0);$("#pdDots").innerHTML=Array.from({length:n},(_,i)=>`<i data-i="${i}"></i>`).join("");
+  $("#procDlg").showModal();$("#pdTrack").scrollLeft=0;procDots();
+}
+const pdStep=()=>{const t=$("#pdTrack"),f=t.querySelector(".pf");return f?f.getBoundingClientRect().width+14:300};
+function procDots(){const t=$("#pdTrack"),i=Math.round(Math.abs(t.scrollLeft)/pdStep());$("#pdDots").querySelectorAll("i").forEach((d,k)=>d.classList.toggle("on",k===i))}
+$("#pdTrack").addEventListener("scroll",()=>requestAnimationFrame(procDots),{passive:true});
+// RTL: "next" moves toward the left
+$("#pdNext").onclick=()=>$("#pdTrack").scrollBy({left:-pdStep(),behavior:"smooth"});
+$("#pdPrev").onclick=()=>$("#pdTrack").scrollBy({left:pdStep(),behavior:"smooth"});
+$("#pdDots").addEventListener("click",e=>{const d=e.target.closest("i");if(d)$("#pdTrack").scrollTo({left:-(+d.dataset.i)*pdStep(),behavior:"smooth"})});
+
+/* ---- Work process photos ("behind the scenes"): small JPEGs with an optional caption ---- */
+S.proc=[];
+async function procShrink(src){const i=await loadImg(src);const k=Math.min(1,1200/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext("2d");x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.78)}
+function renderProcAdmin(){
+  const L=S.proc;
+  $("#procList").innerHTML=L.map((p,i)=>`<div class="proc-item" data-i="${i}"><span class="proc-n">${i+1}</span><img src="${esc(p.url)}" alt=""><input class="proc-cap" data-i="${i}" maxlength="60" placeholder="כיתוב קצר (לא חובה), למשל: פריימר שחור" value="${esc(p.cap||"")}"><div class="row">${i>0?`<button type="button" class="pill small" data-pa="up">↑</button>`:""}${i<L.length-1?`<button type="button" class="pill small" data-pa="down">↓</button>`:""}<button type="button" class="pill small danger" data-pa="rm">✕</button></div></div>`).join("");
+}
+$("#procUp").onclick=()=>$("#procFile").click();
+$("#procFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.startsWith("image"));e.target.value="";
+  for(const [k,f] of files.entries()){$("#procMsg").textContent=`מכין תמונה ${k+1} מתוך ${files.length}…`;
+    try{const data=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(f)});S.proc.push({url:await procShrink(data),cap:""})}catch(err){console.error(err)}}
+  $("#procMsg").textContent=files.length?"התמונות יישמרו יחד עם היצירה.":"";renderProcAdmin()};
+$("#procList").addEventListener("click",e=>{const b=e.target.closest("[data-pa]");if(!b)return;const i=+b.closest(".proc-item").dataset.i,L=S.proc;
+  if(b.dataset.pa==="rm")L.splice(i,1);else{const j=b.dataset.pa==="up"?i-1:i+1;[L[i],L[j]]=[L[j],L[i]]}renderProcAdmin()});
+$("#procList").addEventListener("input",e=>{const t=e.target.closest(".proc-cap");if(t)S.proc[+t.dataset.i].cap=t.value});
+async function uploadProc(id){
+  const out=[],stamp=Date.now();
+  for(const [k,p] of S.proc.entries()){
+    const url=isRemote(p.url)?p.url:await uploadBlob(`works/${id}/proc-${stamp}-${k}.jpg`,b64Blob(p.url),(l,t)=>{$("#fMsg").textContent=`מעלה תמונת תהליך ${k+1} מתוך ${S.proc.length}… ${Math.round(l/t*100)}%`});
+    out.push({url,cap:String(p.cap||"").trim().slice(0,60)});
+  }
+  return out;
+}
+function structuredCloneSafe(w){return w?{...w,media:w.media.map(m=>({...m})),process:(w.process||[]).map(p=>({...p}))}:null}
 function upsert(w){const i=S.works.findIndex(x=>x.id===w.id);if(i>=0)S.works[i]=w;else S.works.push(w)}
-function resetForm(){$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
+function resetForm(){S.proc=[];renderProcAdmin();$("#procMsg").textContent="";$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
@@ -999,7 +1043,7 @@ $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
   if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url,wm:m.wm||null}));
-    $("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
+    S.proc=(w.process||[]).map(p=>({...p}));renderProcAdmin();$("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
   if(b.dataset.a==="no"){renderAdminList();return}
   if(b.dataset.a==="yes"){if(w.example){S.works=S.works.filter(x=>x.id!==w.id);render();return}try{await dbDel(w.id);S.works=S.works.filter(x=>x.id!==w.id);pushHist({type:"delete",before:w});render()}catch(err){toast("המחיקה נכשלה, נסה שוב")}}
@@ -1027,6 +1071,8 @@ const DEFAULT_TEXTS={
   aboutText:"בילדות זה היה נייר, פלסטלינה, חימר וקרטון. היום זה מידול, הדפסת תלת־ממד וצביעה ידנית. כל יצירה נבנית מאפס, בשבילך.",
   aboutStats:"1/1 | כל פסל הוא פריט יחיד במינו\n100% | צבוע ביד, שכבה אחרי שכבה\nימים עד חודשים | של עבודה על כל יצירה\nVIP | מתנות ייחודיות לאנשים מיוחדים",
   finale:"יש דמות שלא יוצאת מהראש? / בואו נהפוך אותה לפסל.",
+  socialTitle:"טיפים, תהליכים / ומאחורי הקלעים.",
+  socialText:"באינסטגרם ובטיקטוק אני משתף טיפים לצביעה, תהליכי עבודה על דגמים ורגעים מהסטודיו.",
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט יחיד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
   burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ←",ctaOrder:"להזמנה אישית",
@@ -1069,6 +1115,8 @@ function renderTexts(){
   $("#aboutText").innerHTML=rich(T.aboutText||"");
   $("#aboutStats").innerHTML=String(T.aboutStats||"").split("\n").map(x=>x.trim()).filter(Boolean).slice(0,6).map(x=>{const [a,b]=x.split("|").map(y=>y.trim());return `<div class="stat"><b dir="auto">${esc(a||"")}</b>${b?`<span>${esc(b)}</span>`:""}</div>`}).join("");
   $("#about").hidden=!String(T.aboutTitle||"").trim()&&!String(T.aboutText||"").trim();
+  $("#socialTitle").innerHTML=two2(T.socialTitle);$("#socialText").textContent=T.socialText||"";
+  $("#socialBand").hidden=!String(T.socialText||"").trim()||(T.btnIg===false&&T.btnTt===false);
   $("#finaleTitle").innerHTML=two2(T.finale);$("#finale").hidden=!String(T.finale||"").trim();
   $("#finaleOrder").textContent=T.ctaOrder||"להזמנה אישית";
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
@@ -1111,8 +1159,8 @@ function renderTexts(){
   $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהסדנה"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
   // Buttons the admin chose to show
   const vis=(sels,on)=>sels.forEach(x=>{const el=$(x);if(el)el.hidden=!on});
-  vis(["#igTop","#igBar","#ctIg","#igGuide"],T.btnIg!==false);
-  vis(["#ttTop","#ttBar","#ctTt","#ttGuide"],T.btnTt!==false);
+  vis(["#igTop","#igBar","#ctIg","#igGuide","#igBand"],T.btnIg!==false);
+  vis(["#ttTop","#ttBar","#ctTt","#ttGuide","#ttBand"],T.btnTt!==false);
   vis(["#navGuide"],T.btnGuide!==false);
   let n=String(T.waNumber||"").replace(/\D/g,"");if(n.startsWith("0"))n="972"+n.slice(1);
   CFG.whatsapp=T.btnWa!==false&&n.length>=9?n:"";
@@ -1120,7 +1168,7 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={giftOcc:"#xGiftOcc",giftGroupT:"#xGiftGroupT",giftGroup:"#xGiftGroup",giftSteps:"#xGiftSteps",giftEnd:"#xGiftEnd",heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={socialTitle:"#xSocialTitle",socialText:"#xSocialText",giftOcc:"#xGiftOcc",giftGroupT:"#xGiftGroupT",giftGroup:"#xGiftGroup",giftSteps:"#xGiftSteps",giftEnd:"#xGiftEnd",heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();if(before.heroMode!==TEXTS.heroMode){HERO_ID=null;render()}$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
