@@ -1571,8 +1571,29 @@ function renderReviews(){
   $("#rvList").innerHTML=list.slice(0,RV_SHOW).map(rvCard).join("");
   $("#rvMore").hidden=list.length<=RV_SHOW;
   requestAnimationFrame(()=>document.querySelectorAll(".rv-body").forEach(p=>{const b=p.nextElementSibling;if(b&&p.scrollHeight>p.clientHeight+4)b.hidden=false}));
-  renderHome();
+  renderHome();  renderSpot();
 }
+/* Home: one featured review, a different one on each visit.
+   Shown only from 5 approved reviews; only 4 stars and up; reviews with a photo are picked more often. */
+let SPOT_ID=null;
+function renderSpot(){
+  const box=$("#spot");if(!box)return;
+  const pub=REVIEWS.filter(r=>r.status==="approved");
+  const pool=pub.filter(r=>rvAvg(r)>=4&&String(r.body||"").trim().length>=12);
+  if(pub.length<5||!pool.length){box.hidden=true;box.innerHTML="";return}
+  let r=pool.find(x=>x.id===SPOT_ID);
+  if(!r){const w=pool.map(x=>x.photos.length?3:1),sum=w.reduce((a,b)=>a+b,0);let k=Math.random()*sum;r=pool.find((x,i)=>(k-=w[i])<0)||pool[0];SPOT_ID=r.id}
+  const body=String(r.body).trim(),short=body.length>230?body.slice(0,body.lastIndexOf(" ",225)).trim()+"…":body;
+  const ph=r.photos[0];
+  box.classList.toggle("has-ph",!!ph);
+  box.innerHTML=`${ph?`<button type="button" class="spot-ph" data-spotph aria-label="תמונה מההמלצה"><img src="${esc(ph)}" alt="" loading="lazy"></button>`:""}
+    <figure class="spot-fig"><span class="spot-mark" aria-hidden="true">”</span>
+      <blockquote>${esc(short)}</blockquote>
+      <figcaption>${starsHTML(rvAvg(r))}<b>${esc(r.name)}</b>${r.subject?`<span class="spot-subj">${esc(r.subject)}</span>`:""}</figcaption>
+      <a class="spot-all" href="#reviews">לכל ${pub.length} ההמלצות ←</a></figure>`;
+  box.hidden=false;
+}
+$("#spot").addEventListener("click",e=>{if(e.target.closest("[data-spotph]")){const r=REVIEWS.find(x=>x.id===SPOT_ID);if(r)openViewer(r.photos,0)}});
 function rvCard(r){
     const d=new Date(r.created_at),v=rvAvg(r);
     return `<article class="rv-card">
