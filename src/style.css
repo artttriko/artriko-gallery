@@ -842,7 +842,6 @@ a.mark{text-decoration:none}
 .about-more p strong{color:var(--paper)}
 
 /* gallery teaser = the showcase */
-.tz-gal .tz-row{grid-template-columns:repeat(3,minmax(0,1fr))}
 /* closing call */
 .finale{text-align:center;padding:clamp(56px,9vw,120px) 0 clamp(70px,9vw,120px);border-top:2px solid var(--line)}
 .finale[hidden]{display:none}
@@ -871,7 +870,6 @@ a.mark{text-decoration:none}
   .stat{padding:20px 12px;border-radius:18px}
   .stat b{font-size:clamp(30px,9vw,42px)}
   .stat span{font-size:13.5px}
-  .tz-gal .tz-row{display:flex;grid-template-columns:none}
   .finale{padding:56px 0 110px}
   .finale .cta{display:grid;grid-template-columns:1fr 1fr}
   .finale .cta .big{justify-content:center}
@@ -993,4 +991,14 @@ footer{flex-wrap:wrap}
   .gift-group{grid-template-columns:1fr;box-shadow:5px 5px 0 var(--pop);border-radius:20px}
   .gift-steps li{padding:16px 4px}
   .gift-end .pill{width:100%;justify-content:center}
+}
+
+/* home teasers: a clean, even showcase (no sale stickers, name only on one line) */
+.tz-row .badge,.tz-row .example{display:none}
+.tz-row .card .meta h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tz-gal .tz-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.tz-gal .tz-row .card h3{font-size:24px}
+@media (max-width:760px){
+  .tz-gal .tz-row,.tz-gift .tz-row{grid-template-columns:none;grid-auto-columns:64%}
+  .tz-gal .tz-row .card h3{font-size:20px}
 }

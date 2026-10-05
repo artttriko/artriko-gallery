@@ -291,14 +291,14 @@ function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">�
 
 // Display order: the admin's own order; works never placed yet (e.g. just added) come first, newest first
 const byOrder=(a,b)=>{const ao=a.order==null,bo=b.order==null;if(ao&&bo)return b.createdAt-a.createdAt;if(ao)return -1;if(bo)return 1;return a.order-b.order||b.createdAt-a.createdAt};
-function cardHTML(w){return `
+function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
         ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${S.admin&&hasWm(w)?`<span class="wm-tag on-card" title="${esc(wmText(w))}">⚠️ סימן מים · רק אתה רואה</span>`:""}
       </div>
-      <div class="meta"><h3>${esc(w.name)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
+      <div class="meta"><h3>${esc(nm)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
     </article>`}
 function renderGifts(){
   const gifts=[...S.works].filter(w=>w.section==="gift").sort(byOrder);
@@ -325,7 +325,7 @@ function renderHome(){
   const P={};P.gallery=`<section class="tz tz-gal">
     <div class="tz-head"><div><span class="ws-eyebrow">הגלריה</span><h2 class="sec-title">פסלי אספנות<br><span>שכבר יצאו מהסטודיו.</span></h2></div>
       <a class="pill solid tz-go" href="#gallery">לכל הגלריה${col.length?` (${col.length})`:""} ←</a></div>
-    <div class="tz-row">${col.slice(0,6).map(cardHTML).join("")}</div></section>`;
+    <div class="tz-row">${col.slice(0,6).map(w=>cardHTML(w,true)).join("")}</div></section>`;
   if(typeof rvAvg==="function"){
     const A=pub.length?pub.reduce((t,r)=>t+rvAvg(r),0)/pub.length:0;
     P.reviews=`<section class="tz tz-rv">
@@ -337,7 +337,7 @@ function renderHome(){
   if(giftOn)P.gifts=`<section class="tz tz-gift">
       <div class="tz-head"><div><span class="ws-eyebrow gift-eyebrow">${esc(T.giftEyebrow||"מתנות ייחודיות")}</span><h2 class="sec-title">${two(T.giftTitle)}</h2><p class="tz-text">${esc(first(T.giftText))}</p></div>
         <a class="pill solid tz-go" href="#gifts">למתנות ←</a></div>
-      ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(cardHTML).join("")}</div>`:""}</section>`;
+      ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(w=>cardHTML(w,true)).join("")}</div>`:""}</section>`;
   if(wsOn){const ph=(T.wsPhotos||[]).slice(0,3);
     P.learn=`<section class="tz tz-ws">
       <div class="tz-head"><div><span class="ws-eyebrow">${esc(T.wsEyebrow||"סדנאות")}</span><h2 class="sec-title">${two(T.wsTitle)}</h2><p class="tz-text">${esc(first(T.wsText))}</p></div>
