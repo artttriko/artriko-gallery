@@ -854,7 +854,8 @@ function renderStaged(){
       <button type="button" class="pill small" data-a="toggle" aria-expanded="${it.open}">${it.open?"סגירת העריכה":"עריכת תמונה"}</button>
       ${it.open?editorHTML(it):""}
       ${it.busy?`<span class="busy">מעבד…</span>`:""}`}
-      <div class="row">${k>0&&it.kind==="image"?`<button type="button" class="pill small" data-a="first">לתמונה ראשית</button>`:it.kind==="image"?`<span class="note">תמונה ראשית</span>`:""}<button type="button" class="pill small danger" data-a="rm">הסרה</button></div>
+      <div class="row st-order"><span class="st-n">${k+1}</span><button type="button" class="pill small" data-a="up" ${k===0?"disabled":""} aria-label="להזיז אחורה בסדר">→</button><button type="button" class="pill small" data-a="down" ${k===S.staged.length-1?"disabled":""} aria-label="להזיז קדימה בסדר">←</button>${k>0&&it.kind==="image"?`<button type="button" class="pill small" data-a="first">לראשית</button>`:k===0?`<span class="note">ראשית</span>`:""}</div>
+      <div class="row"><button type="button" class="pill small danger" data-a="rm">הסרה</button></div>
     </div>`).join("");
 }
 const stOf=el=>{const st=el.closest(".st");return st&&S.staged.find(s=>s.sid==st.dataset.sid)};
@@ -865,6 +866,7 @@ $("#staged").addEventListener("change",e=>{const it=stOf(e.target);if(!it)return
 $("#staged").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const it=stOf(b);const k=S.staged.indexOf(it);const a=b.dataset.a;
   if(a==="rm"){S.staged.splice(k,1);renderStaged();return}
   if(a==="first"){S.staged.unshift(...S.staged.splice(k,1));renderStaged();return}
+  if(a==="up"||a==="down"){const j=a==="up"?k-1:k+1;if(j<0||j>=S.staged.length)return;[S.staged[k],S.staged[j]]=[S.staged[j],S.staged[k]];renderStaged();return}
   if(a==="toggle"){it.open=!it.open;renderStaged();return}
   if(a==="cutout"){makeCutout(it);return}
   if(a==="crop"){openCrop(it);return}
