@@ -990,7 +990,8 @@ function renderProcAdmin(){
   $("#procList").innerHTML=L.map((p,i)=>`<div class="proc-item" data-i="${i}"><span class="proc-n">${i+1}</span><img src="${esc(p.url)}" alt=""><input class="proc-cap" data-i="${i}" maxlength="60" placeholder="כיתוב קצר (לא חובה), למשל: פריימר שחור" value="${esc(p.cap||"")}"><div class="row">${i>0?`<button type="button" class="pill small" data-pa="up">↑</button>`:""}${i<L.length-1?`<button type="button" class="pill small" data-pa="down">↓</button>`:""}<button type="button" class="pill small danger" data-pa="rm">✕</button></div></div>`).join("");
 }
 $("#procUp").onclick=()=>$("#procFile").click();
-$("#procFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.startsWith("image"));e.target.value="";
+$("#procFile").onchange=async e=>{const all=[...e.target.files],files=all.filter(f=>f.type.startsWith("image"));e.target.value="";
+  if(all.length&&!files.length){$("#procMsg").textContent="הקבצים שנבחרו אינם תמונות.";return}
   for(const [k,f] of files.entries()){$("#procMsg").textContent=`מכין תמונה ${k+1} מתוך ${files.length}…`;
     try{const data=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(f)});S.proc.push({url:await procShrink(data),cap:""})}catch(err){console.error(err)}}
   $("#procMsg").textContent=files.length?"התמונות יישמרו יחד עם היצירה.":"";renderProcAdmin()};
