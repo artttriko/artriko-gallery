@@ -138,20 +138,7 @@
 .motion .mark span{animation:markBob 6s ease-in-out infinite;animation-delay:calc(var(--i) * 90ms)}
 @keyframes markBob{0%,86%,100%{transform:none}90%{transform:translateY(-7px)}94%{transform:translateY(2px)}}
 
-/* Side badge with the logo */
-.side-badge{position:fixed;left:18px;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:90;width:108px;height:108px;padding:0;border:0;background:none;cursor:pointer;
-  filter:drop-shadow(5px 5px 0 var(--pop));transition:transform .4s cubic-bezier(.2,1.6,.4,1)}
-.side-badge:hover{transform:scale(1.08) rotate(-6deg)}
-.side-badge svg{width:100%;height:100%;display:block}
-.sb-core{position:absolute;inset:27%;border-radius:50%;background:var(--sun);border:3px solid var(--ink);display:grid;place-items:center;overflow:hidden}
-.sb-core img{width:100%;height:100%;object-fit:cover}
-.sb-logo{font:400 30px/1 var(--f-mark);color:var(--ink);text-shadow:2px 2px 0 var(--pop);transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
-.side-badge:hover .sb-logo{transform:rotateY(360deg)}
 
-@media (max-width:760px){
-  .side-badge{width:66px;height:66px;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-  .sb-logo{font-size:18px}
-}
 @media (prefers-reduced-motion:reduce){.hero-art::before{display:none}}
 /* decorative layers (rays, bands) must never widen the page */
 html,body{overflow-x:clip}

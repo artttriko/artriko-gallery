@@ -356,12 +356,13 @@ function render(){
   let list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
   if(S.q.trim()){const sc=new Map(list.map(w=>[w,searchScore(w,S.q)]));list=list.filter(w=>sc.get(w)>0).sort((a,b)=>sc.get(b)-sc.get(a))}
   $("#count").textContent=`${list.length} יצירות`;
-  $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך המנעול בתחתית והעלה את הראשונה.</p>`;
+  $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך הנקודה הקטנה בראש העמוד והעלה את הראשונה.</p>`;
   if(!list.length&&all.length)$("#grid").innerHTML=S.q.trim()
     ?`<div class="q-empty"><p>עוד אין כאן <b>${esc(S.q.trim())}</b>, אבל אפשר להזמין בדיוק את הדמות הזו.</p><div class="row"><button class="pill solid" type="button" id="qOrder">להזמנה אישית</button><button class="chip" type="button" id="clearF">ניקוי החיפוש</button></div></div>`
     :`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
   // Hero picture: only replace it when it actually changes (re-inserting the same image made the page jump)
   const top=all.find(firstImg),heroHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
+  const cap=$("#heroCap");cap.hidden=!top;if(top){cap.dataset.id=top.id;const nm=String(top.name||"").split(/\s+[–-]\s+/)[0];cap.innerHTML=`<b dir="auto">${esc(nm)}</b><span>לצפייה ←</span>`}
   if($("#heroScene").dataset.k!==heroHTML){$("#heroScene").innerHTML=heroHTML;$("#heroScene").dataset.k=heroHTML;
     const im=top&&firstImg(top);if(im&&!top.example&&/^https?:/.test(im.orig))save("heroImg",im.orig)}
   if(S.admin) renderAdminList();
@@ -451,7 +452,7 @@ $("#grid").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList
 const wa=t=>CFG.whatsapp?`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(t||"")}`:"";
 ["#igTop","#igBar","#ctIg"].forEach(s=>{const el=$(s);if(el)el.href=CFG.instagram});
 ["#ttTop","#ttBar","#ctTt"].forEach(s=>{const el=$(s);if(el)el.href=CFG.tiktok});
-$("#ctaOrder").onclick=()=>openContact("order");$("#orderBar").onclick=()=>openContact("order");
+$("#ctaOrder").onclick=()=>openContact("order");$("#finaleOrder").onclick=()=>openContact("order");$("#orderBar").onclick=()=>openContact("order");
 $("#giftCta").onclick=()=>openContact("gift");
 
 /* ================= Lightbox ================= */
@@ -761,7 +762,6 @@ async function openAdmin(tab){
   if(!$("#ad").open)$("#ad").showModal();
   if(S.admin){$("#whoAmI").textContent="מחובר: "+S.email;loadAdminData();showTab(tab||"work")}
 }
-$("#lockBtn").onclick=()=>openAdmin();
 $("#lockTop").onclick=()=>openAdmin();
 $("#loginForm").onsubmit=async e=>{
   e.preventDefault();const email=$("#lEmail").value.trim(),password=$("#lPass").value;
@@ -988,6 +988,13 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>showTab(b.datas
 /* ================= Landing texts (editable) ================= */
 const DEFAULT_TEXTS={
   h1a:"כל פסל",h1hl:"נולד",h1b:"מהלב.",h1red:"בהדפסה.",
+  eyebrow:"סטודיו לפסלי אספנות · צבוע ביד",
+  sub:"פסלי אספנות ומתנות אחת במינן. מודפסים בתלת־ממד, צבועים ביד, פריט אחד בכל פעם.",
+  aboutEyebrow:"מי אני",
+  aboutTitle:"פותר בעיות דרך אמנות. / מאז שאני זוכר את עצמי.",
+  aboutText:"בילדות זה היה נייר, פלסטלינה, חימר וקרטון. היום זה מידול, הדפסת תלת־ממד וצביעה ידנית. כל יצירה נבנית מאפס, בשבילך.",
+  aboutStats:"1/1 | כל פסל הוא פריט אחד במינו\n100% | צבוע ביד, שכבה אחרי שכבה\nימים עד חודשים | של עבודה על כל יצירה\nVIP | מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון",
+  finale:"יש דמות שלא יוצאת מהראש? / בואו נהפוך אותה לפסל.",
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט אחד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
   burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ←",ctaOrder:"להזמנה אישית",
@@ -1016,6 +1023,17 @@ function renderTexts(){
   const T=TEXTS;
   $("#tH1").innerHTML=`${esc(T.h1a)} ${T.h1hl?`<em>${esc(T.h1hl)}</em>`:""}<br>${esc(T.h1b)} ${T.h1red?`<b>${esc(T.h1red)}</b>`:""}`;
   $("#tP1").innerHTML=rich(T.p1);$("#tP2").innerHTML=rich(T.p2);$("#tP2").hidden=!T.p2;
+  $("#aboutMore").hidden=!String(T.p1||"").trim()&&!String(T.p2||"").trim();
+  $("#tEyebrow").textContent=T.eyebrow||"";$("#tEyebrow").hidden=!String(T.eyebrow||"").trim();
+  $("#tSub").innerHTML=rich(T.sub||"");$("#tSub").hidden=!String(T.sub||"").trim();
+  const two2=t=>{const [a,b]=String(t||"").split("/").map(x=>x.trim());return `${esc(a||"")}${b?`<br><span>${esc(b)}</span>`:""}`};
+  $("#aboutEyebrow").textContent=T.aboutEyebrow||"";
+  $("#aboutTitle").innerHTML=two2(T.aboutTitle);
+  $("#aboutText").innerHTML=rich(T.aboutText||"");
+  $("#aboutStats").innerHTML=String(T.aboutStats||"").split("\n").map(x=>x.trim()).filter(Boolean).slice(0,6).map(x=>{const [a,b]=x.split("|").map(y=>y.trim());return `<div class="stat"><b dir="auto">${esc(a||"")}</b>${b?`<span>${esc(b)}</span>`:""}</div>`}).join("");
+  $("#about").hidden=!String(T.aboutTitle||"").trim()&&!String(T.aboutText||"").trim();
+  $("#finaleTitle").innerHTML=two2(T.finale);$("#finale").hidden=!String(T.finale||"").trim();
+  $("#finaleOrder").textContent=T.ctaOrder||"להזמנה אישית";
   $("#tBurst").textContent=T.burst;$("#tBurst").hidden=!T.burst.trim();
   $("#ctaMain").textContent=String(T.ctaMain||"לגלריה ←").replace("↓","←");$("#ctaOrder").textContent=T.ctaOrder||"להזמנה אישית";$("#orderBar").textContent=T.ctaOrder||"להזמנה אישית";
   const [g1,g2]=String(T.giftTitle||"").split("/").map(x=>x.trim());
@@ -1023,7 +1041,7 @@ function renderTexts(){
   $("#giftTitle").innerHTML=`${esc(g1||"")}${g2?`<br><span>${esc(g2)}</span>`:""}`;
   $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=T.giftCta||"אני רוצה מתנה כזו!";
   const giftOn=!!String(T.giftText||"").trim();
-  ["#navGifts","#giftHero"].forEach(x=>$(x).hidden=!giftOn);
+  $("#navGifts").hidden=!giftOn;
   setCaption(pickLine("studio",T.studioLines));
   $("#galNote").textContent=T.galNote||"";$("#galNote").hidden=!String(T.galNote||"").trim();
   const lines=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
@@ -1037,7 +1055,7 @@ function renderTexts(){
   $("#wsCombo").innerHTML=rich(T.wsCombo||"");
   $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
   const wsOn=!!String(T.wsText||"").trim();
-  $("#learnHero").hidden=$("#navLearn").hidden=!wsOn||T.btnLearn===false;
+  $("#navLearn").hidden=!wsOn||T.btnLearn===false;
   applyNavOrder();
   if(typeof renderHome==="function"&&S.works.length)renderHome();
   const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
@@ -1047,14 +1065,14 @@ function renderTexts(){
   const vis=(sels,on)=>sels.forEach(x=>{const el=$(x);if(el)el.hidden=!on});
   vis(["#igTop","#igBar","#ctIg","#igGuide"],T.btnIg!==false);
   vis(["#ttTop","#ttBar","#ctTt","#ttGuide"],T.btnTt!==false);
-  vis(["#guideHero","#navGuide"],T.btnGuide!==false);
+  vis(["#navGuide"],T.btnGuide!==false);
   let n=String(T.waNumber||"").replace(/\D/g,"");if(n.startsWith("0"))n="972"+n.slice(1);
   CFG.whatsapp=T.btnWa!==false&&n.length>=9?n:"";
   $("#waBar").hidden=!CFG.whatsapp;if(CFG.whatsapp)$("#waBar").href=wa("היי ARTRIKO, ראיתי את הגלריה ואשמח לשמוע עוד");
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
@@ -1431,10 +1449,29 @@ function route(){
   Object.entries(PAGE_EL).forEach(([k,sel])=>{$(sel).hidden=k!==page});
   document.documentElement.dataset.page=page;
   document.querySelectorAll("#secnav a").forEach(a=>a.classList.toggle("on",pageOfHash(a.getAttribute("href"))===page));
+  $("#galBtn").classList.toggle("on",page==="gallery");setMenu(false);
   if(page==="guide")track("guide");
   const t=id&&!PAGE_EL[id]&&id!=="top"?document.getElementById(id):null;
   if(t)requestAnimationFrame(()=>t.scrollIntoView());else window.scrollTo(0,0);
 }
+/* Header: the logo always leads home; on phones the menu folds into a hamburger */
+function setMenu(open){
+  const b=$("#burger");if(!b)return;
+  document.documentElement.classList.toggle("menu-open",open);
+  b.setAttribute("aria-expanded",String(open));b.setAttribute("aria-label",open?"סגירת התפריט":"תפריט");
+  if(open)$(".mbar")?.classList.remove("hide");
+}
+$("#burger").onclick=()=>setMenu(!document.documentElement.classList.contains("menu-open"));
+$("#secnav").addEventListener("click",e=>{if(e.target.closest("a"))setMenu(false)});
+addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
+$("#homeLogo").addEventListener("click",e=>{
+  setMenu(false);
+  if(pageOfHash(location.hash)!=="home")return;           // another page: the link (and the wipe) takes it home
+  e.preventDefault();
+  if(location.hash&&location.hash!=="#top")history.replaceState(null,"","#top");
+  scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+});
+$("#heroCap").onclick=e=>{const id=e.currentTarget.dataset.id;if(id)openLB(id)};
 window.addEventListener("hashchange",route);route();
 
 /* ================= Boot ================= */

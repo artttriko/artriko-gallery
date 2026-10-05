@@ -25,7 +25,7 @@ function build() {
   layer.setAttribute("aria-hidden", "true");
   layer.innerHTML = `<video muted playsinline preload="auto"></video><video muted playsinline preload="none"></video>`;
   document.body.prepend(layer);
-  const hero = document.querySelector(".hero");
+  const hero = document.querySelector(".about") || document.querySelector(".hero");   // the camera window sits right after "who I am"
   if (hero) {
     win = document.createElement("section");
     win.className = "studio-window";
