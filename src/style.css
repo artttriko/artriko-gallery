@@ -1055,3 +1055,11 @@ footer{flex-wrap:wrap}
 .sb-link.tt svg{filter:drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55)}
 .pf-links .sb-link{justify-content:center}
 @media (max-width:760px){.social-band{grid-template-columns:1fr;border-radius:20px}}
+
+/* admin list: drag handle on the left, away from the thumb's natural scroll path */
+.li>.li-n{order:1}.li>img{order:2}.li>.t{order:3}.li>.drag{order:4}.li>.li-mv{order:5}.li>button,.li>.confirm{order:6}
+@media (min-width:761px){.li>.drag{order:9;margin-inline-start:4px}}
+@media (max-width:760px){.li .t{flex-basis:calc(100% - 150px)}.li>.drag{margin-inline-start:auto;font-size:26px;padding:8px 6px}}
+.proc-li{border-color:var(--sun)}
+.proc-adm.flash{animation:procFlash 1.6s ease}
+@keyframes procFlash{0%,40%{border-color:var(--sun);background:rgba(255,210,63,.12)}100%{background:none}}

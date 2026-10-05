@@ -986,7 +986,7 @@ $("#pdDots").addEventListener("click",e=>{const d=e.target.closest("i");if(d)$("
 S.proc=[];
 async function procShrink(src){const i=await loadImg(src);const k=Math.min(1,1200/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext("2d");x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.78)}
 function renderProcAdmin(){
-  const L=S.proc;
+  const L=S.proc;procSaveState();
   $("#procList").innerHTML=L.map((p,i)=>`<div class="proc-item" data-i="${i}"><span class="proc-n">${i+1}</span><img src="${esc(p.url)}" alt=""><input class="proc-cap" data-i="${i}" maxlength="60" placeholder="כיתוב קצר (לא חובה), למשל: פריימר שחור" value="${esc(p.cap||"")}"><div class="row">${i>0?`<button type="button" class="pill small" data-pa="up">↑</button>`:""}${i<L.length-1?`<button type="button" class="pill small" data-pa="down">↓</button>`:""}<button type="button" class="pill small danger" data-pa="rm">✕</button></div></div>`).join("");
 }
 $("#procUp").onclick=()=>$("#procFile").click();
@@ -997,6 +997,12 @@ $("#procFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.ty
 $("#procList").addEventListener("click",e=>{const b=e.target.closest("[data-pa]");if(!b)return;const i=+b.closest(".proc-item").dataset.i,L=S.proc;
   if(b.dataset.pa==="rm")L.splice(i,1);else{const j=b.dataset.pa==="up"?i-1:i+1;[L[i],L[j]]=[L[j],L[i]]}renderProcAdmin()});
 $("#procList").addEventListener("input",e=>{const t=e.target.closest(".proc-cap");if(t)S.proc[+t.dataset.i].cap=t.value});
+function procSaveState(){const ok=S.editing&&!String(S.editing).startsWith("ex-");$("#procSave").hidden=!ok}
+$("#procSave").onclick=async()=>{const id=S.editing,w=S.works.find(x=>x.id===id);if(!w)return;
+  $("#procSave").disabled=true;
+  try{const process=await uploadProc(id);const {error}=await sb.from("works").update({process}).eq("id",id);if(error)throw error;
+    w.process=process;S.proc=process.map(p=>({...p}));renderProcAdmin();render();$("#procMsg").textContent=process.length?"נשמר. הכפתור \"מאחורי הקלעים\" מופיע עכשיו בחלון העבודה.":"נשמר. אין תמונות תהליך, הכפתור לא יופיע.";$("#fMsg").textContent="";toast("תמונות התהליך נשמרו")}
+  catch(err){console.error(err);$("#procMsg").textContent="השמירה נכשלה: "+(err.message||err)}finally{$("#procSave").disabled=false}};
 async function uploadProc(id){
   const out=[],stamp=Date.now();
   for(const [k,p] of S.proc.entries()){
@@ -1012,7 +1018,7 @@ $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
   const list=[...S.works].sort(byOrder);
-  $("#adList").innerHTML=list.map((w,i)=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  $("#adList").innerHTML=list.map((w,i)=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small proc-li" data-a="proc" title="תמונות מתהליך העבודה">🛠️ תהליך${w.process&&w.process.length?` (${w.process.length})`:""}</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 /* ---- Reordering works: drag the ⠿ handle, or use ⤒ / ↑ / ↓ ---- */
@@ -1023,6 +1029,10 @@ async function saveOrder(ids){
   const res=await Promise.all(real.map(w=>sb.from("works").update({sort_order:w.order}).eq("id",w.id)));
   toast(res.some(r=>r.error)?"שמירת הסדר נכשלה":"הסדר נשמר");
 }
+// "🛠️ תהליך" in the list: open the work for editing and jump straight to its process photos
+$("#adList").addEventListener("click",e=>{const b=e.target.closest('button[data-a="proc"]');if(!b)return;e.stopImmediatePropagation();
+  b.closest(".li").querySelector('[data-a="edit"]').click();
+  setTimeout(()=>{const box=$("#procAdm");box.scrollIntoView({behavior:"smooth",block:"start"});box.classList.remove("flash");void box.offsetWidth;box.classList.add("flash")},250)},true);
 const listIds=()=>[...document.querySelectorAll("#adList .li")].map(r=>r.dataset.id);
 $("#adList").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b||!["top","mup","mdown"].includes(b.dataset.a))return;
   e.stopImmediatePropagation();const ids=listIds(),id=b.closest(".li").dataset.id,i=ids.indexOf(id);ids.splice(i,1);
