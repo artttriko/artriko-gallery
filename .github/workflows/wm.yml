@@ -1,10 +1,14 @@
 name: wm-scan
 on: { push: { branches: [ tmp-image-check ] } }
+permissions: { contents: write }
 jobs:
   get:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: mkdir imgs && while read n u; do curl -sSfL -o "imgs/$n.jpg" "$u" || echo "fail $n"; done < urls.txt && ls -la imgs | head -80
-      - uses: actions/upload-artifact@v4
-        with: { name: imgs, path: imgs, retention-days: 1 }
+      - run: |
+          mkdir -p imgs
+          while read n u; do curl -sSfL -o "imgs/$n.jpg" "$u" || echo "fail $n"; done < urls.txt
+          ls imgs | wc -l
+          git config user.email noreply@anthropic.com; git config user.name Claude
+          git add imgs && git commit -qm "images" && git push
