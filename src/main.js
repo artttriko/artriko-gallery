@@ -348,6 +348,23 @@ $("#teasers").addEventListener("click",e=>{
   const buy=e.target.closest("[data-buy]");if(buy){e.preventDefault();openContact(S.works.find(w=>w.id===buy.dataset.buy));return}
   const card=e.target.closest(".card");if(card)openLB(card.dataset.id);
 });
+/* Home picture: a different statue on each visit (gifts never), or fixed = the first work in the gallery.
+   For rotation the next visit's picture is chosen now and cached, so the page opens on it without a visible swap. */
+let HERO_ID=null;
+function heroWork(all){
+  const withImg=all.filter(firstImg);
+  if(TEXTS.heroMode==="fixed"){HERO_ID=null;return withImg[0]}
+  const pool=withImg.filter(w=>!w.example);if(!pool.length)return withImg[0];
+  let cur=HERO_ID&&pool.find(w=>w.id===HERO_ID);
+  if(!cur){
+    const cached=load("heroImg");
+    cur=pool.find(w=>firstImg(w).orig===cached)||pool[Math.floor(Math.random()*pool.length)];
+    HERO_ID=cur.id;
+    const rest=pool.length>1?pool.filter(w=>w.id!==cur.id):pool,next=rest[Math.floor(Math.random()*rest.length)];
+    const u=firstImg(next).orig;if(/^https?:/.test(u))save("heroImg",u);
+  }
+  return cur;
+}
 function render(){
   renderGifts();renderHome();
   const all=[...S.works].filter(w=>w.section!=="gift").sort(byOrder);
@@ -361,10 +378,10 @@ function render(){
     ?`<div class="q-empty"><p>עוד אין כאן <b>${esc(S.q.trim())}</b>, אבל אפשר להזמין בדיוק את הדמות הזו.</p><div class="row"><button class="pill solid" type="button" id="qOrder">להזמנה אישית</button><button class="chip" type="button" id="clearF">ניקוי החיפוש</button></div></div>`
     :`<p class="note">אין יצירות שמתאימות לסינון. <button class="chip" id="clearF">ניקוי הסינון</button></p>`;
   // Hero picture: only replace it when it actually changes (re-inserting the same image made the page jump)
-  const top=all.find(firstImg),heroHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
+  const top=heroWork(all),heroHTML=top?(S.view==="room"?sceneHTML(top):flatHTML(top)):"";
   const cap=$("#heroCap");cap.hidden=!top;if(top){cap.dataset.id=top.id;const nm=String(top.name||"").split(/\s+[–-]\s+/)[0];cap.innerHTML=`<b dir="auto">${esc(nm)}</b><span>לצפייה ←</span>`}
   if($("#heroScene").dataset.k!==heroHTML){$("#heroScene").innerHTML=heroHTML;$("#heroScene").dataset.k=heroHTML;
-    const im=top&&firstImg(top);if(im&&!top.example&&/^https?:/.test(im.orig))save("heroImg",im.orig)}
+    if(TEXTS.heroMode==="fixed"){const im=top&&firstImg(top);if(im&&!top.example&&/^https?:/.test(im.orig))save("heroImg",im.orig)}}
   if(S.admin) renderAdminList();
 }
 
@@ -1015,7 +1032,7 @@ const DEFAULT_TEXTS={
   wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
   wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
   wsCta:"אני רוצה לצבוע ככה!",wsPhotos:[],
-  btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:"",navOrder:["home","gallery","reviews","gifts","learn","guide"]
+  heroMode:"rotate",btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:"",navOrder:["home","gallery","reviews","gifts","learn","guide"]
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -1072,10 +1089,10 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
-$("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
+$("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();if(before.heroMode!==TEXTS.heroMode){HERO_ID=null;render()}$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
 $("#xReset").onclick=()=>{TEXTS={...TEXTS,...DEFAULT_TEXTS};fillTextForm();$("#xMsg").textContent="הטקסט המקורי חזר לטופס. לחץ שמירה כדי להחיל."};
 
 /* ================= Voice samples for the generator ================= */
