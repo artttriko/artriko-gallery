@@ -1002,3 +1002,4 @@ footer{flex-wrap:wrap}
   .tz-gal .tz-row,.tz-gift .tz-row{grid-template-columns:none;grid-auto-columns:64%}
   .tz-gal .tz-row .card h3{font-size:20px}
 }
+.gift-group p strong{display:block;font-size:1.12em;margin-bottom:6px;color:var(--ink)}
