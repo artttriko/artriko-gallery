@@ -876,3 +876,18 @@ a.mark{text-decoration:none}
   .finale .cta{display:grid;grid-template-columns:1fr 1fr}
   .finale .cta .big{justify-content:center}
 }
+
+/* Header v3 on phones: menu on the right, logo centred, gallery on the left */
+@media (max-width:900px){
+  .top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+  .top .burger{justify-self:start}
+  .top .mark{margin:0;justify-self:center;font-size:25px}
+  .top .topnav{justify-self:end;gap:4px}
+  .burger{width:44px;height:44px;border:0;border-radius:12px;background:none;gap:6px;justify-items:start;padding-inline:10px}
+  .burger span{width:22px;height:2.5px}
+  .burger span:nth-child(2){width:15px;background:var(--sun)}
+  .menu-open .burger span{background:var(--sun)}
+  .menu-open .burger span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
+  .menu-open .burger span:nth-child(3){transform:translateY(-8.5px) rotate(-45deg)}
+  .adm-dot{width:20px;margin:0}
+}
