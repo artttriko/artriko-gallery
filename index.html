@@ -21,7 +21,7 @@
   <header class="top">
     <a class="mark" href="#top">ARTRIKO</a>
     <nav class="secnav" id="secnav" aria-label="ניווט באתר">
-      <a href="#top" id="navHome">ראשי</a><a href="#gallery">גלריה</a><a href="#reviews" id="navReviews">המלצות</a><a href="#gifts" id="navGifts">מתנות</a><a href="#learn" id="navLearn">סדנאות</a><a href="#guide" id="navGuide">המדריך לאספנים</a>
+      <a href="#top" id="navHome" data-k="home">ראשי</a><a href="#gallery" data-k="gallery">גלריה</a><a href="#reviews" id="navReviews" data-k="reviews">המלצות</a><a href="#gifts" id="navGifts" data-k="gifts">מתנות</a><a href="#learn" id="navLearn" data-k="learn">סדנאות</a><a href="#guide" id="navGuide" data-k="guide">המדריך לאספנים</a>
     </nav>
     <div class="topnav">
       <a class="ico" id="igTop" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
@@ -464,6 +464,8 @@
       <label>טכניקות מכחולים (שורה לכל אחת)<textarea id="xWsBrush" maxlength="600" style="min-height:140px"></textarea></label>
       <label class="full">משפט השילוב (להדגשה: **מילים**)<textarea id="xWsCombo" maxlength="400"></textarea></label>
       <div class="full"><div class="toolrow"><button type="button" class="pill small" id="wsPhUp">הוספת תמונות מסדנאות</button><input type="file" id="wsPhFile" accept="image/*" multiple hidden><span class="note" id="wsPhMsg">התמונות נשמרות מיד ומופיעות בסקשן הסדנאות.</span></div><div id="wsPhList" class="ws-ph-admin"></div></div>
+      <h4 class="full" style="margin:10px 0 0">סדר הכפתורים בתפריט</h4>
+      <div class="full"><p class="note" style="margin:0 0 6px">החצים משנים את הסדר ונשמרים מיד. אותו סדר קובע גם את סדר הטעימות בדף הבית.</p><div class="nav-order" id="navOrder"></div></div>
       <h4 class="full" style="margin:10px 0 0">כפתורים</h4>
       <div class="full btn-toggles">
         <label><input type="checkbox" id="xBtnIg"> אינסטגרם</label>

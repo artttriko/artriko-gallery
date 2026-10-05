@@ -314,29 +314,29 @@ function renderHome(){
   const two=t=>{const [a,b]=String(t||"").split("/").map(x=>x.trim());return `${esc(a||"")}${b?`<br><span>${esc(b)}</span>`:""}`};
   const giftOn=!!String(T.giftText||"").trim(),wsOn=!!String(T.wsText||"").trim();
   const first=t=>String(t||"").replace(/\*\*/g,"").split(/(?<=[.!?])\s/)[0];
-  let h=`<section class="tz tz-gal">
+  const P={};P.gallery=`<section class="tz tz-gal">
     <div class="tz-head"><div><span class="ws-eyebrow">הגלריה</span><h2 class="sec-title">פסלי אספנות<br><span>שכבר יצאו מהסטודיו.</span></h2></div>
       <a class="pill solid tz-go" href="#gallery">לכל הגלריה${col.length?` (${col.length})`:""} ←</a></div>
     <div class="tz-row">${col.slice(0,6).map(cardHTML).join("")}</div></section>`;
   if(typeof rvAvg==="function"){
     const A=pub.length?pub.reduce((t,r)=>t+rvAvg(r),0)/pub.length:0;
-    h+=`<section class="tz tz-rv">
+    P.reviews=`<section class="tz tz-rv">
       <div class="tz-head"><div><span class="ws-eyebrow">המלצות</span><h2 class="sec-title">מה אומרים<br><span>אחרי שהפסל הגיע הביתה.</span></h2>
         ${pub.length?`<p class="tz-score">${starsHTML(A,"lg")} <b>${A.toFixed(1)}</b> · ${pub.length===1?"המלצה אחת":pub.length+" המלצות"}</p>`:`<p class="tz-text">עוד אין כאן המלצות. אפשר להיות הראשונים לכתוב.</p>`}</div>
         <div class="tz-btns">${pub.length?`<a class="pill solid tz-go" href="#reviews">לכל ההמלצות ←</a>`:""}<button class="pill tz-go" type="button" data-rvwrite>✍️ לכתוב המלצה</button></div></div>
       ${pub.length?`<div class="tz-row rv-row">${pub.slice(0,3).map(rvCard).join("")}</div>`:""}</section>`;
   }
-  if(giftOn)h+=`<section class="tz tz-gift">
+  if(giftOn)P.gifts=`<section class="tz tz-gift">
       <div class="tz-head"><div><span class="ws-eyebrow gift-eyebrow">${esc(T.giftEyebrow||"מתנות ייחודיות")}</span><h2 class="sec-title">${two(T.giftTitle)}</h2><p class="tz-text">${esc(first(T.giftText))}</p></div>
         <a class="pill solid tz-go" href="#gifts">למתנות ←</a></div>
       ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(cardHTML).join("")}</div>`:""}</section>`;
   if(wsOn){const ph=(T.wsPhotos||[]).slice(0,3);
-    h+=`<section class="tz tz-ws">
+    P.learn=`<section class="tz tz-ws">
       <div class="tz-head"><div><span class="ws-eyebrow">${esc(T.wsEyebrow||"סדנאות")}</span><h2 class="sec-title">${two(T.wsTitle)}</h2><p class="tz-text">${esc(first(T.wsText))}</p></div>
         <a class="pill solid tz-go" href="#learn">לסדנאות ←</a></div>
       ${ph.length?`<div class="tz-row tz-ph">${ph.map((u,i)=>`<button type="button" data-wsph="${i}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}</section>`}
-  if(T.btnGuide!==false)h+=`<a class="tz tz-guide" href="#guide"><span class="ws-eyebrow">המדריך לאספנים</span><b>באסט, דיורמה או פסל מלא? מה זה סקייל, ומה ההבדל בין רזין ל־FDM?</b><span class="tz-go-t">לקריאה במדריך ←</span></a>`;
-  box.innerHTML=h;
+  if(T.btnGuide!==false)P.guide=`<a class="tz tz-guide" href="#guide"><span class="ws-eyebrow">המדריך לאספנים</span><b>באסט, דיורמה או פסל מלא? מה זה סקייל, ומה ההבדל בין רזין ל־FDM?</b><span class="tz-go-t">לקריאה במדריך ←</span></a>`;
+  box.innerHTML=navOrder().filter(k=>k!=="home").map(k=>P[k]||"").join("");
 }
 $("#teasers").addEventListener("click",e=>{
   if(e.target.closest("[data-rvwrite]")){rvOpen();return}
@@ -980,7 +980,7 @@ const DEFAULT_TEXTS={
   wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
   wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
   wsCta:"אני רוצה לצבוע ככה!",wsPhotos:[],
-  btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:""
+  btnIg:true,btnTt:true,btnWa:true,btnLearn:true,btnGuide:true,waNumber:"",navOrder:["home","gallery","reviews","gifts","learn","guide"]
 };
 let TEXTS={...DEFAULT_TEXTS};
 const rich=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
@@ -1010,6 +1010,7 @@ function renderTexts(){
   $("#wsCta").textContent=T.wsCta||"אני רוצה ללמוד לצבוע!";
   const wsOn=!!String(T.wsText||"").trim();
   $("#learnHero").hidden=$("#navLearn").hidden=!wsOn||T.btnLearn===false;
+  applyNavOrder();
   if(typeof renderHome==="function"&&S.works.length)renderHome();
   const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
   $("#wsPhotos").hidden=!ph.length;
@@ -1338,6 +1339,17 @@ function calcGuide(){
 ["#cReal","#cModel"].forEach(id=>$(id).addEventListener("input",calcGuide));calcGuide();
 $("#igGuide").href=CFG.instagram;$("#ttGuide").href=CFG.tiktok;
 document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{S.filter={cat:b.dataset.goto,tech:"",sale:false};render();location.hash="gallery"});
+
+/* ================= Menu order (set in admin) ================= */
+function navLabels(){return {home:"ראשי",gallery:"גלריה",reviews:"המלצות",gifts:"מתנות",learn:"סדנאות",guide:"המדריך לאספנים"}}
+function navOrder(){const all=Object.keys(navLabels()),o=(Array.isArray(TEXTS.navOrder)?TEXTS.navOrder:[]).filter(k=>all.includes(k));return [...o,...all.filter(k=>!o.includes(k))]}
+function applyNavOrder(){const nav=$("#secnav");if(!nav)return;navOrder().forEach(k=>{const a=nav.querySelector(`[data-k="${k}"]`);if(a)nav.appendChild(a)});renderNavOrderAdmin()}
+function renderNavOrderAdmin(){const box=$("#navOrder");if(!box)return;const o=navOrder();
+  box.innerHTML=o.map((k,i)=>`<div class="no-i" data-k="${k}"><span class="no-n">${i+1}</span><b class="no-l" data-k="${k}">${navLabels()[k]}</b><button type="button" class="pill small" data-mv="-1" ${i===0?"disabled":""} aria-label="להזיז למעלה">↑</button><button type="button" class="pill small" data-mv="1" ${i===o.length-1?"disabled":""} aria-label="להזיז למטה">↓</button></div>`).join("")}
+$("#navOrder").addEventListener("click",async e=>{const b=e.target.closest("[data-mv]");if(!b||b.disabled)return;
+  const o=navOrder(),k=b.closest("[data-k]").dataset.k,i=o.indexOf(k),j=i+ +b.dataset.mv;if(j<0||j>=o.length)return;
+  [o[i],o[j]]=[o[j],o[i]];TEXTS.navOrder=o;applyNavOrder();renderHome();
+  try{await putSetting("texts",TEXTS);toast("סדר התפריט נשמר")}catch(err){toast("השמירה נכשלה")}});
 
 /* ================= Pages (hash routing) ================= */
 // The site is split into pages: home (a taste of everything), gallery, reviews, gifts, workshops, guide.
