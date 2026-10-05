@@ -545,25 +545,33 @@ const SOLD_LINES=[
   n=>`ניסיון יפה! "${n}" לא למכירה, הוא עובד פה כדוגמן. אבל אפשר להזמין ממני אח קטן (או גדול) בהזמנה אישית.`
 ];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
+// Contact message helpers: the work's short name (the part before the dash) and an emoji that fits the character
+const shortName=w=>String(w.name||"").split(/\s+[–-]\s+/)[0].trim();
+const EMOJI=[[/simba|rafiki|סימבה|lion|אריה/i,"🦁"],[/pikachu|פיקאצ|pok[eé]mon/i,"⚡"],[/spider|ספיידר|spidey/i,"🕷️"],[/batman|באטמן/i,"🦇"],[/catwoman|קאטוומן/i,"🐈‍⬛"],
+  [/wolverine|וולברין|logan/i,"🐺"],[/hulk|הענק|האלק/i,"💚"],[/hellboy|הלבוי/i,"😈"],[/groot|גרוט/i,"🌳"],[/stitch|סטיץ/i,"👽"],[/scorpion|סקורפיון/i,"🦂"],
+  [/death|מוות|skull|גולגולת/i,"💀"],[/asura|אסורה/i,"🔥"],[/bumblebee|באמבלבי|transformer/i,"🐝"],[/warhammer|ווהאמר/i,"⚔️"],[/superman|סופרמן/i,"🦸"],
+  [/dragon|דרקון/i,"🐉"],[/joker|ג'וקר/i,"🃏"],[/iron ?man|איירון/i,"🤖"],[/thor|ת'ור/i,"🔨"],[/deadpool|דדפול/i,"🗡️"],[/goku|dragon ?ball/i,"🐲"]];
+function workEmoji(w){const t=`${w.name} ${w.character||""}`;const m=EMOJI.find(([r])=>r.test(t));return m?m[1]:w.section==="gift"?"🎁":"✨"}
 function openContact(w){
   track(w==="learn"?"learn":"want");
   let title,note,t,sold="";
   if(w==="order"||w==="gift"){
     title=w==="gift"?(TEXTS.giftCta||"אני רוצה מתנה כזו!"):"הזמנה אישית";
     note=w==="gift"?"כמה מילים על המתנה: למי היא, לאיזה אירוע וכמה יחידות. אחר כך בוחרים איפה נוח לדבר.":"כמה מילים על הדמות שבא לך. אחר כך בוחרים איפה נוח לדבר, ואפשר לצרף שם תמונה או רפרנס.";
-    t=w==="gift"?"היי ARTRIKO, אשמח לשמוע על מתנה מיוחדת בהתאמה אישית. המתנה היא בשביל: ":"היי ARTRIKO, אשמח להזמין פסל בהתאמה אישית. הדמות שאני רוצה: ";
+    t=w==="gift"?"היי ARTRIKO 👋\nאשמח לשמוע על 🎁 *מתנה מיוחדת בהתאמה אישית*\nהמתנה היא בשביל: ":"היי ARTRIKO 👋\nאשמח להזמין 🎨 *פסל בהתאמה אישית*\nהדמות שאני רוצה: ";
   }else if(w==="learn"){
     title=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
     note="כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה. אחר כך בוחרים איפה נוח לדבר.";
-    t="היי ARTRIKO, אני רוצה ללמוד לצבוע! אשמח לשמוע על הדרכה אישית או סדנה (איירבראש ומכחולים).";
+    t="היי ARTRIKO 👋\nאני רוצה ללמוד לצבוע! 🖌️\nאשמח לשמוע על *הדרכה אישית או סדנה* (איירבראש ומכחולים).";
   }else{
     const notForSale=!!(w&&w.status!=="sale");
     title=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
     if(notForSale)sold=pick(SOLD_LINES)(w.name);
     note=notForSale?"בא לך הזמנה אישית בסגנון? בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:":"בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:";
-    t=!w?"היי ARTRIKO, אשמח לשמוע עוד"
-      :notForSale?`היי ARTRIKO, ראיתי את "${w.name}" ונדלקתי! אפשר להזמין ממך משהו בסגנון?`
-      :`היי ARTRIKO, אני רוצה את "${w.name}" (${w.heightCm} ס"מ)! אשמח לשמוע על זמינות ומחיר.`;
+    const tag=w?`${workEmoji(w)} \u200E*${shortName(w)}*\u200E`:"";  // LRM keeps the asterisks next to the English name on screen
+    t=!w?"היי ARTRIKO 👋\nאשמח לשמוע עוד"
+      :notForSale?`היי ARTRIKO 👋\nראיתי את ${tag} ונדלקתי! 🔥\nאפשר להזמין ממך משהו בסגנון?`
+      :`היי ARTRIKO 👋\nאשמח למחיר וזמינות ל־ ${tag}`;
   }
   $("#ctTitle").textContent=title;$("#ctSold").hidden=!sold;$("#ctSold").textContent=sold;
   $("#ctNote").textContent=note;$("#ctMsg").value=t;
@@ -576,7 +584,7 @@ function openContact(w){
 $("#ctWa").addEventListener("click",e=>{const u=wa($("#ctMsg").value.trim());if(!u){e.preventDefault();return}e.currentTarget.href=u});
 $("#ct").querySelectorAll(".plat").forEach(a=>a.addEventListener("click",()=>setTimeout(()=>$("#ct").close(),400)));
 ["#ctIg","#ctTt"].forEach(sel=>$(sel).addEventListener("click",()=>{
-  const t=$("#ctMsg").value.trim();
+  const t=$("#ctMsg").value.trim().replace(/\*([^*\n]+)\*/g,"$1");
   const done=()=>toast("ההודעה הועתקה. בצ'אט שנפתח, רק להדביק ולשלוח");
   try{navigator.clipboard.writeText(t).then(done,()=>{})}catch(e){}
 }));
@@ -1108,7 +1116,7 @@ function renderTexts(){
   vis(["#navGuide"],T.btnGuide!==false);
   let n=String(T.waNumber||"").replace(/\D/g,"");if(n.startsWith("0"))n="972"+n.slice(1);
   CFG.whatsapp=T.btnWa!==false&&n.length>=9?n:"";
-  $("#waBar").hidden=!CFG.whatsapp;if(CFG.whatsapp)$("#waBar").href=wa("היי ARTRIKO, ראיתי את הגלריה ואשמח לשמוע עוד");
+  $("#waBar").hidden=!CFG.whatsapp;if(CFG.whatsapp)$("#waBar").href=wa("היי ARTRIKO 👋\nראיתי את הגלריה ואשמח לשמוע עוד");
   cacheLines("intro",T.introLines);
 }
 renderTexts();
