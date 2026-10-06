@@ -3,7 +3,7 @@
 // suggestions when both are unavailable.
 // POST: only the signed-in gallery admin may call it. The keys stay on the server.
 
-const MODELS = [process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-flash-latest", "gemini-2.5-flash"].filter(Boolean);
+const MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-lite-latest", "gemini-2.0-flash"].filter(Boolean);
 const API = "https://generativelanguage.googleapis.com/v1beta";
 
 // Google issues keys in two formats (AIza… and the newer AQ.…). Try the standard header first,
@@ -75,7 +75,8 @@ async function tryGemini(prompt, images) {
     const r = await callGemini(`models/${encodeURIComponent(model)}:generateContent`, body);
     if (!r) break;
     if (r.r.status === 404) { lastErr = `model ${model} not found`; continue; }
-    if (r.r.status === 429) return { err: { status: 429, code: "rate_limited", error: "Gemini rate limit" } };
+    // each model has its own quota: when one is limited, try the next one
+    if (r.r.status === 429) { console.error("Gemini 429", model, short(r.text)); lastErr = "rate_limited"; continue; }
     let data = {};
     try { data = JSON.parse(r.text); } catch {}
     if (!r.r.ok) {
@@ -91,6 +92,7 @@ async function tryGemini(prompt, images) {
     if (!result) return { err: { status: 502, code: "invalid_json", error: "Could not read the answer" } };
     return { result, model };
   }
+  if (lastErr === "rate_limited") return { err: { status: 429, code: "rate_limited", error: "Gemini rate limit on all models" } };
   return { err: { status: 502, code: "upstream_error", error: lastErr || "No Gemini model available" } };
 }
 

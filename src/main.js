@@ -1014,7 +1014,7 @@ async function uploadProc(id){
 }
 function structuredCloneSafe(w){return w?{...w,media:w.media.map(m=>({...m})),process:(w.process||[]).map(p=>({...p}))}:null}
 function upsert(w){const i=S.works.findIndex(x=>x.id===w.id);if(i>=0)S.works[i]=w;else S.works.push(w)}
-function resetForm(){S.proc=[];renderProcAdmin();$("#procMsg").textContent="";$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
+function resetForm(){autoScale=null;lastRef=null;S.proc=[];renderProcAdmin();$("#procMsg").textContent="";$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
@@ -1385,7 +1385,28 @@ function updateScale(note,techReason){
   if(techReason)parts.push(`טכנולוגיה: ${techReason}`);
   if(parts.length)$("#scaleWhy").textContent=parts.join(" ");
 }
-$("#fH").addEventListener("input",()=>{if(lastRef)updateScale()});
+$("#fH").addEventListener("input",()=>{if(lastRef)updateScale();else localScale()});
+/* Scale guess without AI: known heights of popular characters (cm, as usually given in the comics or films).
+   A bust shows roughly the top third of the figure, so its reference is about 35% of the full height. */
+const CHAR_CM=[[/bat-?man|באטמן|בטמן/i,"BATMAN",188],[/spider-?man|spidey|ספיידר|ספיידי/i,"SPIDER-MAN",178],[/wolverine|logan|וולברין/i,"WOLVERINE",160],
+  [/hulk|האלק|הענק הירוק/i,"HULK",230],[/hellboy|הלבוי/i,"HELLBOY",196],[/pikachu|פיקאצ/i,"PIKACHU",40],[/scorpion|סקורפיון/i,"SCORPION",188],
+  [/cat-?woman|קאטוומן|קטוומן/i,"CATWOMAN",170],[/super-?man|סופרמן/i,"SUPERMAN",191],[/wonder ?woman|וונדר/i,"WONDER WOMAN",183],
+  [/iron ?man|איירון ?מן|איירונמן/i,"IRON MAN",185],[/captain america|קפטן אמריקה/i,"CAPTAIN AMERICA",188],[/\bthor\b|ת'ור|תור /i,"THOR",198],
+  [/deadpool|דדפול/i,"DEADPOOL",188],[/joker|ג'וקר|גוקר/i,"JOKER",196],[/harley|הארלי/i,"HARLEY QUINN",170],[/thanos|תאנוס|ת'אנוס/i,"THANOS",201],
+  [/black panther|הפנתר השחור|בלאק פנתר/i,"BLACK PANTHER",183],[/darth vader|דארת' ויידר|דארת ויידר|ויידר/i,"DARTH VADER",202],[/\byoda\b|יודה/i,"YODA",66],
+  [/goku|גוקו/i,"GOKU",175],[/vegeta|וגיטה/i,"VEGETA",164],[/luffy|לופי/i,"LUFFY",174],[/aquaman|אקוומן/i,"AQUAMAN",185],[/\bflash\b|הפלאש/i,"FLASH",183],
+  [/green lantern|הפנס הירוק/i,"GREEN LANTERN",188],[/cyborg|סייבורג/i,"CYBORG",198]];
+let autoScale=null;
+function localScale(){
+  const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=+$("#fH").value,bust=$("#fCat").value==="Bust";
+  const cur=$("#fScale").value.trim(),mine=!cur||cur===autoScale;
+  if(!hit||!(h>0)){if(mine&&autoScale){$("#fScale").value="";autoScale=null;$("#scaleWhy").textContent=""}return}
+  const ref=Math.round(hit[2]*(bust?0.35:1)),sc=calcScale(ref,h);if(!sc)return;
+  if(mine){$("#fScale").value=sc.label;autoScale=sc.label;const el=$("#fScale");el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}
+  $("#scaleWhy").textContent=`השערת קנה מידה: ${hit[1]} בערך ${hit[2]} ס"מ${bust?` (בבאסט רואים כשליש מהדמות, בערך ${ref} ס"מ)`:""} ÷ ${h} ס"מ בדגם ≈ 1:${sc.ratio.toFixed(1)}${mine?"":". השארתי את הערך שהזנת."}`;
+}
+["#fChar","#fName"].forEach(id=>$(id).addEventListener("input",()=>{if(!lastRef)localScale()}));
+$("#fCat").addEventListener("change",()=>{if(!lastRef)localScale()});
 
 /* ================= Background removal (remove.bg) for the in-room illustration ================= */
 const CUT_ERR={not_admin:"צריך להיות מחובר כמנהל.",no_key:"מפתח remove.bg לא מוגדר ב־Vercel (REMOVEBG_API_KEY).",bad_key:"המפתח של שירות הסרת הרקע לא תקין. בדוק אותו ב־Vercel.",needs_credits:"נגמרו הקרדיטים החינמיים של remove.bg לחודש הזה. הם מתחדשים בתחילת החודש הבא, או שאפשר לקנות עוד באתר שלהם.",no_subject:"השירות לא הצליח לזהות את הפסל בתמונה. נסה תמונה עם רקע נקי יותר.",rate_limited:"יותר מדי בקשות. נסה שוב בעוד דקה.",needs_billing:"בחשבון OpenAI צריך קרדיט או אמצעי תשלום (Billing) כדי להשתמש במודל התמונות.",needs_verification:"OpenAI דורשים אימות ארגון (Verify Organization) בחשבון כדי להשתמש במודל התמונות.",upload_failed:"שמירת התמונה נכשלה. נסה שוב.",refused:"OpenAI סירבו לעבד את התמונה הזו."};
@@ -1610,7 +1631,9 @@ async function wmCheck(src){
   const o=j.result||{};
   return {found:o.watermark===true||o.watermark==="true",text:String(o.text||"").slice(0,60),where:String(o.where||"").toLowerCase(),src:String(src).slice(-80),at:Date.now()};
 }
-const wmTimers=new Map();
+const wmTimers=new Map();let wmChain=Promise.resolve();
+// one check at a time with a short gap, so uploads don't burst the AI's per-minute limit
+const wmOne=src=>(wmChain=wmChain.catch(()=>{}).then(()=>wmCheck(src)).finally(()=>new Promise(r=>setTimeout(r,1500))));
 function wmQueue(it){
   if(!S.admin||it.kind!=="image"||!it.orig)return;
   if(it.wm&&it.wm.src===String(it.orig).slice(-80))return; // this exact picture was already checked
@@ -1618,7 +1641,7 @@ function wmQueue(it){
   wmTimers.set(it.sid,setTimeout(async()=>{
     const slot=()=>document.querySelector(`.st[data-sid="${it.sid}"] .wm-slot`);
     it.wmBusy=true;if(slot())slot().innerHTML=wmBadge(it);
-    try{it.wm=await wmCheck(it.orig)}catch(e){it.wm=null}
+    try{it.wm=await wmOne(it.orig)}catch(e){it.wm=null}
     it.wmBusy=false;if(slot())slot().innerHTML=wmBadge(it);
   },1200));
 }
