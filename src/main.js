@@ -1613,9 +1613,12 @@ const WM_WHERE={"top-left":"בפינה השמאלית העליונה","top-right
 const WM_PROMPT=`Look at this photo of a hand-painted figurine. Is there a WATERMARK added on top of the photo? That means an overlaid logo or text stamp such as "CapCut", "CapCut AI", "Meitu", "Remini", "PicsArt", "InShot", a TikTok/Instagram logo or @username, a website address, "Made with ...", "AI generated", a stock-photo mark, or a semi-transparent repeated pattern.
 Do NOT count text that physically exists in the scene: labels on paint bottles, printing on products or boxes, text on a computer screen, writing on the figurine itself.
 Return only JSON: {"watermark": true or false, "text": "the watermark text if readable, else empty", "where": "top-left|top-right|bottom-left|bottom-right|top|bottom|left|right|center|tiled|"}`;
-const hasWm=w=>(w.media||[]).some(m=>m.wm&&m.wm.found);
+// Watermark check is switched off (the owner asked to stop it); kept dormant so it can be re-enabled.
+const WM_ON=false;
+const hasWm=w=>WM_ON&&(w.media||[]).some(m=>m.wm&&m.wm.found);
 const wmText=w=>(w.media||[]).filter(m=>m.wm&&m.wm.found).map(m=>(m.wm.text||"סימן מים")+(m.wm.where?" "+(WM_WHERE[m.wm.where]||""):"")).join(" · ");
 function wmBadge(it){
+  if(!WM_ON)return"";
   if(it.kind!=="image")return"";
   if(it.wmBusy)return `<span class="wm-chk">בודק סימני מים…</span>`;
   if(!it.wm)return"";
@@ -1635,6 +1638,7 @@ const wmTimers=new Map();let wmChain=Promise.resolve();
 // one check at a time with a short gap, so uploads don't burst the AI's per-minute limit
 const wmOne=src=>(wmChain=wmChain.catch(()=>{}).then(()=>wmCheck(src)).finally(()=>new Promise(r=>setTimeout(r,1500))));
 function wmQueue(it){
+  if(!WM_ON)return;
   if(!S.admin||it.kind!=="image"||!it.orig)return;
   if(it.wm&&it.wm.src===String(it.orig).slice(-80))return; // this exact picture was already checked
   clearTimeout(wmTimers.get(it.sid));
