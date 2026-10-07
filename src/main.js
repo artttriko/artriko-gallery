@@ -759,7 +759,9 @@ $("#crBox").addEventListener("pointermove",e=>{const d=CR.drag;if(!d)return;
 const crEnd=()=>{CR.drag=null};
 $("#crBox").addEventListener("pointerup",crEnd);$("#crBox").addEventListener("pointercancel",crEnd);
 $("#crCancel").onclick=()=>$("#cropDlg").close();
-$("#crSave").onclick=()=>{const it=CR.it;if(!it)return;it.ed={...it.ed,rot:CR.ed.rot,flip:CR.ed.flip,angle:CR.ed.angle||0,crop:fullCrop(CR.ed.crop)?null:CR.ed.crop};
+$("#crSave").onclick=()=>{const it=CR.it;if(!it)return;
+  if(it.onSave){const ed={...it.ed,rot:CR.ed.rot,flip:CR.ed.flip,angle:CR.ed.angle||0,crop:fullCrop(CR.ed.crop)?null:CR.ed.crop};$("#cropDlg").close();it.onSave(ed);return}
+  it.ed={...it.ed,rot:CR.ed.rot,flip:CR.ed.flip,angle:CR.ed.angle||0,crop:fullCrop(CR.ed.crop)?null:CR.ed.crop};
   $("#cropDlg").close();process(it);toast("החיתוך והיישור נשמרו")};
 function b64Blob(dataURL){const [h,b]=dataURL.split(",");const bin=atob(b);const u=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);return new Blob([u],{type:h.slice(5).split(";")[0]})}
 // Background removal: flood-fills the backdrop from the photo's edges, then trims to the sculpture.
@@ -987,7 +989,7 @@ S.proc=[];
 async function procShrink(src){const i=await loadImg(src);const k=Math.min(1,1200/Math.max(i.width,i.height));const c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext("2d");x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.78)}
 function renderProcAdmin(){
   const L=S.proc;procSaveState();
-  $("#procList").innerHTML=L.map((p,i)=>`<div class="proc-item" data-i="${i}"><span class="proc-n">${i+1}</span><img src="${esc(p.url)}" alt=""><input class="proc-cap" data-i="${i}" maxlength="60" placeholder="כיתוב קצר (לא חובה), למשל: פריימר שחור" value="${esc(p.cap||"")}"><div class="row">${i>0?`<button type="button" class="pill small" data-pa="up">↑</button>`:""}${i<L.length-1?`<button type="button" class="pill small" data-pa="down">↓</button>`:""}<button type="button" class="pill small danger" data-pa="rm">✕</button></div></div>`).join("");
+  $("#procList").innerHTML=L.map((p,i)=>`<div class="proc-item" data-i="${i}"><span class="proc-n">${i+1}</span><img src="${esc(p.url)}" alt=""><input class="proc-cap" data-i="${i}" maxlength="60" placeholder="כיתוב קצר (לא חובה), למשל: פריימר שחור" value="${esc(p.cap||"")}"><div class="row"><button type="button" class="pill small" data-pa="edit" title="חיתוך, יישור וסיבוב">✂️ עריכה</button>${i>0?`<button type="button" class="pill small" data-pa="up">↑</button>`:""}${i<L.length-1?`<button type="button" class="pill small" data-pa="down">↓</button>`:""}<button type="button" class="pill small danger" data-pa="rm">✕</button></div></div>`).join("");
 }
 $("#procUp").onclick=()=>$("#procFile").click();
 $("#procFile").onchange=async e=>{const all=[...e.target.files],files=all.filter(f=>f.type.startsWith("image"));e.target.value="";
@@ -996,6 +998,14 @@ $("#procFile").onchange=async e=>{const all=[...e.target.files],files=all.filter
     try{const data=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(f)});S.proc.push({url:await procShrink(data),cap:""})}catch(err){console.error(err)}}
   $("#procMsg").textContent=files.length?"התמונות יישמרו יחד עם היצירה.":"";renderProcAdmin()};
 $("#procList").addEventListener("click",e=>{const b=e.target.closest("[data-pa]");if(!b)return;const i=+b.closest(".proc-item").dataset.i,L=S.proc;
+  if(b.dataset.pa==="edit"){const p=L[i],raw=p.raw||p.url;
+    // edits always start from the photo as it was before editing in this session, so re-editing doesn't crop twice
+    openCrop({raw,ed:{...ED0,...(p.ed||{})},onSave:async ed=>{
+      $("#procMsg").textContent="מעדכן את התמונה…";
+      try{p.raw=raw;p.ed=ed;p.url=await procShrink(await applyEdits(raw,ed));renderProcAdmin();
+        $("#procMsg").textContent="התמונה נערכה. כדי לשמור באתר, לחץ \"שמירת תמונות התהליך\".";toast("העריכה הוחלה")}
+      catch(err){console.error(err);$("#procMsg").textContent="העריכה נכשלה, נסה שוב."}}});
+    return}
   if(b.dataset.pa==="rm")L.splice(i,1);else{const j=b.dataset.pa==="up"?i-1:i+1;[L[i],L[j]]=[L[j],L[i]]}renderProcAdmin()});
 $("#procList").addEventListener("input",e=>{const t=e.target.closest(".proc-cap");if(t)S.proc[+t.dataset.i].cap=t.value});
 function procSaveState(){const ok=S.editing&&!String(S.editing).startsWith("ex-");$("#procSave").hidden=!ok}
