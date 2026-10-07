@@ -186,9 +186,11 @@ async function uploadBlob(path,blob,onProg){
 const CATS=[
   {v:"Bust",he:"באסט"},{v:"Statue",he:"פסל מלא"},{v:"Diorama",he:"דיורמה"},{v:"Miniature",he:"מיניאטורה"},{v:"Action Figure",he:"דמות מפרקית"}
 ];
-const catHe=v=>(CATS.find(c=>c.v===v)||{}).he||v||"";
+const catsOf=w=>String((w&&w.category)||"").split(",").map(x=>x.trim()).filter(Boolean);
+const catHe1=v=>(CATS.find(c=>c.v===v)||{}).he||v||"";
+const catHe=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean).map(catHe1).join(" · ");
 const TECH_HE={"FDM":"FDM","Resin":"שרף","FDM+Resin":"FDM + שרף"};
-$("#fCat").insertAdjacentHTML("beforeend",CATS.map(c=>`<option value="${c.v}">${c.he} (${c.v})</option>`).join(""));
+["#fCat","#fCat2"].forEach(id=>$(id).insertAdjacentHTML("beforeend",CATS.map(c=>`<option value="${c.v}">${c.he} (${c.v})</option>`).join("")));
 // Scale = real-life size of the part shown ÷ model height, snapped to the standard scales
 const SCALES=[[1,"1:1 (גודל טבעי)"],[2,"1:2 (חצי)"],[3,"1:3"],[4,"1:4 (רבע)"],[6,"1:6"],[8,"1:8"],[10,"1:10 (Art Scale)"],[12,"1:12"]];
 function calcScale(refCm,modelCm){
@@ -377,7 +379,7 @@ function render(){
   const all=[...S.works].filter(w=>w.section!=="gift").sort(byOrder);
   renderFilters(all);
   const F=S.filter;
-  let list=all.filter(w=>(!F.cat||w.category===F.cat)&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
+  let list=all.filter(w=>(!F.cat||catsOf(w).includes(F.cat))&&(!F.tech||w.tech===F.tech)&&(!F.sale||w.status==="sale"));
   if(S.q.trim()){const sc=new Map(list.map(w=>[w,searchScore(w,S.q)]));list=list.filter(w=>sc.get(w)>0).sort((a,b)=>sc.get(b)-sc.get(a))}
   $("#count").textContent=`${list.length} יצירות`;
   $("#grid").innerHTML=list.map(cardHTML).join("") || `<p class="note">עוד אין יצירות. היכנס כמנהל דרך הנקודה הקטנה בראש העמוד והעלה את הראשונה.</p>`;
@@ -393,7 +395,7 @@ function render(){
 }
 
 function renderFilters(all){
-  const cnt=(k,v)=>all.filter(w=>w[k]===v).length;
+  const cnt=(k,v)=>all.filter(w=>k==="category"?catsOf(w).includes(v):w[k]===v).length;
   const cats=CATS.filter(c=>cnt("category",c.v));
   const techs=Object.keys(TECH_HE).filter(t=>cnt("tech",t));
   const F=S.filter;
@@ -937,7 +939,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:$("#fCat").value,scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:[...new Set([$("#fCat").value,$("#fCat2").value].filter(Boolean))].join(","),scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
     w.process=await uploadProc(id);
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
@@ -1062,7 +1064,7 @@ const dragEnd=()=>{if(!DRAG)return;const ids=listIds(),moved=ids.join()!==DRAG.s
 $("#adList").addEventListener("pointerup",dragEnd);$("#adList").addEventListener("pointercancel",dragEnd);
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";$("#fCat").value=w.category||"";$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";{const cs=catsOf(w);$("#fCat").value=cs[0]||"";$("#fCat2").value=cs[1]||""}$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url,wm:m.wm||null}));
     S.proc=(w.process||[]).map(p=>({...p}));renderProcAdmin();$("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -1411,7 +1413,7 @@ const CHAR_CM=[[/bat-?man|באטמן|בטמן/i,"BATMAN",188],[/spider-?man|spid
   [/green lantern|הפנס הירוק/i,"GREEN LANTERN",188],[/cyborg|סייבורג/i,"CYBORG",198]];
 let autoScale=null;
 function localScale(){
-  const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=+$("#fH").value,bust=$("#fCat").value==="Bust";
+  const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=+$("#fH").value,bust=$("#fCat").value==="Bust"&&!$("#fCat2").value;
   const cur=$("#fScale").value.trim(),mine=!cur||cur===autoScale;
   if(!hit||!(h>0)){if(mine&&autoScale){$("#fScale").value="";autoScale=null;$("#scaleWhy").textContent=""}return}
   const ref=Math.round(hit[2]*(bust?0.35:1)),sc=calcScale(ref,h);if(!sc)return;
