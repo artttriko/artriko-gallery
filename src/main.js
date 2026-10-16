@@ -187,10 +187,21 @@ const CATS=[
   {v:"Bust",he:"באסט"},{v:"Statue",he:"פסל מלא"},{v:"Diorama",he:"דיורמה"},{v:"Miniature",he:"מיניאטורה"},{v:"Action Figure",he:"דמות מפרקית"}
 ];
 const catsOf=w=>String((w&&w.category)||"").split(",").map(x=>x.trim()).filter(Boolean);
-const catHe1=v=>(CATS.find(c=>c.v===v)||{}).he||v||"";
+// Gift types (signs and personal pieces): no scale, their own category list
+const GIFT_CATS=[{v:"WallSign",he:"שלט לקיר"},{v:"HomeSign",he:"שלט לבית"},{v:"Figurine",he:"פסלון או דמות"},{v:"Custom",he:"מתנה בהתאמה אישית"}];
+const catHe1=v=>([...CATS,...GIFT_CATS].find(c=>c.v===v)||{}).he||v||"";
 const catHe=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean).map(catHe1).join(" · ");
 const TECH_HE={"FDM":"FDM","Resin":"שרף","FDM+Resin":"FDM + שרף"};
-["#fCat","#fCat2"].forEach(id=>$(id).insertAdjacentHTML("beforeend",CATS.map(c=>`<option value="${c.v}">${c.he} (${c.v})</option>`).join("")));
+const catOpts=list=>`<option value="">—</option>`+list.map(c=>`<option value="${c.v}">${c.he}${list===CATS?` (${c.v})`:""}</option>`).join("");
+["#fCat","#fCat2"].forEach(id=>$(id).innerHTML=catOpts(CATS));
+// "Unique gifts" section: gift types instead of statue types, and no scale (a sign has none)
+function giftMode(){
+  const g=$("#fSection").value==="gift",keep=[$("#fCat").value,$("#fCat2").value],list=g?GIFT_CATS:CATS;
+  if($("#fCat").dataset.mode!==(g?"gift":"collect")){$("#fCat").dataset.mode=g?"gift":"collect";
+    ["#fCat","#fCat2"].forEach((id,i)=>{$(id).innerHTML=catOpts(list);$(id).value=list.some(c=>c.v===keep[i])?keep[i]:""})}
+  $("#fScale").closest("label").hidden=g;$("#fCat2").closest("label").hidden=g;$("#scaleWhy").hidden=g;
+}
+$("#fSection").addEventListener("change",giftMode);
 // Scale = real-life size of the part shown ÷ model height, snapped to the standard scales
 const SCALES=[[1,"1:1 (גודל טבעי)"],[2,"1:2 (חצי)"],[3,"1:3"],[4,"1:4 (רבע)"],[6,"1:6"],[8,"1:8"],[10,"1:10 (Art Scale)"],[12,"1:12"]];
 function calcScale(refCm,modelCm){
@@ -293,15 +304,47 @@ function flatHTML(w){const im=firstImg(w);if(!im)return `<div class="vid-only">�
 
 // Display order: the admin's own order; works never placed yet (e.g. just added) come first, newest first
 const byOrder=(a,b)=>{const ao=a.order==null,bo=b.order==null;if(ao&&bo)return b.createdAt-a.createdAt;if(ao)return -1;if(bo)return 1;return a.order-b.order||b.createdAt-a.createdAt};
+/* ================= Likes: one per device; counts are shown only from 5, so a new work never looks unloved ================= */
+let LIKES={};const LIKE_FROM=5;
+const myLikes=()=>{try{return new Set(JSON.parse(localStorage.getItem("artriko.likes")||"[]"))}catch(e){return new Set()}};
+const saveMyLikes=set=>{try{localStorage.setItem("artriko.likes",JSON.stringify([...set]))}catch(e){}};
+const shownLikes=id=>{const n=LIKES[id]||0;return S.admin||n>=LIKE_FROM?n:0};
+function lovedIds(){return Object.entries(LIKES).filter(([,n])=>n>=LIKE_FROM).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>id)}
+function likeBtn(w,big){const on=myLikes().has(w.id),n=shownLikes(w.id);
+  return `<button type="button" class="like${big?" big":""}${on?" on":""}" data-like="${esc(w.id)}" aria-pressed="${on}" aria-label="${on?"הסרת הלב":"לב לעבודה הזו"}"><span class="lk-h" aria-hidden="true">${on?"❤️":"🤍"}</span>${big?`<span class="lk-t">${on?"אהבת את זה":"אהבתם?"}</span>`:""}${n?`<span class="lk-n">${n}</span>`:""}</button>`}
+async function loadLikes(){
+  if(typeof sb==="undefined"||!sb.rpc)return;
+  try{const {data,error}=await sb.rpc("like_counts");if(error||!Array.isArray(data))return;
+    LIKES={};data.forEach(r=>LIKES[r.work_id]=+r.likes||0);if(S.works.length)render()}catch(e){}
+}
+function paintLikes(id){document.querySelectorAll(`[data-like="${CSS.escape(id)}"]`).forEach(b=>{const w=S.works.find(x=>x.id===id);if(w)b.outerHTML=likeBtn(w,b.classList.contains("big"))})}
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-like]");if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  const id=b.dataset.like,mine=myLikes(),like=!mine.has(id);
+  if(like)mine.add(id);else mine.delete(id);saveMyLikes(mine);
+  if(LIKES[id]!=null&&(S.admin||LIKES[id]>=LIKE_FROM))LIKES[id]=Math.max(0,LIKES[id]+(like?1:-1));
+  paintLikes(id);
+  if(like){const nb=document.querySelector(`[data-like="${CSS.escape(id)}"]`);if(nb){nb.classList.add("pop");splash(nb)}}
+  if(String(id).startsWith("ex-"))return;
+  try{const r=await fetch("/api/like",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,vid:visitorId(),like})});
+    const j=await r.json().catch(()=>({}));if(r.ok){if(j.likes!=null)LIKES[id]=j.likes;else if(!S.admin)delete LIKES[id];paintLikes(id)}}catch(err){}
+},true);
+// a little paint splash when someone taps the heart
+function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#2ec4ff","#ff3b5c"];
+  for(let i=0;i<8;i++){const d=document.createElement("i");d.className="lk-drop";const a=i/8*Math.PI*2;
+    d.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;background:${c[i%4]};--dx:${Math.cos(a)*34}px;--dy:${Math.sin(a)*34}px`;
+    document.body.appendChild(d);setTimeout(()=>d.remove(),650)}}
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
         ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
+        ${likeBtn(w)}
         ${S.admin&&hasWm(w)?`<span class="wm-tag on-card" title="${esc(wmText(w))}">⚠️ סימן מים · רק אתה רואה</span>`:""}
       </div>
-      <div class="meta"><h3>${esc(nm)}</h3><span class="spec">${(w.section==="gift"?[w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
+      <div class="meta"><h3>${esc(nm)}${lovedIds().includes(w.id)?`<span class="loved">❤️ אהוב במיוחד</span>`:""}</h3><span class="spec">${(w.section==="gift"?[w.category&&esc(catHe(w.category)),w.heightCm?esc(w.heightCm)+' ס"מ':""]:[w.category&&esc(catHe(w.category)),w.scale&&esc(w.scale.split(" ")[0]),esc(w.heightCm)+' ס"מ']).filter(Boolean).join(" · ")}</span></div>
     </article>`}
 function renderGifts(){
   const gifts=[...S.works].filter(w=>w.section==="gift").sort(byOrder);
@@ -493,7 +536,8 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span>
+    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span>${likeBtn(w,true)}</div>
+    <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️</p>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
@@ -503,6 +547,7 @@ function openLB(id){
   $("#lbContact").onclick=()=>openContact(w);
   if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
   showSlide(0); $("#lb").showModal();
+  clearTimeout(openLB.t);openLB.t=setTimeout(()=>{if(!$("#lb").open||myLikes().has(w.id))return;const b=$("#lbInfo [data-like]");if(b){b.classList.add("breathe");$("#lkNudge").hidden=false}},3500);
 }
 function showSlide(i){
   const n=LB.slides.length; LB.i=(i+n)%n; const s=LB.slides[LB.i], w=LB.w;
@@ -829,7 +874,7 @@ $("#pwForm").onsubmit=async e=>{
 };
 async function loadAdminData(){
   renderAdminList();
-  loadReviews();
+  loadReviews();loadLikes();
   const st=await getSetting("studio");if(st)STUDIO={...STUDIO,...st};renderStudio();
   const vv=await getSetting("voice");if(vv){VOICE=vv;$("#xVoice").value=vv.samples||"";$("#xVoiceRules").value=vv.rules||""}
   loadStats();
@@ -939,7 +984,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:[...new Set([$("#fCat").value,$("#fCat2").value].filter(Boolean))].join(","),scale:$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:[...new Set([$("#fCat").value,$("#fCat2").value].filter(Boolean))].join(","),scale:$("#fSection").value==="gift"?"":$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
     w.process=await uploadProc(id);
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
@@ -1026,12 +1071,12 @@ async function uploadProc(id){
 }
 function structuredCloneSafe(w){return w?{...w,media:w.media.map(m=>({...m})),process:(w.process||[]).map(p=>({...p}))}:null}
 function upsert(w){const i=S.works.findIndex(x=>x.id===w.id);if(i>=0)S.works[i]=w;else S.works.push(w)}
-function resetForm(){autoScale=null;lastRef=null;S.proc=[];renderProcAdmin();$("#procMsg").textContent="";$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
+function resetForm(){setTimeout(giftMode);autoScale=null;lastRef=null;S.proc=[];renderProcAdmin();$("#procMsg").textContent="";$("#wf").reset();$("#techAuto").textContent="";$("#scaleWhy").textContent="";clearAiMarks();S.staged=[];S.editing=null;$("#fCancel").hidden=true;$("#fSave").textContent="שמירה בגלריה";$("#formTitle").textContent="יצירה חדשה";$("#aiOpts").innerHTML="";$("#aiPicked").hidden=true;$("#aiState").textContent="יופיעו אוטומטית אחרי העלאת תמונה.";renderStaged()}
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
   const list=[...S.works].sort(byOrder);
-  $("#adList").innerHTML=list.map((w,i)=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small proc-li" data-a="proc" title="תמונות מתהליך העבודה">🛠️ תהליך${w.process&&w.process.length?` (${w.process.length})`:""}</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  $("#adList").innerHTML=list.map((w,i)=>{const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"} · ❤️ ${LIKES[w.id]||0}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small proc-li" data-a="proc" title="תמונות מתהליך העבודה">🛠️ תהליך${w.process&&w.process.length?` (${w.process.length})`:""}</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 /* ---- Reordering works: drag the ⠿ handle, or use ⤒ / ↑ / ↓ ---- */
@@ -1064,7 +1109,7 @@ const dragEnd=()=>{if(!DRAG)return;const ids=listIds(),moved=ids.join()!==DRAG.s
 $("#adList").addEventListener("pointerup",dragEnd);$("#adList").addEventListener("pointercancel",dragEnd);
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";{const cs=catsOf(w);$("#fCat").value=cs[0]||"";$("#fCat2").value=cs[1]||""}$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";giftMode();$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";{const cs=catsOf(w);$("#fCat").value=cs[0]||"";$("#fCat2").value=cs[1]||""}$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url,wm:m.wm||null}));
     S.proc=(w.process||[]).map(p=>({...p}));renderProcAdmin();$("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -1386,14 +1431,14 @@ let lastRef=null;
 function applyCategorization(o){
   if(!o)return;
   if(o.character)setAi("#fChar",String(o.character).slice(0,80));
-  if(CATS.some(c=>c.v===o.category))setAi("#fCat",o.category);
+  if(CATS.some(c=>c.v===o.category)&&$("#fSection").value!=="gift")setAi("#fCat",o.category);
   if(["FDM","Resin","FDM+Resin"].includes(o.tech)&&!techFromMaterials($("#fMat").value))setAi("#fTech",o.tech);
   lastRef=+o.referenceHeightCm||null;
   updateScale(o.referenceNote,o.techReason);
   $("#catState").textContent="מולא על ידי AI (מסומן בכחול). בדוק ושנה אם צריך.";
 }
 function updateScale(note,techReason){
-  const sc=calcScale(lastRef,$("#fH").value);
+  const sc=$("#fSection").value==="gift"?null:calcScale(lastRef,$("#fH").value);
   if(sc)setAi("#fScale",sc.label);
   const parts=[];
   if(lastRef)parts.push(`קנה מידה: ${note?note+". ":""}${sc?`${lastRef} ס"מ במציאות ÷ ${$("#fH").value} ס"מ בדגם ≈ 1:${sc.ratio.toFixed(1)}.`:"מלא גובה בס\"מ כדי לחשב."}`);
@@ -1413,6 +1458,7 @@ const CHAR_CM=[[/bat-?man|באטמן|בטמן/i,"BATMAN",188],[/spider-?man|spid
   [/green lantern|הפנס הירוק/i,"GREEN LANTERN",188],[/cyborg|סייבורג/i,"CYBORG",198]];
 let autoScale=null;
 function localScale(){
+  if($("#fSection").value==="gift")return;
   const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=+$("#fH").value,bust=$("#fCat").value==="Bust"&&!$("#fCat2").value;
   const cur=$("#fScale").value.trim(),mine=!cur||cur===autoScale;
   if(!hit||!(h>0)){if(mine&&autoScale){$("#fScale").value="";autoScale=null;$("#scaleWhy").textContent=""}return}
@@ -1861,7 +1907,7 @@ $("#rvAdmList").addEventListener("click",async e=>{
   }else{const {error}=await sb.from("reviews").update({status:a}).eq("id",id);if(error){toast("השמירה נכשלה");return}}
   toast(a==="approved"?"ההמלצה פורסמה באתר":a==="hidden"?"ההמלצה הוסתרה":"ההמלצה נמחקה");loadReviews()});
 
-loadReviews();
+loadReviews();loadLikes();
 
 {const hi=load("heroImg");if(hi&&/^https:\/\//.test(hi)&&!$("#heroScene").innerHTML)$("#heroScene").innerHTML=`<div class="flat"><img src="${esc(hi)}" alt="" fetchpriority="high"></div>`}
 (async()=>{

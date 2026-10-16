@@ -120,3 +120,11 @@ revoke execute on function public.event_stats() from anon, public;
 -- migration: works_process_photos
 -- Optional "behind the scenes" photos per work: [{url, cap}] (small JPEGs, shown in a uniform black frame).
 alter table public.works add column if not exists process jsonb not null default '[]'::jsonb;
+
+-- migration: work_likes
+-- Likes per work, one per device (salted hash of a random browser id). Changed only through toggle_like
+-- (called by /api/like with the server secret). like_counts() shows public counts only from 5 likes;
+-- the admin sees every count.
+--   table public.work_likes (work_id, visitor_hash, ip_hash, active, created_at), RLS on, no policies
+--   function public.toggle_like(p_secret, p_work, p_visitor_hash, p_ip_hash, p_like) returns integer
+--   function public.like_counts() returns table(work_id, likes)
