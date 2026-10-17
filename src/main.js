@@ -188,7 +188,7 @@ const CATS=[
 ];
 const catsOf=w=>String((w&&w.category)||"").split(",").map(x=>x.trim()).filter(Boolean);
 // Gift types (signs and personal pieces): no scale, their own category list
-const GIFT_CATS=[{v:"WallSign",he:"שלט לקיר"},{v:"HomeSign",he:"שלט לבית"},{v:"Figurine",he:"פסלון או דמות"},{v:"Keychain",he:"מחזיק מפתחות"},{v:"Magnet",he:"מגנט"},{v:"Custom",he:"מתנה בהתאמה אישית"}];
+const GIFT_CATS=[{v:"WallSign",he:"שלט לקיר"},{v:"HomeSign",he:"שלט לבית"},{v:"Figurine",he:"פסלון או דמות"},{v:"Keychain",he:"מחזיק מפתחות"},{v:"Magnet",he:"מגנט"},{v:"Diorama",he:"דיורמה"},{v:"Custom",he:"מתנה בהתאמה אישית"}];
 const catHe1=v=>([...CATS,...GIFT_CATS].find(c=>c.v===v)||{}).he||v||"";
 const catHe=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean).map(catHe1).join(" · ");
 const TECH_HE={"FDM":"FDM","Resin":"שרף","FDM+Resin":"FDM + שרף"};
