@@ -22,7 +22,7 @@
     <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="secnav" aria-label="תפריט"><span></span><span></span><span></span></button>
     <a class="mark" href="#top" id="homeLogo">ARTRIKO</a>
     <nav class="secnav" id="secnav" aria-label="ניווט באתר">
-      <a href="#top" id="navHome" data-k="home">ראשי</a><a href="#gallery" data-k="gallery">גלריה</a><a href="#reviews" id="navReviews" data-k="reviews">המלצות</a><a href="#gifts" id="navGifts" data-k="gifts">מתנות</a><a href="#learn" id="navLearn" data-k="learn">סדנאות</a><a href="#guide" id="navGuide" data-k="guide">המדריך לאספנים</a>
+      <a href="#top" id="navHome" data-k="home">ראשי</a><a href="#gallery" data-k="gallery">גלריה</a><a href="#reviews" id="navReviews" data-k="reviews">המלצות</a><a href="#gifts" id="navGifts" data-k="gifts">מעבר לפסלים</a><a href="#learn" id="navLearn" data-k="learn">סדנאות</a><a href="#guide" id="navGuide" data-k="guide">המדריך לאספנים</a>
     </nav>
     <div class="topnav">
       <a class="gal-btn" href="#gallery" id="galBtn">גלריה</a>
@@ -133,7 +133,7 @@
     <div class="gift-occ" id="giftOcc"></div>
     <div class="gift-group" id="giftGroup"></div>
     <div class="gift-steps-wrap" id="giftStepsWrap"><h3 class="gift-h">איך זה עובד</h3><ol class="gift-steps" id="giftSteps"></ol></div>
-    <div id="giftWorks"><h3 class="gift-h">מתנות שכבר יצאו מהסטודיו</h3><div class="grid gift-grid" id="giftGrid"></div></div>
+    <div id="giftWorks"><h3 class="gift-h">עוד דברים שיצאו מהסטודיו</h3><div class="grid gift-grid" id="giftGrid"></div></div>
     <div class="gift-end"><p class="gift-end-t" id="giftEndT"></p><button class="pill big solid" type="button" id="giftCta2"></button></div>
   </section>
 
@@ -431,7 +431,7 @@
       <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
       <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק, עץ…"></label>
       <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד</option></select></label>
-      <label>איפה מוצג<select id="fSection"><option value="collect">גלריית הפסלים</option><option value="gift">מתנות ייחודיות</option></select></label>
+      <label>איפה מוצג<select id="fSection"><option value="collect">גלריית הפסלים</option><option value="gift">מעבר לפסלים (מתנות, שלטים, מעמדים)</option></select></label>
       <label>הצגה בהמחשת גודל<select id="fMount"><option value="stand">עומד על הרצפה</option><option value="wall">תלוי על הקיר</option></select></label>
       <div class="full cat-box">
         <div class="cat-head"><strong>סיווג לפילטרים</strong><span class="note" id="catState">יתמלא אוטומטית אחרי ניתוח התמונות. אפשר לשנות ידנית.</span></div>
@@ -482,7 +482,7 @@
       <label>מילה בצהוב<input id="xH1hl" maxlength="30"></label>
       <label>כותרת, שורה 2<input id="xH1b" maxlength="40"></label>
       <label>סיום באדום<input id="xH1red" maxlength="30"></label>
-      <label class="full">התמונה בדף הראשי<select id="xHeroMode"><option value="rotate">מתחלפת בכל כניסה (פסלים בלבד, בלי מתנות)</option><option value="fixed">קבועה: העבודה הראשונה בגלריה</option></select></label>
+      <label class="full">התמונה בדף הראשי<select id="xHeroMode"><option value="rotate">מתחלפת בכל כניסה (פסלים בלבד)</option><option value="fixed">קבועה: העבודה הראשונה בגלריה</option></select></label>
       <label class="full">שורה קטנה מעל הכותרת<input id="xEyebrow" maxlength="60"></label>
       <label class="full">משפט קצר מתחת לכותרת<textarea id="xSub" maxlength="200" style="min-height:60px"></textarea></label>
       <h4 class="full" style="margin:10px 0 0">מי אני (בדף הראשי)</h4>
@@ -505,7 +505,7 @@
       <label>עידוד להוסיף תמונה (הדרכה)<textarea id="xNudgeLesson" maxlength="1000" style="min-height:130px"></textarea></label>
       <label>אחרי שהוסיפו תמונה<textarea id="xNudgeDone" maxlength="800" style="min-height:90px"></textarea></label>
       <label>תודה אחרי שליחת ההמלצה<textarea id="xRvThanks" maxlength="1000" style="min-height:90px"></textarea></label>
-      <h4 class="full" style="margin:10px 0 0">מתנות ייחודיות</h4>
+      <h4 class="full" style="margin:10px 0 0">מעבר לפסלים</h4>
       <label>כותרת קטנה<input id="xGiftEyebrow" maxlength="60"></label>
       <label>כותרת (עם / בין השורה הלבנה לצבעונית)<input id="xGiftTitle" maxlength="90"></label>
       <label class="full">פסקה (להדגשה: **מילים**). ריק = הסקשן מוסתר<textarea id="xGiftText" maxlength="700"></textarea></label>

@@ -188,7 +188,7 @@ const CATS=[
 ];
 const catsOf=w=>String((w&&w.category)||"").split(",").map(x=>x.trim()).filter(Boolean);
 // Gift types (signs and personal pieces): no scale, their own category list
-const GIFT_CATS=[{v:"WallSign",he:"שלט לקיר"},{v:"HomeSign",he:"שלט לבית"},{v:"Figurine",he:"פסלון או דמות"},{v:"Keychain",he:"מחזיק מפתחות"},{v:"Magnet",he:"מגנט"},{v:"Diorama",he:"דיורמה"},{v:"Custom",he:"מתנה בהתאמה אישית"}];
+const GIFT_CATS=[{v:"WallSign",he:"שלט לקיר"},{v:"HomeSign",he:"שלט לבית"},{v:"Figurine",he:"פסלון או דמות"},{v:"Keychain",he:"מחזיק מפתחות"},{v:"Magnet",he:"מגנט"},{v:"Diorama",he:"דיורמה"},{v:"Stand",he:"מעמד או אביזר תצוגה"},{v:"Custom",he:"פריט בהתאמה אישית"}];
 const catHe1=v=>([...CATS,...GIFT_CATS].find(c=>c.v===v)||{}).he||v||"";
 const catHe=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean).map(catHe1).join(" · ");
 const TECH_HE={"FDM":"FDM","Resin":"שרף","FDM+Resin":"FDM + שרף"};
@@ -381,8 +381,8 @@ function renderHome(){
       ${pub.length?`<div class="tz-row rv-row">${pub.slice(0,3).map(rvCard).join("")}</div>`:""}</section>`;
   }
   if(giftOn)P.gifts=`<section class="tz tz-gift">
-      <div class="tz-head"><div><span class="ws-eyebrow gift-eyebrow">${esc(T.giftEyebrow||"מתנות ייחודיות")}</span><h2 class="sec-title">${two(T.giftTitle)}</h2><p class="tz-text">${esc(first(T.giftText))}</p></div>
-        <a class="pill solid tz-go" href="#gifts">למתנות ←</a></div>
+      <div class="tz-head"><div><span class="ws-eyebrow gift-eyebrow">${esc(T.giftEyebrow||"מתנות · שלטים · מעמדים · ועוד")}</span><h2 class="sec-title">${two(T.giftTitle)}</h2><p class="tz-text">${esc(first(T.giftText))}</p></div>
+        <a class="pill solid tz-go" href="#gifts">מעבר לפסלים ←</a></div>
       ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(w=>cardHTML(w,true)).join("")}</div>`:""}</section>`;
   if(wsOn){const ph=(T.wsPhotos||[]).slice(0,3);
     P.learn=`<section class="tz tz-ws">
@@ -606,9 +606,9 @@ function openContact(w){
   track(w==="learn"?"learn":"want");
   let title,note,t,sold="";
   if(w==="order"||w==="gift"){
-    title=w==="gift"?(TEXTS.giftCta||"אני רוצה מתנה כזו!"):"הזמנה אישית";
-    note=w==="gift"?"כמה מילים על המתנה: למי היא, לאיזה אירוע וכמה יחידות. אחר כך בוחרים איפה נוח לדבר.":"כמה מילים על הדמות שבא לך. אחר כך בוחרים איפה נוח לדבר, ואפשר לצרף שם תמונה או רפרנס.";
-    t=w==="gift"?"היי ARTRIKO 👋\nאשמח לשמוע על 🎁 *מתנה מיוחדת בהתאמה אישית*\nהמתנה היא בשביל: ":"היי ARTRIKO 👋\nאשמח להזמין 🎨 *פסל בהתאמה אישית*\nהדמות שאני רוצה: ";
+    title=w==="gift"?(TEXTS.giftCta||"אני רוצה משהו כזה!"):"הזמנה אישית";
+    note=w==="gift"?"כמה מילים על הרעיון: מה בא לך, ואם זו מתנה, למי היא, לאיזה אירוע וכמה יחידות. אחר כך בוחרים איפה נוח לדבר.":"כמה מילים על הדמות שבא לך. אחר כך בוחרים איפה נוח לדבר, ואפשר לצרף שם תמונה או רפרנס.";
+    t=w==="gift"?"היי ARTRIKO 👋\nאשמח לשמוע על ✨ *פריט מיוחד בהתאמה אישית*\nהרעיון שלי: ":"היי ARTRIKO 👋\nאשמח להזמין 🎨 *פסל בהתאמה אישית*\nהדמות שאני רוצה: ";
   }else if(w==="learn"){
     title=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
     note="כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה. אחר כך בוחרים איפה נוח לדבר.";
@@ -1146,14 +1146,14 @@ const DEFAULT_TEXTS={
   p1:"אני נותן פתרונות יצירתיים. מאז ילדות אני פותר בעיות דרך אמנות: ציור, פיסול בנייר, פלסטלינה, חימר וקרטון. היום אני עובד עם **הדפסת תלת־ממד ביתית**: מידול, הדפסה וצביעה ידנית ייחודית.",
   p2:"יצרתי מתנות לאישי ציבור, שופטים, רופאים וכוחות ביטחון. רוב היצירות שלי מגיעות לאספנים שמחפשים פריט יחיד במינו. **כל יצירה לוקחת ימים עד חודשים.**",
   burst:"יד\nאחת\nפסל אחד",ctaMain:"לגלריה ←",ctaOrder:"להזמנה אישית",
-  giftEyebrow:"מתנות ייחודיות",giftTitle:"מתנה שאין / לאף אחד אחר.",
+  giftEyebrow:"מתנות · שלטים · מעמדים · ועוד",giftTitle:"מעבר לפסלים. / לפעמים הרעיון אחר לגמרי.",
   giftText:"מעבר לפסלי האספנות, אני יוצר **מתנות אישיות**: ליום הולדת, לאירוע, לפרישה, לצוות, או למי שכבר יש לו הכול. מרעיון או תמונה ועד פריט מודפס וצבוע ביד.",
-  giftCta:"אני רוצה מתנה כזו!",
+  giftCta:"אני רוצה משהו כזה!",
   giftOcc:"🎂 | יום הולדת | מתנה שאף אחד אחר לא יביא\n🏅 | פרישה והוקרה | תודה על שנים של עשייה, שנשארת על המדף\n👥 | צוות ועובדים | כמה דגמים, כל אחד מותאם למי שמקבל\n🎓 | מורים ותלמידים | לסיום שנה, לכיתה או לקורס\n🎖️ | יחידה ואנשי ביטחון | סמל, דמות או רגע משותף, צבוע ביד\n💍 | רגע אישי | חתונה, יום נישואים, או סתם כי מגיע",
   giftGroupT:"צריכים יותר מאחד? / אין בעיה.",
   giftGroup:"**בשונה מפסלי האספנות, במתנות אפשר להזמין כמה עותקים זהים!** לצוות, לכיתה, ליחידה או לאירוע: אותה מתנה לכולם, או כמה דגמים שונים שמותאמים אישית.",
   giftSteps:"רעיון או תמונה | מספרים לי למי המתנה ומה הסיפור. אפשר לשלוח תמונה, דמות או השראה.\nעיצוב ואישור | מתכננים יחד את הדגם, הגודל והצבעים, ומאשרים לפני שמתחילים.\nהדפסה וצביעה ביד | הדגם מודפס בתלת־ממד, נצבע ביד ומגיע מוכן לרגע של הנתינה.",
-  giftEnd:"יש לך רעיון למתנה? בואו נהפוך אותו למשהו שאי אפשר לשכוח.",
+  giftEnd:"יש לך רעיון? בואו נהפוך אותו למשהו שאי אפשר לשכוח.",
   nudgePiece:"וואו, איך זה יצא במציאות? תמונה אחת שווה אלף כוכבים.\nבלי תמונה זה לא קרה! איך זה נראה אחרי שהגיע?\nאיך הגיבו למתנה? תמונה של הרגע תשמח את כולם.\nצילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה באמת.\nתמונה אחת עוזרת למי שמתלבט יותר מכל מילה.",
   nudgeLesson:"יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!\nהדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.\nתמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף.",
   nudgeDone:"יש! 🔥 הרבה יותר שווה עם תמונה.\nמושלם, תודה על התמונה! 📸\nוואו, איזה יופי. תודה!",
@@ -1194,7 +1194,7 @@ function renderTexts(){
   const [g1,g2]=String(T.giftTitle||"").split("/").map(x=>x.trim());
   $("#giftEyebrow").textContent=T.giftEyebrow||"";
   $("#giftTitle").innerHTML=`${esc(g1||"")}${g2?`<br><span>${esc(g2)}</span>`:""}`;
-  $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=$("#giftCta2").textContent=T.giftCta||"אני רוצה מתנה כזו!";
+  $("#giftText").innerHTML=rich(T.giftText||"");$("#giftCta").textContent=$("#giftCta2").textContent=T.giftCta||"אני רוצה משהו כזה!";
   {const L=t=>String(t||"").split("\n").map(x=>x.trim()).filter(Boolean),P=x=>x.split("|").map(y=>y.trim());
    const occ=L(T.giftOcc).slice(0,9);
    $("#giftOcc").innerHTML=occ.map(x=>{const [e,h,d]=P(x);return `<div class="occ"><span class="occ-e">${esc(e||"")}</span><b>${esc(h||"")}</b>${d?`<span>${esc(d)}</span>`:""}</div>`}).join("");
@@ -1619,7 +1619,7 @@ $("#igGuide").href=CFG.instagram;$("#ttGuide").href=CFG.tiktok;
 document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{S.filter={cat:b.dataset.goto,tech:"",sale:false};render();location.hash="gallery"});
 
 /* ================= Menu order (set in admin) ================= */
-function navLabels(){return {home:"ראשי",gallery:"גלריה",reviews:"המלצות",gifts:"מתנות",learn:"סדנאות",guide:"המדריך לאספנים"}}
+function navLabels(){return {home:"ראשי",gallery:"גלריה",reviews:"המלצות",gifts:"מעבר לפסלים",learn:"סדנאות",guide:"המדריך לאספנים"}}
 function navOrder(){const all=Object.keys(navLabels()),o=(Array.isArray(TEXTS.navOrder)?TEXTS.navOrder:[]).filter(k=>all.includes(k));return [...o,...all.filter(k=>!o.includes(k))]}
 function applyNavOrder(){const nav=$("#secnav");if(!nav)return;navOrder().forEach(k=>{const a=nav.querySelector(`[data-k="${k}"]`);if(a)nav.appendChild(a)});renderNavOrderAdmin()}
 function renderNavOrderAdmin(){const box=$("#navOrder");if(!box)return;const o=navOrder();
