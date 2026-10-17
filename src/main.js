@@ -646,8 +646,10 @@ $("#wsCta").onclick=()=>openContact("learn");
 function visitorId(){try{let v=localStorage.getItem("artriko.vid");if(!v){v=crypto.randomUUID();localStorage.setItem("artriko.vid",v)}return v}catch(e){return null}}
 function ping(kind){try{fetch("/api/visit",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(kind?{kind,vid:visitorId()}:{vid:visitorId()})})}catch(e){}}
 function track(kind){if(!S.admin)ping(kind)}
-document.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a)return;const h=a.href;
-  if(/instagram\.com/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(/wa\.me/.test(h))track("wa")},true);
+// Counts exits to Instagram / TikTok / WhatsApp. Includes the contact window: its Instagram button is an ig.me
+// chat link, and its WhatsApp button gets its link only during the click, so it is recognised by id.
+document.addEventListener("click",e=>{const a=e.target.closest("a");if(!a)return;const h=a.href||"";
+  if(/instagram\.com|ig\.me/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(a.id==="ctWa"||/wa\.me/.test(h))track("wa")},true);
 const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["search","שימוש בחיפוש"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
 /* Activity over time: unique visitors per day / month, busiest hours and weekdays (Israel time) */
 const HE_DAYS=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
