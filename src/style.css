@@ -1094,3 +1094,24 @@ footer{flex-wrap:wrap}
 .info .remake b{color:var(--sky)}
 .badge.remake-b{white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
 .gift-grid .badge.remake-b,.grid.cols-2 .badge.remake-b{font-size:11px;padding:3px 8px;top:8px;inset-inline-end:8px}
+
+/* admin: search the works list */
+.ad-search{width:100%;margin:0 0 10px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#0a0a0a;color:var(--paper);font:inherit;font-size:16px}
+.ad-search:focus{outline:none;border-color:var(--sun)}
+#adList.searching .drag,#adList.searching .li-mv{display:none}
+/* crop editor: actions pinned to the bottom, image sized so nothing needs scrolling */
+.cr-bar{position:sticky;bottom:-16px;z-index:5;display:flex;gap:10px;margin:12px -14px -16px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#0d0a0b;border-top:1px solid var(--line)}
+.cr-bar .pill{flex:1;justify-content:center;font-size:17px;padding:12px}
+.cr-bar #crSave{flex:2}
+@media (max-width:760px){
+  .crop-dlg{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;padding:8px 10px 16px;border-radius:0;display:flex;flex-direction:column}
+  .crop-dlg:not([open]){display:none}
+  .cr-top{margin-bottom:6px}.cr-top b{font-size:20px}
+  .cr-stage{flex:1;min-height:0;padding:10px}
+  .cr-wrap canvas{max-height:calc(100dvh - 330px)}
+  .cr-ratios{margin:8px 0 2px}.cr-ratios button{padding:4px 10px;font-size:13px}
+  .cr-angle{margin-top:4px}.cr-tools{margin-top:6px}
+  .cr-bar{margin:auto -10px -16px;padding-inline:10px}
+}
+/* admin form: the save button stays reachable while scrolling the form */
+.admin .save-bar{position:sticky;bottom:-24px;z-index:6;background:#0d0a0b;padding:10px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:-12px;border-top:1px solid var(--line)}
