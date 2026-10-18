@@ -338,7 +338,7 @@ function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
-        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין, אבל אפשר להזמין גרסה חדשה">🎨 בהזמנה אישית</button>`}
+        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">🏠 כבר מצא בית</button>`}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${likeBtn(w)}
@@ -536,7 +536,7 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"🎨 בהזמנה אישית"}</span>${likeBtn(w,true)}</div>
+    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"🏠 כבר מצא בית · לא זמין כרגע"}</span>${likeBtn(w,true)}</div>
     <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️</p>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
