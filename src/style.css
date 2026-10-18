@@ -1086,3 +1086,9 @@ footer{flex-wrap:wrap}
 .loved{display:inline-block;margin-inline-start:8px;font:800 12px/1 var(--f-body);color:#fff;background:var(--pop);padding:3px 8px;border-radius:999px;vertical-align:middle;white-space:nowrap}
 .grid.cols-2 .like{bottom:6px;inset-inline-end:6px;padding:3px 7px;font-size:12px}
 @media (prefers-reduced-motion:reduce){.like.breathe,.like.pop .lk-h,.lk-drop{animation:none}}
+
+/* not for sale: invite a new version instead of a dead end */
+.badge.remake-b{background:var(--ink);color:var(--sky);border-color:var(--sky);box-shadow:3px 3px 0 var(--sky);transform:rotate(-2deg)}
+.badge.remake-b:hover{background:var(--sky);color:var(--ink)}
+.info .remake{display:flex;flex-direction:column;gap:4px;margin:6px 0 14px;padding:12px 14px;border-radius:14px;border:2px dashed var(--sky);background:rgba(46,196,255,.08);color:var(--paper);line-height:1.5}
+.info .remake b{color:var(--sky)}

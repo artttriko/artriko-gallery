@@ -338,7 +338,7 @@ function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
-        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:""}
+        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין, אבל אפשר להזמין גרסה חדשה">🎨 בהזמנה אישית</button>`}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${likeBtn(w)}
@@ -536,13 +536,14 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"}</span>${likeBtn(w,true)}</div>
+    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"🎨 בהזמנה אישית"}</span>${likeBtn(w,true)}</div>
     <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️</p>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
     ${w.process&&w.process.length?`<button class="proc-btn" id="lbProc" type="button"><span class="pb-ic">🛠️</span><span><b>מאחורי הקלעים</b><small>${w.process.length===1?"תמונה אחת":w.process.length+" תמונות"} מתהליך העבודה</small></span><span class="pb-go">←</span></button>`:""}
-    <button class="pill contact-btn" id="lbContact">אני רוצה את זה!</button>
+    ${w.status!=="sale"?`<div class="remake"><b>${w.section==="gift"?"רוצים אחד כזה?":"המקורי כבר לא זמין, אבל הסיפור לא נגמר כאן."}</b><span>${w.section==="gift"?"אפשר להכין עוד עותק או גרסה מותאמת: בגודל אחר, בצבעים אחרים או עם טקסט משלך.":"ברוב היצירות אפשר ליצור גרסה חדשה בשבילך: בגודל אחר, בצביעה אחרת או עם שינויים משלך. כל גרסה נצבעת מחדש ביד, ולכן גם היא יחידה במינה."}</span></div>`:""}
+    <button class="pill contact-btn" id="lbContact">${w.status==="sale"?"אני רוצה את זה!":"אני רוצה גרסה משלי!"}</button>
     ${showIl?`<p class="note">בהמחשה בחדר הגודל על השידה מחושב לפי הגובה האמיתי של הפסל.</p>`:""}`;
   $("#lbContact").onclick=()=>openContact(w);
   if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
@@ -587,7 +588,7 @@ document.querySelectorAll("dialog").forEach(d=>{
 
 /* ================= Contact ================= */
 // Playful lines for a piece that is on display only (not for sale)
-const SOLD_TITLES=["אוי, איזה באסה!","אאוץ'. כמעט!","נו באמת, דווקא את זה?","שברון לב בפופ־ארט"];
+const SOLD_TITLES=["גרסה משלך? בשמחה!","אפשר להכין גם לך!","יש דרך להגשים את זה!"];
 const SOLD_LINES=[
   n=>`"${n}" כבר מצא בית חם, והוא לא מתכנן לעבור דירה. אבל אל דאגה: אני יכול להכין לך משהו באותה אנרגיה, רק שלך.`,
   n=>`"${n}" כאן רק כדי שתתאהבו בו, והוא יודע את זה טוב מאוד. נעשה לך אחד משלך?`,
