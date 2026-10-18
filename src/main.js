@@ -153,6 +153,7 @@ const SAMPLES=[
 ];
 
 /* ================= Data (Supabase) ================= */
+const forSale=w=>w.section!=="gift"&&w.status==="sale";
 const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
 const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
@@ -338,7 +339,7 @@ function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
-        ${w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">🏠 כבר מצא בית</button>`}
+        ${w.section==="gift"?`<button class="badge remake-b" data-buy="${esc(w.id)}" title="נוצר בהזמנה אישית וכבר אצל מי שהזמין אותו">נוצר בהזמנה אישית</button>`:w.status==="sale"?`<button class="badge" data-buy="${esc(w.id)}">זמין לרכישה</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">נחטף!</button>`}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${likeBtn(w)}
@@ -536,14 +537,14 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <div class="lb-top"><span class="status ${w.status}">${w.status==="sale"?"זמין לרכישה":"🏠 כבר מצא בית · לא זמין כרגע"}</span>${likeBtn(w,true)}</div>
+    <div class="lb-top"><span class="status ${forSale(w)?"sale":"show"}">${w.section==="gift"?"✨ נוצר בהזמנה אישית":w.status==="sale"?"זמין לרכישה":"נחטף! · לא זמין כרגע"}</span>${likeBtn(w,true)}</div>
     <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️</p>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
     ${w.process&&w.process.length?`<button class="proc-btn" id="lbProc" type="button"><span class="pb-ic">🛠️</span><span><b>מאחורי הקלעים</b><small>${w.process.length===1?"תמונה אחת":w.process.length+" תמונות"} מתהליך העבודה</small></span><span class="pb-go">←</span></button>`:""}
-    ${w.status!=="sale"?`<div class="remake"><b>${w.section==="gift"?"רוצים אחד כזה?":"המקורי כבר לא זמין, אבל הסיפור לא נגמר כאן."}</b><span>${w.section==="gift"?"אפשר להכין עוד עותק או גרסה מותאמת: בגודל אחר, בצבעים אחרים או עם טקסט משלך.":"ברוב היצירות אפשר ליצור גרסה חדשה בשבילך: בגודל אחר, בצביעה אחרת או עם שינויים משלך. כל גרסה נצבעת מחדש ביד, ולכן גם היא יחידה במינה."}</span></div>`:""}
-    <button class="pill contact-btn" id="lbContact">${w.status==="sale"?"אני רוצה את זה!":"אני רוצה גרסה משלי!"}</button>
+    ${!forSale(w)?`<div class="remake"><b>${w.section==="gift"?"הפריט הזה נוצר בהזמנה אישית, והוא כבר אצל מי שהזמין אותו.":"המקורי כבר לא זמין, אבל הסיפור לא נגמר כאן."}</b><span>${w.section==="gift"?"רוצים אחד כזה? אפשר להכין עוד עותק או גרסה מותאמת: בגודל אחר, בצבעים אחרים או עם טקסט משלך.":"ברוב היצירות אפשר ליצור גרסה חדשה בשבילך: בגודל אחר, בצביעה אחרת או עם שינויים משלך. כל גרסה נצבעת מחדש ביד, ולכן גם היא יחידה במינה."}</span></div>`:""}
+    <button class="pill contact-btn" id="lbContact">${forSale(w)?"אני רוצה את זה!":w.section==="gift"?"אני רוצה גם!":"אני רוצה גרסה משלי!"}</button>
     ${showIl?`<p class="note">בהמחשה בחדר הגודל על השידה מחושב לפי הגובה האמיתי של הפסל.</p>`:""}`;
   $("#lbContact").onclick=()=>openContact(w);
   if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
@@ -615,7 +616,7 @@ function openContact(w){
     note="כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה. אחר כך בוחרים איפה נוח לדבר.";
     t="היי ARTRIKO 👋\nאני רוצה ללמוד לצבוע! 🖌️\nאשמח לשמוע על *הדרכה אישית או סדנה* (איירבראש ומכחולים).";
   }else{
-    const notForSale=!!(w&&w.status!=="sale");
+    const notForSale=!!(w&&!forSale(w));
     title=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
     if(notForSale)sold=pick(SOLD_LINES)(w.name);
     note=notForSale?"בא לך הזמנה אישית בסגנון? בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:":"בוחרים איפה נוח לדבר, וההודעה כבר מוכנה:";

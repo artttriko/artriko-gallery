@@ -1092,3 +1092,5 @@ footer{flex-wrap:wrap}
 .badge.remake-b:hover{background:var(--sky);color:var(--ink)}
 .info .remake{display:flex;flex-direction:column;gap:4px;margin:6px 0 14px;padding:12px 14px;border-radius:14px;border:2px dashed var(--sky);background:rgba(46,196,255,.08);color:var(--paper);line-height:1.5}
 .info .remake b{color:var(--sky)}
+.badge.remake-b{white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
+.gift-grid .badge.remake-b,.grid.cols-2 .badge.remake-b{font-size:11px;padding:3px 8px;top:8px;inset-inline-end:8px}
