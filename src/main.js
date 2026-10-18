@@ -154,8 +154,8 @@ const SAMPLES=[
 
 /* ================= Data (Supabase) ================= */
 const forSale=w=>w.section!=="gift"&&w.status==="sale";
-const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],createdAt:Date.parse(r.created_at)});
+const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,figure_cm:+w.figureCm>0?+w.figureCm:null,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
+const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,figureCm:r.figure_cm==null?"":+r.figure_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -200,7 +200,7 @@ function giftMode(){
   const g=$("#fSection").value==="gift",keep=[$("#fCat").value,$("#fCat2").value],list=g?GIFT_CATS:CATS;
   if($("#fCat").dataset.mode!==(g?"gift":"collect")){$("#fCat").dataset.mode=g?"gift":"collect";
     ["#fCat","#fCat2"].forEach((id,i)=>{$(id).innerHTML=catOpts(list);$(id).value=list.some(c=>c.v===keep[i])?keep[i]:""})}
-  $("#fScale").closest("label").hidden=g;$("#fCat2").closest("label").hidden=g;$("#scaleWhy").hidden=g;
+  $("#fScale").closest("label").hidden=g;$("#fFigL").hidden=g;$("#fCat2").closest("label").hidden=g;$("#scaleWhy").hidden=g;
 }
 $("#fSection").addEventListener("change",giftMode);
 // Scale = real-life size of the part shown ÷ model height, snapped to the standard scales
@@ -988,7 +988,7 @@ $("#wf").onsubmit=async e=>{
   $("#fSave").disabled=true;
   try{
     const media=await uploadMedia(id,S.staged);
-    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:[...new Set([$("#fCat").value,$("#fCat2").value].filter(Boolean))].join(","),scale:$("#fSection").value==="gift"?"":$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
+    const w={id,name:$("#fName").value.trim(),heightCm:+$("#fH").value,figureCm:$("#fSection").value==="gift"?"":+$("#fFig").value||"",materials:$("#fMat").value.trim(),status:$("#fStatus").value,section:$("#fSection").value,mount:$("#fMount").value,summary:$("#fSum").value.trim(),character:$("#fChar").value.trim(),category:[...new Set([$("#fCat").value,$("#fCat2").value].filter(Boolean))].join(","),scale:$("#fSection").value==="gift"?"":$("#fScale").value.trim(),tech:techFromMaterials($("#fMat").value)||$("#fTech").value,createdAt:before?before.createdAt:Date.now(),order:before?before.order??null:null,media};
     w.process=await uploadProc(id);
     $("#fMsg").textContent="שומר…";
     await dbPut(w);
@@ -1113,7 +1113,7 @@ const dragEnd=()=>{if(!DRAG)return;const ids=listIds(),moved=ids.join()!==DRAG.s
 $("#adList").addEventListener("pointerup",dragEnd);$("#adList").addEventListener("pointercancel",dragEnd);
 $("#adList").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;const row=b.closest(".li");const w=S.works.find(x=>x.id===row.dataset.id);
-  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";giftMode();$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";{const cs=catsOf(w);$("#fCat").value=cs[0]||"";$("#fCat2").value=cs[1]||""}$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
+  if(b.dataset.a==="edit"){S.editing=w.id;$("#fName").value=w.name;$("#fH").value=w.heightCm;$("#fFig").value=w.figureCm||"";$("#fMat").value=w.materials||"";$("#fStatus").value=w.status;$("#fSection").value=w.section||"collect";giftMode();$("#fMount").value=w.mount||"stand";$("#fSum").value=w.summary||"";$("#fChar").value=w.character||"";{const cs=catsOf(w);$("#fCat").value=cs[0]||"";$("#fCat2").value=cs[1]||""}$("#fScale").value=w.scale||"";$("#fTech").value=w.tech||"";autoTech();$("#scaleWhy").textContent="";clearAiMarks();
     S.staged=w.media.map(m=>({sid:++sid,kind:m.kind,name:"",progress:1,ready:true,raw:m.raw||m.orig,orig:m.orig,illus:!!m.illus,aiCut:m.aiCut||null,ed:m.ed||(m.enh?{...ED0,b:108,c:112,s:122}:{...ED0}),open:false,sceneOn:!!m.sceneOn,blob:m.blob,url:m.url,wm:m.wm||null}));
     S.proc=(w.process||[]).map(p=>({...p}));renderProcAdmin();$("#fCancel").hidden=false;$("#fSave").textContent="שמירת שינויים";$("#formTitle").textContent="עריכה: "+w.name;$("#aiOpts").innerHTML="";$("#aiState").textContent="לחץ \"הצעות חדשות\" כדי לקבל הצעות לתמונות האלה.";renderStaged();showTab("work");return}
   if(b.dataset.a==="del"){const cf=document.createElement("span");cf.className="confirm";cf.innerHTML=`למחוק? <button class="pill small danger" data-a="yes">כן, למחוק</button><button class="pill small" data-a="no">לא</button>`;b.replaceWith(cf);row.querySelector('[data-a="edit"]').hidden=true;return}
@@ -1291,7 +1291,7 @@ ${hint?`
 - כל הצעה בטון אחר: אחת מצחיקה, אחת מרגשת, אחת נועזת.
 - אל תמציא פרטים טכניים (שעות עבודה, מחיר, חומרים) שלא נמסרו.
 - כל הצעה חייבת להיות מקורית: בלי לפתוח באותן מילים כמו הצעה אחרת, ובלי ביטויים שחוזרים על עצמם.${usedTexts()}${v}${r}
-${name?`שם זמני שהאמן כתב: ${name}. `:""}${h?`גובה: ${h} ס"מ. `:""}${mat?`חומרים: ${mat}.`:""}
+${name?`שם זמני שהאמן כתב: ${name}. `:""}${h?`גובה: ${h} ס"מ${+$("#fFig").value>0?` (כולל מסגרת או בסיס; הדמות עצמה ${$("#fFig").value} ס"מ)`:""}. `:""}${mat?`חומרים: ${mat}.`:""}
 
 שלב 3: סיווג לפילטרים של הגלריה. השתמש בהגדרות האלה בדיוק:
 CATEGORY (בחר אחת בלבד):
@@ -1442,14 +1442,15 @@ function applyCategorization(o){
   $("#catState").textContent="מולא על ידי AI (מסומן בכחול). בדוק ושנה אם צריך.";
 }
 function updateScale(note,techReason){
-  const sc=$("#fSection").value==="gift"?null:calcScale(lastRef,$("#fH").value);
+  const sc=$("#fSection").value==="gift"?null:calcScale(lastRef,figH());
   if(sc)setAi("#fScale",sc.label);
   const parts=[];
-  if(lastRef)parts.push(`קנה מידה: ${note?note+". ":""}${sc?`${lastRef} ס"מ במציאות ÷ ${$("#fH").value} ס"מ בדגם ≈ 1:${sc.ratio.toFixed(1)}.`:"מלא גובה בס\"מ כדי לחשב."}`);
+  if(lastRef)parts.push(`קנה מידה: ${note?note+". ":""}${sc?`${lastRef} ס"מ במציאות ÷ ${figH()} ס"מ ${+$("#fFig").value>0?"הדמות":"בדגם"} ≈ 1:${sc.ratio.toFixed(1)}.`:"מלא גובה בס\"מ כדי לחשב."}`);
   if(techReason)parts.push(`טכנולוגיה: ${techReason}`);
   if(parts.length)$("#scaleWhy").textContent=parts.join(" ");
 }
-$("#fH").addEventListener("input",()=>{if(lastRef)updateScale();else localScale()});
+const figH=()=>+$("#fFig").value>0?+$("#fFig").value:+$("#fH").value;
+["#fH","#fFig"].forEach(id=>$(id).addEventListener("input",()=>{if(lastRef)updateScale();else localScale()}));
 /* Scale guess without AI: known heights of popular characters (cm, as usually given in the comics or films).
    A bust shows roughly the top third of the figure, so its reference is about 35% of the full height. */
 const CHAR_CM=[[/bat-?man|באטמן|בטמן/i,"BATMAN",188],[/spider-?man|spidey|ספיידר|ספיידי/i,"SPIDER-MAN",178],[/wolverine|logan|וולברין/i,"WOLVERINE",160],
@@ -1463,12 +1464,12 @@ const CHAR_CM=[[/bat-?man|באטמן|בטמן/i,"BATMAN",188],[/spider-?man|spid
 let autoScale=null;
 function localScale(){
   if($("#fSection").value==="gift")return;
-  const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=+$("#fH").value,bust=$("#fCat").value==="Bust"&&!$("#fCat2").value;
+  const txt=`${$("#fChar").value} ${$("#fName").value}`,hit=CHAR_CM.find(([r])=>r.test(txt)),h=figH(),bust=$("#fCat").value==="Bust"&&!$("#fCat2").value;
   const cur=$("#fScale").value.trim(),mine=!cur||cur===autoScale;
   if(!hit||!(h>0)){if(mine&&autoScale){$("#fScale").value="";autoScale=null;$("#scaleWhy").textContent=""}return}
   const ref=Math.round(hit[2]*(bust?0.35:1)),sc=calcScale(ref,h);if(!sc)return;
   if(mine){$("#fScale").value=sc.label;autoScale=sc.label;const el=$("#fScale");el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}
-  $("#scaleWhy").textContent=`השערת קנה מידה: ${hit[1]} בערך ${hit[2]} ס"מ${bust?` (בבאסט רואים כשליש מהדמות, בערך ${ref} ס"מ)`:""} ÷ ${h} ס"מ בדגם ≈ 1:${sc.ratio.toFixed(1)}${mine?"":". השארתי את הערך שהזנת."}`;
+  $("#scaleWhy").textContent=`השערת קנה מידה: ${hit[1]} בערך ${hit[2]} ס"מ${bust?` (בבאסט רואים כשליש מהדמות, בערך ${ref} ס"מ)`:""} ÷ ${h} ס"מ ${+$("#fFig").value>0?"הדמות":"בדגם"} ≈ 1:${sc.ratio.toFixed(1)}${mine?"":". השארתי את הערך שהזנת."}`;
 }
 ["#fChar","#fName"].forEach(id=>$(id).addEventListener("input",()=>{if(!lastRef)localScale()}));
 $("#fCat").addEventListener("change",()=>{if(!lastRef)localScale()});

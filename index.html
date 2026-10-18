@@ -428,7 +428,8 @@
     <h4 id="formTitle">יצירה חדשה</h4>
     <form class="form" id="wf" autocomplete="off">
       <label>שם היצירה<input id="fName" required maxlength="80"></label>
-      <label>גובה (ס"מ)<input id="fH" type="number" min="1" max="200" step="0.5" required></label>
+      <label>גובה כולל (ס"מ) <small>(עם מסגרת או בסיס)</small><input id="fH" type="number" min="1" max="200" step="0.5" required></label>
+      <label id="fFigL">גובה הדמות עצמה (ס"מ) <small>(רק אם יש מסגרת או בסיס גדול. לא מוצג באתר, משמש לחישוב קנה המידה)</small><input id="fFig" type="number" min="0.5" max="200" step="0.5" placeholder="ריק = כמו הגובה הכולל"></label>
       <label>חומרים<input id="fMat" placeholder="PLA, שרף, אקריליק, עץ…"></label>
       <label>סטטוס<select id="fStatus"><option value="sale">זמין לרכישה</option><option value="show">מוצג בלבד (אפשר להזמין גרסה חדשה)</option></select></label>
       <label>איפה מוצג<select id="fSection"><option value="collect">גלריית הפסלים</option><option value="gift">מעבר לפסלים (מתנות, שלטים, מעמדים)</option></select></label>
