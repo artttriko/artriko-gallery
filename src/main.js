@@ -311,8 +311,9 @@ const myLikes=()=>{try{return new Set(JSON.parse(localStorage.getItem("artriko.l
 const saveMyLikes=set=>{try{localStorage.setItem("artriko.likes",JSON.stringify([...set]))}catch(e){}};
 const shownLikes=id=>{const n=LIKES[id]||0;return S.admin||n>=LIKE_FROM?n:0};
 function lovedIds(){return Object.entries(LIKES).filter(([,n])=>n>=LIKE_FROM).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>id)}
+const HEART=`<span class="lk-h" aria-hidden="true"><svg viewBox="0 0 24 22"><path class="lk-o" d="M12 20.5S2 14.4 2 7.6A5.1 5.1 0 0 1 12 5a5.1 5.1 0 0 1 10 2.6c0 6.8-10 12.9-10 12.9z"/><path class="lk-f" d="M12 20.5S2 14.4 2 7.6A5.1 5.1 0 0 1 12 5a5.1 5.1 0 0 1 10 2.6c0 6.8-10 12.9-10 12.9z"/></svg><i class="lk-drip"></i></span>`;
 function likeBtn(w,big){const on=myLikes().has(w.id),n=shownLikes(w.id);
-  return `<button type="button" class="like${big?" big":""}${on?" on":""}" data-like="${esc(w.id)}" aria-pressed="${on}" aria-label="${on?"הסרת הלב":"לב לעבודה הזו"}"><span class="lk-h" aria-hidden="true">${on?"❤️":"🤍"}</span>${big?`<span class="lk-t">${on?"אהבת את זה":"אהבתם?"}</span>`:""}${n?`<span class="lk-n">${n}</span>`:""}</button>`}
+  return `<button type="button" class="like${big?" big":""}${on?" on":""}" data-like="${esc(w.id)}" aria-pressed="${on}" aria-label="${on?"הסרת הלב":"לב לעבודה הזו"}">${HEART}${big?`<span class="lk-t">${on?"אהבת את זה":"אהבתם?"}</span>`:""}${n?`<span class="lk-n">${n}</span>`:""}</button>`}
 async function loadLikes(){
   if(typeof sb==="undefined"||!sb.rpc)return;
   try{const {data,error}=await sb.rpc("like_counts");if(error||!Array.isArray(data))return;
@@ -329,13 +330,15 @@ document.addEventListener("click",async e=>{
   if(like){const nb=document.querySelector(`[data-like="${CSS.escape(id)}"]`);if(nb){nb.classList.add("pop");splash(nb)}}
   if(String(id).startsWith("ex-"))return;
   try{const r=await fetch("/api/like",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,vid:visitorId(),like})});
-    const j=await r.json().catch(()=>({}));if(r.ok){if(j.likes!=null)LIKES[id]=j.likes;else if(!S.admin)delete LIKES[id];paintLikes(id)}}catch(err){}
+    const j=await r.json().catch(()=>({}));if(r.ok){const was=LIKES[id]||0;if(j.likes!=null)LIKES[id]=j.likes;else if(!S.admin)delete LIKES[id];paintLikes(id);if(like&&j.likes===LIKE_FROM&&was<LIKE_FROM)toast(`🎉 בזכותך היצירה עברה ${LIKE_FROM} לבבות!`)}}catch(err){}
 },true);
 // a little paint splash when someone taps the heart
+// effects must live inside an open modal dialog, or they render underneath it
+const layerHost=()=>document.querySelector("dialog[open]")||document.body;
 function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#2ec4ff","#ff3b5c"];
   for(let i=0;i<8;i++){const d=document.createElement("i");d.className="lk-drop";const a=i/8*Math.PI*2;
     d.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;background:${c[i%4]};--dx:${Math.cos(a)*34}px;--dy:${Math.sin(a)*34}px`;
-    document.body.appendChild(d);setTimeout(()=>d.remove(),650)}}
+    layerHost().appendChild(d);setTimeout(()=>d.remove(),650)}}
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
@@ -540,7 +543,7 @@ function openLB(id){
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
     <div class="lb-top">${forSale(w)?`<span class="status sale sv" data-t="זמין לרכישה"><span>זמין לרכישה</span></span>`:`<span class="status show">${w.section==="gift"?"✨ נוצר בהזמנה אישית":"נחטף! · לא זמין כרגע"}</span>`}${likeBtn(w,true)}</div>
-    <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️</p>
+    <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️<small>טיפ: לחיצה כפולה על התמונה עובדת גם</small></p>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
@@ -551,7 +554,7 @@ function openLB(id){
   $("#lbContact").onclick=()=>openContact(w);
   if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
   showSlide(0); $("#lb").showModal();
-  clearTimeout(openLB.t);openLB.t=setTimeout(()=>{if(!$("#lb").open||myLikes().has(w.id))return;const b=$("#lbInfo [data-like]");if(b){b.classList.add("breathe");$("#lkNudge").hidden=false}},3500);
+  clearTimeout(openLB.t);openLB.t=setTimeout(()=>{if(!$("#lb").open||myLikes().has(w.id))return;const b=$("#lbInfo [data-like]");if(b){b.classList.add("breathe");$("#lkNudge").hidden=false}},1500);
 }
 function showSlide(i){
   const n=LB.slides.length; LB.i=(i+n)%n; const s=LB.slides[LB.i], w=LB.w;
@@ -1948,3 +1951,17 @@ loadReviews();loadLikes();
   if(!isAdmin)ping();
 })();
 sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY")openAdmin("account")});
+
+/* ---- Likes: double-tap the photo (like Instagram), and a one-time heartbeat as cards scroll into view ---- */
+function bigHeart(x,y){const h=document.createElement("div");h.className="lk-burst";h.innerHTML=HEART;h.style.left=x+"px";h.style.top=y+"px";layerHost().appendChild(h);setTimeout(()=>h.remove(),900)}
+function dblLike(x,y){if(!LB||!LB.w)return;bigHeart(x,y);if(!myLikes().has(LB.w.id)){const b=$("#lbInfo [data-like]");if(b)b.click()}}
+(()=>{const m=$("#lbMain");if(!m)return;let t=0,px=0,py=0;
+  m.addEventListener("touchend",e=>{const p=e.changedTouches[0],now=Date.now();
+    if(now-t<300&&Math.hypot(p.clientX-px,p.clientY-py)<40){e.preventDefault();t=0;dblLike(p.clientX,p.clientY)}else{t=now;px=p.clientX;py=p.clientY}},{passive:false});
+  m.addEventListener("dblclick",e=>{e.preventDefault();dblLike(e.clientX,e.clientY)});
+})();
+const BEAT=new Set();
+const beatIO="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;const b=en.target;beatIO.unobserve(b);
+  const id=b.dataset.like;if(BEAT.has(id)||b.classList.contains("on"))return;BEAT.add(id);setTimeout(()=>{b.classList.add("beat");setTimeout(()=>b.classList.remove("beat"),1300)},350)}),{threshold:.9}):null;
+const beatScan=()=>document.querySelectorAll(".card .like:not(.big):not(.on)").forEach(b=>{if(!BEAT.has(b.dataset.like))beatIO.observe(b)});
+if(beatIO){beatScan();new MutationObserver(beatScan).observe(document.body,{childList:true,subtree:true})}

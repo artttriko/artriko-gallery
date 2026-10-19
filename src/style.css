@@ -1153,3 +1153,27 @@ footer{flex-wrap:wrap}
 .chip.sale-chip{box-shadow:-3px 0 0 var(--sky),3px 2px 0 var(--pop)}
 .chip.sale-chip[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:#000}
 .ad-filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+
+/* like heart: outline that fills up with paint from the bottom, with a little drip */
+.like .lk-h{position:relative;display:inline-grid;width:18px;height:17px}
+.like.big .lk-h{width:22px;height:20px}
+.lk-h svg{width:100%;height:100%;overflow:visible}
+.lk-h .lk-o{fill:none;stroke:var(--paper);stroke-width:2}
+.lk-h .lk-f{fill:var(--pop);clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.3,.8,.3,1)}
+.like.on .lk-o{stroke:var(--pop)}
+.like.on .lk-f{clip-path:inset(0 0 0 0)}
+.lk-drip{position:absolute;left:50%;top:86%;width:4px;height:4px;margin-left:-2px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--pop);opacity:0}
+.like.pop .lk-drip{animation:lkDrip .9s .25s ease-in forwards}
+@keyframes lkDrip{0%{opacity:1;transform:translateY(0) scaleY(1)}60%{opacity:1;transform:translateY(7px) scaleY(1.6)}100%{opacity:0;transform:translateY(13px) scaleY(.8)}}
+/* one-time heartbeat when a card scrolls into view */
+.like.beat .lk-h{animation:lkBeat 1.2s ease-in-out}
+.like.beat{border-color:var(--pop)}
+@keyframes lkBeat{0%,40%,100%{transform:scale(1)}12%{transform:scale(1.35)}22%{transform:scale(1)}30%{transform:scale(1.25)}}
+/* big heart on double-tap */
+.lk-burst{position:fixed;z-index:400;width:110px;height:100px;margin:-50px 0 0 -55px;pointer-events:none;animation:lkBurst .85s cubic-bezier(.2,1.4,.4,1) forwards;filter:drop-shadow(4px 4px 0 #000)}
+.lk-burst .lk-h{width:100%;height:100%;display:block}
+.lk-burst .lk-o{stroke:#fff;stroke-width:1.4}.lk-burst .lk-f{clip-path:none}
+.lk-burst .lk-drip{display:none}
+@keyframes lkBurst{0%{transform:scale(.2);opacity:0}25%{transform:scale(1.15);opacity:1}45%{transform:scale(.95)}75%{transform:scale(1);opacity:1}100%{transform:scale(1.3) translateY(-30px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.like.beat .lk-h,.like.pop .lk-drip,.lk-burst{animation:none}.lk-h .lk-f{transition:none}}
+.lk-nudge small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
