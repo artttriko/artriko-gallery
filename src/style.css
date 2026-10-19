@@ -1115,3 +1115,38 @@ footer{flex-wrap:wrap}
 }
 /* admin form: the save button stays reachable while scrolling the form */
 .admin .save-bar{position:sticky;bottom:-24px;z-index:6;background:#0d0a0b;padding:10px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:-12px;border-top:1px solid var(--line)}
+
+/* "Available" badge: comic-book glitch look (misprinted red/cyan, halftone dots, animated on twos) */
+.sv{--sv-r:var(--pop);--sv-c:var(--sky);position:absolute;isolation:isolate;overflow:visible;
+  font:700 19px/1 var(--f-display);letter-spacing:.02em;color:var(--ink);padding:6px 14px 5px;
+  background:var(--sun) radial-gradient(circle,rgba(255,59,92,.55) 1.1px,transparent 1.5px) 0 0/6px 6px;
+  border:2.5px solid #000;border-radius:4px;transform:rotate(-4deg) skewX(-6deg);
+  box-shadow:-4px 0 0 var(--sv-c),4px 3px 0 var(--sv-r),0 0 0 2.5px #000;
+  animation:svJit 2.4s steps(1) infinite}
+.sv>span{position:relative;display:inline-block;text-shadow:-1.5px 0 var(--sv-c),1.5px 0 var(--sv-r);animation:svTxt 2.4s steps(1) infinite}
+.sv::before,.sv::after{content:attr(data-t);position:absolute;inset:0;display:grid;place-items:center;padding-top:1px;pointer-events:none;z-index:2;
+  font:inherit;color:#000;opacity:0}
+.sv::before{background:var(--sv-c);animation:svSliceA 2.4s steps(1) infinite}
+.sv::after{background:var(--sv-r);color:#fff;animation:svSliceB 2.4s steps(1) infinite}
+.badge.sv{top:10px;inset-inline-end:10px;cursor:pointer}
+.badge.sv:hover{animation-duration:.6s}.badge.sv:hover>span,.badge.sv:hover::before,.badge.sv:hover::after{animation-duration:.6s}
+.status.sv{position:relative;display:inline-block;font-size:20px;color:var(--ink)}
+.grid.cols-2 .badge.sv{font-size:15px;padding:4px 9px 3px;top:7px;inset-inline-end:7px}
+@keyframes svJit{
+  0%,100%{transform:rotate(-4deg) skewX(-6deg)}
+  8%{transform:rotate(-3deg) skewX(-8deg) translate(1px,-1px)}
+  16%{transform:rotate(-4deg) skewX(-6deg)}
+  70%{transform:rotate(-5deg) skewX(-4deg) translate(-2px,1px) scale(1.06)}
+  74%{transform:rotate(-2deg) skewX(-10deg) translate(3px,-1px) scale(1.1)}
+  78%{transform:rotate(-4deg) skewX(-6deg) scale(1)}}
+@keyframes svTxt{
+  0%,100%{text-shadow:-1.5px 0 var(--sv-c),1.5px 0 var(--sv-r)}
+  70%{text-shadow:-4px 1px var(--sv-c),4px -1px var(--sv-r)}
+  74%{text-shadow:3px 0 var(--sv-c),-3px 1px var(--sv-r)}
+  78%{text-shadow:-1.5px 0 var(--sv-c),1.5px 0 var(--sv-r)}}
+@keyframes svSliceA{0%,69%,77%,100%{opacity:0}70%{opacity:1;clip-path:inset(12% 0 58% 0);transform:translateX(-6px)}73%{opacity:1;clip-path:inset(62% 0 8% 0);transform:translateX(5px)}}
+@keyframes svSliceB{0%,71%,79%,100%{opacity:0}72%{opacity:1;clip-path:inset(40% 0 35% 0);transform:translateX(7px)}75%{opacity:1;clip-path:inset(5% 0 75% 0);transform:translateX(-4px)}}
+/* cards that are available get a misprinted frame too, so they stand out while scrolling */
+.card:has(.badge.sv) .frame{box-shadow:-5px 0 0 var(--sky),5px 4px 0 var(--pop)}
+@media (prefers-reduced-motion:reduce){.sv,.sv>span,.sv::before,.sv::after{animation:none}}
+.lb-top .status.sv{margin:4px 0 10px}
