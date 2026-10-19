@@ -327,6 +327,7 @@ document.addEventListener("click",async e=>{
   if(like)mine.add(id);else mine.delete(id);saveMyLikes(mine);
   if(LIKES[id]!=null&&(S.admin||LIKES[id]>=LIKE_FROM))LIKES[id]=Math.max(0,LIKES[id]+(like?1:-1));
   paintLikes(id);
+  if(like&&$("#lkNudge"))$("#lkNudge").hidden=true;
   if(like){const nb=document.querySelector(`[data-like="${CSS.escape(id)}"]`);if(nb){nb.classList.add("pop");splash(nb)}}
   if(String(id).startsWith("ex-"))return;
   try{const r=await fetch("/api/like",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,vid:visitorId(),like})});
@@ -542,8 +543,7 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <div class="lb-top">${forSale(w)?`<span class="status sale sv" data-t="זמין לרכישה"><span>זמין לרכישה</span></span>`:`<span class="status show">${w.section==="gift"?"✨ נוצר בהזמנה אישית":"נחטף! · לא זמין כרגע"}</span>`}${likeBtn(w,true)}</div>
-    <p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️<small>טיפ: לחיצה כפולה על התמונה עובדת גם</small></p>
+    <div class="lb-top">${forSale(w)?`<span class="status sale sv" data-t="זמין לרכישה"><span>זמין לרכישה</span></span>`:`<span class="status show">${w.section==="gift"?"✨ נוצר בהזמנה אישית":"נחטף! · לא זמין כרגע"}</span>`}${likeBtn(w,true)}<p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️<small>טיפ: לחיצה כפולה על התמונה עובדת גם</small></p></div>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
@@ -554,7 +554,7 @@ function openLB(id){
   $("#lbContact").onclick=()=>openContact(w);
   if($("#lbProc"))$("#lbProc").onclick=()=>openProc(w);
   showSlide(0); $("#lb").showModal();
-  clearTimeout(openLB.t);openLB.t=setTimeout(()=>{if(!$("#lb").open||myLikes().has(w.id))return;const b=$("#lbInfo [data-like]");if(b){b.classList.add("breathe");$("#lkNudge").hidden=false}},1500);
+  clearTimeout(openLB.t);openLB.t=setTimeout(()=>{if(!$("#lb").open||myLikes().has(w.id))return;const b=$("#lbInfo [data-like]");if(b){b.classList.add("breathe");$("#lkNudge").hidden=false;clearTimeout(openLB.t2);openLB.t2=setTimeout(()=>{const n=$("#lkNudge");if(n)n.hidden=true},7000)}},1500);
 }
 function showSlide(i){
   const n=LB.slides.length; LB.i=(i+n)%n; const s=LB.slides[LB.i], w=LB.w;
