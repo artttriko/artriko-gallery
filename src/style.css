@@ -1150,3 +1150,6 @@ footer{flex-wrap:wrap}
 .card:has(.badge.sv) .frame{box-shadow:-5px 0 0 var(--sky),5px 4px 0 var(--pop)}
 @media (prefers-reduced-motion:reduce){.sv,.sv>span,.sv::before,.sv::after{animation:none}}
 .lb-top .status.sv{margin:4px 0 10px}
+
+.chip.sale-chip{box-shadow:-3px 0 0 var(--sky),3px 2px 0 var(--pop)}
+.chip.sale-chip[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:#000}

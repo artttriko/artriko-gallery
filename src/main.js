@@ -443,11 +443,13 @@ function renderFilters(all){
   const cats=CATS.filter(c=>cnt("category",c.v));
   const techs=Object.keys(TECH_HE).filter(t=>cnt("tech",t));
   const F=S.filter;
-  $("#filters").innerHTML=(cats.length?`<button class="chip" data-f="cat" data-v="" aria-pressed="${!F.cat}">הכול<span class="n">${all.length}</span></button>`+cats.map(c=>`<button class="chip" data-f="cat" data-v="${c.v}" aria-pressed="${F.cat===c.v}">${c.he}<span class="n">${cnt("category",c.v)}</span></button>`).join(""):"")
-    +(techs.length>1?`<select id="techF" aria-label="טכנולוגיה"><option value="">כל הטכנולוגיות</option>${techs.map(t=>`<option value="${t}" ${F.tech===t?"selected":""}>${TECH_HE[t]}</option>`).join("")}</select>`:"")
-    +`<button class="chip" data-f="sale" aria-pressed="${F.sale}">רק זמינים לרכישה</button>`;
+  const nSale=all.filter(w=>w.status==="sale").length;
+  $("#filters").innerHTML=`<button class="chip" data-f="cat" data-v="" aria-pressed="${!F.cat&&!F.sale}">הכול<span class="n">${all.length}</span></button>`
+    +(nSale?`<button class="chip sale-chip" data-f="sale" aria-pressed="${F.sale}">זמינים לרכישה<span class="n">${nSale}</span></button>`:"")
+    +(cats.length?cats.map(c=>`<button class="chip" data-f="cat" data-v="${c.v}" aria-pressed="${F.cat===c.v}">${c.he}<span class="n">${cnt("category",c.v)}</span></button>`).join(""):"")
+    +(techs.length>1?`<select id="techF" aria-label="טכנולוגיה"><option value="">כל הטכנולוגיות</option>${techs.map(t=>`<option value="${t}" ${F.tech===t?"selected":""}>${TECH_HE[t]}</option>`).join("")}</select>`:"");
 }
-$("#filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;if(b.dataset.f==="cat")S.filter.cat=b.dataset.v;if(b.dataset.f==="sale")S.filter.sale=!S.filter.sale;render()});
+$("#filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;if(b.dataset.f==="cat"){S.filter.cat=b.dataset.v;if(!b.dataset.v)S.filter.sale=false}if(b.dataset.f==="sale")S.filter.sale=!S.filter.sale;render()});
 $("#filters").addEventListener("change",e=>{if(e.target.id==="techF"){S.filter.tech=e.target.value;render()}});
 $("#grid").addEventListener("click",e=>{if(e.target.id==="clearF"){S.filter={cat:"",tech:"",sale:false};S.q="";$("#q").value="";$("#qClear").hidden=true;render()}
   if(e.target.id==="qOrder")openContact("order")});
