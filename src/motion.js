@@ -192,13 +192,18 @@ if (FINE && !RM) {
     c.classList.remove("tilting"); const f = c.querySelector(".frame"); if (f) f.style.transform = "";
   });
 
-  const magnets = () => qa(".pill.big, .guide-link, .contact-btn, .lock-top");
+  // Gentle "magnetic" pull on small buttons only. It stays tiny and capped, so a button never slides away from the mouse
+  // (wide buttons such as "אני רוצה את זה!" and the order buttons are left alone).
+  const magnets = () => qa(".guide-link, .lock-top");
+  const clamp = (v, m) => Math.max(-m, Math.min(m, v));
   document.addEventListener("pointermove", e => {
     magnets().forEach(b => {
-      const r = b.getBoundingClientRect(), mx = r.left + r.width / 2, my = r.top + r.height / 2;
-      const dx = e.clientX - mx, dy = e.clientY - my, d = Math.hypot(dx, dy), R = Math.max(r.width, r.height) * 0.9;
+      const r = b.getBoundingClientRect();
+      if (r.width > 220) { b.style.transform = ""; return; }
+      const near = e.clientX > r.left - 24 && e.clientX < r.right + 24 && e.clientY > r.top - 24 && e.clientY < r.bottom + 24;
+      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
       b.classList.add("mag");
-      b.style.transform = d < R ? `translate(${(dx * 0.22).toFixed(1)}px,${(dy * 0.3).toFixed(1)}px)` : "";
+      b.style.transform = near ? `translate(${clamp(dx * 0.12, 4).toFixed(1)}px,${clamp(dy * 0.15, 3).toFixed(1)}px)` : "";
     });
   }, { passive: true });
 }
