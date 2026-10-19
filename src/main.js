@@ -1081,15 +1081,25 @@ function resetForm(){setTimeout(giftMode);autoScale=null;lastRef=null;S.proc=[];
 $("#fCancel").onclick=resetForm;
 
 function renderAdminList(){
-  const q=($("#adSearch").value||"").trim().toLowerCase();
-  const all=[...S.works].sort(byOrder),list=q?all.filter(w=>`${w.name} ${w.character||""}`.toLowerCase().includes(q)):all;
-  $("#adList").classList.toggle("searching",!!q);$("#adSearchNote").hidden=!q;
-  $("#adList").innerHTML=(q&&!list.length?`<p class="note">לא נמצאה יצירה בשם הזה.</p>`:"")+list.map((w,j)=>{const i=all.indexOf(w);const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"🎁 מתנות · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"} · ❤️ ${LIKES[w.id]||0}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small proc-li" data-a="proc" title="תמונות מתהליך העבודה">🛠️ תהליך${w.process&&w.process.length?` (${w.process.length})`:""}</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
+  const q=($("#adSearch").value||"").trim().toLowerCase(),A=S.adFilter||{k:"",v:""};
+  const all=[...S.works].sort(byOrder),col=all.filter(w=>w.section!=="gift");
+  const cats=CATS.filter(c=>col.some(w=>catsOf(w).includes(c.v))),nSale=col.filter(w=>w.status==="sale").length,nGift=all.length-col.length;
+  const chip=(k,v,label,n)=>`<button type="button" class="chip${k==="sale"?" sale-chip":""}" data-af="${k}" data-v="${v}" aria-pressed="${A.k===k&&A.v===v}">${label}<span class="n">${n}</span></button>`;
+  $("#adFilters").innerHTML=chip("","","הכול",all.length)+(nSale?chip("sale","1","זמינים לרכישה",nSale):"")+cats.map(c=>chip("cat",c.v,c.he,col.filter(w=>catsOf(w).includes(c.v)).length)).join("")+(nGift?chip("gift","1","מעבר לפסלים",nGift):"");
+  let list=A.k==="sale"?col.filter(w=>w.status==="sale"):A.k==="cat"?col.filter(w=>catsOf(w).includes(A.v)):A.k==="gift"?all.filter(w=>w.section==="gift"):all;
+  if(q)list=list.filter(w=>`${w.name} ${w.character||""}`.toLowerCase().includes(q));
+  const part=list.length<all.length;$("#adSearchNote").hidden=!part;
+  $("#adList").innerHTML=(!list.length?`<p class="note">${q?"לא נמצאה יצירה בשם הזה.":"אין יצירות בסינון הזה."}</p>`:"")+list.map((w,j)=>{const i=j;const im=firstImg(w);return `<div class="li" data-id="${esc(w.id)}"><span class="drag" title="גרירה לשינוי הסדר" aria-label="גרירה לשינוי הסדר">⠿</span><span class="li-n">${i+1}</span>${im?`<img src="${im.orig}" alt="" draggable="false">`:""}<div class="t"><b>${esc(w.name)}${w.example?" · דוגמה":""}</b>${hasWm(w)?`<span class="wm-tag" title="${esc(wmText(w))}">⚠️ סימן מים</span>`:""}<span>${w.section==="gift"?"✨ מעבר לפסלים · ":""}${esc(w.heightCm)} ס"מ · ${w.status==="sale"?"זמין לרכישה":"מוצג בלבד"} · ❤️ ${LIKES[w.id]||0}</span></div><div class="li-mv"><button class="pill small" data-a="top" ${i===0?"disabled":""} title="להעביר לראשון">⤒ ראשון</button><button class="pill small" data-a="mup" ${i===0?"disabled":""} aria-label="למעלה">↑</button><button class="pill small" data-a="mdown" ${i===list.length-1?"disabled":""} aria-label="למטה">↓</button></div><button class="pill small" data-a="edit">עריכה</button><button class="pill small proc-li" data-a="proc" title="תמונות מתהליך העבודה">🛠️ תהליך${w.process&&w.process.length?` (${w.process.length})`:""}</button><button class="pill small danger" data-a="del">מחיקה</button></div>`}).join("");
   $("#undoBtn").disabled=!S.history.length;$("#undoNote").textContent=S.history.length?`${S.history.length} פעולות לביטול (עד 10)`:"";
 }
 $("#adSearch").addEventListener("input",renderAdminList);
+S.adFilter={k:"",v:""};
+$("#adFilters").addEventListener("click",e=>{const b=e.target.closest("[data-af]");if(!b)return;S.adFilter={k:b.dataset.af,v:b.dataset.v};renderAdminList()});
 /* ---- Reordering works: drag the ⠿ handle, or use ⤒ / ↑ / ↓ ---- */
 async function saveOrder(ids){
+  // the list may be filtered: put the visible works, in their new order, back into the slots they held in the full order
+  const full=[...S.works].sort(byOrder).map(w=>w.id),vis=new Set(ids);
+  if(ids.length<full.length){let k=0;ids=full.map(id=>vis.has(id)?ids[k++]:id)}
   const changed=[];ids.forEach((id,i)=>{const w=S.works.find(x=>x.id===id);if(w&&w.order!==i){w.order=i;changed.push(w)}});
   render();renderAdminList();
   const real=changed.filter(w=>!w.example);if(!real.length)return;
