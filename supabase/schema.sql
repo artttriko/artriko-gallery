@@ -128,3 +128,15 @@ alter table public.works add column if not exists process jsonb not null default
 --   table public.work_likes (work_id, visitor_hash, ip_hash, active, created_at), RLS on, no policies
 --   function public.toggle_like(p_secret, p_work, p_visitor_hash, p_ip_hash, p_like) returns integer
 --   function public.like_counts() returns table(work_id, likes)
+
+-- ============ Data API grants (Supabase change, 30 Oct 2026) ============
+-- New tables in "public" no longer get Data API access automatically. Existing tables keep theirs.
+-- If this schema is ever rebuilt (new project, branch, db reset), run these grants too.
+-- Row Level Security still decides what each role may actually see or change.
+-- The browser reads and writes only these three tables directly; everything else goes through
+-- security-definer functions (record_event, toggle_like, like_counts ...), which need no table grants.
+grant select on public.works, public.settings, public.reviews to anon;
+grant select, insert, update, delete on public.works, public.settings, public.reviews to authenticated;
+grant insert on public.reviews to anon;
+grant select, insert, update, delete on all tables in schema public to service_role;
+-- When adding a NEW table later: add its grants in the same migration that creates it.
