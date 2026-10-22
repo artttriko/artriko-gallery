@@ -140,3 +140,9 @@ grant select, insert, update, delete on public.works, public.settings, public.re
 grant insert on public.reviews to anon;
 grant select, insert, update, delete on all tables in schema public to service_role;
 -- When adding a NEW table later: add its grants in the same migration that creates it.
+
+-- ============ "Snatched this week" ============
+-- works.sold_at is stamped by a trigger when status changes from 'sale' to anything else,
+-- and cleared when it goes back to 'sale'. The site shows "נחטף השבוע!" for 7 days after it.
+--   column public.works.sold_at timestamptz
+--   function public.works_track_sold() + trigger works_track_sold (before insert or update)

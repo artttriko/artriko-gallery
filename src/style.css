@@ -1190,3 +1190,15 @@ footer{flex-wrap:wrap}
   box-shadow:-3px 0 0 var(--sky),3px 3px 0 var(--pop);transform:rotate(-2deg);transition:opacity .3s,transform .3s}
 .rv-hi.out{opacity:0;transform:rotate(-2deg) translateY(-6px)}
 .rv-hi[hidden]{display:none}
+
+/* "snatched this week": the badge keeps vanishing in a puff, like it was just grabbed */
+.badge.snatched{background:var(--pop);color:#fff;border-color:#000;box-shadow:3px 3px 0 #000;animation:snatch 3.2s ease-in-out infinite}
+.card:has(.badge.snatched) .frame img{filter:grayscale(.45) contrast(.95);transition:filter .4s}
+.card:has(.badge.snatched):hover .frame img{filter:none}
+@keyframes snatch{0%,62%,100%{opacity:1;filter:none;transform:rotate(-2deg)}
+  70%{opacity:.15;filter:blur(3px);transform:rotate(-2deg) translate(-10px,-6px) scale(1.15)}
+  76%{opacity:0;filter:blur(5px);transform:rotate(-2deg) translate(-16px,-10px) scale(1.25)}
+  84%{opacity:0;transform:rotate(-2deg) scale(.7)}
+  92%{opacity:1;filter:none;transform:rotate(-2deg) scale(1.08)}}
+.status.snatched{color:var(--pop);border-color:var(--pop)}
+@media (prefers-reduced-motion:reduce){.badge.snatched{animation:none}}

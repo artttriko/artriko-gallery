@@ -154,8 +154,10 @@ const SAMPLES=[
 
 /* ================= Data (Supabase) ================= */
 const forSale=w=>w.section!=="gift"&&w.status==="sale";
+// went from "available" to "not available" in the last 7 days (sold_at is set by a database trigger)
+const justSnatched=w=>w.section!=="gift"&&w.status!=="sale"&&w.soldAt&&Date.now()-w.soldAt<7*864e5;
 const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,figure_cm:+w.figureCm>0?+w.figureCm:null,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
-const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,figureCm:r.figure_cm==null?"":+r.figure_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],createdAt:Date.parse(r.created_at)});
+const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,figureCm:r.figure_cm==null?"":+r.figure_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],soldAt:r.sold_at?Date.parse(r.sold_at):null,createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
 async function dbPut(w){const {error}=await sb.from("works").upsert(toRow(w));if(error)throw error}
 async function dbDel(id){const {error}=await sb.from("works").delete().eq("id",id);if(error)throw error}
@@ -343,7 +345,7 @@ function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
     <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
-        ${w.section==="gift"?`<button class="badge remake-b" data-buy="${esc(w.id)}" title="נוצר בהזמנה אישית וכבר אצל מי שהזמין אותו">נוצר בהזמנה אישית</button>`:w.status==="sale"?`<button class="badge sv" data-buy="${esc(w.id)}" data-t="זמין לרכישה"><span>זמין לרכישה</span></button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">נחטף!</button>`}
+        ${w.section==="gift"?`<button class="badge remake-b" data-buy="${esc(w.id)}" title="נוצר בהזמנה אישית וכבר אצל מי שהזמין אותו">נוצר בהזמנה אישית</button>`:w.status==="sale"?`<button class="badge sv" data-buy="${esc(w.id)}" data-t="זמין לרכישה"><span>זמין לרכישה</span></button>`:(justSnatched(w)?`<button class="badge remake-b snatched" data-buy="${esc(w.id)}" title="נחטף ממש השבוע. אפשר להזמין גרסה חדשה">🔥 נחטף השבוע!</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">נחטף!</button>`)}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${likeBtn(w)}
@@ -543,7 +545,7 @@ function openLB(id){
   if(showIl&&S.view!=="room") slides.push({kind:"room"});
   LB={w,slides,i:0};
   $("#lbInfo").innerHTML=`
-    <div class="lb-top">${forSale(w)?`<span class="status sale sv" data-t="זמין לרכישה"><span>זמין לרכישה</span></span>`:`<span class="status show">${w.section==="gift"?"✨ נוצר בהזמנה אישית":"נחטף! · לא זמין כרגע"}</span>`}${likeBtn(w,true)}<p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️<small>טיפ: לחיצה כפולה על התמונה עובדת גם</small></p></div>
+    <div class="lb-top">${forSale(w)?`<span class="status sale sv" data-t="זמין לרכישה"><span>זמין לרכישה</span></span>`:`<span class="status show${justSnatched(w)?" snatched":""}">${w.section==="gift"?"✨ נוצר בהזמנה אישית":justSnatched(w)?"🔥 נחטף השבוע! · לא זמין כרגע":"נחטף! · לא זמין כרגע"}</span>`}${likeBtn(w,true)}<p class="lk-nudge" id="lkNudge" hidden>אהבתם? לב אחד עושה לי את היום ❤️<small>טיפ: לחיצה כפולה על התמונה עובדת גם</small></p></div>
     <h2>${esc(w.name)}</h2>
     <dl>${w.character?`<dt>דמות</dt><dd>${esc(w.character)}</dd>`:""}${w.category?`<dt>קטגוריה</dt><dd>${esc(catHe(w.category))} <a class="flink" href="#guide" data-close>מה זה?</a></dd>`:""}<dt>גובה</dt><dd>${esc(w.heightCm)} ס"מ</dd>${w.scale?`<dt>קנה מידה</dt><dd>${esc(w.scale)}</dd>`:""}${w.tech?`<dt>טכנולוגיה</dt><dd>${esc(TECH_HE[w.tech]||w.tech)}</dd>`:""}<dt>חומרים</dt><dd>${esc(w.materials||"—")}</dd><dt>נוסף</dt><dd>${new Date(w.createdAt).toLocaleDateString("he-IL")}</dd></dl>
     <p class="summary">${esc(w.summary||"")}</p>
