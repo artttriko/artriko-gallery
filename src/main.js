@@ -1177,6 +1177,7 @@ const DEFAULT_TEXTS={
   nudgePiece:"וואו, איך זה יצא במציאות? תמונה אחת שווה אלף כוכבים.\nבלי תמונה זה לא קרה! איך זה נראה אחרי שהגיע?\nאיך הגיבו למתנה? תמונה של הרגע תשמח את כולם.\nצילום מהיר מהטלפון מספיק, שכולם יראו איך זה נראה באמת.\nתמונה אחת עוזרת למי שמתלבט יותר מכל מילה.",
   nudgeLesson:"יש תמונה של מה שצבעתם בהדרכה? נשמח לראות את התוצאה!\nהדגם הראשון אחרי ההדרכה? זה הרגע להשוויץ בו.\nתמונה של העבודה מההדרכה תעזור למי שמתלבט אם להצטרף.",
   nudgeDone:"יש! 🔥 הרבה יותר שווה עם תמונה.\nמושלם, תודה על התמונה! 📸\nוואו, איזה יופי. תודה!",
+  rvHi:"וואי, תודה רבה על הזמן שלך!\nמעריך את זה ממש!\nאין דברים כמוך!\nכל מילה שלך שווה זהב!\nתודה שלקחת רגע בשבילי!\nאיזה כיף שבאת לכאן!",
   rvThanks:"וואו, תודה על הזמן ועל המילים!\nתודה ענקית ששיתפת את החוויה! 🙏\nאיזה כיף לקרוא. תודה על כל מילה!\nתודה! זה באמת משמח אותי.",
   introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
   galNote:"התמונות בגלריה עוברות עריכה קלה של תאורה, צבע ורקע כדי להתאים לתצוגה באתר. ייתכנו הבדלי גוון קלים בין מסכים. הפסל עצמו, כמובן, צבוע ביד ונאמן לעבודה המקורית.",
@@ -1258,7 +1259,7 @@ function renderTexts(){
   cacheLines("intro",T.introLines);
 }
 renderTexts();
-const TF={socialTitle:"#xSocialTitle",socialText:"#xSocialText",giftOcc:"#xGiftOcc",giftGroupT:"#xGiftGroupT",giftGroup:"#xGiftGroup",giftSteps:"#xGiftSteps",giftEnd:"#xGiftEnd",heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
+const TF={rvHi:"#xRvHi",socialTitle:"#xSocialTitle",socialText:"#xSocialText",giftOcc:"#xGiftOcc",giftGroupT:"#xGiftGroupT",giftGroup:"#xGiftGroup",giftSteps:"#xGiftSteps",giftEnd:"#xGiftEnd",heroMode:"#xHeroMode",eyebrow:"#xEyebrow",sub:"#xSub",aboutEyebrow:"#xAboutEyebrow",aboutTitle:"#xAboutTitle",aboutText:"#xAboutText",aboutStats:"#xAboutStats",finale:"#xFinale",h1a:"#xH1a",h1hl:"#xH1hl",h1b:"#xH1b",h1red:"#xH1red",p1:"#xP1",p2:"#xP2",burst:"#xBurst",ctaMain:"#xCtaMain",ctaOrder:"#xCtaOrder",giftEyebrow:"#xGiftEyebrow",giftTitle:"#xGiftTitle",giftText:"#xGiftText",giftCta:"#xGiftCta",nudgePiece:"#xNudgePiece",nudgeLesson:"#xNudgeLesson",nudgeDone:"#xNudgeDone",rvThanks:"#xRvThanks",galNote:"#xGalNote",wsEyebrow:"#xWsEyebrow",wsTitle:"#xWsTitle",wsText:"#xWsText",wsFormats:"#xWsFormats",wsCta:"#xWsCta",wsAir:"#xWsAir",wsBrush:"#xWsBrush",wsCombo:"#xWsCombo",waNumber:"#xWaNumber",introLines:"#xIntro",studioLines:"#xStudio"};
 const BF={btnIg:"#xBtnIg",btnTt:"#xBtnTt",btnWa:"#xBtnWa",btnLearn:"#xBtnLearn",btnGuide:"#xBtnGuide"};
 function fillTextForm(){for(const k in TF)$(TF[k]).value=TEXTS[k]??"";for(const k in BF)$(BF[k]).checked=TEXTS[k]!==false;renderWsPhAdmin()}
 $("#tf").onsubmit=async e=>{e.preventDefault();const before={...TEXTS};for(const k in TF)TEXTS[k]=$(TF[k]).value;for(const k in BF)TEXTS[k]=$(BF[k]).checked;await putSetting("texts",TEXTS);pushHist({type:"texts",before,after:{...TEXTS}});renderTexts();if(before.heroMode!==TEXTS.heroMode){HERO_ID=null;render()}$("#xMsg").textContent="נשמר. הדף הראשי עודכן."};
@@ -1971,9 +1972,10 @@ if(new URLSearchParams(location.search).has("review")){
   history.replaceState(null,"",location.pathname+"#reviews");
   try{rvOpen("piece")}catch(e){addEventListener("load",()=>rvOpen("piece"),{once:true})}
   // a warm, rotating thank-you line on top of the form (worded for everyone)
-  const HI=["וואי, תודה רבה על הזמן שלך!","מעריך את זה ממש!","אין דברים כמוך!","כל מילה שלך שווה זהב!","תודה שלקחת רגע בשבילי!","איזה כיף שבאת לכאן!"];
+  // the lines are editable in the admin (texts → rvHi); read on every tick so saved texts apply once they load
+  const HI=()=>{const l=String((typeof TEXTS!=="undefined"&&TEXTS.rvHi)||"").split("\n").map(x=>x.trim()).filter(Boolean);return l.length?l:["וואי, תודה רבה על הזמן שלך!"]};
   const hi=$("#rvHi");let k=0;
-  if(hi){hi.hidden=false;hi.textContent=HI[0];
+  if(hi){hi.hidden=false;hi.textContent=HI()[0];
     const t=setInterval(()=>{if(!$("#rvDlg").open){clearInterval(t);hi.hidden=true;return}
-      hi.classList.add("out");setTimeout(()=>{k=(k+1)%HI.length;hi.textContent=HI[k];hi.classList.remove("out")},300)},2600)}
+      hi.classList.add("out");setTimeout(()=>{const l=HI();k=(k+1)%l.length;hi.textContent=l[k];hi.classList.remove("out")},300)},2600)}
 }
