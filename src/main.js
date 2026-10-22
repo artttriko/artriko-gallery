@@ -1947,6 +1947,8 @@ loadReviews();loadLikes();
   const isAdmin=await checkAdmin();if(isAdmin)render();
   const q=new URLSearchParams(location.search);
   if(q.has("admin")){history.replaceState(null,"",location.pathname+location.hash);if(isAdmin)openAdmin("account");else if((await sb.auth.getSession()).data.session)toast("המשתמש הזה לא מוגדר כמנהל")}
+  // artriko.art/?review (the QR on the thank-you card): open the reviews page with the "write a review" form ready
+  if(q.has("review")){history.replaceState(null,"",location.pathname+"#reviews");location.hash="reviews";setTimeout(()=>rvOpen("piece"),500)}
   // Count the visit (the server ignores repeats from the same IP within 10 minutes); admins are not counted
   if(!isAdmin)ping();
 })();
