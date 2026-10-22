@@ -1184,3 +1184,9 @@ footer{flex-wrap:wrap}
 .lb-top .lk-nudge::before{content:"";position:absolute;top:-8px;inset-inline-end:28px;border:7px solid transparent;border-top:0;border-bottom-color:var(--pop)}
 @keyframes lkBubble{from{opacity:0;transform:translateY(-6px) scale(.9)}to{opacity:1;transform:none}}
 @media (min-width:761px){#lbInfo .lb-top{padding-inline-end:48px}#lbInfo .lb-top .lk-nudge{inset-inline-end:48px}}
+
+/* thank-you line on the review form when opened from the QR card */
+.rv-hi{display:inline-block;margin:0 0 10px;padding:6px 14px;border-radius:999px;background:var(--sun);color:var(--ink);font-weight:800;font-size:16px;
+  box-shadow:-3px 0 0 var(--sky),3px 3px 0 var(--pop);transform:rotate(-2deg);transition:opacity .3s,transform .3s}
+.rv-hi.out{opacity:0;transform:rotate(-2deg) translateY(-6px)}
+.rv-hi[hidden]{display:none}

@@ -1970,4 +1970,10 @@ if(beatIO){beatScan();new MutationObserver(beatScan).observe(document.body,{chil
 if(new URLSearchParams(location.search).has("review")){
   history.replaceState(null,"",location.pathname+"#reviews");
   try{rvOpen("piece")}catch(e){addEventListener("load",()=>rvOpen("piece"),{once:true})}
+  // a warm, rotating thank-you line on top of the form (worded for everyone)
+  const HI=["וואי, תודה רבה על הזמן שלך!","מעריך את זה ממש!","אין דברים כמוך!","כל מילה שלך שווה זהב!","תודה שלקחת רגע בשבילי!","איזה כיף שבאת לכאן!"];
+  const hi=$("#rvHi");let k=0;
+  if(hi){hi.hidden=false;hi.textContent=HI[0];
+    const t=setInterval(()=>{if(!$("#rvDlg").open){clearInterval(t);hi.hidden=true;return}
+      hi.classList.add("out");setTimeout(()=>{k=(k+1)%HI.length;hi.textContent=HI[k];hi.classList.remove("out")},300)},2600)}
 }
