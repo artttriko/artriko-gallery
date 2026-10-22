@@ -13,7 +13,7 @@ if (!RM) root.classList.add("motion");
 
 /* ---------- 1. Intro (once per visit, click to skip) ---------- */
 (function intro() {
-  if (RM) return;
+  if (RM || /[?&]review\b/.test(location.search)) return;   // QR link to the review form: no intro
   let seen = false;
   try { seen = sessionStorage.getItem("artriko.intro") === "1"; sessionStorage.setItem("artriko.intro", "1"); } catch (e) { seen = true; }
   if (seen) return;

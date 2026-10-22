@@ -1947,8 +1947,6 @@ loadReviews();loadLikes();
   const isAdmin=await checkAdmin();if(isAdmin)render();
   const q=new URLSearchParams(location.search);
   if(q.has("admin")){history.replaceState(null,"",location.pathname+location.hash);if(isAdmin)openAdmin("account");else if((await sb.auth.getSession()).data.session)toast("המשתמש הזה לא מוגדר כמנהל")}
-  // artriko.art/?review (the QR on the thank-you card): open the reviews page with the "write a review" form ready
-  if(q.has("review")){history.replaceState(null,"",location.pathname+"#reviews");location.hash="reviews";setTimeout(()=>rvOpen("piece"),500)}
   // Count the visit (the server ignores repeats from the same IP within 10 minutes); admins are not counted
   if(!isAdmin)ping();
 })();
@@ -1967,3 +1965,9 @@ const beatIO="IntersectionObserver" in window?new IntersectionObserver(es=>es.fo
   const id=b.dataset.like;if(BEAT.has(id)||b.classList.contains("on"))return;BEAT.add(id);setTimeout(()=>{b.classList.add("beat");setTimeout(()=>b.classList.remove("beat"),1300)},350)}),{threshold:.9}):null;
 const beatScan=()=>document.querySelectorAll(".card .like:not(.big):not(.on)").forEach(b=>{if(!BEAT.has(b.dataset.like))beatIO.observe(b)});
 if(beatIO){beatScan();new MutationObserver(beatScan).observe(document.body,{childList:true,subtree:true})}
+
+/* artriko.art/?review (the QR on the thank-you card): straight into the "write a review" form, no intro, no delay */
+if(new URLSearchParams(location.search).has("review")){
+  history.replaceState(null,"",location.pathname+"#reviews");
+  try{rvOpen("piece")}catch(e){addEventListener("load",()=>rvOpen("piece"),{once:true})}
+}
