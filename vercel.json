@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/:p([Dd][Rr][Ee][Aa][Mm])", "destination": "/dream/index.html" },
+    { "source": "/:p([Dd][Rr][Ee][Aa][Mm])/", "destination": "/dream/index.html" },
+    { "source": "/:p([Kk][Uu][Bb][Ii][Yy][Aa])", "destination": "/dream/index.html" },
+    { "source": "/:p([Kk][Uu][Bb][Ii][Yy][Aa])/", "destination": "/dream/index.html" }
+  ]
+}
