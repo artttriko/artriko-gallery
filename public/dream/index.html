@@ -93,7 +93,7 @@ textarea{min-height:92px;resize:vertical}
 .hcard[aria-pressed=true]{outline:4px solid var(--yel);outline-offset:2px}
 .hcard[aria-pressed=false]{filter:saturate(.45) brightness(.8)}
 .lvlb{position:absolute;top:6px;inset-inline-start:6px;width:38px;height:38px;z-index:2}
-.tagd{position:absolute;top:8px;inset-inline-end:8px;z-index:2;font-size:.72rem;font-weight:900;background:var(--pnk);border:2.5px solid var(--o);border-radius:999px;padding:0 8px}
+.tagd{position:absolute;top:40px;inset-inline-end:8px;z-index:2;font-size:.72rem;font-weight:900;background:var(--pnk);border:2.5px solid var(--o);border-radius:999px;padding:0 8px}
 /* reveal */
 .reveal{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding-top:6px}
 .rays{position:absolute;top:-30px;left:50%;width:340px;height:340px;margin-left:-170px;border-radius:50%;background:repeating-conic-gradient(#ffffff2e 0 12deg,#0000 12deg 30deg);-webkit-mask:radial-gradient(circle,#000 30%,#0000 70%);mask:radial-gradient(circle,#000 30%,#0000 70%);animation:spin 14s linear infinite;pointer-events:none}
@@ -237,6 +237,11 @@ svg.hero,.fx svg{overflow:visible}
 .flapR{animation:flapR 1.6s ease-in-out infinite;transform-origin:88px 102px;transform-box:view-box}
 @keyframes flapL{50%{transform:rotate(9deg)}}
 @keyframes flapR{50%{transform:rotate(-9deg)}}
+.editlbl{position:absolute;top:8px;inset-inline-end:8px;z-index:2;display:inline-flex;align-items:center;gap:3px;background:#fff;color:var(--o);border:2.5px solid var(--o);border-radius:999px;padding:1px 9px 1px 6px;font-size:.78rem;font-weight:900;box-shadow:0 2px 0 var(--o)}
+.editlbl svg{width:15px;height:15px}
+.hwrap{position:relative;min-width:0;display:flex}.hwrap>.hcard{flex:1}
+.editb{position:absolute;top:6px;inset-inline-end:6px;z-index:3;width:40px;height:40px;border-radius:50%;background:#fff;border:3px solid var(--o);box-shadow:0 3px 0 var(--o);display:grid;place-items:center;padding:0}
+.editb svg{width:22px;height:22px}
 .stats{display:flex;gap:7px;justify-content:center;margin-top:3px}
 .stats span{display:inline-flex;align-items:center;gap:2px;font-weight:900;font-size:.82rem;color:#fff}
 .stats svg{width:16px;height:16px}
@@ -586,6 +591,7 @@ function cleanHero(r,fb){
  for(const k of ["hair","head","weapon","pet","back","emblem"])if(ENUM[k].includes(r[k]))o.params[k]=r[k];
  for(const k of ["hairColor","primary","secondary"])if(hex(r[k]))o.params[k]=hex(r[k]);
  if(Number.isInteger(r.skin)&&r.skin>=0&&r.skin<=4)o.params.skin=r.skin;
+ if(typeof r.blush==="boolean")o.params.blush=r.blush;if(typeof r.tongue==="boolean")o.params.tongue=r.tongue;
  return o;
 }
 function heroPrompt(kid,gender,desc,prev,fix){
@@ -605,7 +611,9 @@ Reply with ONLY this JSON:
 "weapon": "none|sword|bow|staff|wand|heartwand|hammer|shield",
 "back": "none|cape|wings|butterfly",
 "emblem": "star|heart|bolt|moon|paw",
-"pet": "none|dragon|cat|owl|frog"}`;
+"pet": "none|dragon|cat|owl|frog",
+"blush": true or false (pink cheeks; false if the parent asks without blush or without circles on the cheeks),
+"tongue": true or false (tongue in the smile; false if the parent asks without it)}`;
 }
 
 /* ---------- drawing kit ---------- */
@@ -652,19 +660,23 @@ function hairFront(H,hc){
  if(H==="none")return `<ellipse cx="86" cy="32" rx="8" ry="4" fill="#fff" opacity=".4" transform="rotate(28 86 32)"/>`;
  if(H==="spiky")return `<polygon points="32,62 29,38 40,40 39,15 54,29 64,4 75,27 89,10 92,33 105,29 108,62 98,45 86,47 76,40 64,47 52,41 42,47" fill="${hc}"${K()}/>`+hl;
  if(H==="curly"){let a="",b="";for(let i=0;i<=9;i++){const t=Math.PI*(1.02+i*0.107);const x=(70+33*Math.cos(t)).toFixed(1),y=(54+30*Math.sin(t)).toFixed(1);a+=`<circle cx="${x}" cy="${y}" r="11.5" fill="${hc}"${K()}/>`;b+=`<circle cx="${x}" cy="${y}" r="9.3" fill="${hc}"/>`;}return a+b+hl;}
- return `<path d="M33 62 Q28 18 70 18 Q112 18 107 62 Q101 42 88 40 Q82 49 70 43 Q56 50 46 42 Q38 48 33 62 Z" fill="${hc}"${K()}/>`+hl;
+ const dk=shade(hc,-.28);
+ let f=`<path d="M33 64 Q27 17 70 16 Q113 17 107 64 L103 50 L97 55 L94 42 L86 48 L82 36 L74 45 L68 34 L61 44 L55 35 L49 47 L44 39 L40 53 L36 49 Z" fill="${hc}"${K()}/><path d="M62 21 Q56 29 55 37 M80 20 Q86 28 87 36 M46 30 Q43 37 43 43" fill="none" stroke="${dk}" stroke-width="2.4" stroke-linecap="round"/>`+hl;
+ if(H==="long")f+=`<path d="M35 56 Q26 88 33 114 Q38 106 43 110 Q40 86 44 62 Z" fill="${hc}"${K(2.6)}/><path d="M105 56 Q114 88 107 114 Q102 106 97 110 Q100 86 96 62 Z" fill="${hc}"${K(2.6)}/>`;
+ return f;
 }
-function faceSVG(m){
- let f=blush(45,95,75);
+function faceSVG(m,p){
+ const bl=!p||p.blush!==false,tg=!p||p.tongue!==false;
+ let f=bl?blush(45,95,75):"";
  if(m==="sleep")return f+`<path d="M48 63 Q56 69 64 63 M76 63 Q84 69 92 63" fill="none"${K(3.5)}/><path d="M64 81 Q70 85 76 81" fill="none"${K(3)}/><g class="zz"><text x="102" y="18" font-family="Rubik,sans-serif" font-weight="900" font-size="18" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">Z</text><text x="116" y="2" font-family="Rubik,sans-serif" font-weight="900" font-size="12" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">z</text></g>`;
- if(m==="joy")return `<ellipse cx="44" cy="74" rx="8" ry="4.6" fill="#ff7b9c" opacity=".75"/><ellipse cx="96" cy="74" rx="8" ry="4.6" fill="#ff7b9c" opacity=".75"/><path d="M46 65 Q55 52 64 65 M76 65 Q85 52 94 65" fill="none"${K(4.6)}/><path d="M46 43 Q54 37 63 41 M94 43 Q86 37 77 41" fill="none"${K(4)}/><path d="M54 75 Q70 101 86 75 Q70 80 54 75 Z" fill="#6a1b3a"${K(2.6)}/><path d="M57 76.5 Q70 80.5 83 76.5 L81.6 80 Q70 84 58.4 80 Z" fill="#fff"/><ellipse cx="70" cy="90.5" rx="7" ry="3.6" fill="#ff7d9a"/><g class="tw"><path d="M20 30 l-9 -7 M15 45 l-11 -1 M120 30 l9 -7 M125 45 l11 -1" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/></g>`;
+ if(m==="joy")return `${bl?`<ellipse cx="44" cy="74" rx="8" ry="4.6" fill="#ff7b9c" opacity=".75"/><ellipse cx="96" cy="74" rx="8" ry="4.6" fill="#ff7b9c" opacity=".75"/>`:""}<path d="M46 65 Q55 52 64 65 M76 65 Q85 52 94 65" fill="none"${K(4.6)}/><path d="M46 43 Q54 37 63 41 M94 43 Q86 37 77 41" fill="none"${K(4)}/><path d="M54 75 Q70 101 86 75 Q70 80 54 75 Z" fill="#6a1b3a"${K(2.6)}/><path d="M57 76.5 Q70 80.5 83 76.5 L81.6 80 Q70 84 58.4 80 Z" fill="#fff"/>${tg?`<ellipse cx="70" cy="90.5" rx="7" ry="3.6" fill="#ff7d9a"/>`:""}<g class="tw"><path d="M20 30 l-9 -7 M15 45 l-11 -1 M120 30 l9 -7 M125 45 l11 -1" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/></g>`;
  const k=m==="wow"?1.15:1;
  f+=`<g class="eyes"><ellipse cx="56" cy="62" rx="${(9*k).toFixed(1)}" ry="${(10.5*k).toFixed(1)}" fill="#fff"${K(2.8)}/><ellipse cx="84" cy="62" rx="${(9*k).toFixed(1)}" ry="${(10.5*k).toFixed(1)}" fill="#fff"${K(2.8)}/><circle cx="57.5" cy="63.5" r="6.2" fill="#6b3f1e"/><circle cx="85.5" cy="63.5" r="6.2" fill="#6b3f1e"/><circle cx="57.5" cy="63.5" r="3.5" fill="${O}"/><circle cx="85.5" cy="63.5" r="3.5" fill="${O}"/><circle cx="60" cy="60" r="2.5" fill="#fff"/><circle cx="88" cy="60" r="2.5" fill="#fff"/><circle cx="55.5" cy="66.5" r="1.1" fill="#fff"/><circle cx="83.5" cy="66.5" r="1.1" fill="#fff"/></g>`;
  const brow={happy:"M46 47 Q54 43 63 48 M94 47 Q86 43 77 48",wow:"M46 40 Q54 35 63 40 M94 40 Q86 35 77 40",oops:"M46 45 Q55 50 63 46 M94 45 Q85 50 77 46"}[m]||"M46 47 Q54 43 63 48 M94 47 Q86 43 77 48";
  f+=`<path d="${brow}" fill="none"${K(4.5)}/>`;
  if(m==="wow")f+=`<ellipse cx="70" cy="83" rx="6.5" ry="7.5" fill="#6a1b3a"${K(2.5)}/>`;
  else if(m==="oops")f+=`<path d="M58 83 Q62 79 66 83 Q70 87 74 83 Q78 79 82 83" fill="none"${K(3)}/><path d="M104 28 Q111 40 104 45 Q97 40 104 28 Z" fill="#8fd8ff"${K(2)}/>`;
- else f+=`<path d="M57 77 Q70 93 83 77 Q70 81 57 77 Z" fill="#6a1b3a"${K(2.5)}/><path d="M59.5 78.3 Q70 81.8 80.5 78.3 L79.4 81.4 Q70 84.4 60.6 81.4 Z" fill="#fff"/><ellipse cx="70" cy="86.5" rx="5" ry="2.4" fill="#ff7d9a"/>`;
+ else f+=`<path d="M57 77 Q70 93 83 77 Q70 81 57 77 Z" fill="#6a1b3a"${K(2.5)}/><path d="M59.5 78.3 Q70 81.8 80.5 78.3 L79.4 81.4 Q70 84.4 60.6 81.4 Z" fill="#fff"/>${tg?`<ellipse cx="70" cy="86.5" rx="5" ry="2.4" fill="#ff7d9a"/>`:""}`;
  return f;
 }
 const HEADTOP={crown:[70,8],wizard:[74,-18],helmet:[84,-2],bandana:[118,42],catears:[70,16],horns:[70,10],mushrooms:[82,-2],flower:[96,26],star:[98,26],unicorn:[70,-8],tiara:[70,16],bow:[94,24],circlet:[70,24]};
@@ -740,7 +752,7 @@ function heroInner(p,level=1,o={}){
  s+=shadowE();
  let g="";
  g+=backSVG(p.back,tL,p);
- if(H==="long")g+=`<path d="M31 56 Q24 116 44 124 L96 124 Q116 116 109 56 Z" fill="${hc}"${K()}/>`;
+ if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="${hc}"${K()}/>`;
  g+=limb("M60 130 L58 146","#2e2552",11)+limb("M80 130 L82 146","#2e2552",11);
  g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${prd}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${prd}"${K(2.8)}/>`;
  g+=`<path d="M46 96 Q70 86 94 96 Q102 116 98 134 Q70 142 42 134 Q38 116 46 96 Z" fill="${pr}"${K()}/>`;
@@ -759,7 +771,7 @@ function heroInner(p,level=1,o={}){
  if(H==="bun")g+=`<circle cx="70" cy="17" r="13" fill="${hc}"${K()}/>`;
  g+=`<circle cx="70" cy="58" r="36" fill="${sk}"${K(3.2)}/>`;
  g+=`<path d="M37 66 Q44 92 70 94 Q47 87 42 63 Z" fill="${skd}"/>`;
- g+=hairFront(H,hc)+faceSVG(mood)+headItem(HD,pr,prd,se,hc,tW);
+ g+=hairFront(H,hc)+faceSVG(mood,p)+headItem(HD,pr,prd,se,hc,tW);
  return s+`<g class="hb">${g}</g>`+petSVG(p.pet);
 }
 function heroLevel(h){return 1+Math.floor((h.xp||0)/4);}
@@ -1013,7 +1025,8 @@ function toast(t){S.toast=t;render();setTimeout(()=>{if(S.toast===t){S.toast=nul
 const SND=()=>`<button class="ib" data-a="sound" aria-pressed="${soundOn}" aria-label="${soundOn?"השתקה":"הפעלת צלילים"}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>${soundOn?`<path d="M16 8.5q2.5 3.5 0 7M18.5 6q4.5 6 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`:`<path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`}</svg></button>`;
 function topbar(extra=""){return `<div class="topbar"><button class="brand" data-a="home">${LOGO}<span class="ol">הקוביה המספרת</span></button><div class="tools">${extra}${SND()}</div></div>`;}
 function cardVars(h){const p=h.params.primary||"#ff3d4e";return `--c1:${shade(p,.25)};--c2:${shade(p,-.38)}`;}
-function hcard(h,attrs,extra=""){return `<button class="hcard" style="${cardVars(h)}" ${attrs}>${lvlBadge(h)}${extra}${heroSVG(h)}<span class="nm">${esc(h.heroName)}<small>${esc(h.title)}</small>${statRow(h)}</span></button>`;}
+const PEN=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L5 15 L16 4 L20 8 L9 19 Z" fill="#ffd23f" stroke="#1b1030" stroke-width="2" stroke-linejoin="round"/><path d="M14 6 L18 10" stroke="#1b1030" stroke-width="2"/></svg>`;
+function hcard(h,attrs,extra="",editBtn=false){const card=`<button class="hcard" style="${cardVars(h)}" ${attrs}>${lvlBadge(h)}${extra}${heroSVG(h)}<span class="nm">${esc(h.heroName)}<small>${esc(h.title)}</small>${statRow(h)}</span>${editBtn?"":`<span class="editlbl">${PEN}עריכה</span>`}</button>`;return editBtn?`<div class="hwrap">${card}<button class="editb" data-a="edithero" data-id="${h.id}" aria-label="עריכת ${esc(h.heroName)}">${PEN}</button></div>`:card;}
 
 function vHome(){
  const c=SAVE.campaign,hs=SAVE.heroes;
@@ -1052,8 +1065,8 @@ function vHero(){
   const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?pv*4:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
   prev=`<section class="panel ov"><div class="reveal">${d.fresh?`<div class="rays"></div>`:""}${heroSVG(fake,"hero cheer","joy")}<h2 class="ol">${esc(r.heroName)}</h2><div class="muted">${esc(r.title)}</div><div class="catch">"${esc(r.catch)}"</div></div>
   <div class="fl"><span>איך ${g?"היא":"הוא"} ${g?"תיראה":"ייראה"} אחרי שדרוגים?</span><div class="chips">${["עכשיו","רמה 2","רמה 3","רמה מקסימלית"].map((l,i)=>`<button class="chip" data-a="pv" data-v="${i}" aria-pressed="${pv===i}">${l}</button>`).join("")}</div></div>
-  <label class="fl">רוצים לשנות משהו? <span class="muted small">נשארו ${d.fixesLeft} תיקונים</span>
-  <input type="text" id="fix" placeholder="למשל: שיער כחול, ובלי כובע" value="${esc(d.fix)}" ${d.fixesLeft?"":"disabled"}></label>
+  <label class="fl">רוצים לשנות משהו? <span class="muted small">${d.fixesLeft===1?"נשאר תיקון אחד":d.fixesLeft===0?"נגמרו התיקונים, אפשר להמשיך בכוונון הידני":"נשארו "+d.fixesLeft+" תיקונים"}</span>
+  <input type="text" id="fix" placeholder="למשל: בלי כתר, בלי סומק, שיער כחול" value="${esc(d.fix)}" ${d.fixesLeft?"":"disabled"}></label>
   <button class="btn sm blu" data-a="fixhero" ${d.fixesLeft&&!d.busy?"":"disabled"}><span>${d.busy?"מתקנים...":"תקנו את הדמות"}</span></button>
   <details ${d.manual?"open":""} id="manual"><summary class="eyebrow" style="cursor:pointer">כוונון ידני (לא נספר כתיקון)</summary>
   <div class="sprev">${heroSVG(fake,"hero")}<div><b>${esc(r.heroName)}</b><div class="small muted">כל שינוי מופיע כאן מיד</div></div></div>
@@ -1074,7 +1087,7 @@ function manualControls(p){
  const row=(k,lbl)=>`<div class="fl" style="margin-top:12px"><span>${lbl}</span><div class="chips">${ENUM[k].map(v=>`<button class="chip" data-a="mset" data-k="${k}" data-v="${v}" aria-pressed="${p[k]===v}">${LBL[k][v]}</button>`).join("")}</div></div>`;
  const sw=(k,lbl,pal)=>`<div class="fl" style="margin-top:12px"><span>${lbl}</span><div class="chips">${pal.map(c=>`<button class="swatch" style="background:${c}" data-a="mset" data-k="${k}" data-v="${c}" aria-pressed="${p[k]===c}" aria-label="${c}"></button>`).join("")}</div></div>`;
  return sw("primary","צבע ראשי",PALETTE)+sw("secondary","צבע שני",PALETTE)+sw("hairColor","צבע שיער",HAIRPAL)+row("hair","תסרוקת")+row("head","על הראש")+row("weapon","ביד")+row("back","על הגב")+row("emblem","סמל על החולצה")+row("pet","חבר קטן")+
- `<div class="fl" style="margin-top:12px"><span>גוון עור</span><div class="chips">${SKIN.map((c,i)=>`<button class="swatch" style="background:${c}" data-a="mset" data-k="skin" data-v="${i}" aria-pressed="${p.skin===i}" aria-label="גוון ${i+1}"></button>`).join("")}</div></div>`;
+ `<div class="fl" style="margin-top:12px"><span>סומק בלחיים</span><div class="chips"><button class="chip" data-a="mset" data-k="blush" data-v="1" aria-pressed="${p.blush!==false}">כן</button><button class="chip" data-a="mset" data-k="blush" data-v="0" aria-pressed="${p.blush===false}">לא</button></div></div><div class="fl" style="margin-top:12px"><span>לשון בחיוך</span><div class="chips"><button class="chip" data-a="mset" data-k="tongue" data-v="1" aria-pressed="${p.tongue!==false}">כן</button><button class="chip" data-a="mset" data-k="tongue" data-v="0" aria-pressed="${p.tongue===false}">לא</button></div></div><div class="fl" style="margin-top:12px"><span>גוון עור</span><div class="chips">${SKIN.map((c,i)=>`<button class="swatch" style="background:${c}" data-a="mset" data-k="skin" data-v="${i}" aria-pressed="${p.skin===i}" aria-label="גוון ${i+1}"></button>`).join("")}</div></div>`;
 }
 
 /* setup */
@@ -1082,7 +1095,7 @@ function vSetup(){
  const s=S.setup;const hs=SAVE.heroes;
  return `${topbar(`<button class="ib" data-a="home">חזרה</button>`)}
  <section class="panel"><div class="eyebrow">הרפתקה חדשה</div><h2 class="ol">מי משחק הערב?</h2><p class="muted small">בחרו בין 1 ל־4 גיבורים. בכל תחנה גיבור אחר מוביל.</p>
- <div class="heroes">${hs.map(h=>hcard(h,`data-a="pickhero" data-id="${h.id}" aria-pressed="${s.heroIds.includes(h.id)}"`)).join("")}<button class="hcard add" data-a="newhero"><b>+</b>גיבור חדש</button></div></section>
+ <div class="heroes">${hs.map(h=>hcard(h,`data-a="pickhero" data-id="${h.id}" aria-pressed="${s.heroIds.includes(h.id)}"`,"",true)).join("")}<button class="hcard add" data-a="newhero"><b>+</b>גיבור חדש</button></div></section>
  <section class="panel"><h3>איזה סוג ערב?</h3>
  <div class="chips">${MODES.map(m=>`<button class="chip" data-a="smode" data-v="${m.id}" aria-pressed="${s.mode===m.id}">${m.l}</button>`).join("")}</div>
  <p class="muted small">${MODES.find(m=>m.id===s.mode).d}</p>
@@ -1313,23 +1326,62 @@ function readInputs(){
 }
 function go(screen){S.screen=screen;S.confirmDel=null;if(screen!=="home")S.confirmReset=null;render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});}
 
+const NEG_RE=/(^|\s)(בלי|ובלי|ללא|להוריד|תוריד|תורידו|תורידי|הורד|הורידו|להסיר|תסיר|לא רוצה|לא צריך|אין)(\s|$)/;
+function applyFix(p0,text,gender,negOnly){
+ const p={...p0};let understood=false;
+ const set=(k,v)=>{understood=true;p[k]=v;};
+ const parts=String(text||"").split(/[,.;!]|\s(?=(?:בלי|ובלי|ללא|להוריד|תוריד|תורידו|הורד|הורידו|להסיר|עם|ועם)\s)/).map(x=>" "+(x||"").trim()+" ").filter(x=>x.trim());
+ for(const c of parts){
+  const has=w=>c.includes(w);
+  if(NEG_RE.test(c)){
+   if(has("מטפחת")||has("כיסוי")||has("בנדנה")||has("צעיף")){set("head",p.head==="bandana"?"none":p.head);if(p.hair!=="long"&&p.hair!=="curly")p.hair="long";}
+   if(/כובע|כתר|קטר|נזר|קרן|סרט|קסדה|פטרי|פרח|אוזני|קרניים|על הראש/.test(c))set("head","none");
+   if(/כנפ|גלימה/.test(c))set("back","none");
+   if(/חתול|דרקון|ינשוף|צפרדע|חיה|חבר קטן|חיית/.test(c))set("pet","none");
+   if(/שרביט|חרב|קשת|מטה|פטיש|מגן|נשק|ביד/.test(c))set("weapon","none");
+   if(/סומק|לחי|עיגול/.test(c))set("blush",false);
+   if(/לשון|עיגול|סנטר/.test(c))set("tongue",false);
+   if(/ לב|סמל/.test(c))set("emblem","star");
+   continue;
+  }
+  if(negOnly)continue;
+  const fx=parseDesc("x",gender,c).params;
+  const colorWord=Object.keys(COLORS).some(w=>has(w));
+  if(has("שיער")){if(Object.keys(HAIRC).some(w=>has(w))||colorWord)set("hairColor",fx.hairColor!=="#7a4a2a"?fx.hairColor:(COLORS[Object.keys(COLORS).find(w=>has(w))]||p.hairColor));if(/קוצ|תלתל|קוקו|ארוך|קצר|קירח/.test(c))set("hair",fx.hair);}
+  else if(colorWord){const cw=Object.keys(COLORS).filter(w=>has(w)).sort((a,b)=>c.indexOf(a)-c.indexOf(b));set("primary",COLORS[cw[0]]);if(cw[1]&&COLORS[cw[1]]!==COLORS[cw[0]])set("secondary",COLORS[cw[1]]);}
+  else if(/קוצ|תלתל|קוקו|קירח/.test(c))set("hair",fx.hair);
+  if(fx.head!=="none"&&!has("שיער"))set("head",fx.head);
+  if(fx.weapon!=="none")set("weapon",fx.weapon);
+  if(fx.pet!=="none")set("pet",fx.pet);
+  if(fx.back!=="none")set("back",fx.back);
+  if(/ לב|ברק|ירח|כף רגל/.test(c)&&fx.emblem!=="star")set("emblem",fx.emblem);
+  if(has("סומק"))set("blush",true);
+  if(has("לשון"))set("tongue",true);
+  if(has("עור")){if(/בהיר/.test(c))set("skin",0);else if(/כהה|שחום/.test(c))set("skin",3);}
+ }
+ return {params:p,understood};
+}
 async function genHero(fix){
  const d=S.draft;const kid=d.kidName.trim();
  if(!kid){toast("כתבו את שם הילד קודם");return;}
  if(!fix&&!d.desc.trim()){toast("ספרו בכמה מילים איך הדמות נראית");return;}
- const base=parseDesc(kid,d.gender,fix?(d.desc+" "+d.fix):d.desc);
+ const base=parseDesc(kid,d.gender,d.desc);
+ base.params=applyFix(base.params,d.desc,d.gender,true).params;
+ let local=null;
  if(fix&&d.result){
-  const fx=parseDesc(kid,d.gender,d.fix);const p={...d.result.params};const t=" "+d.fix+" ";
-  if(Object.keys(COLORS).some(w=>t.includes(w))&&!t.includes("שיער"))p.primary=fx.params.primary;
-  if(t.includes("שיער")){p.hairColor=fx.params.hairColor;if(/קוצ|תלתל|קוקו|ארוך|קירח/.test(t))p.hair=fx.params.hair;}
-  if(fx.params.head!=="none")p.head=fx.params.head;if(t.includes("בלי כובע")||t.includes("בלי כתר"))p.head="none";
-  if(fx.params.weapon!=="none")p.weapon=fx.params.weapon;if(fx.params.pet!=="none")p.pet=fx.params.pet;
-  base.params=p;base.heroName=d.result.heroName;base.title=d.result.title;base.catch=d.result.catch;
+  local=applyFix(d.result.params,d.fix,d.gender);
+  base.params=local.params;base.heroName=d.result.heroName;base.title=d.result.title;base.catch=d.result.catch;
  }
  d.busy=true;render();
- let res=base;
- try{const r=await askJSON(heroPrompt(kid,d.gender,d.desc,fix?d.result:null,d.fix));res=cleanHero(r,base);}catch(e){}
- if(fix){d.fixesLeft=Math.max(0,d.fixesLeft-1);d.fix="";}
+ let res=base,ai=false;
+ try{const r=await askJSON(heroPrompt(kid,d.gender,d.desc,fix?d.result:null,d.fix));res=cleanHero(r,base);ai=true;}catch(e){}
+ if(fix){
+  res.params=applyFix(res.params,d.fix,d.gender,true).params;
+  const changed=JSON.stringify(res.params)!==JSON.stringify(d.result.params);
+  d.busy=false;
+  if(!changed){render();toast(local&&local.understood?"זה כבר נראה ככה. אפשר לשנות גם בכוונון הידני למטה":"לא הבנתי את התיקון. כתבו למשל: בלי כתר, בלי סומק, שיער כחול. אפשר גם בכוונון הידני למטה");return;}
+  d.fixesLeft=Math.max(0,d.fixesLeft-1);d.fix="";
+ }
  d.result=res;d.busy=false;d.fresh=true;render();d.fresh=false;
  sfx("win");confetti(30);
  const rv=document.querySelector(".reveal");if(rv)rv.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});
@@ -1441,12 +1493,12 @@ app.addEventListener("click",e=>{
   case "reset2": {const all=S.confirmReset==="all";if(all)SAVE=defaultSave();else{SAVE.heroes.forEach(h=>{h.xp=0;h.items=[];h.stats={str:0,wis:0,luck:0};});SAVE.campaign=null;}S.setup=null;S.play=null;S.confirmReset=null;persist();go("home");toast(all?"הכל אופס. מתחילים מחדש!":"ההתקדמות אופסה. הגיבורים מחכים להרפתקה חדשה");break;}
   case "sound": soundOn=!soundOn;try{localStorage.setItem("kub-snd",soundOn?"1":"0");}catch(e){} render();sfx("pop");break;
   case "newhero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft();go("hero");break;
-  case "edithero": S.returnTo="home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
+  case "edithero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "gender": S.draft.gender=b.dataset.v;render();break;
   case "pv": S.draft.pv=+b.dataset.v;render();sfx("pop");break;
   case "genhero": genHero(false);break;
   case "fixhero": if(!S.draft.fix.trim()){toast("כתבו מה לשנות");break;} genHero(true);break;
-  case "mset": {const k=b.dataset.k;let v=b.dataset.v;if(k==="skin")v=+v;S.draft.result.params[k]=v;S.draft.manual=true;render();sfx("pop");break;}
+  case "mset": {const k=b.dataset.k;let v=b.dataset.v;if(k==="skin")v=+v;if(k==="blush"||k==="tongue")v=v==="1";S.draft.result.params[k]=v;S.draft.manual=true;render();sfx("pop");break;}
   case "savehero": saveHero();break;
   case "delhero": S.confirmDel=true;render();break;
   case "delcancel": S.confirmDel=null;render();break;
