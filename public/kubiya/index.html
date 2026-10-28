@@ -263,6 +263,12 @@ svg.hero,.fx svg{overflow:visible}
 .arena.tall{height:350px}.kids .arena.tall{height:430px}
 .bubble.big{font-family:var(--f-tale);font-size:1.14rem;line-height:1.5;white-space:pre-line;text-align:center;right:10px}
 .arena.tall .banner{top:auto;bottom:20%}
+.counter{width:170px;height:170px;border-radius:50%;margin:4px auto;border:4px solid var(--o);background:radial-gradient(circle at 40% 35%,#9dffb6,#21b84a 70%);box-shadow:inset 0 -10px 0 #1a8f3a,0 7px 0 var(--o);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;touch-action:manipulation}
+.counter b{font-size:4rem;font-weight:900;line-height:1;text-shadow:-2px -2px 0 var(--o),2px -2px 0 var(--o),-2px 2px 0 var(--o),2px 2px 0 var(--o),0 4px 0 var(--o)}
+.counter span{font-weight:900;text-shadow:0 2px 0 var(--o)}
+.counter:active{transform:translateY(4px);box-shadow:inset 0 -6px 0 #1a8f3a,0 3px 0 var(--o)}
+.counter.bump b{animation:bumpn .3s cubic-bezier(.2,1.8,.4,1)}
+@keyframes bumpn{from{transform:scale(1.6)}}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -389,6 +395,82 @@ const MAPS={
   ]}
 };
 const MAP_ORDER=["ice","swamp","sky"];
+/* ---------- grown-up versions of the worlds (ages 8+) ---------- */
+const MAPS_OLD={
+ ice:{name:"מצודת הכפור",campTitle:"אבן השמש האבודה",goal:"למצוא את אבן השמש ולגלות מי לקח אותה",
+  premise:"בצפון הרחוק, מעבר להרים שאף מפה לא מגיעה אליהם, עומדת מצודת הכפור. מאות שנים שמרה אבן השמש על הממלכה חמה וחיה. לפני שלושה לילות, האבן נעלמה. מאז הכל קופא: הנהרות, השווקים, ואפילו המילים בפה של האנשים. המלכה כפורית הסתגרה בארמון ולא מדברת עם אף אחד. השמועות אומרות שמישהו מבפנים לקח את האבן. $N {נשלח|נשלחה|נשלחו} לגלות מי, ולמה.",
+  st:[
+   {title:"הגשר הסדוק",read:"מעל תהום של קרח מתוח גשר צר, סדוק לכל אורכו. פינגווין שומר עם משקפת מצביע עליו: 'מי שעובר מהר מדי, שומע קְרַאק. מי שעובר לאט מדי, קופא באמצע.'",stage:"דברו בקול נמוך ומתוח. עצרו רגע לפני ההטלה.",challenge:{what:"לעבור את הגשר בקצב המדויק"},success:"$L [מצא|מצאה] את הקצב המדויק, צעד ועוד צעד, והגשר רק נאנח. עברתם.",fail:"קְרַאק! הגשר מתפורר מאחורי $L, [שקפץ|שקפצה] לצד השני ברגע האחרון. הדרך חזרה סגורה. מעכשיו, רק קדימה.",bubble:"לא מהר ולא לאט. בדיוק."},
+   {title:"שומר הסודות",read:"ינשוף זקן יושב על עמוד קרח ומביט בכם בעיניים צהובות. 'אני יודע מי עבר כאן בלילה שבו האבן נעלמה,' הוא אומר. 'אבל מידע עולה מחיר. פתרו את החידה, ואולי אספר.'",stage:"קול איטי ומסתורי. תנו לשקט לעבוד.",success:"'מרשים,' ממלמל הינשוף. 'אז שמעו: בלילה ההוא ראיתי צל קטן עם כנפיים עף לכיוון הארמון. לא גנב. משהו... אחר.'",fail:"הינשוף לוחש את התשובה ומנענע בראש. 'אספר לכם בכל זאת, אבל זכרו: מי שמבזבז רמזים, מגיע מאוחר. ראיתי צל קטן עם כנפיים עף לכיוון הארמון.'",bubble:"מידע עולה מחיר."},
+   {title:"מערת ההדים",read:"המערה מלאה פתיתים זוהרים שמגיבים לכל תנועה. כל צעד מהדהד כמו פעמון, ומשהו בעומק המערה מתחיל להתעורר. כדי לעבור בלי שישמעו אתכם, צריך שליטה מוחלטת.",stage:"לחשו. אם מישהו צוחק, תתחילו את הספירה מחדש.",success:"הפתיתים נרגעים ומסתדרים לחץ זוהר שמצביע לעומק המערה. על הקיר חרוט ציור: דרקון קטן מחזיק אבן בוהקת.",bubble:"שקט. משהו מתעורר."},
+   {title:"פרשת הדרכים",read:"השביל מתפצל. משמאל, עקבות דוב ענקיות וטריות. מימין, שביל של קרחונים שמזמזמים מנגינה עצובה. אין זמן לשניהם.",stage:"תנו להם להתווכח ולהחליט. כל בחירה טובה.",challenge:{options:[{label:"עוקבים אחרי העקבות",result:"העקבות מובילות לדובה ענקית שמגנה על גור. היא מסמנת לכם בראש לעבור בשקט, ומשאירה לכם כפפת עור עבה."},{label:"הולכים בשביל המזמזם",result:"הקרחונים מנגנים מנגינת ערש. $N {הבין|הבינה|הבינו} שמישהו מנגן אותה כבר שלושה לילות ברצף. מישהו מנסה להרדים מישהו."}]},bubble:"שני שבילים. זמן לאחד."},
+   {title:"שומר המעבר",read:"דוב קוטב בגודל של בית חוסם את המעבר בין ההרים. הוא לא תוקף. הוא פשוט לא זז. 'אני שומר כאן מאז שהאבן נעלמה,' הוא רוטן. 'אף אחד לא עובר, עד שמישהו יוכיח לי שהוא ראוי.'",stage:"קול עמוק ואיטי. לפני כל הטלה, שאלו את הילד מה הוא אומר לדוב.",challenge:{what:"לשכנע את הדוב שאתם ראויים",hpName:"חשדנות",hit:["$L [הציג|הציגה] תכנית חכמה, והדוב מרים גבה בהערכה.","$L [עמד|עמדה] מולו בלי למצמץ. הדוב נסוג חצי צעד.","$L [שאל|שאלה] אותו: 'למה אתה בעצם שומר כאן?' הדוב משתתק לרגע ארוך."],miss:["הדוב נוהם נהמה שמרעידה את השלג מהעצים. עוד ניסיון.","הדוב מפהק בשעמום. זה לא שכנע אותו."]},success:"הדוב זז הצידה. 'הדרקון הקטן עבר כאן,' הוא לוחש. 'הוא בכה. אני לא חושב שהוא גנב. אני חושב שהוא מתחבא.'",bubble:"תוכיחו שאתם ראויים."},
+   {title:"מלך הפינגווינים",read:"מלך הפינגווינים יושב על כס קרח ומסרב להסתכל עליכם. 'כל הממלכה מאשימה את הדרקון,' הוא אומר. 'אבל אף אחד לא שאל את השאלה הנכונה.'",stage:"שחקו מלך מתנשא. רק שאלה טובה באמת מרככת אותו.",challenge:{ask:"איזו שאלה תשאלו את המלך כדי לגלות את האמת?"},success:"המלך מחייך לראשונה. 'סוף סוף מישהו חושב.' הוא מגלה לכם סוד: אבן השמש מתחילה לדעוך, והמלכה ציוותה לשמור על זה בסוד.",bubble:"שאלו את השאלה הנכונה."},
+   {title:"שער הכפור",read:"שער ענק עם פנים חרוטות חוסם את הכניסה לארמון. העיניים נפתחות לאט. 'שלושה לילות לא נפתחתי,' הוא אומר בקול עמוק. 'אפתח רק למי שחושב לפני שהוא מדבר.'",stage:"קול עמוק וכבד, כמו אבן שזזה.",success:"השער נפתח בחריקה ארוכה. בפנים, מדרגות כחולות ושקט מוחלט.",fail:"השער לוחש את התשובה. 'אמרו אותה ביחד, בקול,' הוא דורש. רק אחרי זה הוא נפתח.",bubble:"חשבו לפני שאתם עונים."},
+   {title:"המעבר הנסתר",read:"מאחורי וילון של קרח מסתתרת מגלשה שמובילה ישר לאולם הכס. אבל היא נפתחת רק למי שזז כמו הרוח של הצפון: מהר, מדויק, ובלי לפחד.",stage:"הדגימו, וספרו בקול.",success:"ווּוּש! $N {החליק|החליקה|החליקו} פנימה, ישר לאולם הכס. ושם, משהו מחכה.",bubble:"מהר. מדויק. בלי לפחד."},
+   {title:"סערת המלכה",read:"האולם מתמלא ברוח קפואה שמסתחררת סביבכם, ובתוכה עיניים. 'לא תיקחו ממנה את הדבר האחרון שנשאר לה!' שואגת הסערה. זו לא סתם רוח. זה הכעס של המלכה, שקיבל צורה.",stage:"נשפו חזק, ותנו לכל ילד להגיד משפט אחד לסערה לפני ההטלה שלו.",challenge:{what:"להרגיע את הכעס הקפוא",hpName:"כעס קפוא",hit:["$L [אמר|אמרה] בקול: 'לא באנו לקחת. באנו לעזור.' הסערה נחלשת.","$L [עמד|עמדה] במקום בזמן שכולם התכופפו. הרוח מהססת.","$L [הניח|הניחה] יד על הקיר הקפוא, והקרח מתחיל להפשיר."],miss:["משב קפוא מעיף את $L אחורה, אבל [הוא קם|היא קמה] מיד.","הסערה מסתחררת חזק יותר. הכעס עוד לא נגמר."]},success:"הסערה דועכת והופכת לפתית שלג אחד, שנוחת בכף היד של $L. הוא חמים.",bubble:"לא תיקחו אותה!"},
+   {title:"האמת של המלכה",read:"המלכה כפורית יושבת ליד חלון. בכפות ידיה, אבן השמש, כמעט כבויה. ולידה, מכורבל, הדרקון הקטן פתיתון. 'הוא לא גנב אותה,' היא לוחשת. 'הוא הביא אותה אליי כדי לחמם אותה. אבל אף אחד לא יודע איך להדליק אותה מחדש.'",stage:"האטו מאוד. זה הרגע של התעלומה. תנו לכל ילד להציע רעיון.",challenge:{ask:"איך תדליקו מחדש את אבן השמש? כל אחד מציע רעיון אחד."},success:"כל אחד מהגיבורים מניח יד על האבן ואומר משהו שהוא אוהב בממלכה. האבן מתחילה לזהור, חזק ועוד יותר חזק, עד שכל הארמון מתמלא אור. הקרח נמס, הנהרות זורמים, והמלכה צוחקת בפעם הראשונה מזה שלושה לילות. התעלומה נפתרה.",bubble:"הוא לא גנב אותה."}
+  ]},
+ swamp:{name:"ביצת הערפילים",campTitle:"הלילה שבו הירח נפל",goal:"להחזיר את הירח לשמיים לפני שהחושך יתפשט",
+  premise:"בביצת הערפילים יש חוק אחד: לא יוצאים מהשביל אחרי השקיעה. אבל בלילה האחרון קרה משהו שאף אחד לא ראה מעולם: הירח נפל מהשמיים ונבלע בביצה. מאז החושך מתעבה, הגחליליות כבו, והיצורים מספרים על קולות מוזרים שעולים מהמים. סבתא קווא, השומרת הוותיקה של הביצה, שלחה מכתב אחד בלבד: '$N. רק אתם יכולים להחזיר אותו. בואו מהר.'",
+  st:[
+   {title:"עלי הנופר",read:"השביל נגמר במים שחורים. הדרך היחידה קדימה היא עלי נופר שמתנדנדים על המים, וכל אחד מהם שוקע אם עומדים עליו יותר משנייה. צפרדע צעירה מסתכלת עליכם בחיוך עקום: 'אני עוברת פה כל יום. אתם?'",stage:"דברו מהר, כמו מי שממהר לעבור.",challenge:{what:"לחצות את המים על עלי הנופר"},success:"$L [קפץ|קפצה] מעלה לעלה בלי לעצור לרגע, ו[נחת|נחתה] על הגדה. הצפרדע מוחאת כפיים בהפתעה.",fail:"פלאש! $L [שקע|שקעה] עד הברכיים, ו[יצא|יצאה] עם אצות בשיער. הצפרדע מנסה לא לצחוק. מנסה.",bubble:"אני עוברת פה כל יום. אתם?"},
+   {title:"השומרת",read:"סבתא קווא יושבת על אבן מכוסה טחב, עם משקפיים עבים וצעיף ורוד. 'אני לא נותנת מפות לכל מי שמגיע,' היא אומרת. 'קודם נבדוק אם יש לכם ראש על הכתפיים.'",stage:"קול של סבתא חכמה וקצת עוקצנית.",success:"'יפה,' היא מהנהנת, ומושיטה לכם מפה מקומטת. 'הירח נפל לבריכה במרכז. אבל משהו שומר עליה עכשיו.'",fail:"'קווא, לא הפעם,' היא לוחשת את התשובה. 'שלוש קפיצות של צפרדע, ואקבל אתכם בכל זאת.'",bubble:"יש לכם ראש על הכתפיים?"},
+   {title:"מקהלת החושך",read:"הצפרדעים הפסיקו לשיר מאז שהירח נפל, ובלי השיר שלהן היצורים בביצה הולכים לאיבוד. הן מוכנות לנסות שוב, אבל רק אם מישהו יראה להן שהוא לא מפחד מהחושך.",stage:"הנמיכו את האור בחדר, אם אפשר.",success:"המקהלה מתחילה, חלשה בהתחלה ואז חזקה. בקצה הביצה, נקודת אור קטנה נדלקת כאילו עונה להן.",bubble:"מי לא מפחד מהחושך?"},
+   {title:"מנהרה או סירה",read:"שתי דרכים: מנהרה בין שורשים עבים שמשהו מזמזם בתוכה, או סירה עשויה מקליפת אגוז ענקית שמחכה ריקה על הגדה. מוזר. מי השאיר אותה פה?",stage:"תנו להם להחליט. שאלו מה כל אחד חושד.",challenge:{options:[{label:"נכנסים למנהרה",result:"בתוך המנהרה, נחיל דבורים בגודל של אגודל. הן לא תוקפות. הן נותנות לכם צנצנת דבש זוהר, כאילו חיכו לכם."},{label:"עולים על הסירה",result:"הסירה מתחילה לשוט לבד, נגד הזרם. מישהו, או משהו, מוביל אתכם. דג כסוף מלווה אתכם לרגע ונעלם."}]},bubble:"מנהרה? או סירה?"},
+   {title:"התנין שחוסם את הגדה",read:"תנין ענק שוכב לרוחב הגדה ולא זז. כשמתקרבים, הוא פותח עין אחת: 'אף אחד לא עובר. מאז שהירח נפל כואבת לי השן, ואני לא במצב רוח לאורחים.'",stage:"קול של תנין עצבני ועייף. לפני כל הטלה, הילד מספר מה הוא מנסה.",challenge:{what:"לעזור לתנין עם השן",hpName:"כאב שן",hit:["$L [קשר|קשרה] חוט לשן הנדנדת ו[משך|משכה]. התנין צועק, אבל השן זזה.","$L [סיפר|סיפרה] לו משהו מצחיק, והתנין שוכח לרגע מהכאב.","$L [הצמיד|הצמידה] לו עלה קר ללחי. התנין נאנח בהקלה."],miss:["קלאק! התנין סוגר את הפה ברגע האחרון. עוד ניסיון.","התנין מסתובב עם הגב. 'לכו מכאן.' לא מוותרים."]},success:"פּוֹפּ! השן יוצאת. התנין מחייך חיוך ענק ומבריק, ולוחש: 'הבריכה במרכז. היזהרו מהערפל. הוא חי.'",bubble:"אני לא במצב רוח לאורחים."},
+   {title:"להעיר את הגחליליות",read:"בתוך עץ חלול ישנות מאות גחליליות כבויות. בלי האור שלהן אי אפשר לראות את השביל. צריך להעיר אותן, אבל בעדינות: גחלילית שמתעוררת בבהלה בורחת ולא חוזרת.",stage:"תנו לילד להגיד איך הוא מעיר אותן בעדינות.",challenge:{what:"להעיר את הגחליליות בלי להבהיל"},success:"אחת, ועוד אחת, ועוד מאה. הגחליליות מתעוררות ומציירות שביל של אור זהוב.",fail:"חלק מהגחליליות ברחו בבהלה, אבל אחת קטנה ואמיצה נשארה. היא מאירה לכם את הדרך, אור קטן אבל מספיק.",bubble:"זזז... בעדינות!"},
+   {title:"העץ שזוכר",read:"עץ ערבה עתיק פותח עיניים ירוקות. 'אני זוכר את הלילה שבו הירח נפל,' הוא לוחש. 'הוא לא נפל. מישהו קרא לו. אספר לכם מי, אם תוכיחו שאתם יודעים להקשיב.'",stage:"לחשו. רק הילדים שמקשיבים שומעים.",success:"'הערפל,' הוא לוחש. 'הערפל קרא לירח, כי הוא בודד. ועכשיו הוא לא מוכן לשחרר אותו.'",fail:"העץ לוחש את התשובה. 'הקשיבו טוב יותר בפעם הבאה. אבל דעו: הערפל קרא לירח, ועכשיו הוא לא משחרר.'",bubble:"הירח לא נפל. קראו לו."},
+   {title:"מתחת לשורשים",read:"השביל צולל מתחת לשורשים נמוכים ודביקים. אי אפשר ללכת, אפשר רק לזחול, ומשהו מתחת למים עוקב אחרי כל תנועה.",stage:"קבעו יעד בחדר, ובדקו מי מגיע ראשון.",success:"$N {יצא|יצאה|יצאו} מהצד השני, מלאי בוץ, ומולכם בריכה שזוהרת באור חיוור.",bubble:"מי מגיע ראשון?"},
+   {title:"רוח הערפל",read:"הערפל מתעבה ומתעגל לצורה ענקית עם עיניים חיוורות. 'הוא שלי,' לוחש הערפל. 'סוף סוף מישהו מאיר לי. לא תיקחו אותו.'",stage:"קול מהדהד ואיטי. עמעמו את האור.",challenge:{what:"לפזר את הערפל",hpName:"ענני ערפל",hit:["$L [הרים|הרימה] את צנצנת האור, והערפל נרתע.","$L [אמר|אמרה] לו: 'גם אנחנו יכולים להיות חברים שלך.' הערפל מהסס.","הגחליליות מתאספות סביב $L, והערפל נפתח."],miss:["הערפל עוטף את $L ומבלבל את הכיוונים. עוד ניסיון.","'לא!' שואג הערפל, ומתעבה."]},success:"הערפל מתכווץ לענן קטן ושקט. 'רק רציתי שמישהו ישחק איתי,' הוא לוחש. מתחתיו נגלית בריכה זוהרת.",bubble:"הוא שלי."},
+   {title:"הירח בבריכה",read:"בבריכה העגולה שוכב הירח, עייף וחיוור. 'הערפל היה בודד,' הוא אומר. 'אני רוצה לחזור לשמיים, אבל אני לא רוצה שהוא יישאר לבד שוב.'",stage:"זה הרגע הגדול. תנו לכל ילד להציע פתרון.",challenge:{ask:"איך מחזירים את הירח לשמיים, בלי להשאיר את הערפל לבד?"},success:"$N {מצא|מצאה|מצאו} פתרון: הערפל יעלה עם הירח, ויהיה הענן שלו בלילות. כל יצורי הביצה דוחפים ביחד, והירח עולה, עם ענן קטן ושמח לצידו. הביצה מוארת שוב.",bubble:"אני לא רוצה שיהיה לבד."}
+  ]},
+ sky:{name:"איי הסערה",campTitle:"מי שלח את הסערה?",goal:"לאסוף את הכוכבים ולגלות מי שלח את הסערה",
+  premise:"מעל העננים, באיים שמרחפים בין שקיעה לזריחה, גר פופו, הדרקון שתולה את הכוכבים בכל לילה. אבל השבוע משהו השתבש: סערה שאף אחד לא צפה פיזרה את כל הכוכבים על האיים, והשמיים מעל העולם נשארו חשוכים. בלי כוכבים, יורדי הים הולכים לאיבוד, והחלומות של כולם נעשים אפורים. פופו שלח את הקשת לאסוף את היחידים שהוא סומך עליהם: $N.",
+  st:[
+   {title:"סולם הקשת",read:"הקשת יורדת עד לרגליים שלכם, אבל היא לא יציבה: הצבעים שלה מתחלפים, וכל פעם שצבע משתנה, המדרגה שלו נעלמת. ציפור אדומה מרחפת לידכם: 'תטפסו רק על הצבע שעומד להופיע.'",stage:"מנו צבעים בקצב, והאיצו.",challenge:{what:"לטפס בקצב של הצבעים"},success:"$L [טיפס|טיפסה] בדיוק בקצב של הצבעים, ו[הגיע|הגיעה] לראש הקשת.",fail:"$L [החליק|החליקה] על הסגול ו[נחת|נחתה] על ענן רך. הציפור מחזירה [אותו|אותה] למעלה בטיסה, צוחקת.",bubble:"רק על הצבע הבא!"},
+   {title:"אספן החידות",read:"ענן שמנמן חוסם את הדרך ומסתכל עליכם בעניין. 'אני אוסף חידות מכל העולם,' הוא אומר. 'אם תפתרו את הקשה ביותר באוסף שלי, אראה לכם איפה נפל הכוכב הראשון.'",stage:"קול של אספן גאה.",success:"הענן מתנפח בגאווה. 'מעטים פותרים את זו.' הוא מצביע על קן גבוה, ובתוכו משהו מנצנץ.",fail:"הענן לוחש את התשובה. 'תוסיפו אותה לאוסף שלכם,' הוא אומר, ומצביע בכל זאת על קן גבוה.",bubble:"החידה הכי קשה שלי."},
+   {title:"הלהקה",read:"להקת ציפורים צבעוניות עפה סביבכם במעגלים. 'ראינו איפה נפלו כוכבים,' הן קוראות, 'אבל אנחנו מראות רק למי שיודע לעוף איתנו.'",stage:"הדגימו כנפיים, ועופו ביחד.",success:"הציפורים מצייצות ומצביעות למטה: כוכב ראשון מנצנץ בתוך קן נטוש.",bubble:"עפים איתנו?"},
+   {title:"שני איים",read:"שני איים מרחפים לפניכם. על אחד גדלים בלונים צבעוניים שמושכים למעלה. על השני יש פעמונים שמצלצלים לבד, בלי רוח.",stage:"תנו להם להחליט. שאלו: מה מוזר פה?",challenge:{options:[{label:"טסים לאי הבלונים",result:"הבלונים מרימים את כולם גבוה מעל העננים. משם רואים בבירור: כל הכוכבים נפלו בקו ישר, כאילו מישהו זרק אותם ממגדל הרוחות."},{label:"טסים לאי הפעמונים",result:"הפעמונים מצלצלים כי בתוך הגדול שבהם מסתתר כוכב קטן ונבהל. הוא לוחש: 'הסערה הגיעה ממגדל הרוחות.'"}]},bubble:"בלונים או פעמונים?"},
+   {title:"הרוח השובבה",read:"רוח שובבה חוטפת את הכובע של $L ומתעופפת סביב בצחוק. 'רוצים אותו? תתפסו אותי! ואם תצליחו, אולי אספר לכם מי שלח את הסערה.'",stage:"קול מקניט. הזיזו את היד מהר מצד לצד.",challenge:{what:"לתפוס את הרוח",hpName:"משבי רוח",hit:["$L [קפץ|קפצה] גבוה ו[תפס|תפסה] את קצה הזנב של הרוח!","$L [הסתתר|הסתתרה] מאחורי ענן ו[הפתיע|הפתיעה] אותה.","$L [פרש|פרשה] רשת מקשת בענן. כמעט נתפסה!"],miss:["ווּוּש! הרוח מתחמקת ומצחקקת. ממשיכים.","הרוח עושה סלטה באוויר. עוד ניסיון."]},success:"הרוח נוחתת, מתנשפת, ומחזירה את הכובע. 'טוב, טוב. הסערה? היא באה ממגדל הרוחות. ענן הרעם יושב שם, והוא... לא בדיוק מאושר.'",bubble:"תתפסו אותי, אם תוכלו!"},
+   {title:"הכוכב התקוע",read:"כוכב זוהר תקוע בקצה של ענן גבוה, ממש על הקצה. עוד משב רוח אחד, והוא נופל לים.",stage:"בקשו מהילדים להושיט ידיים גבוה.",challenge:{what:"להציל את הכוכב לפני שיפול"},success:"$L [נמתח|נמתחה] עוד קצת, ו[תפס|תפסה] אותו ברגע האחרון. הכוכב רועד ונרגע.",fail:"הענן התהפך, והכוכב נפל... ישר לתוך הכיס של $L. לפעמים צריך גם מזל.",bubble:"הצילו! אני על הקצה!"},
+   {title:"שומרת הלילה",read:"ציפור כחולה עם נוצות שזוהרות כמו שמיים בלילה יושבת על ירח קטן. 'אני שומרת הכוכבים השנייה של פופו,' היא אומרת. 'ואני לא מוסרת כוכבים לזרים. הוכיחו שאתם לא זרים.'",stage:"קול שקט ובטוח בעצמו.",success:"הציפור קדה, ומגישה לכם עוד שני כוכבים. 'פופו בחר טוב.'",fail:"הציפור לוחשת את התשובה. 'תזכרו אותה לפעם הבאה,' היא אומרת, ופותחת את הדרך.",bubble:"הוכיחו שאתם לא זרים."},
+   {title:"להדליק את הכוכבים",read:"השק מלא כוכבים, אבל הם כבויים. כדי שיחזרו לזהור, צריך להראות להם איך נראה כוכב אמיתי.",stage:"הדגימו, וספרו בקול.",success:"כל הכוכבים בשק נדלקים בבת אחת, והאור שלהם מגיע עד ראש מגדל הרוחות.",bubble:"תראו לנו איך!"},
+   {title:"ענן הרעם",read:"בראש מגדל הרוחות יושב ענן אפור ועצום, שזורק ברקים לכל עבר. 'בום! כל לילה פופו מאיר את השמיים, וכולם מתפעלים ממנו! ואותי? אותי כולם שונאים!'",stage:"קול רועם. תופפו על השולחן לפני כל הטלה.",challenge:{what:"להרגיע את ענן הרעם",hpName:"רעמים",hit:["$L [אמר|אמרה] לו תודה על הגשם, והענן מופתע.","$L [עמד|עמדה] מול הברקים בלי לזוז. הענן מהסס.","$L [סיפר|סיפרה] לו כמה הקשת יפה אחרי גשם. הענן נעשה ורוד."],miss:["בום! ברק פוגע ליד $L. מפחיד, אבל [הוא לא זז|היא לא זזה].","הענן רועם חזק יותר. הוא עוד לא מוכן להקשיב."]},success:"הענן נרגע ומתכווץ. 'אף אחד אף פעם לא אמר לי תודה על הגשם,' הוא אומר בשקט. הוא מבטיח לא לשלוח עוד סערות, אם יזמינו אותו לפעמים להצגה של הכוכבים.",bubble:"בום! תתרחקו!"},
+   {title:"מגדל הכוכבים",read:"פופו מחכה בראש המגדל עם שק ריק. 'הבאתם אותם?' הוא שואל. ואז הוא רואה את ענן הרעם מאחוריכם, ונרתע.",stage:"זה הרגע הגדול. תנו לכל ילד להציע רעיון.",challenge:{ask:"איך תעזרו לפופו ולענן הרעם להפוך לחברים?"},success:"$N {גרם|גרמה|גרמו} לשניהם ללחוץ ידיים, כלומר כנף וענן. פופו תולה את הכוכבים, וענן הרעם מאיר אותם בברק עדין. השמיים מעולם לא נראו יפים יותר.",bubble:"מה הוא עושה פה?"}
+  ]}
+};
+const _mapCache={};
+function mapOf(id,age){
+ const old=ageGroup(age||"5-7")==="old"&&MAPS_OLD[id];
+ if(!old)return MAPS[id];
+ if(_mapCache[id])return _mapCache[id];
+ const B=MAPS[id];
+ const m={...B,...old,st:B.st.map((t,i)=>{const o=old.st[i]||{};return {...t,...o,challenge:o.challenge?{...t.challenge,...o.challenge}:t.challenge};})};
+ return _mapCache[id]=m;
+}
+
+/* ---------- movement tasks woven into the story (active and friends modes) ---------- */
+const MOVES={
+ swamp:[{t:"עלי הנופר מתנדנדים, ועל כל אחד יושבת צפרדע. עוברים את האגם רק בקפיצות צפרדע!",n:10,u:"קפיצות צפרדע",at:0},
+  {t:"הביצה שורצת תנינים! זחלו כמו תנינים מנקודה אחת בבית לנקודה אחרת, כדי שהתנינים יחשבו שאתם משלהם.",n:1,u:"הגענו!"},
+  {t:"מכשפת הביצה הטילה עליכם כישוף! משתחררים ממנו רק בקפיצות על רגל אחת, וסופרים בקול.",n:15,u:"קפיצות על רגל אחת"},
+  {t:"נחשי מים חוסמים את השביל. עוברים מעליהם בקפיצות גבוהות, ברכיים למעלה!",n:10,u:"קפיצות גבוהות"}],
+ ice:[{t:"הקרח חלקלק! מתקדמים בצעדי פינגווין, ידיים צמודות לגוף.",n:12,u:"צעדי פינגווין",at:0},
+  {t:"סערת שלג מתקרבת! מתחממים בקפיצות פיסוק.",n:10,u:"קפיצות פיסוק"},
+  {t:"כישוף הקיפאון! מי שקופא על רגל אחת עד הסוף, משתחרר.",n:10,u:"שניות על רגל אחת"},
+  {t:"מורידים את השלג מהשביל: מתגלגלים על השטיח כמו כדור שלג, או עושים גלגלון.",n:1,u:"התגלגלנו!"}],
+ sky:[{t:"כדי לעוף בין האיים צריך כנפיים חזקות. נפנופי ידיים גדולים!",n:15,u:"נפנופי כנפיים"},
+  {t:"הענן מתנדנד! עומדים על רגל אחת בלי ליפול.",n:10,u:"שניות על רגל אחת",at:5},
+  {t:"מטפסים על הקשת: הרמות ברכיים במקום, מהר!",n:12,u:"הרמות ברכיים",at:0},
+  {t:"הכוכבים מתעוררים רק מקפיצות כוכב: ידיים ורגליים לצדדים!",n:8,u:"קפיצות כוכב"}]
+};
+function assignMoves(ch,c){
+ if(!c||c.mode==="bed")return;
+ const pool=[...(MOVES[c.mapId]||MOVES.swamp)];const big=ageGroup(c.age)==="old";
+ ch.stations.forEach(st=>{if(st.type==="dice"&&!st.move&&pool.length){let j=pool.findIndex(x=>x.at===st.node);if(j<0){const free=pool.map((x,i)=>x.at==null?i:-1).filter(i=>i>=0);j=free.length?pick(free):Math.floor(Math.random()*pool.length);}const m=pool.splice(j,1)[0];st.move={...m,n:m.n>1&&big?Math.round(m.n*1.5):m.n};}});
+}
+
 const CLOSE={
  bed:"הלילה יורד על $W. $N {מצא|מצאה|מצאו} פינה חמימה ומוגנת, {הדליק|הדליקה|הדליקו} מדורה קטנה, ו{התכרבל|התכרבלה|התכרבלו} מתחת לשמיכה רכה. הכוכבים מנצנצים, והנשימה נעשית איטית ושקטה... מחר, ההרפתקה ממשיכה.",
  active:"$N {עצר|עצרה|עצרו} לנוח רגע... ופתאום נשמע רעש מוזר מעבר לגבעה! מה זה יכול להיות? את זה נגלה בפרק הבא.",
@@ -837,7 +919,7 @@ function nextRiddle(c){
  const r=pick(pool);c.usedR.push(r.i);return {q:r.q,a:r.a,hint:r.h};
 }
 function fallbackChapter(c,count){
- const hs=campHeroes(),M=MAPS[c.mapId];const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
+ const hs=campHeroes(),M=mapOf(c.mapId,c.age);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
  const stations=nodes.map(n=>{
   const t=M.st[n];const L=hs[leaderIdx(n,hs.length)];
   const ch=JSON.parse(JSON.stringify(t.challenge||{}));
@@ -855,10 +937,10 @@ function fallbackChapter(c,count){
  return {title:stations[0]?stations[0].title:M.name,opening,stations,closing,recap:stations.map(s=>s.title).join(", ")+".",source:"local"};
 }
 function chapterPrompt(c,count,first){
- const hs=campHeroes(),M=MAPS[c.mapId];const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
+ const hs=campHeroes(),M=mapOf(c.mapId,c.age);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
  const modeTxt={bed:"BEDTIME: a calm wind-down. Energy starts adventurous and gets calmer toward the end. No running or jumping. Any 'physical' station must be calm (slow breathing, freezing like a statue, slow stretching, whispering). The closing has the heroes find a cozy safe place to rest for the night, a slow calm image, and ends with 'tomorrow the adventure continues'.",
-  active:"FAMILY EVENING: energetic. Include exactly one 'physical' station with real movement (jumps, crawling like an animal, a cartwheel, hopping on one foot) with a count. The closing is a small cliffhanger that makes kids want to continue next time.",
-  friends:"FRIENDS PARTY: lively and social, every hero gets a moment. 'physical' stations may use real movement. The closing is a cheer plus a small cliffhanger."}[c.mode];
+  active:"FAMILY EVENING: energetic. Include exactly one 'physical' station with real movement that the story justifies, with a count (for example: crossing a lily-pad lake in 10 frog jumps; crawling like crocodiles from one spot in the house to another so the crocodiles think you are one of them; breaking a spell by hopping on one foot 15 times while counting aloud). The closing is a small cliffhanger that makes kids want to continue next time.",
+  friends:"FRIENDS PARTY: lively and social, every hero gets a moment. 'physical' stations use real movement that the story justifies (frog jumps across a lake, crawling like crocodiles, hopping on one foot to break a spell), with a count. The closing is a cheer plus a small cliffhanger."}[c.mode];
  const heroLines=hs.map(h=>`- ${h.heroName} (${h.gender==="f"?"girl, feminine Hebrew forms":"boy, masculine Hebrew forms"}; ${h.title}; carries: ${LBL.weapon[h.params.weapon]}; pet: ${LBL.pet[h.params.pet]}; items: ${(h.items||[]).slice(-5).map(i=>i.name).join(", ")||"none"})`).join("\n");
  const leaders=nodes.map((n,i)=>`station ${i+1} -> ${hs[leaderIdx(n,hs.length)].heroName}`).join("; ");
  const finale=nodes.includes(NODES-1);
@@ -938,7 +1020,7 @@ function vHome(){
  let camp="";
  if(c){
   const ch=campHeroes();
-  camp=`<section class="panel slide"><div class="eyebrow">ההרפתקה שלכם · ${esc(MAPS[c.mapId].name)}</div><h2 class="ol">${esc(c.title)}</h2>
+  camp=`<section class="panel slide"><div class="eyebrow">ההרפתקה שלכם · ${esc(mapOf(c.mapId,c.age).name)}</div><h2 class="ol">${esc(c.title)}</h2>
   <div class="mapwrap">${mapSVG(c.mapId,c.node,ch,{win:true,wh:260})}</div>
   <div class="prog" aria-label="תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES}">${Array.from({length:NODES},(_,i)=>`<i class="${i<c.node?"on":""}"></i>`).join("")}</div>
   <p class="muted small">תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES} · ${c.sessions===1?"פרק אחד שוחק":(c.sessions||0)+" פרקים שוחקו"}${(c.mapsDone||[]).length?` · ${(c.mapsDone||[]).length} עולמות הושלמו`:""}</p>
@@ -1009,7 +1091,7 @@ function vSetup(){
  <h3>קוביות</h3><div class="chips"><button class="chip" data-a="sdice" data-v="digital" aria-pressed="${s.dice==="digital"}">קובייה במסך</button><button class="chip" data-a="sdice" data-v="physical" aria-pressed="${s.dice==="physical"}">יש לנו קובייה אמיתית</button></div>
  </section>
  <section class="panel"><h3>באיזה עולם?</h3>
- <div class="maps3">${MAP_ORDER.map(id=>`<button class="mapchoice" data-a="smap" data-v="${id}" aria-pressed="${s.mapId===id}">${mapThumb(id)}<span>${MAPS[id].name}</span></button>`).join("")}</div>
+ <div class="maps3">${MAP_ORDER.map(id=>`<button class="mapchoice" data-a="smap" data-v="${id}" aria-pressed="${s.mapId===id}">${mapThumb(id)}<span>${mapOf(id,s.age).name}</span></button>`).join("")}</div>
  <label class="fl">מה הילדים אוהבים? <span class="muted small">הסיפור ישלב את זה</span><input type="text" id="likes" value="${esc(s.likes)}" placeholder="דרקונים, ממתקים, חתולים, כדורגל..."></label>
  <label class="fl">משימה מיוחדת? <span class="muted small">לא חובה</span><input type="text" id="goal" value="${esc(s.goal)}" placeholder="למשל: להציל את הנסיכה"></label>
  <button class="btn wide grn" data-a="startcamp" ${s.heroIds.length?"":"disabled"}><span>${s.heroIds.length?"צאו לדרך":"בחרו לפחות גיבור אחד"}</span></button></section>`;
@@ -1030,7 +1112,7 @@ function vLoading(){
 }
 function vIntro(){
  const c=SAVE.campaign,hs=campHeroes();
- return `${topbar()}<section class="panel"><div class="eyebrow">${esc(MAPS[c.mapId].name)}</div><h1 class="ol">${esc(c.title)}</h1>
+ return `${topbar()}<section class="panel"><div class="eyebrow">${esc(mapOf(c.mapId,c.age).name)}</div><h1 class="ol">${esc(c.title)}</h1>
  <div class="arena a-${c.mapId}" style="display:flex;justify-content:center;align-items:flex-end;direction:ltr"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,"hero cheer","joy")).join("")}</div></div></section>
  <div class="parch big"><span class="tt">פעם, לפני הרבה זמן...</span>${esc(c.premise)}</div>
  <div class="stage parent-only">${MASK}<span>קראו לאט, בקול של מספר סיפורים. בסוף, הראו לילדים את המפה.</span></div>
@@ -1107,7 +1189,8 @@ function vStation(st,hs,c){
  if(["riddle","meet","choice"].includes(st.type)&&!P.opened)return h+`<div class="panel" style="text-align:center;align-items:center"><p style="font-weight:900;font-size:1.1rem">${S.kids?"":"תנו לילד ללחוץ על "}${st.type==="riddle"?"סימן השאלה":st.type==="meet"?"בועת הדיבור":"סימן השבילים"} שבזירה!</p><button class="btn wide" data-a="openq"><span>${st.type==="riddle"?"גלו את החידה":st.type==="meet"?"מה יש לו להגיד?":"לאן אפשר ללכת?"}</span></button></div>`;
  const ch=st.challenge||{};
  if(st.type==="dice"){
-  const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.help?1:0)-(P.plan?2:0)));const bonus=statOf(L,"str");
+  if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">משימת גוף · כולם ביחד!</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(m.t)}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>מתוך ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(m.u)}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(m.u)}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
+  const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.help?1:0)-(P.plan?2:0)-(st.move&&P.moveDone?1:0)));const bonus=statOf(L,"str");
   h+=`<div class="panel dicebox"><div class="need">${esc(ch.what||"")}<br>צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${L.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
   if(c.dice==="digital"){
    const v=P.roll;const ok=v!=null&&v+bonus>=target;const cls=v==null?"":(ok?"win":"lose");
@@ -1177,7 +1260,7 @@ function bossHit(v,ok){
  P.roll=v;P.bossPhase="rolled";P.lastHit=hit;
  if(hit)P.bossHp=Math.max(0,P.bossHp-1);
  const lines=hit?st.challenge.hit:st.challenge.miss;
- P.bossLine=fill(pick(lines&&lines.length?lines:["הבוס מתנדנד!"]),hs,R,MAPS[c.mapId].name);
+ P.bossLine=fill(pick(lines&&lines.length?lines:["הבוס מתנדנד!"]),hs,R,mapOf(c.mapId,c.age).name);
  render();sfx(hit?"win":"lose");if(hit)confetti(P.bossHp?18:90);
  const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});
 }
@@ -1262,7 +1345,7 @@ function saveHero(){
 let loadCtl=null;
 async function startCampaign(){
  const s=S.setup;
- const mapId=s.mapId||pick(MAP_ORDER);const M=MAPS[mapId];
+ const mapId=s.mapId||pick(MAP_ORDER);const M=mapOf(mapId,s.age);
  SAVE.campaign={id:rid(),mapId,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,likes:s.likes.trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
  const c=SAVE.campaign;c.premise=fill(M.premise,campHeroes(),null,M.name);
  persist();
@@ -1284,6 +1367,7 @@ async function loadChapter(first){
 function startPlay(ch,first){
  const c=SAVE.campaign;
  if(ch.campaign&&first){if(ch.campaign.title)c.title=ch.campaign.title;if(ch.campaign.premise)c.premise=ch.campaign.premise;if(ch.campaign.goal)c.goal=ch.campaign.goal;persist();}
+ assignMoves(ch,c);
  S.play={chapter:ch,idx:-1,phase:"read",startedAt:Date.now(),roll:null,help:false,hint:false,reveal:false,walk:null,entered:null,mapDone:false,luckUsed:{},bossHp:null};
  go(first?"intro":"play");
 }
@@ -1315,7 +1399,7 @@ function advance(){
  const from=Math.min(c.node,NODES-1);c.node=Math.min(c.node+1,NODES);
  if(c.node>=NODES)P.mapDone=true;
  persist();
- P.idx++;P.phase="read";P.roll=null;P.help=false;P.plan=false;P.opened=false;P.hint=false;P.reveal=false;P.xpInfo=null;P.tries=0;P.noReward=false;P.answer="";P.bossHp=null;P.bossLine=null;P.bossPhase=null;P.upIdx=0;P.upQueue=[];
+ P.idx++;P.phase="read";P.roll=null;P.help=false;P.plan=false;P.opened=false;P.moveDone=false;P.mcount=0;P.hint=false;P.reveal=false;P.xpInfo=null;P.tries=0;P.noReward=false;P.answer="";P.bossHp=null;P.bossLine=null;P.bossPhase=null;P.upIdx=0;P.upQueue=[];
  if(P.idx<P.chapter.stations.length&&S.showMap)P.walk={from,to:Math.min(c.node,NODES-1)};
  if(P.idx>=P.chapter.stations.length&&P.mapDone)setTimeout(()=>confetti(80),300);
  render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});
@@ -1324,7 +1408,7 @@ function nextWorld(c){
  c.mapsDone=c.mapsDone||[];if(!c.mapsDone.includes(c.mapId))c.mapsDone.push(c.mapId);
  if(c.mapsDone.length>=3)c.mapsDone=[c.mapId];
  const next=MAP_ORDER.find(m=>!c.mapsDone.includes(m))||MAP_ORDER[(MAP_ORDER.indexOf(c.mapId)+1)%3];
- const M=MAPS[next];c.mapId=next;c.node=0;c.title=M.campTitle;c.goal=M.goal;c.premise=fill(M.premise,campHeroes(),null,M.name);c.log=[];c.nextChapter=null;
+ const M=mapOf(next,c.age);c.mapId=next;c.node=0;c.title=M.campTitle;c.goal=M.goal;c.premise=fill(M.premise,campHeroes(),null,M.name);c.log=[];c.nextChapter=null;
  return M;
 }
 function endSession(){
@@ -1340,7 +1424,7 @@ function rollDice(btn){
  const v=1+Math.floor(Math.random()*d.sides);
  btn.disabled=true;sfx("roll");
  const hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];
- const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=Math.max(1,Math.min(d.sides,d.target-(P.help?1:0)-(P.plan?2:0)));if(v+statOf(L,"str")>=target){sfx("pop");confetti(24);}};
+ const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=Math.max(1,Math.min(d.sides,d.target-(P.help?1:0)-(P.plan?2:0)-(st.move&&P.moveDone?1:0)));if(v+statOf(L,"str")>=target){sfx("pop");confetti(24);}};
  if(RM){done();return;}
  if(d.sides===6){const cube=$("#cube");if(cube){cube.classList.add("go");requestAnimationFrame(()=>{cube.style.transform=cubeTf(v,2);});}setTimeout(done,1400);}
  else{const el=$("#d20"),sp=$("#d20v");if(el)el.classList.add("rolling");let k=0;const iv=setInterval(()=>{if(sp)sp.textContent=1+Math.floor(Math.random()*20);if(++k>14){clearInterval(iv);done();}},80);}
@@ -1388,6 +1472,8 @@ app.addEventListener("click",e=>{
   case "openq": P.opened=true;P.justOpened=true;sfx("pop");render();P.justOpened=false;{const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;
   case "jumpact": {const t=document.querySelector(".dicebox")||[...document.querySelectorAll(".btn.wide")].pop();if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});sfx("pop");break;}
   case "plan": P.plan=!P.plan;sfx("pop");render();break;
+  case "mcount": {const st=P.chapter.stations[P.idx];P.mcount=(P.mcount||0)+1;if(P.mcount>=st.move.n){P.moveDone=true;sfx("win");confetti(40);render();const t=document.querySelector(".dicebox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}else{sfx("pop");const el=b.querySelector("b");if(el)el.textContent=P.mcount;b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump");}break;}
+  case "mdone": P.moveDone=true;sfx("win");confetti(40);render();{const t=document.querySelector(".dicebox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}break;
   case "reroll": {const st=P.chapter.stations[P.idx],hs=campHeroes();const R=st.type==="boss"?hs[P.bossTurn%hs.length]:(hs.find(h=>h.id===st.leaderId)||hs[0]);if(luckLeft(R)<=0)break;P.luckUsed[R.id]=(P.luckUsed[R.id]||0)+1;P.roll=null;if(st.type==="boss"){P.bossPhase="ready";P.bossLine=fill(`${R.heroName} [משתמש|משתמשת] במזל, ו[מטיל|מטילה] שוב!`,hs,R,"");}sfx("pop");render();break;}
   case "bossnext": P.bossTurn++;P.bossPhase="ready";P.roll=null;sfx("pop");render();{const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;
   case "bossmark": bossHit(null,b.dataset.ok==="1");break;
