@@ -570,10 +570,29 @@ function persist(){
 }
 /* ---------- saving to the player's account (website only) ---------- */
 const SB_URL="https://qbsdrmjjgpdcdbkovfyj.supabase.co",SB_KEY="sb_publishable_jdN3h-CSJTPXhLWIyXFdjA_yRuw3lDm";
-let sb=null,sbUser=null,sbGoogle=false,cloudT=null;
+let sb=null,sbUser=null,sbGoogle=true,cloudT=null;
+const G_CID="14698983875-23icr4hrjsets1hgl6a8fpbnrglpi4k4.apps.googleusercontent.com";
+let gReady=false,gNonce=null;
+async function gInit(){
+ if(gReady||!window.google||!google.accounts||!google.accounts.id)return;
+ const raw=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
+ const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw));
+ const hashed=Array.from(new Uint8Array(h),b=>b.toString(16).padStart(2,"0")).join("");
+ gNonce=raw;
+ google.accounts.id.initialize({client_id:G_CID,nonce:hashed,use_fedcm_for_prompt:true,callback:async(resp)=>{
+  if(!sb){toast("החיבור עוד נטען, נסו שוב בעוד רגע");return;}
+  const {error}=await sb.auth.signInWithIdToken({provider:"google",token:resp.credential,nonce:gNonce});
+  if(error){toast("ההתחברות לא הצליחה, נסו שוב");gReady=false;gInit();}else{S.acct=false;toast("התחברתם! ההתקדמות נשמרת בחשבון");}
+ }});
+ gReady=true;gRender();
+}
+function gRender(){
+ const el=document.getElementById("gbtn");if(!el||!gReady||el.dataset.done)return;el.dataset.done="1";
+ google.accounts.id.renderButton(el,{theme:"filled_blue",size:"large",shape:"pill",text:"continue_with",locale:"he",width:Math.min(320,el.clientWidth||300)});
+}
 function initCloud(){
  if(window.claude)return;
- fetch(SB_URL+"/auth/v1/settings",{headers:{apikey:SB_KEY}}).then(r=>r.json()).then(j=>{sbGoogle=!!(j&&j.external&&j.external.google);if(S.screen==="home")render();}).catch(()=>{});
+ const gs=document.createElement("script");gs.src="https://accounts.google.com/gsi/client";gs.async=true;gs.onload=()=>gInit();document.head.appendChild(gs);
  const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js";
  sc.onload=async()=>{try{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
@@ -599,7 +618,7 @@ function acctPanel(){
  if(window.claude||!S.acct)return "";
  if(sbUser)return `<section class="panel slide"><div class="eyebrow">החשבון שלכם</div><p>מחובר: <b>${esc(sbUser.email||"")}</b>. הגיבורים וההתקדמות נשמרים בחשבון, ואפשר להמשיך מכל טלפון או מחשב.</p><button class="btn sm blu" data-a="logout"><span>יציאה מהחשבון</span></button></section>`;
  return `<section class="panel slide"><div class="eyebrow">שמירה בחשבון</div><p class="small">התחברו כדי שהגיבורים וההתקדמות יישמרו ותוכלו להמשיך מכל מכשיר.</p>
- ${sbGoogle?`<button class="btn wide" data-a="google"><span>המשך עם חשבון גוגל</span></button>`:""}
+ ${sbGoogle?`<div id="gbtn" style="display:flex;justify-content:center;min-height:44px;margin:6px 0"></div>`:""}
  <label class="fl">${sbGoogle?"או ":""}כניסה עם קישור במייל<input type="text" id="acctmail" inputmode="email" autocomplete="email" placeholder="המייל שלכם" dir="ltr"></label>
  <button class="btn sm grn" data-a="maillink"><span>שלחו לי קישור כניסה</span></button></section>`;
 }
@@ -1156,6 +1175,7 @@ function render(){
  app.innerHTML=v();
  if(S.toast)app.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${esc(S.toast)}</div>`);
  after();
+ if(typeof gRender==="function")try{gRender();}catch(e){}
 }
 function toast(t){S.toast=t;render();setTimeout(()=>{if(S.toast===t){S.toast=null;const el=document.querySelector(".toast");if(el)el.remove();}},2600);}
 const SND=()=>`<button class="ib" data-a="sound" aria-pressed="${soundOn}" aria-label="${soundOn?"השתקה":"הפעלת צלילים"}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>${soundOn?`<path d="M16 8.5q2.5 3.5 0 7M18.5 6q4.5 6 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`:`<path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`}</svg></button>`;
