@@ -380,7 +380,7 @@ svg.hero,.fx svg{overflow:visible}
 .tile svg *{animation:none!important}
 .tile span{font-weight:900;font-size:.8rem;line-height:1.2;text-align:center}
 .tile[aria-pressed=true]{background:#ffd23f;outline:3px solid var(--pnk);outline-offset:1px}
-@media (min-width:700px){.dress{left:0;right:0;width:auto;max-width:none;margin:0}.dtop,.dmain,.dcols{width:100%;max-width:900px;margin-inline:auto}.dpick{width:100%}.dgrid{max-width:900px;margin-inline:auto}.dmain{grid-template-columns:96px 1fr 96px}.dcat svg{max-height:9vh}.dcat span{font-size:.8rem}.dopt span{font-size:.75rem}.drow .swatch{width:36px;height:36px}}
+@media (min-width:700px){.dress{left:0;right:0;width:auto;max-width:none;margin:0}.dtop,.dmain{width:100%;max-width:900px;margin-inline:auto}.dcols{width:100%}.dcols .drow{max-width:900px;margin-inline:auto;justify-content:center}.dpick{width:100%}.dgrid{max-width:900px;margin-inline:auto}.dmain{grid-template-columns:96px 1fr 96px}.dcat svg{max-height:9vh}.dcat span{font-size:.8rem}.dopt span{font-size:.75rem}.drow .swatch{width:36px;height:36px}}
 
 .dress{height:100dvh;overflow:hidden;box-sizing:border-box}.dress *{box-sizing:border-box}
 .dmain{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:66px 1fr 66px;grid-template-rows:minmax(0,1fr);gap:4px;padding:0 max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))}
@@ -516,6 +516,7 @@ svg.hero,.fx svg{overflow:visible}
 .bubble.big{line-height:1.6}
 .eztext{display:block;font-family:"Frank Ruhl Libre","David Libre","Times New Roman",serif;font-size:1.65rem;line-height:1.9;font-weight:700;color:#2b1a0e}
 .kids .eztext{font-size:2rem}
+.panel .eztext{color:#fff}.panel .heartask .eztext{color:#8a1240}
 .eztog{margin-top:10px;font-size:.8rem;background:#f0e6c8;color:var(--parch-ink);box-shadow:0 2px 0 var(--o);min-height:34px}
 .narrcard{background:linear-gradient(180deg,#5b3bd0,#3a24a0)}
 
@@ -535,6 +536,33 @@ svg.hero,.fx svg{overflow:visible}
 .wm b{font-family:Rubik,Inter,sans-serif;font-weight:900;font-size:1.45rem;letter-spacing:.06em;color:#fff}
 .wm small{font-weight:900;font-size:.62rem;letter-spacing:.14em;color:var(--yel);margin-top:2px}
 .tagline{font-weight:900;color:var(--yel);font-size:1rem;margin-top:-6px}
+
+.gempill{display:inline-flex;align-items:center;gap:4px;background:var(--o);border:3px solid var(--o);border-radius:999px;padding:2px 10px 2px 6px;font-weight:900;color:#bff6ff;min-height:38px;box-shadow:0 3px 0 #0006}
+.gemfly{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:95;display:flex;align-items:center;gap:6px;background:#1b1030ee;color:#bff6ff;border:3px solid #3ee0ff;border-radius:999px;padding:6px 16px;font-weight:900;font-size:1.3rem;pointer-events:none;animation:gemfly 1.7s ease-out forwards}
+@keyframes gemfly{0%{opacity:0;transform:translate(-50%,20px) scale(.6)}15%{opacity:1;transform:translate(-50%,0) scale(1.15)}70%{opacity:1;transform:translate(-50%,-6px) scale(1)}100%{opacity:0;transform:translate(-50%,-40px)}}
+.oprice{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:2px;background:var(--o);color:#bff6ff;border-radius:999px;padding:0 7px 0 4px;font-style:normal;font-weight:900;font-size:.72rem;white-space:nowrap}
+.dopt.t3{background:#7a3bd0}.dopt.t4{background:linear-gradient(135deg,#ff9f1c,#ff4f8a)}
+.dopt.t3[aria-pressed=true],.dopt.t4[aria-pressed=true]{background:#ffd23f}
+.silh,.dopt.silh svg{filter:grayscale(1) brightness(.28) contrast(1.2)}
+.silwrap{position:relative;height:100%;width:100%;display:flex;align-items:center;justify-content:center}
+.silwrap>svg{height:100%;width:auto;max-width:100%}
+.silnote{position:absolute;bottom:8%;background:var(--o);color:var(--yel);font-weight:900;border-radius:999px;padding:3px 14px;font-size:.9rem}
+.shopprev{width:150px;height:150px;margin:0 auto;border-radius:22px;border:3px solid var(--o);background:radial-gradient(circle,#bfc9ff,#7d8ff0);overflow:hidden}
+.shopprev.t3{background:radial-gradient(circle,#d6b4ff,#7a3bd0)}.shopprev.t4{background:radial-gradient(circle,#ffe0a0,#ff4f8a)}
+.shopprev svg{width:100%;height:100%}
+.tierb{font-weight:900;color:var(--yel);margin-top:-8px}.tierb.t3{color:#d6b4ff}.tierb.t4{color:#ffb35c}
+.pcode summary{cursor:pointer;font-weight:900;color:var(--ink-dim);font-size:.9rem}
+.pcode{display:flex;flex-direction:column;gap:8px}
+.pcode[open]{gap:8px}
+@media (min-width:700px) and (min-height:601px){.dgrid{grid-template-columns:repeat(var(--n),minmax(0,150px))}.dopt svg{max-height:15vh}.dopt span{font-size:.9rem}.oprice{font-size:.85rem}}
+
+.sugrow{display:flex;gap:10px;justify-content:center}
+.sugitem{flex:1;max-width:170px;display:flex;flex-direction:column;align-items:center;gap:3px;background:#2a3cc4;border:3px solid var(--o);border-radius:16px;padding:6px;box-shadow:0 4px 0 var(--o);color:#fff}
+.sugitem.t3{background:#7a3bd0}.sugitem.t4{background:linear-gradient(135deg,#ff9f1c,#ff4f8a)}
+.sugitem svg{width:100%;aspect-ratio:1;height:auto;border-radius:10px;background:radial-gradient(circle,#bfc9ff,#7d8ff0)}
+.sugitem b{font-weight:900;font-size:.9rem}.sugitem span{display:inline-flex;align-items:center;gap:3px;font-weight:900;color:#bff6ff}
+.savedrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid #ffffff22}
+.savedrow:first-of-type{border-top:0}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -567,8 +595,19 @@ const COLORS={"אדום":"#ff3d4e","אדומה":"#ff3d4e","צהוב":"#ffcf2e","
 const HAIRC={"בלונדיני":"#ffd95a","בלונדינית":"#ffd95a","ג'ינג'י":"#ff7a2e","ג׳ינג׳י":"#ff7a2e","ג'ינג'ית":"#ff7a2e","שחור":"#2e2640","חום":"#7a4a2a","אדום":"#ff3d4e","ורוד":"#ff5fb0","כחול":"#3a7bff","סגול":"#9a5cff","לבן":"#f2f0ff","ירוק":"#3ed45e","כתום":"#ff8a1f"};
 const PALETTE=["#ff3d4e","#ffcf2e","#3a7bff","#3ed45e","#9a5cff","#ff5fb0","#ff8a1f","#1fd1c1","#5fd2ff","#ffc21f","#3a3456","#f6f3ff"];
 const HAIRPAL=["#2e2640","#7a4a2a","#ffd95a","#ff7a2e","#ff5fb0","#3a7bff","#9a5cff","#f2f0ff"];
-const ENUM={eyes:["round","big","dot","happy","sleepy","star","wink","cool"],mouth:["smile","grin","small","cat","tongue","smirk","o"],hair:["short","long","bob","ponytail","braid","pigtails","spiky","curly","bun","none"],style:["sparkle","hero"],bottom:["pants","skirt","shorts"],head:["none","crown","tiara","unicorn","wizard","helmet","bandana","bow","catears","horns","mushrooms","flower","star"],weapon:["none","sword","bow","staff","wand","heartwand","hammer","shield"],pet:["none","dragon","cat","owl","frog"],back:["none","cape","wings","butterfly"],emblem:["star","heart","bolt","moon","paw"]};
-const LBL={eyes:{round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש"},mouth:{smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו"},hair:{short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"כוכב במה",hero:"גיבור על"},bottom:{pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים"},head:{none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן"},pet:{none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע"},back:{none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר"},emblem:{star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל"}};
+const ENUM={eyes:["round","big","dot","happy","wink","kawaii","spiral","cool","hearts","starglasses"],
+ mouth:["smile","small","grin","cat","smirk","o","tongue","fangs","mustache","bubble"],
+ hair:["short","long","bob","ponytail","bun","none","braid","pigtails","spiky","curly"],
+ style:["sparkle","hero","nature","magic"],
+ bottom:["pants","skirt","shorts","jeans","sporty","striped","tutu","starry","armor","rainbow"],
+ head:["none","crown","bow","catears","flower","helmet","horns","wizard","unicorn","star"],
+ weapon:["none","sword","wand","shield","staff","flower","bow","heartwand","hammer","lantern"],
+ pet:["none","cat","puppy","frog","bunny","parrot","fox","panda","dragon","unicorn"],
+ back:["none","cape","wings","butterfly","fairy","batwings","jetpack","robotarms","spiderlegs","dragonwings"],
+ emblem:["star","heart","bolt","moon","paw","flower","note","fire","crown","diamond"],
+ /* still drawable for older heroes, no longer offered */
+ _legacy:["sleepy","star","roundglasses","heartglasses","visor","tiara","bandana","mushrooms","book","owl","bee","backpack","shell","snow"]};
+const LBL={eyes:{round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש",kawaii:"חמודות",roundglasses:"משקפיים עגולים",spiral:"סחרחורת",hearts:"לבבות",heartglasses:"משקפי לב",visor:"מגן עתידני",starglasses:"משקפי כוכב"},mouth:{smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו",fangs:"ניבי ערפד",mustache:"שפם",bubble:"בועת מסטיק"},hair:{short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"שומר הקשת",hero:"מגן הלילה",nature:"שומר היער",magic:"קוסם הגלקסיה"},bottom:{pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים",jeans:"ג'ינס",sporty:"ספורט",striped:"פסים",tutu:"טוטו",starry:"כוכבים",armor:"שריון",rainbow:"קשת בענן"},head:{none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן",flower:"פרח קסום",book:"ספר לחשים",lantern:"פנס קסום"},pet:{parrot:"תוכי",none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע",bunny:"ארנבון",puppy:"כלבלב",bee:"דבורה",fox:"שועל",panda:"פנדה",unicorn:"חד־קרן"},back:{robotarms:"זרועות רובוט",spiderlegs:"רגלי עכביש",none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר",backpack:"תרמיל",fairy:"כנפי פיה",shell:"שריון צב",batwings:"כנפי עטלף",jetpack:"תרמיל סילון",dragonwings:"כנפי דרקון"},emblem:{star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל",flower:"פרח",note:"תו מוזיקה",snow:"פתית שלג",fire:"אש",crown:"כתר",diamond:"יהלום"}};
 const ICONS=["gem","key","potion","shield","feather","star","scroll","crystal","crown","moon"];
 const NPC_KEYS=["penguin","penguinking","owl","bear","dog","door","wind","queen","frog","grandmafrog","firefly","croc","tree","moon","bird","nightbird","cloud","star","dragon","sprite"];
 const AGES=[{id:"3-5",l:"3–5"},{id:"5-7",l:"5–7"},{id:"8-10",l:"8–10"},{id:"11+",l:"11+"}];
@@ -713,12 +752,46 @@ const UNLOCK_CODE="2405";
 const STYLE_TAG={ice:{young:"אגדת חורף מתוקה",old:"תעלומה קפואה"},swamp:{young:"הרפתקת לילה מצחיקה",old:"מסתורין בחושך"},sky:{young:"מסע צבעוני בשמיים",old:"מרדף בין העננים"}};
 function U(){SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};return SAVE.unlocks;}
 function mapOpen(id){if(String(id).startsWith("c_"))return true;const i=MAP_ORDER.indexOf(id);const u=U();return i<=0||u.maps.includes(id)||u.done.includes(MAP_ORDER[i-1]);}
-const PREMIUM={eyes:["star","cool"],mouth:["cat"],head:["wizard","horns","mushrooms","star"],back:["butterfly"],pet:["dragon","owl"],hair:["curly"],weapon:["hammer"]};
-function premiumLocked(k,v){return !U().items&&(PREMIUM[k]||[]).includes(v);}
+const PREMIUM_OLD={eyes:["star","cool"],mouth:["cat"],head:["wizard","horns","mushrooms","star"],back:["butterfly"],pet:["dragon","owl"],hair:["curly"],weapon:["hammer"]};
+/* item economy: 2 free items per category (plus "none"), the rest open with gems earned in play, or one at a time with the parent code */
+const TIER={
+ eyes:{dot:1,happy:1,wink:1,kawaii:2,spiral:2,cool:3,hearts:3,starglasses:4},
+ mouth:{grin:1,cat:1,smirk:1,o:2,tongue:2,fangs:3,mustache:3,bubble:4},
+ hair:{bob:1,ponytail:1,bun:1,none:2,braid:2,pigtails:3,spiky:3,curly:4},
+ face:{freckles:1,bandaid:1,chocolate:1,whiskers:2,hearts:2,clown:3,eyepatch:3,glitter:4},
+ head:{catears:1,flower:1,helmet:1,horns:2,wizard:2,unicorn:3,star:4},
+ weapon:{shield:1,staff:1,flower:1,bow:2,heartwand:2,hammer:3,lantern:4},
+ back:{butterfly:1,fairy:1,batwings:2,jetpack:2,robotarms:3,spiderlegs:3,dragonwings:4},
+ pet:{frog:1,bunny:1,parrot:1,fox:2,panda:2,dragon:3,unicorn:4},
+ emblem:{bolt:1,moon:1,paw:1,flower:2,note:2,fire:3,crown:3,diamond:4},
+ bottom:{shorts:1,jeans:1,sporty:1,striped:2,tutu:2,starry:3,armor:3,rainbow:4},
+ style:{nature:4,magic:4}};
+const PRICE={1:2,2:4,3:6,4:9};
+const TIER_N={1:"רגיל",2:"מיוחד",3:"נדיר",4:"אגדי"};
+function tkey(k){return k==="_face"?"face":k;}
+function tierOf(k,v){return (TIER[tkey(k)]||{})[v]||0;}
+function owned(k,v){const u=U();u.owned=u.owned||[];return u.owned.includes(tkey(k)+":"+v);}
+function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;return tierOf(k,v)>0&&!owned(k,v);}
+function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
+function gems(){return SAVE.gems||0;}
+const GEM=(w=18)=>`<svg viewBox="0 0 24 24" width="${w}" height="${w}" aria-hidden="true"><path d="M5 9 L9 4 H15 L19 9 L12 20 Z" fill="#3ee0ff" stroke="${O}" stroke-width="2" stroke-linejoin="round"/><path d="M5 9 H19 M9 4 L10.5 9 L12 20 L13.5 9 L15 4" fill="none" stroke="${O}" stroke-width="1.2"/><path d="M8 7 l2 -1.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+function gemPill(){return `<span class="gempill" aria-label="${gems()} יהלומים">${GEM(18)}<b>${gems()}</b></span>`;}
+function earn(n){if(!n)return;SAVE.gems=gems()+n;try{persist();}catch(e){}
+ const el=document.createElement("div");el.className="gemfly";el.innerHTML=`${GEM(26)}<b>+${n}</b>`;document.body.appendChild(el);setTimeout(()=>el.remove(),1700);
+ document.querySelectorAll(".gempill b").forEach(x=>x.textContent=gems());}
+function premiumLocked(k,v){return itemLocked(k,v);}
 const LOCK_SVG=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="12" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/><path d="M8 10 V7 a4 4 0 0 1 8 0 V10" fill="none" stroke="${O}" stroke-width="2.4"/><circle cx="12" cy="16" r="2" fill="${O}"/></svg>`;
 function lockModal(){
  const L=S.lock;if(!L)return "";
- const txt={map:`העולם "${esc(L.name||"")}" נפתח אחרי שמסיימים את העולם שלפניו. רוצים לפתוח אותו כבר עכשיו?`,items:"פריטים מיוחדים לחדר ההלבשה: עיני כוכבים, משקפי שמש, כובע קוסם, כנפי פרפר, דרקון ועוד.",create:"יצירת עולם משלכם: בוחרים שם ומילות מפתח, והמשחק בונה סביבם הרפתקה חדשה."}[L.kind]||"";
+ if(L.kind==="item"){const tr=tierOf(L.k,L.v),pr=PRICE[tr],need=pr-gems(),leg=tr===4&&!legendOK(),q={...S.draft.result.params};dSet(q,L.k,L.v);const T=DTABS.find(t=>t.k===L.k)||DTABS[0];
+  return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${L.k==="style"?"silh":""}">${heroInner(q,L.k==="style"?4:1,{fem:S.draft.gender==="f",mood:"happy"})}</svg></div>
+  <h3>${esc(dLbl(L.k,L.v))}</h3><p class="tierb t${tr}">${TIER_N[tr]}</p>
+  ${leg?`<p>${L.k==="style"?"סגנון העל נפתח רק בסוף המשחק, אחרי שמסיימים את כל העולמות, וכשהדמות מגיעה לרמה הכי גבוהה.":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
+  <button class="btn wide ${need>0||leg?"":"grn"}" data-a="buygem" ${need>0||leg?"disabled":""}><span>פתיחה ב־${pr} יהלומים</span></button>
+  <p class="small muted">יש לכם ${gems()} יהלומים</p>
+  <details class="pcode" ${L.err?"open":""}><summary>פתיחה עם קוד הורים</summary><input type="text" id="lockcode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="• • • •" dir="ltr" class="${L.err?"shake":""}">${L.err?`<p class="lockerr">הקוד לא נכון. נסו שוב.</p>`:""}<button class="btn sm grn" data-a="lockok"><span>פתיחה עם קוד</span></button></details>
+  <button class="btn sm blu" data-a="lockcancel"><span>סגירה</span></button></div></div>`;}
+ const txt={map:`העולם "${esc(L.name||"")}" נפתח אחרי שמסיימים את העולם שלפניו. רוצים לפתוח אותו כבר עכשיו?`,items:"פריטים מיוחדים לחדר ההלבשה: עיני כוכבים, משקפי שמש, כובע קוסם, כנפי פרפר, דרקון ועוד.",create:"יצירת עולם משלכם: בוחרים שם ומילות מפתח, והמשחק בונה סביבם הרפתקה חדשה. כל עולם חדש נפתח בנפרד."}[L.kind]||"";
  return `<div class="lockov" role="dialog" aria-label="נעילת הורים"><div class="lockbox slide"><div class="lockic">${LOCK_SVG}</div><h3>נעילת הורים</h3><p>${txt}</p><p class="small muted">בשלב הניסיון הכול נפתח עם קוד. הכניסו את הקוד:</p>
  <input type="text" id="lockcode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="• • • •" dir="ltr" class="${L.err?"shake":""}">
  ${L.err?`<p class="lockerr">הקוד לא נכון. נסו שוב.</p>`:""}
@@ -772,7 +845,7 @@ const LS="kubiya-save-v1";
 function defaultSave(){
  return {v:1,updatedAt:0,heroes:[{id:"demo",demo:true,kidName:"ים",gender:"m",desc:"לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב",heroName:"ים דרקו",title:"לוחם הדרקונים",catch:"אף דרקון לא מפחיד אותי!",params:{skin:1,hair:"spiky",hairColor:"#7a4a2a",primary:"#ff3d4e",secondary:"#ffcf2e",head:"bandana",weapon:"sword",pet:"dragon"},fixesLeft:3,xp:0,items:[]}],campaign:null};
 }
-function normSave(){try{SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params)h.params.fem=h.gender==="f";});}catch(e){}}
+function normSave(){try{SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.unlocks.owned=SAVE.unlocks.owned||[];SAVE.gems=SAVE.gems||0;SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params)h.params.fem=h.gender==="f";});}catch(e){}}
 function loadLocal(){try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r);}catch(e){}return null;}
 let db=null,uid=null,writing=false,pendingWrite=false;
 function persist(){
@@ -967,7 +1040,7 @@ const shadowE=(rx=34)=>`<ellipse cx="70" cy="160" rx="${rx}" ry="6" fill="#000" 
 const smile=(x,y,w=8)=>`<path d="M${x-w} ${y} Q${x} ${y+w} ${x+w} ${y}" fill="none"${K(3)}/>`;
 const VB="0 -28 140 194";
 
-const TIP={sword:[0,-66],bow:[14,-10],staff:[0,-52],wand:[0,-37],heartwand:[0,-40],hammer:[0,-44],orb:[0,-16]};
+const TIP={book:[0,-22],lantern:[0,-24],flower:[0,-36],sword:[0,-66],bow:[14,-10],staff:[0,-52],wand:[0,-37],heartwand:[0,-40],hammer:[0,-44],orb:[0,-16]};
 function heartPath(cx,cy,s){return `M${cx} ${(cy+s*.9).toFixed(1)} C ${(cx-s*1.45).toFixed(1)} ${(cy-s*.1).toFixed(1)} ${(cx-s*.95).toFixed(1)} ${(cy-s*1.25).toFixed(1)} ${cx} ${(cy-s*.45).toFixed(1)} C ${(cx+s*.95).toFixed(1)} ${(cy-s*1.25).toFixed(1)} ${(cx+s*1.45).toFixed(1)} ${(cy-s*.1).toFixed(1)} ${cx} ${(cy+s*.9).toFixed(1)} Z`;}
 function sparkles(pts,col="#fff"){return pts.map(([x,y,r],i)=>`<polygon class="tw" style="animation-delay:${(i*.45).toFixed(2)}s" points="${starPts(x,y,r,r*.42)}" fill="${col}"${K(1.3)}/>`).join("");}
 /* power effects shared by every upgradable item: t = 0..3 */
@@ -992,6 +1065,9 @@ function weaponSVG(W,se,pr,t=0){
  if(W==="wand")w=limb("M0 12 L0 -28",t>=1?"#ffd23f":"#6a43b8",4)+`<polygon points="${starPts(0,-37,12+t*1.5,5.4+t*.6)}" fill="#ffd23f"${K(2.5)}/>`;
  if(W==="heartwand"){const hs=11+t*1.6;w=limb("M0 12 L0 -27",t>=1?"#ffd23f":"#ff9ad5",4)+`<path d="${heartPath(0,-40,hs)}" fill="#ff4fa0"${K(2.6)}/><ellipse cx="-4" cy="${(-44-t).toFixed(1)}" rx="3" ry="2" fill="#fff" opacity=".8"/>`+(t>=2?`<path d="M-9 -27 L9 -27" stroke="#ffd23f" stroke-width="3" stroke-linecap="round"/>`:"");}
  if(W==="hammer")w=limb("M0 30 L0 -34","#8b5a3c",6)+`<rect x="${-22-t}" y="${-57-t}" width="${44+t*2}" height="${26+t*2}" rx="7" fill="${t>=2?"#ffd23f":"#b3bfd2"}"${K()}/><rect x="-6" y="${-57-t}" width="12" height="${26+t*2}" fill="${se}"${K(2.5)}/>`;
+ if(W==="book")w=`<rect x="-15" y="-36" width="30" height="34" rx="4" fill="${pr}"${K()}/><rect x="-11" y="-33" width="22" height="28" rx="2" fill="#fff6df"/><path d="M0 -33 V-5" stroke="${O}" stroke-width="2"/><polygon points="${starPts(-5.5,-20,4.5,2)}" fill="${se}"/><polygon points="${starPts(5.5,-20,4.5,2)}" fill="${se}"/>`+(t>=1?`<g class="tw">${sparkles([[-14,-42,4],[14,-44,3.5]],"#ffd23f")}</g>`:"");
+ if(W==="lantern")w=`<path d="M0 -40 Q-9 -46 -6 -52 M0 -40 Q9 -46 6 -52" fill="none"${K(2.4)}/><circle class="glow" cx="0" cy="-22" r="${16+t*2}" fill="#ffe36b" opacity=".45"/><rect x="-11" y="-38" width="22" height="30" rx="6" fill="#ffe36b"${K()}/><rect x="-14" y="-41" width="28" height="6" rx="3" fill="#8b5a3c"${K(2.2)}/><rect x="-14" y="-11" width="28" height="6" rx="3" fill="#8b5a3c"${K(2.2)}/><path class="flame" d="M0 -14 C-5 -20 -2 -26 0 -31 C2 -26 5 -20 0 -14 Z" fill="#ff8a1f"/>`;
+ if(W==="flower")w=limb("M0 14 L0 -24","#3ed45e",4)+`<path d="M0 -6 Q-12 -10 -10 -18 Q-4 -12 0 -6 Z" fill="#3ed45e"${K(1.8)}/>`+[0,1,2,3,4].map(i=>{const a=i*1.2566-1.57;return `<circle cx="${(10*Math.cos(a)).toFixed(1)}" cy="${(-36+10*Math.sin(a)).toFixed(1)}" r="7.5" fill="${t>=2?"#ffd23f":"#ff7ec8"}"${K(2.2)}/>`;}).join("")+`<circle cx="0" cy="-36" r="6" fill="#ffcf2e"${K(2)}/>`;
  if(W==="orb")w=`<circle cx="0" cy="-16" r="${9+t}" fill="#8fe3ff"${K(2.5)}/><circle cx="3" cy="-19" r="3" fill="#fff"/>`;
  let pre="",add="";
  if(t>=3&&(W==="sword"||W==="hammer"||W==="staff"||W==="bow"))pre+=`<path class="flame" d="M${tx} ${ty+8} C ${tx-17} ${ty-6} ${tx-7} ${ty-22} ${tx} ${ty-36} C ${tx+7} ${ty-22} ${tx+17} ${ty-6} ${tx} ${ty+8} Z" fill="#ff7a1f" opacity=".9"/><path class="flame" d="M${tx} ${ty+3} C ${tx-9} ${ty-5} ${tx-3} ${ty-14} ${tx} ${ty-23} C ${tx+3} ${ty-14} ${tx+9} ${ty-5} ${tx} ${ty+3} Z" fill="#ffd23f"/>`;
@@ -1037,6 +1113,13 @@ function eyesSVG(st,ec,fem,k){
  if(st==="star")return pair((x,d)=>`<ellipse cx="${x}" cy="62" rx="${(9.6*k).toFixed(1)}" ry="${(11*k).toFixed(1)}" fill="#fff" stroke="${O}" stroke-opacity=".35" stroke-width="1.3"/><polygon points="${starPts(x+d*.6,63.4,8.4*k,3.9*k)}" fill="${ec}" stroke="${O}" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${x+2.6}" cy="58.6" r="${(2.2*k).toFixed(1)}" fill="#fff"/><path d="M${x-9.6*k} 63 A${9.6*k} ${11*k} 0 0 1 ${x+9.6*k} 63" fill="none" stroke="${O}" stroke-width="3.4" stroke-linecap="round"/>`+(fem?`<path d="M${x+d*8.6} 56 l${d*4.5} -4.5" ${K(2.4)}/>`:""));
  if(st==="big")return pair((x,d)=>eyeP(x,62,ec,fem,k*1.2,d)+`<polygon points="${starPts(x-d*2.5,66.5,2.6,1.1,4)}" fill="#fff"/>`);
  if(st==="sleepy"){const sk=arguments[4]||SKIN[1];return pair((x,d)=>{const rx=9.6*k,ry=11*k;return eyeP(x,62,ec,fem,k,d)+`<path d="M${(x-rx-1).toFixed(1)} 63.5 A${rx+1} ${ry+1} 0 0 1 ${(x+rx+1).toFixed(1)} 63.5 Z" fill="${sk}"/><path d="M${(x-rx).toFixed(1)} 63.5 Q${x} 66 ${(x+rx).toFixed(1)} 63.5" fill="none" stroke="${O}" stroke-width="3.2" stroke-linecap="round"/>`;});}
+ if(st==="hearts")return pair((x)=>`<path d="${heartPath(x,61,8.5*k)}" fill="#ff4f8a"${K(2.4)}/><ellipse cx="${x-3}" cy="58" rx="2.4" ry="1.6" fill="#fff" opacity=".85"/>`);
+ if(st==="spiral")return pair((x)=>`<circle cx="${x}" cy="62" r="${9.5*k}" fill="#fff" stroke="${O}" stroke-opacity=".4" stroke-width="1.3"/><path d="M${x} 62 m-1 0 a1 1 0 1 1 2 0 a3 3 0 1 1 -6 0 a5 5 0 1 1 10 0 a7 7 0 1 1 -14 0" fill="none" stroke="${O}" stroke-width="2.2" stroke-linecap="round"/>`);
+ if(st==="kawaii")return pair((x,d)=>`<ellipse cx="${x}" cy="62" rx="${8*k}" ry="${10*k}" fill="${O}"/><ellipse cx="${x}" cy="66" rx="${5.5*k}" ry="${4*k}" fill="${ec}" opacity=".8"/><circle cx="${x+2.6}" cy="57.5" r="${3.6*k}" fill="#fff"/><circle cx="${x-3}" cy="66" r="${1.6*k}" fill="#fff"/>`+(fem?`<path d="M${x+d*7} 54 l${d*4} -4" ${K(2.4)}/>`:""));
+ if(st==="roundglasses")return eyeP(56,62,ec,fem,k*.85,-1)+eyeP(84,62,ec,fem,k*.85,1)+`<circle cx="56" cy="62" r="12" fill="#bfe8ff" fill-opacity=".25" stroke="${O}" stroke-width="3.4"/><circle cx="84" cy="62" r="12" fill="#bfe8ff" fill-opacity=".25" stroke="${O}" stroke-width="3.4"/><path d="M68 61 Q70 58 72 61 M44 60 L35 57 M96 60 L105 57" fill="none" stroke="${O}" stroke-width="3" stroke-linecap="round"/><path d="M49 56 l5 -3" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`;
+ if(st==="heartglasses")return `<path d="M40 56 H100" ${K(3)}/><path d="${heartPath(55,61,12)}" fill="#ff4f8a"${K(2.8)}/><path d="${heartPath(85,61,12)}" fill="#ff4f8a"${K(2.8)}/><path d="M48 55 l5 -2 M78 55 l5 -2" stroke="#fff" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/>`;
+ if(st==="starglasses")return `<path d="M40 58 H100" ${K(3)}/><polygon points="${starPts(55,62,15,7)}" fill="#ffd23f"${K(2.8)}/><polygon points="${starPts(85,62,15,7)}" fill="#ffd23f"${K(2.8)}/><circle cx="55" cy="63" r="5" fill="#ff8a1f"/><circle cx="85" cy="63" r="5" fill="#ff8a1f"/><circle cx="53" cy="60" r="1.8" fill="#fff"/><circle cx="83" cy="60" r="1.8" fill="#fff"/>`;
+ if(st==="visor")return `<rect x="36" y="52" width="68" height="20" rx="10" fill="#3ee0ff" fill-opacity=".9" stroke="${O}" stroke-width="3"/><path d="M44 58 H72" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle cx="92" cy="62" r="3" fill="#fff" opacity=".7"/>`;
  return eyeP(56,62,ec,fem,k,-1)+eyeP(84,62,ec,fem,k,1);
 }
 const TONGUE=`<path d="M63.5 82 Q63 93 70 93.5 Q77 93 76.5 82 Z" fill="#ff6f91" stroke="${O}" stroke-width="2.2" stroke-linejoin="round"/><path d="M70 84 V89.5" stroke="#d94a72" stroke-width="1.8" stroke-linecap="round"/>`;
@@ -1047,7 +1130,21 @@ function mouthSVG(mt){
  if(mt==="smirk")return `<path d="M60 82 Q71 86.5 81 77" fill="none"${K(2.8)}/><path d="M80 76 l2.6 2.6" ${K(2.2)}/>`;
  if(mt==="o")return `<ellipse cx="70" cy="83" rx="4.6" ry="5.6" fill="#7a2840"${K(2.3)}/>`;
  if(mt==="tongue")return `<path d="M59 78 Q70 88 81 78 Q70 81 59 78 Z" fill="#7a2840"${K(2.3)}/>`+TONGUE;
+ if(mt==="fangs")return `<path d="M59 78 Q70 90 81 78 Q70 81 59 78 Z" fill="#7a2840"${K(2.3)}/><path d="M62.5 79 L64.5 84.5 L66.5 79.8 Z M77.5 79 L75.5 84.5 L73.5 79.8 Z" fill="#fff" stroke="${O}" stroke-width="1.2" stroke-linejoin="round"/>`;
+ if(mt==="mustache")return `<path d="M62 82 Q70 87 78 82" fill="none"${K(2.6)}/><path d="M70 75.5 Q63 72 56 76 Q53 80 57 80 Q62 77 70 79 Q78 77 83 80 Q87 80 84 76 Q77 72 70 75.5 Z" fill="#5a3a22"${K(2.2)}/>`;
+ if(mt==="bubble")return `<path d="M62 80 Q70 86 78 80" fill="none"${K(2.6)}/><circle cx="74" cy="86" r="10" fill="#ff8ad0" fill-opacity=".92"${K(2.4)}/><path d="M69 81 q2 -3 6 -3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
  return `<path d="M59 78 Q70 90 81 78 Q70 81 59 78 Z" fill="#7a2840"${K(2.3)}/><path d="M61.5 78.8 Q70 81.6 78.5 78.8 L77.8 80.6 Q70 83 62.2 80.6 Z" fill="#fff"/>`;
+}
+function facePaint(f){
+ if(f==="whiskers")return `<path d="M36 72 L48 74 M35 78 L48 77 M37 84 L48 80 M104 72 L92 74 M105 78 L92 77 M103 84 L92 80" stroke="${O}" stroke-width="1.8" stroke-linecap="round"/><circle cx="70" cy="73" r="2.6" fill="#ff8aa6"/>`;
+ if(f==="stars")return `<polygon points="${starPts(43,76,6,2.6)}" fill="#ffd23f"${K(1.6)}/><polygon points="${starPts(97,76,6,2.6)}" fill="#ffd23f"${K(1.6)}/><polygon points="${starPts(37,68,3.4,1.5)}" fill="#ffd23f"/>`;
+ if(f==="hearts")return `<path d="${heartPath(43,75,5.5)}" fill="#ff4f8a"${K(1.6)}/><path d="${heartPath(97,75,5.5)}" fill="#ff4f8a"${K(1.6)}/>`;
+ if(f==="glitter")return sparkles([[40,70,3.2],[46,79,2.4],[100,70,3.2],[94,79,2.4],[70,40,2.6]],"#fff")+`<circle cx="43" cy="74" r="1.2" fill="#ff8ad0"/><circle cx="97" cy="74" r="1.2" fill="#ff8ad0"/><circle cx="48" cy="70" r="1" fill="#3ee0ff"/><circle cx="92" cy="70" r="1" fill="#3ee0ff"/>`;
+ if(f==="clown")return `<circle cx="70" cy="72" r="6.5" fill="#ff3d4e"${K(2)}/><circle cx="68" cy="70" r="2" fill="#fff" opacity=".8"/>`;
+ if(f==="chocolate")return `<path d="M88 80 q6 -4 10 0 q2 5 -3 6 q-5 2 -7 -1 z" fill="#7a4a2a" opacity=".85"/><circle cx="93" cy="88" r="1.6" fill="#7a4a2a"/><circle cx="45" cy="84" r="1.3" fill="#7a4a2a"/>`;
+ if(f==="eyepatch")return `<path d="M36 50 L104 70" stroke="${O}" stroke-width="2.6"/><ellipse cx="84" cy="62" rx="12" ry="11" fill="#2e2640"${K(2.4)}/><path d="M80 57 l5 -2" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-linecap="round"/>`;
+ if(f==="bandaid")return `<g transform="rotate(-22 96 76)"><rect x="86" y="72" width="20" height="8" rx="3" fill="#f6c28b"${K(1.6)}/><rect x="93" y="72" width="6" height="8" fill="#e8a868"/></g>`;
+ return "";
 }
 function faceSVG(m,p,fem){
  p=p||{};const bl=p.blush!==false;
@@ -1055,12 +1152,12 @@ function faceSVG(m,p,fem){
  const sk=SKIN[p.skin??1]||SKIN[1],ec=p.eye||"#7a4a24",bc=shade(p.hairColor||"#5a3a22",-.5);
  const nose=`<path d="M67.6 72 Q70 74.8 72.4 72" fill="none" stroke="${shade(sk,-.32)}" stroke-width="2.2" stroke-linecap="round"/>`;
  const cheeks=(r=6.5)=>(bl?`<ellipse cx="45" cy="75" rx="${r}" ry="${(r*.56).toFixed(1)}" fill="#ff8aa6" opacity=".5"/><ellipse cx="95" cy="75" rx="${r}" ry="${(r*.56).toFixed(1)}" fill="#ff8aa6" opacity=".5"/>`:"")
-  +(p.freckles?[[41,72],[45.5,76],[48.5,71.5],[99,72],[94.5,76],[91.5,71.5]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.35" fill="${shade(sk,-.42)}"/>`).join(""):"");
+  +(p.freckles?[[41,72],[45.5,76],[48.5,71.5],[99,72],[94.5,76],[91.5,71.5]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.35" fill="${shade(sk,-.42)}"/>`).join(""):"")+facePaint(p.facepaint);
  const brow=d=>`<path d="${d}" fill="none" stroke="${bc}" stroke-width="3.4" stroke-linecap="round"/>`;
  const zz=`<g class="zz"><text x="102" y="18" font-family="Rubik,sans-serif" font-weight="900" font-size="18" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">Z</text><text x="116" y="2" font-family="Rubik,sans-serif" font-weight="900" font-size="12" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">z</text></g>`;
- const cool=es==="cool";
- if(m==="sleep")return cheeks()+(cool?eyesSVG("cool"):`<path d="M47 63 Q56 69 65 63 M75 63 Q84 69 93 63" fill="none"${K(3.4)}/>`+(fem?`<path d="M47 63 l-4 2.5 M93 63 l4 2.5" ${K(2.2)}/>`:""))+brow("M48 50 Q56 47 63 49 M92 50 Q84 47 77 49")+nose+`<path d="M65 81 Q70 84 75 81" fill="none"${K(2.6)}/>`+zz;
- if(m==="joy")return cheeks(8)+(cool?eyesSVG("cool"):`<path d="M47 65 Q56 53 65 65 M75 65 Q84 53 93 65" fill="none"${K(4.4)}/>`+(fem?`<path d="M47 65 l-4.5 -3 M93 65 l4.5 -3" ${K(2.4)}/>`:""))+brow("M47 44 Q55 38 63 42 M93 44 Q85 38 77 42")+nose
+ const cool=["cool","heartglasses","starglasses","visor"].includes(es);
+ if(m==="sleep")return cheeks()+(cool?eyesSVG(es,ec,fem,1):`<path d="M47 63 Q56 69 65 63 M75 63 Q84 69 93 63" fill="none"${K(3.4)}/>`+(fem?`<path d="M47 63 l-4 2.5 M93 63 l4 2.5" ${K(2.2)}/>`:""))+brow("M48 50 Q56 47 63 49 M92 50 Q84 47 77 49")+nose+`<path d="M65 81 Q70 84 75 81" fill="none"${K(2.6)}/>`+zz;
+ if(m==="joy")return cheeks(8)+(cool?eyesSVG(es,ec,fem,1):`<path d="M47 65 Q56 53 65 65 M75 65 Q84 53 93 65" fill="none"${K(4.4)}/>`+(fem?`<path d="M47 65 l-4.5 -3 M93 65 l4.5 -3" ${K(2.4)}/>`:""))+brow("M47 44 Q55 38 63 42 M93 44 Q85 38 77 42")+nose
   +`<path d="M55 76 Q70 99 85 76 Q70 81 55 76 Z" fill="#7a2840"${K(2.5)}/><path d="M57.6 77 Q70 81.2 82.4 77 L81.4 80 Q70 84.2 58.6 80 Z" fill="#fff"/>${mt==="tongue"||mt==="grin"?`<path d="M61.5 86 Q70 80.5 78.5 86 Q70 90.6 61.5 86 Z" fill="#ff7d9a"/>`:""}<g class="tw"><path d="M20 30 l-9 -7 M15 45 l-11 -1 M120 30 l9 -7 M125 45 l11 -1" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/></g>`;
  const k=m==="wow"?1.12:1;
  let f=cheeks()+`<g class="${es==="happy"||cool?"":"eyes"}">${eyesSVG(es,ec,fem,k,sk)}</g>`;
@@ -1108,11 +1205,19 @@ function backSVG(B,t,p){
  if((B||"none")==="none"){if(t<1)return "";B="cape";}
  let s="";
  if(B==="cape"){const w=t*3;s+=`<path d="M50 98 Q${30-w} 140 ${34-w} 157 L${106+w} 157 Q${110+w} 140 90 98 Z" fill="${t>=2?shade(pr,-.35):shade(se,-.3)}"${K()}/>`;if(t>=2)s+=`<path d="M${37-w} 151 Q70 158 ${103+w} 151" fill="none" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>`;if(t>=3)s+=sparkles([[30,128,5],[110,132,5],[38,148,4]],"#fff");return s;}
+ if(B==="jetpack")return `<rect x="47" y="92" width="18" height="40" rx="8" fill="#b3bfd2"${K()}/><rect x="75" y="92" width="18" height="40" rx="8" fill="#b3bfd2"${K()}/><rect x="47" y="100" width="18" height="6" fill="${se}"/><rect x="75" y="100" width="18" height="6" fill="${se}"/><path class="flame" d="M50 132 C46 142 52 152 56 158 C60 152 66 142 62 132 Z M78 132 C74 142 80 152 84 158 C88 152 94 142 90 132 Z" fill="#ff8a1f"${K(2)}/><path class="flame" d="M53 134 C52 140 55 146 56 150 C57 146 60 140 59 134 Z M81 134 C80 140 83 146 84 150 C85 146 88 140 87 134 Z" fill="#ffe36b"/>`;
+ if(B==="robotarms"){const arm=(d)=>{const X=x=>70+d*(x-70);return `<path d="M${X(58)} 102 Q${X(28)} 96 ${X(22)} 72 Q${X(18)} 58 ${X(8)} 48" fill="none" stroke="${O}" stroke-width="10" stroke-linecap="round"/><path d="M${X(58)} 102 Q${X(28)} 96 ${X(22)} 72 Q${X(18)} 58 ${X(8)} 48" fill="none" stroke="#b3bfd2" stroke-width="5" stroke-linecap="round"/><circle cx="${X(26)}" cy="88" r="5" fill="${se}"${K(2.2)}/><circle cx="${X(20)}" cy="64" r="4.5" fill="${se}"${K(2.2)}/><path d="M${X(8)} 48 L${X(0)} 40 M${X(8)} 48 L${X(14)} 38 M${X(8)} 48 L${X(-2)} 52" ${K(3.4)}/>`;};return arm(1)+arm(-1);}
+ if(B==="spiderlegs"){let o="";[0,1,2,3].forEach(i=>{[1,-1].forEach(d=>{const X=x=>70+d*(x-70),y=100+i*7;const path=`M${X(56)} ${y} Q${X(26-i*2)} ${y-26+i*8} ${X(8+i*3)} ${y+4+i*12}`;o+=`<path d="${path}" fill="none" stroke="${O}" stroke-width="7" stroke-linecap="round"/><path d="${path}" fill="none" stroke="${i%2?"#3a3456":"#ff3d4e"}" stroke-width="3.6" stroke-linecap="round"/>`;});});return o;}
+ if(B==="backpack")return `<rect x="30" y="88" width="80" height="48" rx="16" fill="${shade(se,-.15)}"${K()}/><rect x="40" y="82" width="60" height="14" rx="7" fill="${se}"${K(2.6)}/><rect x="24" y="104" width="12" height="22" rx="5" fill="${se}"${K(2.4)}/><rect x="104" y="104" width="12" height="22" rx="5" fill="${se}"${K(2.4)}/>`;
+ if(B==="shell")return `<ellipse cx="70" cy="112" rx="50" ry="40" fill="#3fa05f"${K()}/><path d="M70 86 L84 98 L80 116 L60 116 L56 98 Z M56 98 L36 104 M84 98 L104 104 M60 116 L48 138 M80 116 L92 138" fill="#6fd38a" stroke="${O}" stroke-width="2.6" stroke-linejoin="round"/>`;
  const k=(1+t*.14).toFixed(2);
  let L="";
  if(B==="wings")L=`<path d="M0 0 Q-40 -26 -46 8 Q-36 4 -33 15 Q-25 9 -21 21 Q-11 11 0 11 Z" fill="${t>=2?"#fff3c4":"#fff"}"${K(2.6)}/><path d="M-8 2 Q-26 -10 -36 2" fill="none" stroke="#d8dcf5" stroke-width="2.5"/>`+(t>=3?`<path d="M-46 8 Q-36 4 -33 15 Q-25 9 -21 21" fill="none" stroke="#ffd23f" stroke-width="3"/>`:"");
+ if(B==="batwings")L=`<path d="M0 0 Q-20 -30 -50 -18 Q-44 -6 -48 4 Q-38 -2 -34 10 Q-26 2 -20 14 Q-12 4 0 10 Z" fill="#4a3a7a"${K(2.6)}/><path d="M-10 4 L-40 -14" stroke="#7a68b0" stroke-width="2"/>`;
+ if(B==="dragonwings")L=`<path d="M0 0 Q-16 -40 -52 -34 L-44 -22 L-54 -14 L-42 -6 L-50 4 L-36 6 L-40 16 Q-18 10 0 12 Z" fill="${t>=2?"#ff8a3d":"#52d07e"}"${K(2.6)}/><path d="M-4 4 L-46 -28 M-6 8 L-48 -6 M-8 10 L-36 12" stroke="${O}" stroke-width="1.8" opacity=".6"/>`;
+ if(B==="fairy")L=`<ellipse cx="-22" cy="-14" rx="24" ry="13" transform="rotate(-28 -22 -14)" fill="#bff2ff" fill-opacity=".75"${K(2.2)}/><ellipse cx="-18" cy="12" rx="15" ry="9" transform="rotate(20 -18 12)" fill="#ffd6f5" fill-opacity=".75"${K(2.2)}/><circle cx="-28" cy="-18" r="2.4" fill="#fff"/>`;
  if(B==="butterfly")L=`<path d="M0 0 Q-44 -38 -50 -6 Q-48 8 0 6 Z" fill="${se}"${K(2.6)}/><path d="M0 6 Q-32 10 -32 28 Q-15 32 0 11 Z" fill="${pr}"${K(2.6)}/><circle cx="-28" cy="-6" r="${4+t}" fill="#fff" opacity=".85"/><circle cx="-18" cy="18" r="3" fill="#fff" opacity=".8"/>`;
- if(t>=1)s+=`<circle class="glow" cx="70" cy="100" r="${44+t*6}" fill="${B==="wings"?"#fff6c8":se}" opacity=".35"/>`;
+ if(t>=1)s+=`<circle class="glow" cx="70" cy="100" r="${44+t*6}" fill="${B==="wings"||B==="fairy"?"#fff6c8":se}" opacity=".35"/>`;
  s+=`<g class="flapL"><g transform="translate(52 102) scale(${k})">${L}</g></g><g class="flapR"><g transform="translate(88 102) scale(-${k} ${k})">${L}</g></g>`;
  if(t>=2)s+=sparkles([[18,80,5],[122,84,5],[14,112,4]].slice(0,t),"#fff");
  return s;
@@ -1122,50 +1227,76 @@ function emblemSVG(E,se,pr){
  if(E==="bolt")return `<path d="M72 96 L63 108 L69 108 L66 117 L77 104 L71 104 Z" fill="${se}"${K(2)}/>`;
  if(E==="moon")return `<path d="M73 98 A9 9 0 1 0 77 113 A7 7 0 1 1 73 98 Z" fill="${se}"${K(2)}/>`;
  if(E==="paw")return `<circle cx="70" cy="109" r="5" fill="${se}"${K(1.8)}/><circle cx="63.5" cy="102" r="2.6" fill="${se}"${K(1.5)}/><circle cx="70" cy="99.5" r="2.6" fill="${se}"${K(1.5)}/><circle cx="76.5" cy="102" r="2.6" fill="${se}"${K(1.5)}/>`;
+ if(E==="flower")return [0,1,2,3,4].map(i=>{const a=i*1.2566-1.57;return `<circle cx="${(70+6*Math.cos(a)).toFixed(1)}" cy="${(106+6*Math.sin(a)).toFixed(1)}" r="4.4" fill="${se}"${K(1.6)}/>`;}).join("")+`<circle cx="70" cy="106" r="3.4" fill="#ffd23f"${K(1.4)}/>`;
+ if(E==="note")return `<path d="M66 112 V97 L78 94 V108" fill="none"${K(2.6)}/><ellipse cx="63.5" cy="112" rx="4" ry="3" fill="${se}"${K(1.8)}/><ellipse cx="75.5" cy="108" rx="4" ry="3" fill="${se}"${K(1.8)}/>`;
+ if(E==="snow")return `<path d="M70 96 V116 M61.3 101 L78.7 111 M61.3 111 L78.7 101" stroke="${O}" stroke-width="5" stroke-linecap="round"/><path d="M70 96 V116 M61.3 101 L78.7 111 M61.3 111 L78.7 101" stroke="${se}" stroke-width="2.6" stroke-linecap="round"/>`;
+ if(E==="fire")return `<path d="M70 96 C78 103 80 110 76 115 Q70 119 64 115 C60 110 63 104 66 101 C66 106 68 107 69 106 C68 102 69 99 70 96 Z" fill="${se}"${K(2)}/><path d="M70 107 C73 110 73 113 70 115 C67 113 67 110 70 107 Z" fill="#ffe36b"/>`;
+ if(E==="crown")return `<path d="M60 112 L59 99 L65 105 L70 97 L75 105 L81 99 L80 112 Z" fill="${se}"${K(2)}/><circle cx="70" cy="108" r="1.8" fill="#fff"/>`;
+ if(E==="diamond")return `<path d="M62 101 L66 97 L74 97 L78 101 L70 115 Z" fill="${se}"${K(2)}/><path d="M62 101 H78 M66 97 L68 101 L70 115 L72 101 L74 97" fill="none" stroke="${O}" stroke-width="1.3"/><path d="M65 99 l2 -1" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>`;
  return `<polygon points="${starPts(70,106,8.5,3.8)}" fill="${se}"${K(2)}/>`;
 }
 function petSVG(P){
  if(P==="dragon")return `<g class="pet">${limb("M28 152 Q40 156 40 144","#52d07e",6)}<path d="M8 138 Q-4 122 4 114 Q10 128 17 130 Z" fill="#35b065"${K(2.5)}/><ellipse cx="18" cy="148" rx="13" ry="10" fill="#6fe39a"${K(2.5)}/><ellipse cx="18" cy="151" rx="7" ry="5.5" fill="#ffe58a"/><circle cx="20" cy="130" r="11" fill="#6fe39a"${K(2.5)}/><path d="M13 121 L11 111 L18 119 Z M27 120 L31 111 L24 119 Z" fill="#ffd23f"${K(1.8)}/>${eye(15.5,129,3.8)}${eye(25,129,3.8)}<path d="M17 136 Q20 139 23 136" fill="none"${K(2)}/></g>`;
  if(P==="cat")return `<g class="pet">${limb("M28 150 Q40 146 36 132","#ffa043",5)}<ellipse cx="18" cy="148" rx="12" ry="10" fill="#ffa043"${K(2.5)}/><path d="M10 126 L9 113 L18 121 Z M29 126 L30 113 L21 121 Z" fill="#ffa043"${K(2.2)}/><circle cx="19.5" cy="130" r="11" fill="#ffa043"${K(2.5)}/>${eye(15,129,3.6)}${eye(24,129,3.6)}<path d="M17 135 Q19.5 137 22 135" fill="none"${K(1.8)}/></g>`;
  if(P==="owl")return `<g class="pet"><path d="M8 126 L10 116 L15 124 Z M30 126 L28 116 L23 124 Z" fill="#b07a4a"${K(2.2)}/><ellipse cx="19" cy="140" rx="14" ry="17" fill="#b07a4a"${K(2.5)}/><ellipse cx="19" cy="146" rx="8" ry="9" fill="#f3dcb5"/>${eye(13.5,133,5)}${eye(24.5,133,5)}<path d="M17 138 L21 138 L19 142 Z" fill="#ffb02e"${K(1.5)}/></g>`;
+ if(P==="bunny")return `<g class="pet"><ellipse cx="13" cy="114" rx="4.5" ry="12" fill="#fff"${K(2.2)}/><ellipse cx="25" cy="114" rx="4.5" ry="12" fill="#fff"${K(2.2)}/><ellipse cx="13" cy="115" rx="2" ry="8" fill="#ffb3cf"/><ellipse cx="25" cy="115" rx="2" ry="8" fill="#ffb3cf"/><ellipse cx="18" cy="149" rx="13" ry="10" fill="#fff"${K(2.5)}/><circle cx="19" cy="132" r="11" fill="#fff"${K(2.5)}/>${eye(15,131,3.4)}${eye(23.5,131,3.4)}<path d="M17.5 136 h3 l-1.5 2 z" fill="#ff8aa6"/><circle cx="31" cy="150" r="4" fill="#fff"${K(2)}/></g>`;
+ if(P==="puppy")return `<g class="pet">${limb("M29 150 Q38 146 37 138","#c98a4a",5)}<ellipse cx="18" cy="149" rx="13" ry="10" fill="#c98a4a"${K(2.5)}/><circle cx="19" cy="131" r="11" fill="#c98a4a"${K(2.5)}/><ellipse cx="9" cy="132" rx="4.5" ry="9" fill="#7a4a2a"${K(2.2)}/><ellipse cx="29" cy="132" rx="4.5" ry="9" fill="#7a4a2a"${K(2.2)}/>${eye(15,130,3.4)}${eye(23.5,130,3.4)}<ellipse cx="19.5" cy="136" rx="3" ry="2.2" fill="${O}"/><path d="M18 139 q1.5 4 3 0 z" fill="#ff7d9a"/></g>`;
+ if(P==="bee")return `<g class="pet floaty"><ellipse cx="14" cy="118" rx="7" ry="10" transform="rotate(-25 14 118)" fill="#e8f8ff" fill-opacity=".85"${K(2)}/><ellipse cx="24" cy="118" rx="7" ry="10" transform="rotate(25 24 118)" fill="#e8f8ff" fill-opacity=".85"${K(2)}/><ellipse cx="19" cy="134" rx="13" ry="11" fill="#ffd23f"${K(2.5)}/><path d="M12 126 Q19 124 26 126 M9 133 Q19 130 29 133 M10 140 Q19 138 28 140" stroke="${O}" stroke-width="3" fill="none"/>${eye(15,131,3)}${eye(23,131,3)}<path d="M19 145 l0 5" ${K(2)}/></g>`;
+ if(P==="fox")return `<g class="pet"><path d="M28 152 Q46 150 40 130 Q36 142 26 144 Z" fill="#ff8a3d"${K(2.4)}/><path d="M38 134 Q40 130 40 130 L36 138 Z" fill="#fff"/><ellipse cx="18" cy="149" rx="12" ry="10" fill="#ff8a3d"${K(2.5)}/><ellipse cx="18" cy="152" rx="6" ry="5" fill="#fff"/><path d="M9 126 L8 113 L17 121 Z M30 126 L31 113 L22 121 Z" fill="#ff8a3d"${K(2.2)}/><path d="M19 122 Q8 124 9 132 Q12 140 19.5 141 Q27 140 30 132 Q31 124 19 122 Z" fill="#ff8a3d"${K(2.5)}/><path d="M12 134 Q19.5 144 27 134 Q19.5 137 12 134 Z" fill="#fff"/>${eye(15,130,3.2)}${eye(24,130,3.2)}<circle cx="19.5" cy="136" r="1.8" fill="${O}"/></g>`;
+ if(P==="panda")return `<g class="pet"><ellipse cx="18" cy="149" rx="13" ry="10" fill="#fff"${K(2.5)}/><ellipse cx="10" cy="154" rx="4.5" ry="3.5" fill="#2e2640"/><ellipse cx="27" cy="154" rx="4.5" ry="3.5" fill="#2e2640"/><circle cx="10" cy="122" r="4.5" fill="#2e2640"${K(2)}/><circle cx="29" cy="122" r="4.5" fill="#2e2640"${K(2)}/><circle cx="19.5" cy="131" r="11" fill="#fff"${K(2.5)}/><ellipse cx="15" cy="130" rx="4" ry="5" fill="#2e2640" transform="rotate(20 15 130)"/><ellipse cx="24" cy="130" rx="4" ry="5" fill="#2e2640" transform="rotate(-20 24 130)"/><circle cx="15.5" cy="129.5" r="1.6" fill="#fff"/><circle cx="23.5" cy="129.5" r="1.6" fill="#fff"/><ellipse cx="19.5" cy="136" rx="2.4" ry="1.7" fill="${O}"/></g>`;
+ if(P==="unicorn")return `<g class="pet"><ellipse cx="20" cy="149" rx="14" ry="9" fill="#fff"${K(2.5)}/><path d="M8 153 v6 M14 155 v5 M26 155 v5 M32 153 v6" ${K(3.2)}/><path d="M28 146 Q40 140 38 128" fill="none" stroke="#ff7ec8" stroke-width="6" stroke-linecap="round"/><path d="M28 146 Q40 140 38 128" fill="none" stroke="#b98cff" stroke-width="2.4" stroke-linecap="round"/><path d="M6 140 Q2 124 12 118 Q22 116 24 126 Q24 136 14 142 Z" fill="#fff"${K(2.5)}/><path d="M12 118 Q20 112 26 122 Q22 126 18 122" fill="#ff7ec8"${K(2)}/><polygon points="9,119 7,106 14,117" fill="#ffd23f"${K(2)}/>${eye(13,127,3)}<circle cx="8" cy="134" r="1.2" fill="${O}"/></g>`;
+ if(P==="parrot")return `<g class="pet"><path d="M12 150 L4 164 L16 157 Z M16 152 L12 166 L20 158 Z" fill="#3a7bff"${K(2)}/><ellipse cx="19" cy="144" rx="11" ry="13" fill="#ff3d4e"${K(2.5)}/><path d="M12 138 Q3 148 11 158 Q18 150 12 138 Z" fill="#3ed45e"${K(2)}/><circle cx="20" cy="128" r="10" fill="#ff3d4e"${K(2.5)}/><path d="M27 125 Q36 127 30 136 Q27 132 25 131 Z" fill="#ffd23f"${K(2)}/>${eye(20,126,3.3)}<path d="M15 119 Q18 112 22 118" fill="none" stroke="#ffd23f" stroke-width="3" stroke-linecap="round"/></g>`;
  if(P==="frog")return `<g class="pet"><circle cx="11" cy="141" r="6.5" fill="#5fd35f"${K(2.2)}/><circle cx="25" cy="141" r="6.5" fill="#5fd35f"${K(2.2)}/><ellipse cx="18" cy="151" rx="15" ry="9" fill="#5fd35f"${K(2.5)}/><ellipse cx="18" cy="146" rx="12" ry="5" fill="#5fd35f"/>${eye(11,140,4)}${eye(25,140,4)}<path d="M12 151 Q18 155 24 151" fill="none"${K(2)}/></g>`;
  return "";
 }
+function hueWrap(svg,h,id){if(!svg||!h)return svg||"";return `<defs><filter id="${id}" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="${h}"/></filter></defs><g filter="url(#${id})">${svg}</g>`;}
+const HUES=[0,40,90,150,200,250,300];
 function heroInner(p,level=1,o={}){
  const mood=o.mood||"happy",st=o.stats||{};
  const tS=Math.min(3,st.str||0),tW=Math.min(3,st.wis||0),tL=Math.min(3,st.luck||0);
  const sk=SKIN[p.skin??1]||SKIN[1],skd=shade(sk,-.15),hc=p.hairColor||"#7a4a2a",pr=p.primary||"#ff3d4e",prd=shade(pr,-.3),se=p.secondary||"#ffcf2e",sed=shade(se,-.28);
  const W0=p.weapon||"none",W=(W0==="none"&&tS>=1)?"orb":W0,HD=p.head||"none",H=p.hair||"short";
  const fem=o.fem!=null?o.fem:!!p.fem,gid="h"+(gradN++),GOLD="#ffd23f";
- const power=tS+tW+tL,lv=level,spk=(p.style||(fem?"sparkle":"hero"))==="sparkle",hro=!spk;
+ const power=tS+tW+tL,lv=level,sty=p.style||(fem?"sparkle":"hero"),spk=sty==="sparkle",hro=sty==="hero",mag=sty==="magic",nat=sty==="nature";
  let s="";
  if(lv>=4&&spk){const RB=["#ff4d6d","#ff9f1c","#ffe14d","#4fe36b","#3ec2ff","#a978ff"];RB.forEach((c,i)=>{const r=90-i*8.5;s+=`<path d="M${70-r} 100 A${r} ${r} 0 0 1 ${70+r} 100" fill="none" stroke="${c}" stroke-width="9"/>`;});s+=`<path d="M-20 100 A90 90 0 0 1 160 100 M27.5 100 A42.5 42.5 0 0 1 112.5 100" fill="none" stroke="${O}" stroke-width="2.4" opacity=".55"/>`;[[-6,98],[146,98]].forEach(([x,y])=>{s+=`<g><circle cx="${x-9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x+9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x}" cy="${y-5}" r="11" fill="#fff"${K(2.4)}/><rect x="${x-17}" y="${y+1}" width="34" height="9" fill="#fff"/></g>`;});}
  if(lv>=4&&hro)s+=`<path d="M18 160 L96 4 L126 6 Z" fill="#fff6b0" opacity=".2"/><circle class="glow" cx="110" cy="-2" r="27" fill="#fff3a0" opacity=".45"/><circle cx="110" cy="-2" r="20" fill="#fff3a0"${K(2.6)}/><g transform="translate(110 -2) scale(1.35) translate(-70 -106)">${emblemSVG(p.emblem,O,O)}</g>`;
+ if(lv>=4&&mag)s+=`<circle cx="70" cy="80" r="86" fill="#2a1468" opacity=".9"/><circle cx="70" cy="80" r="86" fill="none" stroke="#a978ff" stroke-width="5"/><g class="spin" style="transform-origin:70px 80px"><path d="M70 0 A80 80 0 0 1 150 80 M70 160 A80 80 0 0 1 -10 80" fill="none" stroke="#3ee0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 10"/></g>`+[[20,40,3],[120,30,2.5],[30,120,2],[118,118,3],[70,-2,2.6],[-2,80,2],[142,76,2]].map(([x,y,r])=>`<circle class="tw" cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join("")+`<ellipse cx="70" cy="80" rx="40" ry="10" fill="#ff7ec8" opacity=".35" transform="rotate(-20 70 80)"/>`;
+ if(lv>=4&&nat)s+=`<path d="M-14 160 Q-20 40 70 10 Q160 40 154 160" fill="none" stroke="#3fa05f" stroke-width="16" stroke-linecap="round"/><path d="M-14 160 Q-20 40 70 10 Q160 40 154 160" fill="none" stroke="#6fd38a" stroke-width="7" stroke-linecap="round"/>`+[[-8,110],[0,62],[24,30],[70,10],[116,30],[140,62],[148,110]].map(([x,y],i)=>`<path d="M${x} ${y} q-10 -6 -14 4 q10 4 14 -4 z" fill="#3ed45e"${K(1.8)}/>`+(i%2?`<g transform="translate(${x+6} ${y+4})">${[0,1,2,3,4].map(j=>{const a=j*1.2566;return `<circle cx="${(4*Math.cos(a)).toFixed(1)}" cy="${(4*Math.sin(a)).toFixed(1)}" r="3.2" fill="${["#ff7ec8","#ffd23f","#fff"][i%3]}"/>`;}).join("")}<circle r="2" fill="#ff8a1f"/></g>`:"")).join("")+`<g class="floaty"><path d="M120 120 q-8 -10 -12 0 q4 8 12 0 q8 -10 12 0 q-4 8 -12 0z" fill="#ffd23f"${K(1.6)}/></g>`;
  if(level>=2||power>=3)s+=`<circle cx="70" cy="92" r="70" fill="${se}" opacity=".16"/><circle cx="70" cy="92" r="54" fill="${se}" opacity=".18"/>`;
  if(level>=5||power>=7)s+=`<circle class="spin" cx="70" cy="92" r="66" fill="none" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 10"/>`;
  if(level>=4||power>=5)for(let i=0;i<5;i++){const a=i*1.26+.3;s+=`<polygon class="tw" style="animation-delay:${(i*.4).toFixed(1)}s" points="${starPts(70+60*Math.cos(a),80+56*Math.sin(a),5,2)}" fill="#fff"/>`;}
  s+=shadowE();
  if(lv>=2)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
  let g=`<defs><radialGradient id="${gid}f" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="${shade(sk,.28)}"/><stop offset=".68" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${gid}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(pr,.2)}"/><stop offset="1" stop-color="${shade(pr,-.12)}"/></linearGradient><linearGradient id="${gid}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(hc,.25)}"/><stop offset="1" stop-color="${shade(hc,-.12)}"/></linearGradient></defs>`;
- g+=backSVG((hro&&lv>=3&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=3?1:0),p);
+ g+=hueWrap(backSVG((hro&&lv>=3&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=3?1:0),p),p.hue_back,gid+"hb");
  if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="url(#${gid}h)"${K()}/>`;
- const BT=p.bottom||"pants",legc=BT==="shorts"?sk:"#2e2552";
+ const BT=p.bottom||"pants",legc=BT==="shorts"?sk:BT==="jeans"?"#3a5fb8":BT==="armor"?"#9aa6c0":"#2e2552";
  g+=limb("M60 130 L58 146",legc,11)+limb("M80 130 L82 146",legc,11);
+ if(BT==="striped")g+=`<path d="M53 135 H63 M53 141 H63 M77 135 H87 M77 141 H87" stroke="${se}" stroke-width="2.6"/>`;
+ if(BT==="starry")g+=[[58,134],[60,142],[82,136],[81,143]].map(([x,y])=>`<polygon points="${starPts(x,y,2.6,1.1)}" fill="#ffd23f"/>`).join("");
+ if(BT==="sporty")g+=`<path d="M55 131 L54 145 M85 131 L86 145" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>`;
+ if(BT==="armor")g+=`<circle cx="59" cy="138" r="4" fill="#d6dde8"${K(2)}/><circle cx="81" cy="138" r="4" fill="#d6dde8"${K(2)}/>`;
+ if(BT==="jeans")g+=`<path d="M56 131 L55 145 M84 131 L85 145" stroke="#9cc0ff" stroke-width="1.4" stroke-dasharray="2 2"/>`;
+ if(BT==="rainbow")g+=["#ff4d6d","#ffd23f","#4fe36b","#3ec2ff"].map((c,i)=>`<path d="M53 ${132+i*3.5} H63 M77 ${132+i*3.5} H87" stroke="${c}" stroke-width="3"/>`).join("");
  if(BT==="shorts")g+=`<path d="M45 130 L95 130 L97 141 L72 141 L70 136 L68 141 L43 141 Z" fill="#2e2552"${K(2.6)}/>`;
  g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=3?se:prd)}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=3?se:prd)}"${K(2.8)}/>`+(tL>=3?`<path d="M50 150 h10 M80 150 h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`:"");
  g+=`<path d="M46 96 Q70 86 94 96 Q102 116 98 134 Q70 142 42 134 Q38 116 46 96 Z" fill="url(#${gid}c)"${K()}/>`;
  g+=`<path d="M47 98 Q40 117 43 132 Q49 135 56 136 Q50 118 54 96 Z" fill="${prd}"/>`;
  g+=`<path d="M86 98 Q93 110 93 122" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3.5" stroke-linecap="round"/>`;
+ if((p.bottom||"pants")==="tutu")g+=`<path d="M40 127 Q44 140 50 133 Q55 143 60 134 Q65 144 70 134 Q75 144 80 134 Q85 143 90 133 Q96 140 100 127 Z" fill="${se}" fill-opacity=".9"${K(2.4)}/><path d="M46 129 Q58 136 70 130 Q82 136 94 129" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>`;
  if((p.bottom||"pants")==="skirt")g+=`<path d="M43 126 L97 126 L105 143 Q70 150 35 143 Z" fill="${se}"${K(2.6)}/><path d="M55 129 L51 145 M70 129 V147 M85 129 L89 145" stroke="${shade(se,-.3)}" stroke-width="2.2" stroke-linecap="round"/>`;
  g+=`<path d="M42.5 120 Q70 127 97.5 120 L98 128 Q70 135 42 128 Z" fill="${se}"${K(2.5)}/><rect x="63" y="119" width="14" height="11" rx="3" fill="#ffd23f"${K(2.5)}/>`;
  if(hro&&lv>=3)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
  if(spk&&lv>=2)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
+ if(nat&&lv>=3)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
+ if(mag&&lv>=3)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
  if(spk&&lv>=3)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
  if(tL>=2)g+=`<g transform="translate(70 124.5)"><circle r="6.5" fill="${GOLD}"${K(2)}/><circle cx="-2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="-2" cy="2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="2" r="2.2" fill="#3ed45e"/></g>`;
  g+=limb("M50 101 Q37 110 34 123",pr,10);
  const raise=W!=="none";
  g+=raise?limb("M90 101 Q104 98 108 88",pr,10):limb("M90 101 Q103 110 106 123",pr,10);
- if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${weaponSVG(W,se,pr,tS)}</g>`;
+ if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,tS),p.hue_weapon,gid+"hw")}</g>`;
  if(tS>=2)g+=`<path d="M34 104 Q34 88 52 91 Q56 100 46 108 Z" fill="${GOLD}"${K(2.6)}/><path d="M106 104 Q106 88 88 91 Q84 100 94 108 Z" fill="${GOLD}"${K(2.6)}/><circle cx="44" cy="97" r="2.4" fill="#fff"/><circle cx="96" cy="97" r="2.4" fill="#fff"/>`;
  const hand=tS>=3?GOLD:(hro&&lv>=3?se:sk);
  g+=`<circle cx="34" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
@@ -1178,14 +1309,16 @@ function heroInner(p,level=1,o={}){
  g+=`<circle cx="70" cy="58" r="36" fill="url(#${gid}f)"${K(3.2)}/>`;
  g+=`<path d="M37 66 Q44 92 70 94 Q47 87 42 63 Z" fill="${skd}"/>`;
  g+=hairFront(H,hc,`url(#${gid}h)`,se);
+ if(nat&&lv>=2)g+=`<path d="M40 98 q-14 -10 -10 -22 q14 6 10 22 z M100 98 q14 -10 10 -22 q-14 6 -10 22 z" fill="#3ed45e"${K(2.2)}/>`;
+ if(mag&&lv>=2)g+=`<g class="orbit"><circle cx="128" cy="92" r="6" fill="#a978ff"${K(2)}/><circle cx="12" cy="92" r="5" fill="#3ee0ff"${K(2)}/><circle cx="70" cy="34" r="4" fill="#ff7ec8"${K(1.6)}/></g>`;
  if(spk&&lv>=2)g+=`<polygon points="${starPts(39,50,6.5,2.8)}" fill="#ff8ad0"${K(2)}/><path d="${heartPath(101,48,5.5)}" fill="#ffd23f"${K(2)}/>`;
- const mask=p.mask===true||(p.mask!==false&&hro&&lv>=2&&(p.eyes||"round")!=="cool");
+ const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=2&&(p.eyes||"round")!=="cool");
  if(mask)g+=`<path d="M37 57 Q53 49 70 55 Q87 49 103 57 Q105 69 95 72 Q82 74 70 66 Q58 74 45 72 Q35 69 37 57 Z" fill="${shade(pr,-.45)}"${K(2.6)}/><path d="M42 58 Q53 53 64 57" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
  g+=faceSVG(mood,p,fem);
  if(spk&&lv>=3)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
- g+=headItem(HD,pr,prd,se,hc,tW);
+ g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
  if(tW>=3)g+=`<g class="floaty"><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${O}" stroke-width="8"/><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${GOLD}" stroke-width="4"/>${sparkles([[46,-18,4],[94,-18,4],[70,-24,4.5]],"#fff")}</g>`;
- return s+`<g class="hb">${g}</g>`+petSVG(p.pet);
+ return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
 }
 function heroLevel(h){return 1+Math.floor((h.xp||0)/4);}
 function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats})}</svg>`;}
@@ -1289,7 +1422,7 @@ const SKY={ice:["#5fb8ff","#e2f4ff"],swamp:["#0f2a44","#1f5e57"],sky:["#7d6bff",
 const ROAD={ice:"#ffffff",swamp:"#d6b27a",sky:"#fff3c4"};
 function tokenSVG(heroes){
  const n=Math.min(heroes.length,4);let t="";
- heroes.slice(0,4).forEach((h,i)=>{const sc=i===0?.4:.32;const off=(i-(n-1)/2)*24;t+=`<g transform="translate(${(off-70*sc).toFixed(1)} ${(-158*sc).toFixed(1)}) scale(${sc})">${heroInner(h.params,1,{stats:h.stats})}</g>`;});
+ heroes.slice(0,4).forEach((h,i)=>{const sc=n>2?.32:.36;const off=(i-(n-1)/2)*(n>2?20:26);t+=`<g transform="translate(${(off-70*sc).toFixed(1)} ${(-158*sc).toFixed(1)}) scale(${sc})">${heroInner(h.params,1,{stats:h.stats})}</g>`;});
  return t;
 }
 function mapSVG(id,node,heroes,opt={}){
@@ -1355,7 +1488,7 @@ function fallbackChapter(c,count){
   if(t.type==="physical")ch.action=c.mode==="bed"?(ch.calm||ch.action):ch.action;
   if(t.type==="boss")ch.hp=n===8?4:3;
   if(ch.options)ch.options=ch.options.map(o=>({label:fill(o.label,hs,L,M.name),result:fill(o.result,hs,L,M.name)}));
-  return {node:n,easy:ageGroup(c.age)==="old"||c.custom?"":(EASY[c.mapId]||[])[n]||"",leaderId:L&&L.id,title:t.title,type:t.type,npc:t.npc,bubble:t.bubble,read:fill(t.read,hs,L,M.name),stage:t.stage,challenge:ch,success:fill(t.success,hs,L,M.name),fail:fill(t.fail,hs,L,M.name),reward:t.reward};
+  return {node:n,easy:(c.narr!=="young"&&ageGroup(c.age)==="old")?"":(EASY[c.mapId]||[])[n]||"",leaderId:L&&L.id,title:t.title,type:t.type,npc:t.npc,bubble:t.bubble,read:fill(t.read,hs,L,M.name),stage:t.stage,challenge:ch,success:fill(t.success,hs,L,M.name),fail:fill(t.fail,hs,L,M.name),reward:t.reward};
  });
  const first=c.node===0;
  const last=c.log&&c.log.length?c.log[c.log.length-1]:"";
@@ -1441,15 +1574,55 @@ function render(){
  if(S.toast)app.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${esc(S.toast)}</div>`);
  after();
  if(typeof gRender==="function")try{gRender();}catch(e){}
+ try{music(themeNow());}catch(e){}
 }
 function toast(t){S.toast=t;render();setTimeout(()=>{if(S.toast===t){S.toast=null;const el=document.querySelector(".toast");if(el)el.remove();}},2600);}
 const SND=()=>`<button class="ib" data-a="sound" aria-pressed="${soundOn}" aria-label="${soundOn?"השתקה":"הפעלת צלילים"}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>${soundOn?`<path d="M16 8.5q2.5 3.5 0 7M18.5 6q4.5 6 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`:`<path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`}</svg></button>`;
-function topbar(extra=""){return `<div class="topbar"><button class="brand" data-a="home" aria-label="Dream by ARTRIKO, הרפתקה בקובייה">${LOGO}<span class="wm"><b class="ol">DREAM</b><small>by ARTRIKO</small></span></button><div class="tools">${extra}${SND()}</div></div>`;}
+function topbar(extra=""){return `<div class="topbar"><button class="brand" data-a="home" aria-label="Dream by ARTRIKO, הרפתקה בקובייה">${LOGO}<span class="wm"><b class="ol">DREAM</b><small>by ARTRIKO</small></span></button><div class="tools">${extra}${S.screen==="home"||S.screen==="hero"?gemPill():""}${SND()}</div></div>`;}
 function cardVars(h){const p=h.params.primary||"#ff3d4e";return `--c1:${shade(p,.25)};--c2:${shade(p,-.38)}`;}
 const PEN=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L5 15 L16 4 L20 8 L9 19 Z" fill="#ffd23f" stroke="#1b1030" stroke-width="2" stroke-linejoin="round"/><path d="M14 6 L18 10" stroke="#1b1030" stroke-width="2"/></svg>`;
 function hcard(h,attrs,extra="",editBtn=false){const card=`<button class="hcard" style="${cardVars(h)}" ${attrs}>${lvlBadge(h)}${extra}${heroSVG(h)}<span class="nm">${esc(h.heroName)}<small>${esc(h.title)}</small>${statRow(h)}</span>${editBtn?"":`<span class="editlbl">${PEN}עריכה</span>`}</button>`;return editBtn?`<div class="hwrap">${card}<button class="editb" data-a="edithero" data-id="${h.id}" aria-label="עריכת ${esc(h.heroName)}">${PEN}</button></div>`:card;}
 
 
+
+/* ---------- background chiptune music: one loop per place, boss and bedtime ---------- */
+const MUS={
+ home:{bpm:96,lw:"square",lv:.022,bv:.05,bars:[0,5,-3,7],lead:[72,0,76,0,79,0,76,0,74,0,77,0,76,0,72,0],bass:[48,0,0,0,55,0,0,0,53,0,0,0,55,0,0,0]},
+ ice:{bpm:78,lw:"triangle",lv:.05,bv:.05,wind:.05,bars:[0,-4,5,-2],lead:[84,0,0,79,0,0,76,0,81,0,0,77,0,0,74,0],bass:[45,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0]},
+ swamp:{bpm:100,lw:"square",lv:.02,bv:.055,wind:.018,bars:[0,0,-4,-2],lead:[69,0,72,0,76,0,72,0,68,0,71,0,74,0,71,0],bass:[45,0,45,0,45,0,45,0,44,0,44,0,44,0,44,0]},
+ sky:{bpm:112,lw:"square",lv:.02,bv:.05,wind:.02,bars:[0,5,7,5],lead:[79,81,84,0,81,79,76,0,77,79,81,0,79,76,74,0],bass:[53,0,60,0,55,0,62,0,53,0,60,0,55,0,62,0]},
+ boss:{bpm:150,lw:"square",lv:.024,bv:.06,bars:[0,0,3,-2],lead:[64,0,67,0,70,69,67,0,64,0,63,0,62,0,0,0],bass:[40,40,52,40,40,52,40,52,43,43,55,43,43,55,43,55]},
+ bed:{bpm:62,lw:"triangle",lv:.035,bv:.035,bars:[0,-3,5,0],lead:[72,0,0,0,76,0,0,0,79,0,0,0,76,0,0,0],bass:[48,0,0,0,0,0,0,0,43,0,0,0,0,0,0,0]}
+};
+let MU={cur:null,timer:null,step:0,next:0,gain:null,wind:null,hold:0};
+const midiF=n=>440*Math.pow(2,(n-69)/12);
+function mNote(n,t,d,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=midiF(n);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(MU.gain);o.start(t);o.stop(t+d+.05);}
+function windOn(level){
+ const len=AC.sampleRate*2,buf=AC.createBuffer(1,len,AC.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+ const src=AC.createBufferSource();src.buffer=buf;src.loop=true;const f=AC.createBiquadFilter();f.type="bandpass";f.frequency.value=500;f.Q.value=.8;
+ const lfo=AC.createOscillator(),lg=AC.createGain();lfo.frequency.value=.12;lg.gain.value=320;lfo.connect(lg).connect(f.frequency);
+ const g=AC.createGain();g.gain.value=level;src.connect(f).connect(g).connect(MU.gain);src.start();lfo.start();return ()=>{try{src.stop();lfo.stop();}catch(e){}};
+}
+function music(th){
+ if(!AC||!soundOn)th=null;
+ if(th===MU.cur)return;
+ if(MU.timer){clearInterval(MU.timer);MU.timer=null;}
+ if(MU.gain){const g=MU.gain,w=MU.wind;g.gain.setTargetAtTime(0,AC.currentTime,.25);setTimeout(()=>{try{w&&w();g.disconnect();}catch(e){}},1400);MU.gain=null;MU.wind=null;}
+ MU.cur=th;if(!th)return;
+ const M=MUS[th];MU.gain=AC.createGain();MU.gain.gain.setValueAtTime(0,AC.currentTime);MU.gain.gain.linearRampToValueAtTime(1,AC.currentTime+1.5);MU.gain.connect(AC.destination);
+ if(M.wind)MU.wind=windOn(M.wind);
+ MU.step=0;MU.next=Math.max(AC.currentTime+.1,MU.hold||0);const st=60/M.bpm/2;
+ MU.timer=setInterval(()=>{if(!AC||!MU.gain)return;while(MU.next<AC.currentTime+.25){const i=MU.step%16,off=M.bars[Math.floor(MU.step/16)%M.bars.length];
+  if(M.lead[i])mNote(M.lead[i]+off,MU.next,st*1.6,M.lw,M.lv);if(M.bass[i])mNote(M.bass[i]+off,MU.next,st*(th==="boss"?.9:3),"triangle",M.bv);
+  MU.next+=st;MU.step++;}},60);
+}
+function themeNow(){
+ if(S.screen==="splash")return null;
+ const c=SAVE&&SAVE.campaign;
+ if((S.screen==="play"||S.screen==="intro")&&c){const P=S.play,st=P&&P.chapter&&P.idx>=0?P.chapter.stations[P.idx]:null;
+  if(st&&st.type==="boss"&&P.phase!=="result"&&P.phase!=="upgrade")return "boss";if(c.mode==="bed")return "bed";return MUS[c.mapId]?c.mapId:"home";}
+ return "home";
+}
 /* ---------- opening screen + 8-bit arcade jingle ---------- */
 function jingle(){
  if(!soundOn)return;
@@ -1466,6 +1639,7 @@ function jingle(){
  bass("G3",t,q*5+e*2);lead("G5",q);lead("G5",q);lead("G5",q);lead("E5",q);lead("D5",q);lead("C5",e*2,1);
  // sparkle finish
  bass("C3",t,e*3);lead("E5",q*.5);lead("G5",q*.5);lead("C6",q*.5);lead("E6",e*2,1);
+ MU.hold=AC.currentTime+t+.6;
 }
 function vSplash(){
  const hs=(SAVE&&SAVE.heroes||[]).slice(0,3);
@@ -1480,24 +1654,37 @@ function vSplash(){
  <div class="spl-sub" style="font-size:1.25rem;color:#fff;font-weight:900">הרפתקה בקובייה</div>
  </div>`;
 }
+function shopSuggest(){
+ const h=(SAVE.heroes||[]).find(x=>!x.demo)||SAVE.heroes[0];if(!h)return "";
+ const all=[];DTABS.forEach(T=>{dOpts(T.k).forEach(v=>{const tr=tierOf(T.k,v);if(tr&&!owned(T.k,v)&&dGet(h.params,T.k)!==v&&!(tr===4&&!legendOK()))all.push({T,v,tr,pr:PRICE[tr]});});});
+ if(!all.length)return "";
+ const can=all.filter(x=>x.pr<=gems());const pool=can.length?can:all.sort((a,b)=>a.pr-b.pr).slice(0,4);
+ const seed=(SAVE.campaign&&SAVE.campaign.sessions||0)+gems();const pick2=[pool[seed%pool.length],pool[(seed+1)%pool.length]].filter((x,i,a)=>x&&a.indexOf(x)===i);
+ return `<section class="panel shopsug"><div class="eyebrow">אפשר לשדרג את ${esc(h.heroName)}</div><div class="sugrow">${pick2.map(x=>{const q={...h.params};dSet(q,x.T.k,x.v);return `<button class="sugitem t${x.tr}" data-a="shopgo" data-id="${h.id}" data-tab="${x.T.id}">${x.T.k==="pet"?`<svg viewBox="-8 100 54 64">${petSVG(x.v)}</svg>`:`<svg viewBox="${x.T.crop}" class="${x.T.k==="style"?"silh":""}">${heroInner(q,1,{fem:h.gender==="f",mood:"happy"})}</svg>`}<b>${esc(x.T.k==="_face"?FACEL[x.v]:x.T.k==="style"?STYLE_N[x.v][h.gender==="f"?1:0]:LBL[x.T.k][x.v])}</b><span>${GEM(14)}${x.pr}</span></button>`;}).join("")}</div>
+ <p class="small muted">${can.length?`יש לכם ${gems()} יהלומים. מספיק כדי לפתוח!`:`יש לכם ${gems()} יהלומים. ממשיכים לשחק ואוספים עוד.`}</p></section>`;
+}
+function savedGames(){
+ const L=SAVE.camps||[];if(!L.length)return "";
+ return `<section class="panel"><div class="eyebrow">משחקים שמורים</div>${L.map((c,i)=>{const names=c.heroIds.map(id=>(SAVE.heroes.find(h=>h.id===id)||{}).heroName).filter(Boolean);return `<div class="savedrow"><div><b>${esc(names.join(", ")||"גיבורים")}</b><div class="small muted">${esc(campMap(c).name)} · תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES}</div></div><button class="btn sm blu" data-a="swapcamp" data-i="${i}"><span>להמשיך</span></button></div>`;}).join("")}</section>`;
+}
 function vHome(){
  const c=SAVE.campaign,hs=SAVE.heroes;
  let camp="";
  if(c){
   const ch=campHeroes();
-  camp=`<section class="panel slide"><div class="eyebrow">ההרפתקה שלכם · ${esc(campMap(c).name)}</div><h2 class="ol">${esc(c.title)}</h2>
+  camp=`<section class="panel slide"><div class="eyebrow">המשחק האחרון · ${esc(campMap(c).name)}</div><h2 class="ol">${esc(c.title)}</h2><p class="small" style="margin-top:-8px">${esc(campHeroes().map(h=>h.heroName).join(", "))}</p>
   <div class="mapwrap">${mapSVG(c.mapId,c.node,ch,{win:true,wh:260})}</div>
   <div class="prog" aria-label="תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES}">${Array.from({length:NODES},(_,i)=>`<i class="${i<c.node?"on":""}"></i>`).join("")}</div>
   <p class="muted small">תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES} · ${c.sessions===1?"פרק אחד שוחק":(c.sessions||0)+" פרקים שוחקו"}${(c.mapsDone||[]).length?` · ${(c.mapsDone||[]).length} עולמות הושלמו`:""}</p>
   <button class="btn wide grn" data-a="continue"><span>${c.sessions?"המשיכו את ההרפתקה":"התחילו את הפרק הראשון"}</span></button>
-  <button class="btn sm blu" data-a="newcamp"><span>הרפתקה חדשה</span></button></section>`;
+  <button class="btn sm blu" data-a="newcamp"><span>משחק חדש (נשמר גם הנוכחי)</span></button></section>`;
  } else {
   camp=`<section class="panel slide"><div class="eyebrow">ערב של הרפתקאות</div><h1 class="ol">אתם המספרים. הילדים הגיבורים.</h1>
   <p class="muted">צרו גיבור לכל ילד, בחרו עולם, וקבלו פרק קצר להקראה עם קוביות, חידות בחרוזים ומשימות. כל פרק ממשיך את הקודם, על אותה מפה.</p>
   <button class="btn wide grn" data-a="newcamp"><span>צאו להרפתקה חדשה</span></button></section>`;
  }
  const cards=hs.map(h=>hcard(h,`data-a="edithero" data-id="${h.id}"`,h.demo?`<span class="tagd">דוגמה</span>`:"")).join("");
- return `${topbar(acctBtn())}${acctPanel()}${camp}
+ return `${topbar(acctBtn())}${acctPanel()}${camp}${savedGames()}${shopSuggest()}
  <section class="panel"><div class="eyebrow">הגיבורים</div>
  <div class="heroes stagger">${cards}<button class="hcard add" data-a="newhero"><b>+</b>גיבור חדש</button></div></section>
  <section class="panel"><details class="guide"><summary>איך מנחים ערב כזה? (להורה)</summary>
@@ -1544,36 +1731,39 @@ const DTABS=[
  {id:"hair",l:"שיער",k:"hair",col:["hairColor",HAIRPAL],crop:"12 -6 116 116"},
  {id:"clothes",l:"חולצה",k:"emblem",col:["primary",PALETTE],col2:["secondary",PALETTE],crop:"30 84 80 60"},
  {id:"bottom",l:"מכנסיים",k:"bottom",crop:"28 108 84 56"},
- {id:"head",l:"כובע",k:"head",crop:"2 -34 136 110"},
- {id:"weapon",l:"ביד",k:"weapon",crop:"40 -10 112 112"},
- {id:"back",l:"גב",k:"back",crop:"-6 30 152 130"},
- {id:"pet",l:"חבר",k:"pet",crop:"-10 100 70 66"},
+ {id:"head",l:"כובע",k:"head",hue:"hue_head",crop:"2 -34 136 110"},
+ {id:"weapon",l:"ביד",k:"weapon",hue:"hue_weapon",crop:"40 -10 112 112"},
+ {id:"back",l:"גב",k:"back",hue:"hue_back",crop:"-6 30 152 130"},
+ {id:"pet",l:"חבר",k:"pet",hue:"hue_pet",crop:"-10 100 70 66"},
  {id:"style",l:"סגנון על",k:"style",crop:"-24 -30 188 194",lv:4}];
-const FACEO=["blush","freckles","both","none"],FACEL={blush:"סומק",freckles:"נמשים",both:"סומק ונמשים",none:"פנים נקיות"};
-function dGet(p,k){if(k==="style")return p.style||(p.fem?"sparkle":"hero");if(k==="_face")return p.blush!==false?(p.freckles?"both":"blush"):(p.freckles?"freckles":"none");return p[k]||ENUM[k][0];}
-function dSet(p,k,v){if(k==="_face"){p.blush=v==="blush"||v==="both";p.freckles=v==="freckles"||v==="both";return;}p[k]=v;if(k==="mouth")p.tongue=v==="tongue";}
+const FACEO=["none","blush","freckles","bandaid","chocolate","whiskers","hearts","clown","eyepatch","glitter"],FACEL={blush:"סומק",freckles:"נמשים",both:"סומק ונמשים",none:"פנים נקיות",bandaid:"פלסטר",chocolate:"מריחת שוקולד",whiskers:"שפם חתול",hearts:"לבבות בלחיים",stars:"מדבקות כוכב",clown:"אף ליצן",eyepatch:"רטייה של פיראט",mask:"מסכת גיבור",glitter:"נצנצים"};const FACE_PAINT=["bandaid","chocolate","whiskers","hearts","stars","clown","eyepatch","mask","glitter"];
+function dGet(p,k){if(k==="style")return p.style||(p.fem?"sparkle":"hero");if(k==="_face"){if(p.facepaint)return p.facepaint;return p.blush!==false?(p.freckles?"both":"blush"):(p.freckles?"freckles":"none");}return p[k]||ENUM[k][0];}
+function dSet(p,k,v){if(k==="_face"){if(FACE_PAINT.includes(v)){p.facepaint=v;return;}p.facepaint=null;p.blush=v==="blush"||v==="both";p.freckles=v==="freckles"||v==="both";return;}p[k]=v;if(k==="mouth")p.tongue=v==="tongue";}
 function dOpts(k){return k==="_face"?FACEO:ENUM[k];}
-function dLbl(k,v){return k==="_face"?FACEL[v]:LBL[k][v];}
+const STYLE_N={sparkle:["שומר הקשת","שומרת הקשת"],hero:["מגן הלילה","מגינת הלילה"],nature:["שומר היער","שומרת היער"],magic:["קוסם הגלקסיה","קוסמת הגלקסיה"]};
+function dLbl(k,v){if(k==="style")return STYLE_N[v][S.draft&&S.draft.gender==="f"?1:0];return k==="_face"?FACEL[v]:LBL[k][v];}
 const DSAMPLE={pet:"cat",weapon:"sword",back:"wings",head:"crown"};
-function dSide(t,p,fem,on){const q={...p};if(DSAMPLE[t.k]&&(q[t.k]||"none")==="none")q[t.k]=DSAMPLE[t.k];if(t.k==="back"){q.pet="none";q.weapon="none";}return `<button class="dcat" data-a="dtab" data-v="${t.id}" aria-pressed="${on}"><svg viewBox="${t.crop}" aria-hidden="true">${heroInner(q,t.lv||1,{fem,mood:"happy"})}</svg><span>${t.l}</span></button>`;}
+function dSide(t,p,fem,on){const q={...p};if(DSAMPLE[t.k]&&(q[t.k]||"none")==="none")q[t.k]=DSAMPLE[t.k];if(t.k==="back"){q.pet="none";q.weapon="none";}return `<button class="dcat" data-a="dtab" data-v="${t.id}" aria-pressed="${on}"><svg viewBox="${t.crop}" aria-hidden="true" class="${t.k==="style"?"silh":""}">${heroInner(q,t.lv||1,{fem,mood:"happy"})}</svg><span>${t.l}</span></button>`;}
 function dRow(key,pal,cur,lbl){return `<div class="drow" aria-label="${lbl}"><b class="drl">${lbl}</b>${pal.map((c,i)=>{const v=key==="skin"?i:c;return `<button class="swatch" style="background:${c}" data-a="mset" data-k="${key}" data-v="${v}" aria-pressed="${cur===v}" aria-label="${lbl}"></button>`;}).join("")}</div>`;}
 function vDress(d,fake){
+if(!d.origP)d.origP={...d.result.params};
  const p=d.result.params,fem=d.gender==="f",tab=d.tab||"eyes",T=DTABS.find(t=>t.id===tab)||DTABS[0];
  const opts=dOpts(T.k),cur=dGet(p,T.k),i=Math.max(0,opts.indexOf(cur));
  const L=DTABS.slice(0,6),Rt=DTABS.slice(6);
  const arrow=dir=>`<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="${dir>0?"M9 4 L17 12 L9 20":"M15 4 L7 12 L15 20"}" fill="none" stroke="${O}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
  let cols="";
  if(T.col)cols+=dRow(T.col[0],T.col[1],T.col[0]==="skin"?(p.skin??1):(p[T.col[0]]||(T.col[0]==="eye"?"#7a4a24":"")),{eye:"צבע",skin:"עור",hairColor:"צבע",primary:"חולצה"}[T.col[0]]);
+ if(T.hue&&(p[T.k]||"none")!=="none")cols+=`<div class="drow" aria-label="צבע הפריט"><b class="drl">צבע</b>${HUES.map(h=>`<button class="swatch ${h?"":"orig"}" style="background:${h?`hsl(${h},85%,58%)`:"conic-gradient(#ff4d6d,#ffd23f,#4fe36b,#3ec2ff,#a978ff,#ff4d6d)"}" data-a="mset" data-k="${T.hue}" data-v="${h}" aria-pressed="${(p[T.hue]||0)===h}" aria-label="${h?"צבע אחר":"צבע מקורי"}"></button>`).join("")}</div>`;
  if(T.col2)cols+=dRow(T.col2[0],T.col2[1],p[T.col2[0]],"צבע 2");
  return `<div class="dress" role="dialog" aria-label="חדר הלבשה">
- <div class="dtop"><button class="ib" data-a="dressrand">ערבוב</button><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
+ <div class="dtop"><div style="display:flex;gap:6px;align-items:center"><button class="ib" data-a="dressrand">ערבוב</button>${gemPill()}</div><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
  <div class="dmain">
   <div class="dside">${L.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
-  <div class="dstage"><div class="dspot"></div>${heroSVG(tab==="style"?{...fake,xp:12,stats:{str:3,wis:3,luck:3}}:fake,"hero")}</div>
+  <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:12,stats:{str:3,wis:3,luck:3}},"hero silh")}<div class="silnote">נחשף ברמה הכי גבוהה</div></div>`:heroSVG(fake,"hero")}</div>
   <div class="dside">${Rt.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
  </div>
- <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"?"ככה הדמות תיראה ברמה הכי גבוהה":esc(dLbl(T.k,opts[i]))}</span></div>
- <div class="dgrid" style="--n:${opts.length<=7?Math.max(4,opts.length):Math.min(7,Math.ceil(opts.length/2))}">${opts.map((v,j)=>{const q={...p};dSet(q,T.k,v);const lk=premiumLocked(T.k,v)&&j!==i;return `<button class="dopt ${lk?"plock":""}" data-a="dpick" data-v="${j}" aria-pressed="${j===i}" aria-label="${esc(dLbl(T.k,v))}${lk?" (נעול)":""}">${lk?`<i class="olock">${LOCK_SVG}</i>`:""}<svg viewBox="${T.crop}" aria-hidden="true">${heroInner(q,T.lv||1,{fem,mood:"happy"})}</svg><span>${esc(dLbl(T.k,v))}</span></button>`;}).join("")}</div></div>
+ <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"?"הסגנון נחשף רק ברמה הכי גבוהה":esc(dLbl(T.k,opts[i]))}</span></div>
+ <div class="dgrid" style="--n:${opts.length<=7?Math.max(4,opts.length):Math.min(7,Math.ceil(opts.length/2))}">${opts.map((v,j)=>{const q={...p};dSet(q,T.k,v);const lk=itemLocked(T.k,v)&&j!==i,tr=tierOf(T.k,v),sil=T.k==="style";return `<button class="dopt ${lk?"plock":""} ${sil?"silh":""} t${tr}" data-a="dpick" data-v="${j}" aria-pressed="${j===i}" aria-label="${esc(dLbl(T.k,v))}${lk?" (נעול)":""}">${lk?`<i class="olock">${LOCK_SVG}</i><i class="oprice">${GEM(13)}${PRICE[tr]}</i>`:""}${T.k==="pet"?`<svg viewBox="-8 100 54 64" aria-hidden="true">${v==="none"?`<path d="M8 120 L40 152 M40 120 L8 152" stroke="#ffffff88" stroke-width="5" stroke-linecap="round"/>`:hueWrap(petSVG(v),q.hue_pet,"pt"+j)}`:`<svg viewBox="${T.crop}" aria-hidden="true">${heroInner(q,T.lv||1,{fem,mood:"happy"})}`}</svg><span>${esc(dLbl(T.k,v))}</span></button>`;}).join("")}</div></div>
  ${cols?`<div class="dcols">${cols}</div>`:""}
  </div>`;
 }
@@ -1605,7 +1795,7 @@ function vSetup(){
  <p class="small muted">כל עולם הוא סיפור אחר, בסגנון אחר. העולמות נפתחים אחד אחרי השני: מסיימים עולם, והבא בתור נפתח.</p>
  <div class="maps3">${MAP_ORDER.map(id=>{const M=mapOf(id,s.age),open=mapOpen(id),done=U().done.includes(id);return `<button class="mapchoice ${open?"":"locked"}" data-a="${open?"smap":"unlock"}" data-kind="map" data-v="${id}" aria-pressed="${open&&s.mapId===id}">${mapThumb(id)}${open?"":`<i class="mlock">${LOCK_SVG}</i>`}${done?`<i class="mdone">✓</i>`:""}<span>${M.name}</span><small>${STYLE_TAG[id][ageGroup(s.age)==="old"?"old":"young"]}</small></button>`;}).join("")}
  ${SAVE.customMaps.map(cm=>`<button class="mapchoice" data-a="smap" data-v="${cm.id}" aria-pressed="${s.mapId===cm.id}">${mapThumb(cm.base)}<i class="mstar">★</i><span>${esc(cm.name)}</span><small>העולם שלכם</small></button>`).join("")}
- <button class="mapchoice newworld" data-a="newworld">${U().create?"":`<i class="mlock">${LOCK_SVG}</i>`}<b>+</b><span>עולם משלכם</span><small>שם ומילות מפתח</small></button></div>
+ <button class="mapchoice newworld" data-a="newworld"><i class="mlock">${LOCK_SVG}</i><b>+</b><span>עולם משלכם</span><small>שם ומילות מפתח</small></button></div>
  ${s.creating?`<div class="panel slide cwform"><div class="eyebrow">עולם חדש</div>
   <label class="fl">איך קוראים לעולם?<input type="text" id="cwName" maxlength="30" placeholder="למשל: ממלכת הממתקים" autocomplete="off"></label>
   <label class="fl">מילות מפתח: מה יש בעולם הזה?<input type="text" id="cwKeys" maxlength="90" placeholder="למשל: הרי שוקולד, נהר של מיץ, דובוני גומי מדברים" autocomplete="off"></label>
@@ -1633,8 +1823,8 @@ function vIntro(){
  const c=SAVE.campaign,hs=campHeroes();
  return `${topbar()}<section class="panel"><div class="eyebrow">${esc(campMap(c).name)}</div><h1 class="ol">${esc(c.title)}</h1>
  <div class="arena a-${c.mapId}" style="display:flex;justify-content:center;align-items:flex-end;direction:ltr"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,"hero cheer","joy")).join("")}</div></div></section>
- <div class="parch big"><span class="tt">איך הכול התחיל...</span>${(c.narr==="young"&&EASY_PREMISE[c.mapId]&&!c.custom&&ageGroup(c.age)!=="old")?`<span class="eztext">${esc(EASY_PREMISE[c.mapId])}</span>`:esc(c.premise)}</div>
- <div class="stage parent-only">${MASK}<span>קראו לאט, בקול של מספר סיפורים. בסוף, הראו לילדים את המפה.</span></div>
+ <div class="parch big"><span class="tt">איך הכול התחיל...</span>${c.narr==="young"?`<span class="eztext">${esc(c.custom?`בְּעוֹלָם שֶׁנִּקְרָא ${c.custom.name} הָיָה הֲכִי כֵּיף בָּעוֹלָם. אֲבָל יוֹם אֶחָד, הַקֶּסֶם הִתְחִיל לְהֵעָלֵם! רַק גִּבּוֹרִים אַמִּיצִים יְכוֹלִים לְהַחְזִיר אוֹתוֹ.`:EASY_PREMISE[c.mapId])}</span>`:esc(c.premise)}</div>
+ ${stageBox("קראו לאט, בקול של מספר סיפורים. בסוף, הראו לילדים את המפה.")}
  <div class="mapwrap">${mapSVG(c.mapId,c.node,hs)}</div>
  <button class="btn wide grn" data-a="beginplay"><span>התחילו את הפרק</span></button>`;
 }
@@ -2185,6 +2375,7 @@ async function startCampaign(){
  let mapId=s.mapId&&mapOpen(s.mapId)?s.mapId:(MAP_ORDER.find(m=>mapOpen(m)&&!U().done.includes(m))||MAP_ORDER[0]);
  const cm=String(mapId).startsWith("c_")?SAVE.customMaps.find(x=>x.id===mapId):null;if(cm)mapId=cm.base;
  const M=cm?campMap({mapId,age:s.age,custom:cm}):mapOf(mapId,s.age);
+ if(SAVE.campaign){SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,8);}
  SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
  const c=SAVE.campaign;c.premise=fill(M.premise,campHeroes(),null,M.name);
  persist();
@@ -2233,6 +2424,7 @@ function resolveStation(ok,text,opt={}){
  persist();
  render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});
  sfx(ok?"win":"lose");if(!P.noReward)sfx("chest");if(ok)confetti();
+ setTimeout(()=>earn(P.noReward?1:(ok?3:1)),500);
 }
 function snapStation(){const P=S.play;if(!P||P.idx<0)return;P.snaps=P.snaps||{};if(!P.snaps[P.idx])P.snaps[P.idx]=JSON.stringify({heroes:SAVE.heroes,node:SAVE.campaign.node,mapDone:!!P.mapDone});}
 function restoreSnap(i){const P=S.play;if(!P.snaps||!P.snaps[i])return;const o=JSON.parse(P.snaps[i]);SAVE.heroes=o.heroes;SAVE.campaign.node=o.node;P.mapDone=o.mapDone;persist();}
@@ -2261,7 +2453,8 @@ function nextWorld(c){
 function endSession(){
  const c=SAVE.campaign,P=S.play;
  c.sessions=(c.sessions||0)+1;c.log=c.log||[];c.log.push(P.chapter.recap);if(c.log.length>8)c.log=c.log.slice(-8);
- if(P.mapDone||c.node>=NODES){const M=nextWorld(c);persist();S.play=null;S.kids=false;go("home");toast("עולם חדש נפתח: "+M.name);return;}
+ SAVE.gems=gems()+3;
+ if(P.mapDone||c.node>=NODES){SAVE.gems=gems()+30;const M=nextWorld(c);persist();S.play=null;S.kids=false;go("home");toast("עולם חדש נפתח: "+M.name);return;}
  c.nextChapter=null;persist();S.play=null;S.kids=false;
  prefetch();
  go("home");toast("נשמר. הפרק הבא מחכה");
@@ -2299,12 +2492,12 @@ app.addEventListener("click",e=>{
   case "dress": S.draft.dress=true;S.draft.fresh=false;document.documentElement.style.overflow="hidden";render();sfx("pop");break;
   case "dressdone": S.draft.dress=false;document.documentElement.style.overflow="";render();sfx("pop");break;
   case "dtab": S.draft.tab=b.dataset.v;render();sfx("pop");break;
-  case "dpick": {const T=DTABS.find(t=>t.id===(S.draft.tab||"eyes"))||DTABS[0],q=S.draft.result.params;{const v=dOpts(T.k)[+b.dataset.v];if(premiumLocked(T.k,v)&&dGet(q,T.k)!==v){S.lock={kind:"items"};render();sfx("pop");break;}}dSet(q,T.k,dOpts(T.k)[+b.dataset.v]);S.draft.manual=true;render();sfx("pop");break;}
+  case "dpick": {const T=DTABS.find(t=>t.id===(S.draft.tab||"eyes"))||DTABS[0],q=S.draft.result.params;{const v=dOpts(T.k)[+b.dataset.v];if(itemLocked(T.k,v)&&dGet(q,T.k)!==v){S.lock={kind:"item",k:T.k,v};render();sfx("pop");break;}}dSet(q,T.k,dOpts(T.k)[+b.dataset.v]);S.draft.manual=true;render();sfx("pop");break;}
   case "dstep": {const T=DTABS.find(t=>t.id===(S.draft.tab||"eyes"))||DTABS[0],q=S.draft.result.params,o=dOpts(T.k);const i=o.indexOf(dGet(q,T.k));dSet(q,T.k,o[(i+ +b.dataset.v+o.length)%o.length]);S.draft.manual=true;render();sfx("pop");break;}
-  case "dressrand": {const q=S.draft.result.params,r0=a=>a[Math.floor(Math.random()*a.length)],r=a=>{const k=Object.keys(ENUM).find(x=>ENUM[x]===a);const f=k?a.filter(v=>!premiumLocked(k,v)):a;return r0(f.length?f:a);};q.eyes=r(ENUM.eyes);q.mouth=r(ENUM.mouth);q.tongue=q.mouth==="tongue";q.hair=r(ENUM.hair.filter(x=>x!=="none"));q.hairColor=r(HAIRPAL);q.primary=r(PALETTE);q.secondary=r(PALETTE.filter(c=>c!==q.primary));q.eye=r(EYEPAL);q.head=r(ENUM.head);q.weapon=r(ENUM.weapon);q.back=r(ENUM.back);q.emblem=r(ENUM.emblem);q.bottom=r(ENUM.bottom);S.draft.manual=true;render();sfx("pop");break;}
+  case "dressrand": {const q=S.draft.result.params,r0=a=>a[Math.floor(Math.random()*a.length)],r=a=>{const k=Object.keys(ENUM).find(x=>ENUM[x]===a);const f=k?a.filter(v=>!itemLocked(k,v)):a;return r0(f.length?f:a);};q.eyes=r(ENUM.eyes);q.mouth=r(ENUM.mouth);q.tongue=q.mouth==="tongue";q.hair=r(ENUM.hair.filter(x=>x!=="none"));q.hairColor=r(HAIRPAL);q.primary=r(PALETTE);q.secondary=r(PALETTE.filter(c=>c!==q.primary));q.eye=r(EYEPAL);q.head=r(ENUM.head);q.weapon=r(ENUM.weapon);q.back=r(ENUM.back);q.emblem=r(ENUM.emblem);q.bottom=r(ENUM.bottom);S.draft.manual=true;render();sfx("pop");break;}
   case "genhero": genHero(false);break;
   case "fixhero": if(!S.draft.fix.trim()){toast("כתבו מה לשנות");break;} genHero(true);break;
-  case "mset": {const k=b.dataset.k;let v=b.dataset.v;if(k==="skin")v=+v;if(k==="blush"||k==="tongue"||k==="freckles")v=v==="1";if(k==="mouth")S.draft.result.params.tongue=v==="tongue";S.draft.result.params[k]=v;S.draft.manual=true;render();sfx("pop");break;}
+  case "mset": {const k=b.dataset.k;let v=b.dataset.v;if(k==="skin"||k.startsWith("hue_"))v=+v;if(k==="blush"||k==="tongue"||k==="freckles")v=v==="1";if(k==="mouth")S.draft.result.params.tongue=v==="tongue";S.draft.result.params[k]=v;S.draft.manual=true;render();sfx("pop");break;}
   case "savehero": saveHero();break;
   case "delhero": S.confirmDel=true;render();break;
   case "delcancel": S.confirmDel=null;render();break;
@@ -2344,7 +2537,7 @@ app.addEventListener("click",e=>{
   case "teamroll": {const hs=campHeroes(),T=teamMembers(hs),d=diceFor(SAVE.campaign,"easy");const rolls=T.map(()=>1+Math.floor(Math.random()*d.sides));P.teamRolls=rolls;b.disabled=true;sfx("roll");
    if(RM){teamHit(rolls.reduce((a,x)=>a+x,0));break;}
    let k=0;const iv=setInterval(()=>{T.forEach((_,i)=>{const el=$("#td"+i);if(el){el.textContent=1+Math.floor(Math.random()*d.sides);el.classList.add("spinning");}});if(++k>12){clearInterval(iv);T.forEach((_,i)=>{const el=$("#td"+i);if(el){el.textContent=rolls[i];el.classList.remove("spinning");el.classList.add("landed");}});setTimeout(()=>teamHit(rolls.reduce((a,x)=>a+x,0)),700);}},90);break;}
-  case "bosswin": resolveStation(true,null,{boss:true});break;
+  case "bosswin": resolveStation(true,null,{boss:true});setTimeout(()=>earn(4),1300);break;
   case "toupgrade": P.phase="upgrade";P.upStep="intro";sfx("lvl");render();confetti(60);break;
   case "upnext": P.upStep="choose";sfx("pop");render();break;
   case "upcont": P.upQueue.shift();P.upPick=null;if(P.upQueue.length){P.upStep="intro";sfx("lvl");render();confetti(40);}else{P.upStep=null;advance();toast("השדרוגים נשמרו!");}break;
@@ -2355,10 +2548,12 @@ app.addEventListener("click",e=>{
   case "choose": {const st=P.chapter.stations[P.idx];const o=st.challenge.options[+b.dataset.i];P.ezRes=EZR[o.label]||null;resolveStation(true,o.result);break;}
   case "advance": advance();break;
   case "endsession": endSession();break;
+  case "swapcamp": {const i=+b.dataset.i;const o=(SAVE.camps||[]).splice(i,1)[0];if(!o)break;if(SAVE.campaign)SAVE.camps.unshift(SAVE.campaign);SAVE.campaign=o;persist();sfx("pop");render();window.scrollTo({top:0});toast("ממשיכים מאיפה שעצרתם!");break;}
+  case "shopgo": {const h=SAVE.heroes.find(x=>x.id===b.dataset.id);if(!h)break;S.returnTo="home";S.draft=newDraft(h);S.draft.dress=true;S.draft.tab=b.dataset.tab;document.documentElement.style.overflow="hidden";go("hero");break;}
   case "splashgo": jingle();S.screen="home";render();window.scrollTo({top:0});break;
   case "readw": {const i=+b.dataset.v;P.readLit=P.readLit||[];if(!P.readLit.includes(i))P.readLit.push(i);else P.readLit=P.readLit.filter(x=>x!==i);
    const n=document.querySelectorAll(".spell .sw").length;
-   if(P.readLit.length>=n){P.readDone=true;P.readBonus=true;P.readCount=(P.readCount||0)+1;const st=P.chapter.stations[P.idx],hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];L.words=(L.words||0)+1;persist();sfx("win");if(SAVE.campaign.mode!=="bed")confetti(36);render();}
+   if(P.readLit.length>=n){P.readDone=true;P.readBonus=true;P.readCount=(P.readCount||0)+1;setTimeout(()=>earn(1),400);const st=P.chapter.stations[P.idx],hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];L.words=(L.words||0)+1;persist();sfx("win");if(SAVE.campaign.mode!=="bed")confetti(36);render();}
    else{b.classList.toggle("lit");sfx("pop");}break;}
   case "eztoggle": P.full=!P.full;render();break;
   case "readskip": P.readDone=true;render();break;
@@ -2369,17 +2564,18 @@ app.addEventListener("click",e=>{
   case "lockok": {const v=(($("#lockcode")||{}).value||"").trim();if(v!==UNLOCK_CODE){S.lock.err=true;sfx("lose");render();setTimeout(()=>{const i=$("#lockcode");if(i)i.focus();},60);break;}
    const L=S.lock,u=U();S.lock=null;
    if(L.kind==="map"){if(!u.maps.includes(L.id))u.maps.push(L.id);if(S.setup)S.setup.mapId=L.id;}
-   if(L.kind==="items")u.items=true;
-   if(L.kind==="create"){u.create=true;if(S.setup)S.setup.creating=true;}
-   persist();sfx("win");confetti(50);toast(L.kind==="map"?"העולם נפתח!":L.kind==="items"?"הפריטים המיוחדים נפתחו!":"אפשר ליצור עולם!");break;}
-  case "newworld": if(!U().create){S.lock={kind:"create"};render();setTimeout(()=>{const i=$("#lockcode");if(i)i.focus();},60);}else{S.setup.creating=true;render();setTimeout(()=>{const i=$("#cwName");if(i)i.focus();},60);}sfx("pop");break;
+   if(L.kind==="item"){u.owned=u.owned||[];u.owned.push(tkey(L.k)+":"+L.v);if(S.draft)dSet(S.draft.result.params,L.k,L.v);}
+   if(L.kind==="create"){if(S.setup)S.setup.creating=true;}
+   persist();sfx("win");confetti(50);toast(L.kind==="map"?"העולם נפתח!":L.kind==="item"?"הפריט נפתח!":"אפשר ליצור עולם!");break;}
+  case "buygem": {const L=S.lock;if(!L||L.kind!=="item")break;const tr=tierOf(L.k,L.v),pr=PRICE[tr];if(gems()<pr||(tr===4&&!legendOK()))break;SAVE.gems=gems()-pr;const u=U();u.owned=u.owned||[];u.owned.push(tkey(L.k)+":"+L.v);if(S.draft)dSet(S.draft.result.params,L.k,L.v);S.lock=null;persist();sfx("win");confetti(60);toast("הפריט נפתח!");break;}
+  case "newworld": if(!(S.setup&&S.setup.creating)){S.lock={kind:"create"};render();setTimeout(()=>{const i=$("#lockcode");if(i)i.focus();},60);}else{S.setup.creating=true;render();setTimeout(()=>{const i=$("#cwName");if(i)i.focus();},60);}sfx("pop");break;
   case "cwbase": S.setup.cwBase=b.dataset.v;{const n=$("#cwName"),k=$("#cwKeys");S.setup.cwN=n?n.value:"";S.setup.cwK=k?k.value:"";}render();{const n=$("#cwName"),k=$("#cwKeys");if(n)n.value=S.setup.cwN||"";if(k)k.value=S.setup.cwK||"";}sfx("pop");break;
   case "cwcancel": S.setup.creating=false;render();break;
   case "cwsave": {const n=(($("#cwName")||{}).value||"").trim(),k=(($("#cwKeys")||{}).value||"").trim();if(!n){toast("תנו שם לעולם");break;}if(!k){toast("כתבו כמה מילות מפתח");break;}
    const cm={id:"c_"+rid(),name:n.slice(0,30),keys:k.slice(0,90),base:S.setup.cwBase||"sky"};SAVE.customMaps.push(cm);S.setup.mapId=cm.id;S.setup.creating=false;persist();sfx("win");confetti(40);toast("העולם "+cm.name+" נוצר!");break;}
   case "heartswap": P.heartPick=(P.heartPick||0)+1;sfx("pop");render();break;
-  case "heartdone": {P.heartDone=true;campHeroes().forEach(h=>h.hearts=(h.hearts||0)+1);persist();sfx("win");if(SAVE.campaign.mode!=="bed")confetti(50);toast("עוד לב נאסף לאוצר!");advance();break;}
-  case "endheart": {P.endHeart=true;campHeroes().forEach(h=>h.hearts=(h.hearts||0)+1);persist();if(SAVE.campaign.mode!=="bed"){sfx("win");confetti(40);}render();break;}
+  case "heartdone": {P.heartDone=true;setTimeout(()=>earn(2),600);campHeroes().forEach(h=>h.hearts=(h.hearts||0)+1);persist();sfx("win");if(SAVE.campaign.mode!=="bed")confetti(50);toast("עוד לב נאסף לאוצר!");advance();break;}
+  case "endheart": {P.endHeart=true;setTimeout(()=>earn(2),300);campHeroes().forEach(h=>h.hearts=(h.hearts||0)+1);persist();if(SAVE.campaign.mode!=="bed"){sfx("win");confetti(40);}render();break;}
  }
 });
 
