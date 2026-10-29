@@ -1748,12 +1748,12 @@ function hcard(h,attrs,extra="",editBtn=false){const card=`<button class="hcard"
 
 /* ---------- background chiptune music: one loop per place, boss and bedtime ---------- */
 const MUS={
- home:{bpm:96,lw:"square",lv:.022,bv:.05,bars:[0,5,-3,7],lead:[72,0,76,0,79,0,76,0,74,0,77,0,76,0,72,0],bass:[48,0,0,0,55,0,0,0,53,0,0,0,55,0,0,0]},
- ice:{bpm:78,lw:"triangle",lv:.05,bv:.05,wind:.05,bars:[0,-4,5,-2],lead:[84,0,0,79,0,0,76,0,81,0,0,77,0,0,74,0],bass:[45,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0]},
- swamp:{bpm:100,lw:"square",lv:.02,bv:.055,wind:.018,bars:[0,0,-4,-2],lead:[69,0,72,0,76,0,72,0,68,0,71,0,74,0,71,0],bass:[45,0,45,0,45,0,45,0,44,0,44,0,44,0,44,0]},
- sky:{bpm:112,lw:"square",lv:.02,bv:.05,wind:.02,bars:[0,5,7,5],lead:[79,81,84,0,81,79,76,0,77,79,81,0,79,76,74,0],bass:[53,0,60,0,55,0,62,0,53,0,60,0,55,0,62,0]},
+ home:{calm:1,bpm:76,pat:[[0,-1,2,-1,3,-1,2,-1,4,-1,3,-1,2,-1,-1,-1],[0,-1,-1,2,3,-1,4,-1,3,-1,2,-1,1,-1,-1,-1]],prog:[[0,"maj9"],[-3,"m7"],[-7,"maj7"],[-5,"sus"]],mel:.4},
+ ice:{calm:1,bpm:62,wind:.04,pat:[[0,-1,-1,2,-1,3,-1,-1,4,-1,3,-1,2,-1,-1,-1],[0,-1,2,-1,-1,4,-1,3,-1,-1,2,-1,1,-1,-1,-1]],prog:[[2,"m9"],[-2,"maj7"],[-7,"maj7"],[0,"add9"]],mel:.5},
+ swamp:{calm:1,bpm:70,wind:.014,pat:[[0,-1,1,-1,2,-1,1,-1,3,-1,2,-1,1,-1,0,-1],[0,-1,2,-1,1,-1,3,-1,2,-1,-1,-1,4,-1,-1,-1]],prog:[[-3,"m9"],[-7,"maj7"],[2,"m7"],[4,"sus"]],mel:.35},
+ sky:{calm:1,bpm:88,wind:.012,pat:[[0,2,3,-1,4,3,2,-1,3,4,5,-1,4,3,2,-1],[0,-1,2,3,-1,4,-1,5,4,-1,3,-1,2,-1,-1,-1]],prog:[[2,"maj9"],[-1,"m7"],[-5,"maj7"],[-3,"add9"]],mel:.45},
  boss:{bpm:150,lw:"square",lv:.024,bv:.06,bars:[0,0,3,-2],lead:[64,0,67,0,70,69,67,0,64,0,63,0,62,0,0,0],bass:[40,40,52,40,40,52,40,52,43,43,55,43,43,55,43,55]},
- bed:{bpm:62,lw:"triangle",lv:.035,bv:.035,bars:[0,-3,5,0],lead:[72,0,0,0,76,0,0,0,79,0,0,0,76,0,0,0],bass:[48,0,0,0,0,0,0,0,43,0,0,0,0,0,0,0]}
+ bed:{calm:1,bpm:50,pat:[[0,-1,-1,-1,2,-1,-1,-1,3,-1,-1,-1,2,-1,-1,-1],[0,-1,-1,2,-1,-1,4,-1,-1,-1,3,-1,-1,-1,-1,-1]],prog:[[0,"maj7"],[-3,"m7"],[2,"m7"],[-5,"sus"]],mel:.25,soft:1}
 };
 let MU={cur:null,timer:null,step:0,next:0,gain:null,wind:null,hold:0};
 const midiF=n=>440*Math.pow(2,(n-69)/12);
@@ -1763,6 +1763,18 @@ function windOn(level){
  const src=AC.createBufferSource();src.buffer=buf;src.loop=true;const f=AC.createBiquadFilter();f.type="bandpass";f.frequency.value=500;f.Q.value=.8;
  const lfo=AC.createOscillator(),lg=AC.createGain();lfo.frequency.value=.12;lg.gain.value=320;lfo.connect(lg).connect(f.frequency);
  const g=AC.createGain();g.gain.value=level;src.connect(f).connect(g).connect(MU.gain);src.start();lfo.start();return ()=>{try{src.stop();lfo.stop();}catch(e){}};
+}
+
+const CH={maj9:[0,4,7,11,14],maj7:[0,4,7,11,12],m7:[0,3,7,10,12],m9:[0,3,7,10,14],add9:[0,4,7,14,12],sus:[0,5,7,12,14]};
+function mPluck(n,t,d,vol){const f=midiF(n),o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),lp=AC.createBiquadFilter();o.type="sine";o2.type="triangle";o.frequency.value=f;o2.frequency.value=f*2;lp.type="lowpass";lp.frequency.value=2600;const g2=AC.createGain();g2.gain.value=.22;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);o2.connect(g2).connect(g);g.connect(lp).connect(MU.gain);o.start(t);o2.start(t);o.stop(t+d+.05);o2.stop(t+d+.05);}
+function calmStep(M,th,bar,i,t,st,tr,seed){
+ const pr=M.prog[bar%M.prog.length],root=60+pr[0]+tr,iv=CH[pr[1]],T=[];for(let k=0;k<iv.length;k++)T.push(root+iv[k]);for(let k=0;k<iv.length;k++)T.push(root+12+iv[k]);
+ const pat=M.pat[(seed+Math.floor(bar/4))%M.pat.length],ix=pat[i],v=M.soft?.045:.075;
+ if(ix>=0&&T[ix]!=null)mPluck(T[ix],t,st*5,v*(i%4===0?1:.8));
+ if(i===0)mPluck(root-24,t,st*12,M.soft?.06:.1);
+ if(i===8&&!M.soft)mPluck(root-17,t,st*6,.05);
+ if(i%4===2&&Math.random()<M.mel*.5&&bar%2===1){const mn=T[3+Math.floor(Math.random()*4)]+12;mPluck(mn,t,st*6,v*.7);}
 }
 let NOISE=null;
 function drum(kind,t,vol){if(!NOISE){const len=AC.sampleRate*.3;NOISE=AC.createBuffer(1,len,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;}
@@ -1785,15 +1797,17 @@ function music(thKey){
  if(!AC||!soundOn)thKey=null;
  if(thKey===MU.cur)return;
  if(MU.timer){clearInterval(MU.timer);MU.timer=null;}
- if(MU.gain){const g=MU.gain,w=MU.wind;g.gain.setTargetAtTime(0,AC.currentTime,.25);setTimeout(()=>{try{w&&w();g.disconnect();}catch(e){}},1400);MU.gain=null;MU.wind=null;}
+ if(MU.gain){const g=MU.gain,w=MU.wind,rv=MU.rv;g.gain.setTargetAtTime(0,AC.currentTime,.25);setTimeout(()=>{try{w&&w();g.disconnect();rv&&rv.forEach(x=>x.disconnect());}catch(e){}},3200);MU.gain=null;MU.wind=null;MU.rv=null;}
  MU.cur=thKey;if(!thKey)return;
  const [th,sd]=thKey.split(":"),seed=+(sd||0);const M=MUS[th];if(!M)return;
- const {parts,order}=makeParts(th,M,seed);
- const tr=[0,2,-3,5,-2,3][seed%6],bpm=M.bpm*[1,1.06,.94,1.1,.97][seed%5];
+ const {parts,order}=M.calm?{parts:null,order:["A"]}:makeParts(th,M,seed);
+ const tr=[0,2,-3,5,-2,3][seed%6],bpm=M.bpm*[1,1.05,.95,1.08,.97][seed%5];
  MU.gain=AC.createGain();MU.gain.gain.setValueAtTime(0,AC.currentTime);MU.gain.gain.linearRampToValueAtTime(1,AC.currentTime+1.5);MU.gain.connect(AC.destination);
+ if(M.calm){const len=Math.floor(AC.sampleRate*2.4),ib=AC.createBuffer(2,len,AC.sampleRate);for(let c=0;c<2;c++){const d=ib.getChannelData(c);for(let k=0;k<len;k++)d[k]=(Math.random()*2-1)*Math.pow(1-k/len,2.8);}const cv=AC.createConvolver();cv.buffer=ib;const wg=AC.createGain();wg.gain.value=.55;MU.gain.connect(cv);cv.connect(wg).connect(AC.destination);MU.rv=[cv,wg];}
  if(M.wind)MU.wind=windOn(M.wind);
  MU.step=0;MU.next=Math.max(AC.currentTime+.1,MU.hold||0);const st=60/bpm/2;
- MU.timer=setInterval(()=>{if(!AC||!MU.gain)return;while(MU.next<AC.currentTime+.25){const i=MU.step%16,bar=Math.floor(MU.step/16),pt=parts[order[bar%order.length]],off=M.bars[bar%M.bars.length]+tr;
+ MU.timer=setInterval(()=>{if(!AC||!MU.gain)return;while(MU.next<AC.currentTime+.25){const i=MU.step%16,bar=Math.floor(MU.step/16),pt=parts?parts[order[bar%order.length]]:null,off=M.bars?M.bars[bar%M.bars.length]+tr:0;
+  if(M.calm){calmStep(M,th,bar,i,MU.next,st,tr,seed);MU.next+=st;MU.step++;continue;}
   const ln=pt.lead[i];if(ln)mNote(ln+off,MU.next,st*1.6,(bar%8>=4&&M.lw==="square")?"triangle":M.lw,M.lv*(pt.quiet?.7:1));
   if(M.bass[i])mNote(M.bass[i]+off,MU.next,st*(th==="boss"?.9:3),"triangle",M.bv*(pt.quiet?.6:1));
   const dc=pt.drum[i];if(dc&&dc!=="0")drum(dc,MU.next,th==="bed"?.02:.05);
