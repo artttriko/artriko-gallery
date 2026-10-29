@@ -280,7 +280,8 @@ svg.hero,.fx svg{overflow:visible}
 .arena.tall .banner{top:auto;bottom:20%}
 .counter{width:170px;height:170px;border-radius:50%;margin:4px auto;border:4px solid var(--o);background:radial-gradient(circle at 40% 35%,#9dffb6,#21b84a 70%);box-shadow:inset 0 -10px 0 #1a8f3a,0 7px 0 var(--o);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;touch-action:manipulation}
 .counter b{font-size:4rem;font-weight:900;line-height:1;text-shadow:-2px -2px 0 var(--o),2px -2px 0 var(--o),-2px 2px 0 var(--o),2px 2px 0 var(--o),0 4px 0 var(--o)}
-.counter span{font-weight:900;text-shadow:0 2px 0 var(--o)}
+.mgoal{margin-top:10px;background:#ffd23f;border:3px solid var(--o);border-radius:14px;padding:6px 10px;font-size:1.25rem;color:var(--o)}.mgoal b{font-size:1.6rem}
+.counter span{font-size:1.1rem;font-weight:900;text-shadow:0 2px 0 var(--o)}
 .counter:active{transform:translateY(4px);box-shadow:inset 0 -6px 0 #1a8f3a,0 3px 0 var(--o)}
 .counter.bump b{animation:bumpn .3s cubic-bezier(.2,1.8,.4,1)}
 @keyframes bumpn{from{transform:scale(1.6)}}
@@ -563,6 +564,17 @@ svg.hero,.fx svg{overflow:visible}
 .sugitem b{font-weight:900;font-size:.9rem}.sugitem span{display:inline-flex;align-items:center;gap:3px;font-weight:900;color:#bff6ff}
 .savedrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid #ffffff22}
 .savedrow:first-of-type{border-top:0}
+
+.tkSquish{animation:tkSquish .6s cubic-bezier(.3,1.6,.5,1)!important;transform-origin:50% 100%}
+@keyframes tkSquish{20%{transform:scale(1.18,.78)}50%{transform:scale(.9,1.12)}75%{transform:scale(1.04,.96)}}
+.tkWiggle{animation:tkWiggle .6s ease-in-out!important;transform-origin:50% 100%}
+@keyframes tkWiggle{20%{transform:rotate(-9deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
+.tkHop{animation:tkHop .6s cubic-bezier(.3,.6,.4,1)!important}
+@keyframes tkHop{40%{transform:translateY(-22%) scale(.96,1.05)}70%{transform:translateY(0) scale(1.08,.92)}}
+.tkSpin{animation:tkSpin .65s ease-in-out!important;transform-origin:50% 60%}
+@keyframes tkSpin{to{transform:rotateY(360deg)}}
+.tkword{position:fixed;z-index:99;transform:translate(-50%,-50%);pointer-events:none;font-family:"Frank Ruhl Libre",serif;font-weight:900;font-size:1.5rem;color:#fff;text-shadow:-2px -2px 0 #1b1030,2px -2px 0 #1b1030,-2px 2px 0 #1b1030,2px 2px 0 #1b1030;animation:tkword .9s ease-out forwards}
+@keyframes tkword{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-90%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-220%)}}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1482,7 +1494,7 @@ function nextRiddle(c){
 function fallbackChapter(c,count){
  const hs=campHeroes(),M=campMap(c);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
  const stations=nodes.map(n=>{
-  const t=M.st[n];const L=hs[leaderIdx(n,hs.length)];
+  const t=(c.narr==="young"&&MAPS[c.mapId]?MAPS[c.mapId]:M).st[n];const L=hs[leaderIdx(n,hs.length)];
   const ch=JSON.parse(JSON.stringify(t.challenge||{}));
   if(t.type==="riddle")Object.assign(ch,nextRiddle(c));
   if(t.type==="physical")ch.action=c.mode==="bed"?(ch.calm||ch.action):ch.action;
@@ -1567,7 +1579,7 @@ function render(){
  app.dataset.screen=S.screen;
  const v={splash:vSplash,home:vHome,hero:vHero,setup:vSetup,loading:vLoading,intro:vIntro,play:vPlay}[S.screen]||vHome;
  const keep={};app.querySelectorAll("[data-keep]").forEach(e=>keep[e.dataset.keep]=[e.scrollTop,e.scrollLeft]);
- let html=v();if((S.screen==="play"||S.screen==="intro")&&narr()!=="parent")html=html.replace(/מסך הורה/g,"מסך מספר").replace(/רק להורה/g,"רק למספר").replace(/להורה/g,"למספר").replace(/ההורה/g,"המספר");
+ let html=v();if((S.screen==="play"||S.screen==="intro")&&narr()!=="parent")html=html.replace(/מסך הורה/g,"מסך מספר");if(ezOn()||(S.screen==="intro"&&narr()==="young"))EZUI.forEach(([a,b])=>{html=html.split(a).join(b);});html=html.replace(/רק להורה/g,"רק למספר").replace(/להורה/g,"למספר").replace(/ההורה/g,"המספר");
  app.innerHTML=html;
  app.querySelectorAll("[data-keep]").forEach(e=>{const k=keep[e.dataset.keep];if(k){e.scrollTop=k[0];e.scrollLeft=k[1];}});
  if(S.lock)app.insertAdjacentHTML("beforeend",lockModal());
@@ -1623,6 +1635,16 @@ function themeNow(){
   if(st&&st.type==="boss"&&P.phase!=="result"&&P.phase!=="upgrade")return "boss";if(c.mode==="bed")return "bed";return MUS[c.mapId]?c.mapId:"home";}
  return "home";
 }
+/* ---------- tickle: touching a character makes it react ---------- */
+const TK=["tkSquish","tkWiggle","tkHop","tkSpin"],TKW=["חִי חִי!","הִי הִי!","זֶה מְדַגְדֵּג!","אוּפְּס!","עוֹד!","הַהַהָּה!"];
+function tickle(svg,e){
+ TK.forEach(c=>svg.classList.remove(c));void svg.getBoundingClientRect();
+ const c=TK[Math.floor(Math.random()*TK.length)];svg.classList.add(c);setTimeout(()=>svg.classList.remove(c),700);
+ const w=document.createElement("div");w.className="tkword";w.textContent=TKW[Math.floor(Math.random()*TKW.length)];w.style.left=e.clientX+"px";w.style.top=e.clientY+"px";document.body.appendChild(w);setTimeout(()=>w.remove(),900);
+ if(soundOn){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();const b=500+Math.random()*200;[0,.07,.14].forEach((t,i)=>tone(b*(1+i*.25),t,.08,"square",.05));}catch(x){}}
+}
+document.addEventListener("pointerdown",e=>{const t=e.target.closest&&e.target.closest("svg");if(!t||t.closest("button,[data-a],.dopt,.dcat,.mapwrap"))return;
+ if(!(t.classList.contains("hero")||t.closest(".fx,.lineup,.bnpc,.bhero,.dstage,.reveal,.turn,.bh-npc,.ovhero")))return;tickle(t,e);},{passive:true});
 /* ---------- opening screen + 8-bit arcade jingle ---------- */
 function jingle(){
  if(!soundOn)return;
@@ -2001,11 +2023,11 @@ const EZC={
  /* movement tasks */
  "עלי הנופר מתנדנדים, ועל כל אחד יושבת צפרדע. עוברים את האגם רק בקפיצות צפרדע!":"עֲלֵי הַנּוּפָר מִתְנַדְנְדִים. עוֹבְרִים אֶת הָאֲגַם רַק בִּקְפִיצוֹת שֶׁל צְפַרְדֵּעַ!","קפיצות צפרדע":"קְפִיצוֹת צְפַרְדֵּעַ",
  "הביצה שורצת תנינים! זחלו כמו תנינים מנקודה אחת בבית לנקודה אחרת, כדי שהתנינים יחשבו שאתם משלהם.":"בַּבִּצָּה יֵשׁ תַּנִּינִים! זוֹחֲלִים כְּמוֹ תַּנִּינִים מִמָּקוֹם לְמָקוֹם בַּבַּיִת.","הגענו!":"הִגַּעְנוּ!",
- "מכשפת הביצה הטילה עליכם כישוף! משתחררים ממנו רק בקפיצות על רגל אחת, וסופרים בקול.":"מְכַשֵּׁפָה הִטִּילָה כִּשּׁוּף! קוֹפְצִים עַל רֶגֶל אַחַת, וְסוֹפְרִים בְּקוֹל.","קפיצות על רגל אחת":"קְפִיצוֹת עַל רֶגֶל אַחַת",
+ "מכשפת הביצה הטילה עליכם כישוף! משתחררים ממנו רק בקפיצות על רגל אחת, וסופרים בקול.":"מְכַשֵּׁפָה הִטִּילָה כִּישׁוּף! קוֹפְצִים עַל רֶגֶל אַחַת, וְסוֹפְרִים בְּקוֹל.","קפיצות על רגל אחת":"קְפִיצוֹת עַל רֶגֶל אַחַת",
  "נחשי מים חוסמים את השביל. עוברים מעליהם בקפיצות גבוהות, ברכיים למעלה!":"נְחָשֵׁי מַיִם עַל הַשְּׁבִיל. קוֹפְצִים גָּבוֹהַּ, בִּרְכַּיִם לְמַעְלָה!","קפיצות גבוהות":"קְפִיצוֹת גְּבוֹהוֹת",
  "הקרח חלקלק! מתקדמים בצעדי פינגווין, ידיים צמודות לגוף.":"הַקֶּרַח חָלָק! הוֹלְכִים כְּמוֹ פִּינְגְּוִינִים, יָדַיִם צְמוּדוֹת לַגּוּף.","צעדי פינגווין":"צַעֲדֵי פִּינְגְּוִין",
  "סערת שלג מתקרבת! מתחממים בקפיצות פיסוק.":"סְעָרַת שֶׁלֶג מִתְקָרֶבֶת! מִתְחַמְּמִים בִּקְפִיצוֹת פִּשּׂוּק.","קפיצות פיסוק":"קְפִיצוֹת פִּשּׂוּק",
- "כישוף הקיפאון! מי שקופא על רגל אחת עד הסוף, משתחרר.":"כִּשּׁוּף הַקִּפָּאוֹן! עוֹמְדִים עַל רֶגֶל אַחַת עַד הַסּוֹף.","שניות על רגל אחת":"שְׁנִיּוֹת עַל רֶגֶל אַחַת",
+ "כישוף הקיפאון! מי שקופא על רגל אחת עד הסוף, משתחרר.":"כִּישׁוּף הַקִּפָּאוֹן! עוֹמְדִים עַל רֶגֶל אַחַת עַד הַסּוֹף.","שניות על רגל אחת":"שְׁנִיּוֹת עַל רֶגֶל אַחַת",
  "מורידים את השלג מהשביל: מתגלגלים על השטיח כמו כדור שלג, או עושים גלגלון.":"מְנַקִּים אֶת הַשֶּׁלֶג: מִתְגַּלְגְּלִים עַל הַשָּׁטִיחַ כְּמוֹ כַּדּוּר שֶׁלֶג.","התגלגלנו!":"הִתְגַּלְגַּלְנוּ!",
  "כדי לעוף בין האיים צריך כנפיים חזקות. נפנופי ידיים גדולים!":"כְּדֵי לָעוּף צָרִיךְ כְּנָפַיִם חֲזָקוֹת. מְנַפְנְפִים בַּיָּדַיִם!","נפנופי כנפיים":"נִפְנוּפֵי כְּנָפַיִם",
  "הענן מתנדנד! עומדים על רגל אחת בלי ליפול.":"הֶעָנָן מִתְנַדְנֵד! עוֹמְדִים עַל רֶגֶל אַחַת בְּלִי לִפֹּל.",
@@ -2035,6 +2057,12 @@ const EZH={
  "חיבוק ונשיקת לילה טוב להורה, כדי שהמגן השקוף יעטוף אות{ך|ך|כם} כל הלילה.":["חִבּוּק לִפְנֵי הַשֵּׁנָה שׁוֹמֵר מִפְּנֵי חֲלוֹמוֹת רָעִים.","חִבּוּק וּנְשִׁיקָה שֶׁל לַיְלָה טוֹב."],
  "{ספר|ספרי|ספרו} להורה: למה את{ה||ם} הכי {מחכה|מחכה|מחכים} מחר?":["שׁוֹמֵר הַחֲלוֹמוֹת רוֹצֶה לָדַעַת מָה מְחַכֶּה לָכֶם מָחָר.","סַפְּרוּ: לְמָה אַתֶּם מְחַכִּים מָחָר?"]
 };
+
+const EZUI=[["מגילת לחש הנגד","מְגִלַּת לַחַשׁ הַנֶּגֶד"],["דילוג על הלחש הפעם","דִּלּוּג עַל הַלַּחַשׁ"],["תורו של","תּוֹרוֹ שֶׁל"],["תורה של","תּוֹרָהּ שֶׁל"],["רגע של לב","רֶגַע שֶׁל לֵב"],["משימה אחרת","מְשִׂימָה אַחֶרֶת"],["<span>עשינו!</span>","<span>עָשִׂינוּ!</span>"],["ספר האגדות","סֵפֶר הָאַגָּדוֹת"],["בפרק הבא","בַּפֶּרֶק הַבָּא"],["האוצר של הגיבורים","הָאוֹצָר שֶׁל הַגִּבּוֹרִים"],["יוצאים לדרך!","יוֹצְאִים לַדֶּרֶךְ!"],["ממשיכים לתחנה הבאה","מַמְשִׁיכִים לַתַּחֲנָה הַבָּאָה"],["לסיום הפרק","לְסִיּוּם הַפֶּרֶק"],["סיימנו להיום","סִיַּמְנוּ לְהַיּוֹם"],["מה בוחרים?","מָה בּוֹחֲרִים?"],["ענו נכון!","עָנוּ נָכוֹן!"],["<span>טעו</span>","<span>טָעוּ</span>"],["קרב בוס!","קְרַב בּוֹס!"],["לחצו כדי להתחיל!","לַחֲצוּ כְּדֵי לְהַתְחִיל!"],["מכה משותפת!","מַכָּה מְשֻׁתֶּפֶת!"],["הלחש עבד!","הַלַּחַשׁ עָבַד!"],["עליית רמה! בחרו שדרוג","עֲלִיַּת רָמָה! בַּחֲרוּ שִׁדְרוּג"],["גלו את החידה","גַּלּוּ אֶת הַחִידָה"],["התחילו את הפרק","הַתְחִילוּ אֶת הַפֶּרֶק"]];
+const EZK={dice:"קֻבִּיּוֹת",riddle:"חִידָה",physical:"מְשִׂימָה",choice:"הַחְלָטָה",meet:"פְּגִישָׁה",boss:"בּוֹס"};
+Object.assign(EZC,{"גשר הקרח החלקלק":"גֶּשֶׁר הַקֶּרַח הַחֲלַקְלַק","הינשוף החכם":"הַיַּנְשׁוּף הֶחָכָם","מערת הפתיתים":"מְעָרַת הַפְּתִיתִים","צומת השבילים":"צֹמֶת הַשְּׁבִילִים","הדוב הרוטן":"הַדֹּב הָרוֹטֵן","מלך הפינגווינים":"מֶלֶךְ הַפִּינְגְּוִינִים","דלת הכפור":"דֶּלֶת הַכְּפוֹר","מגלשת השלג":"מַגְלֵשַׁת הַשֶּׁלֶג","הסערה הגדולה":"הַסְּעָרָה הַגְּדוֹלָה","ארמון הקרח":"אַרְמוֹן הַקֶּרַח",
+ "קפיצה על עלי הנופר":"קְפִיצָה עַל עֲלֵי הַנּוּפָר","סבתא קווא":"סַבְתָּא קְוָה","ריקוד הצפרדעים":"רִקּוּד הַצְּפַרְדְּעִים","שני שבילים במים":"שְׁנֵי שְׁבִילִים בַּמַּיִם","התנין עם השן הכואבת":"הַתַּנִּין עִם הַשֵּׁן הַכּוֹאֶבֶת","עץ הערבה המדבר":"עֵץ הָעֲרָבָה הַמְדַבֵּר","הזחילה מתחת לשורשים":"הַזְּחִילָה מִתַּחַת לַשָּׁרָשִׁים","רוח הערפל":"רוּחַ הָעֲרָפֶל","בריכת הירח":"בְּרֵכַת הַיָּרֵחַ",
+ "סולם הקשת":"סֻלַּם הַקֶּשֶׁת","הענן הסקרן":"הֶעָנָן הַסַּקְרָן","ריקוד הציפורים":"רִקּוּד הַצִּפּוֹרִים","שני איים":"שְׁנֵי אִיִּים","הרוח השובבה":"הָרוּחַ הַשּׁוֹבָבָה","הכוכב התקוע":"הַכּוֹכָב הַתָּקוּעַ","ציפור הלילה":"צִפּוֹר הַלַּיְלָה","קפיצות הכוכב":"קְפִיצוֹת הַכּוֹכָב","ענן הרעם":"עֲנַן הָרַעַם","מגדל הכוכבים":"מִגְדַּל הַכּוֹכָבִים"});
 function E(t){return ezOn()&&t&&EZC[t]?EZC[t]:t;}
 function ezCls(t){return ezOn()&&t&&EZC[t]?" ezline":"";}
 function narr(){const c=SAVE&&SAVE.campaign;return (c&&c.narr)||"parent";}
@@ -2082,7 +2110,7 @@ function vStation(st,hs,c){
  if(P.phase==="result"){
   const R=P.result;
   h+=arenaHTML(st,L,c.mapId,R.ok?"win":"lose",false);
-  h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${R.ok?"הצלחה":"תפנית"}</span>${ezText(P.ezRes||fill(EASY_UI[R.ok?"ok":"fail"][P.idx%2],hs,L,""),R.text)}</div>`;
+  h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${ezOn()?(R.ok?"הַצְלָחָה":"תַּפְנִית"):(R.ok?"הצלחה":"תפנית")}</span>${ezText(P.ezRes||fill(EASY_UI[R.ok?"ok":"fail"][P.idx%2],hs,L,""),R.text)}</div>`;
   const X=P.xpInfo||{};
   if(P.noReward)h+=`<div class="panel slide" style="text-align:center"><div class="small muted">התשובה הייתה</div><div class="answer ol">${esc(E(P.answer))}</div><p>הפעם בלי פרס. תזכרו את התשובה, ובחידה הבאה תנצחו!</p></div>`;
   else h+=`<div class="panel slide"><div class="reward"><div class="chestbox"><div class="rays"></div>${CHEST}<div class="itempop">${itemIcon(st.reward.icon)}</div></div><div style="min-width:0"><div class="small muted">${st.type==="boss"&&hs.length>1?"כל הגיבורים קיבלו":esc(L.heroName)+(L.gender==="f"?" קיבלה":" קיבל")}:</div><div class="rname ol">${esc(st.reward.name)}</div><div class="xp"><div class="xpbar"><i data-to="${X.to??0}" style="width:${X.from??0}%"></i></div><span>דרגה ${X.lvlFrom??heroLevel(L)}</span></div></div></div>
@@ -2091,21 +2119,21 @@ function vStation(st,hs,c){
   return h;
  }
  h+=arenaHTML(st,L,c.mapId,P.tries?"retry":"idle",enter);
- h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL[st.type]};color:${O}">${KIND[st.type]} · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${ezText(st.easy,st.read)}${ezToggle()}</div>${stageBox(st.stage)}`;
+ h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL[st.type]};color:${O}">${ezOn()?EZK[st.type]+" · תַּחֲנָה "+(st.node+1):KIND[st.type]+" · תחנה "+(st.node+1)}</span><span class="tt">${esc(E(st.title))}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div>${stageBox(st.stage)}`;
  if(["riddle","meet","choice"].includes(st.type)&&!P.opened)return h+`<div class="panel" style="text-align:center;align-items:center"><p style="font-weight:900;font-size:1.1rem">${S.kids?"":"תנו "+(hs.length>1?"לילדים":(hs[0]&&hs[0].gender==="f"?"לילדה":"לילד"))+" ללחוץ על "}${st.type==="riddle"?"סימן השאלה":st.type==="meet"?"בועת הדיבור":"סימן השבילים"} שבזירה!</p><button class="btn wide" data-a="openq"><span>${st.type==="riddle"?"גלו את החידה":st.type==="meet"?"מה יש לו להגיד?":"לאן אפשר ללכת?"}</span></button></div>`;
  const ch=st.challenge||{};
  if(st.type==="dice"){
-  if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">משימת גוף · כולם ביחד!</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(E(m.t))}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>מתוך ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(E(m.u))}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(E(m.u))}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
+  if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">${ezOn()?"מְשִׂימַת גּוּף · כֻּלָּם בְּיַחַד!":"משימת גוף · כולם ביחד!"}</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(E(m.t))}${m.n>1?`<div class="mgoal">${ezOn()?`כְּדֵי לַעֲבֹר: <b>${m.n}</b> ${esc(E(m.u))}!`:`כדי לעבור צריך <b>${m.n}</b> ${esc(m.u)}. סופרים ביחד בקול!`}</div>`:""}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>${ezOn()?"מִתּוֹךְ":"מתוך"} ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(E(m.u))}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(E(m.u))}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
   if(c.read&&c.read!=="off"&&!P.readDone&&(P.readCount||0)<2&&P.roll==null)return h+readBox(st,hs,L,c);
   if(P.readBonus)h+=`<div class="readok slide">${HEART_SVG(28)}<b>הלחש עבד! ${esc(P.readItem?P.readItem.cu.n:"הכישוף")} התבטל, והקובייה צריכה 1 פחות.</b></div>`;
   const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(st.move&&P.moveDone?1:0)));const bonus=statOf(L,"str");
-  h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${L.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
+  h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>${ezOn()?`צָרִיךְ <b>${target}</b> וּמַעְלָה בַּקֻּבִּיָּה`:`צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}`}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${L.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
   if(c.dice==="digital"){
    const v=P.roll;const ok=v!=null&&v+bonus>=target;const cls=v==null?"":(ok?"win":"lose");
    h+=d.sides===6?cubeHTML(v,cls):d20HTML(v,cls);
    if(v!=null&&P.rollPair)h+=`<div class="roll-note">בזכות העזרה: ${P.rollPair[0]} ו־${P.rollPair[1]}. לוקחים את הגבוה!</div>`;
    if(v!=null&&bonus)h+=`<div class="roll-note">יצא ${v} + ${bonus} כוח = ${v+bonus}</div>`;
-   if(v==null)h+=`<button class="btn wide" data-a="roll"><span>${esc(L.heroName)}, ${L.gender==="f"?"הטילי":"הטל"}!</span></button>`;
+   if(v==null)h+=`<button class="btn wide" data-a="roll"><span>${esc(L.heroName)}, ${ezOn()?(L.gender==="f"?"הַטִּילִי":"הָטֵל"):(L.gender==="f"?"הטילי":"הטל")}!</span></button>`;
    else{if(!ok&&luckLeft(L)>0)h+=`<button class="btn wide" data-a="reroll"><span>הטלה חוזרת · מזל (נשארו ${luckLeft(L)})</span></button>`;h+=`<button class="btn wide ${ok?"grn":"pnk"}" data-a="dres" data-ok="${ok?1:0}"><span>${ok?"הצלחה! מה קורה עכשיו?":"לא הצליח... מה קורה עכשיו?"}</span></button>`;}
   } else {
    const tg=Math.max(1,target-bonus);
@@ -2132,7 +2160,7 @@ function vStation(st,hs,c){
 
 /* ---------- reading practice: counter-spells the child reads exactly as written ---------- */
 const SPELL_W=["קֶסֶם, צֵא!","שַׁעַר, פְּתַח!","אוֹר, בּוֹא!","כּוֹכָב, זְרַח!","קֶרַח, לֵךְ!","עָנָן, זוּז!","גֶּשֶׁר, קוּם!","קֶסֶם, חֲזֹר!","לֵב טוֹב!","אֹמֶץ, אֹמֶץ!"];
-const SPELL_S=["כִּשּׁוּף רַע, לֵךְ מִכָּאן!","אוֹר גָּדוֹל, בּוֹא אֵלַי!","אֲנִי לֹא [מְפַחֵד|מְפַחֶדֶת] מִשּׁוּם כִּשּׁוּף!","הַקֶּסֶם הָרַע נֶעֱלָם עַכְשָׁו!","יַחַד אֲנַחְנוּ חֲזָקִים מִכֹּל קֶסֶם!","שַׁעַר, שַׁעַר, פְּתַח לִי!","הַקֶּרַח נָמֵס, הַדֶּרֶךְ פְּתוּחָה!","כּוֹכָב קָטָן, הָאֵר לָנוּ!"];
+const SPELL_S=["כִּישׁוּף רַע, לֵךְ מִכָּאן!","אוֹר גָּדוֹל, בּוֹא אֵלַי!","אֲנִי לֹא [מְפַחֵד|מְפַחֶדֶת] מִשּׁוּם כִּישׁוּף!","הַקֶּסֶם הָרַע נֶעֱלָם עַכְשָׁו!","יַחַד אֲנַחְנוּ חֲזָקִים מִכֹּל קֶסֶם!","שַׁעַר, שַׁעַר, פְּתַח לִי!","הַקֶּרַח נָמֵס, הַדֶּרֶךְ פְּתוּחָה!","כּוֹכָב קָטָן, הָאֵר לָנוּ!"];
 const CURSES=[{n:"כישוף הקיפאון",d:"שהקפיא את הדרך"},{n:"כישוף השינה",d:"שמרדים כל מי שמתקרב"},{n:"כישוף הערפל",d:"שמסתיר את השביל"},{n:"כישוף הבלבול",d:"שהופך את כל הכיוונים"},{n:"כישוף השתיקה",d:"שגונב את הקולות"}];
 const MANNERS={loud:["בקול רם וחגיגי, כמו קוסם גדול","בקול עמוק של ענק","עם יד מורמת, כמו שרביט"],calm:["בלחישה סודית","לאט לאט, מילה אחרי מילה","בקול רך, כמו שיר ערש"]};
 function readPick(c,hs,L){
@@ -2142,9 +2170,9 @@ function readPick(c,hs,L){
 function readBox(st,hs,L,c){
  const P=S.play,R=readPick(c,hs,L),words=R.t.split(" "),lit=P.readLit||[],f=L.gender==="f";
  return `<div class="panel readbox slide"><div class="eyebrow">מגילת לחש הנגד</div>
- ${ezOn()?`<p class="eztext" style="color:#fff">מְכַשֵּׁף רַע הִטִּיל כָּאן כִּשּׁוּף! קוֹרְאִים אֶת הַלַּחַשׁ בְּדִיּוּק כְּמוֹ שֶׁהוּא כָּתוּב:</p>`:`<p class="readintro">מכשף רע הטיל כאן את <b>${R.cu.n}</b>, ${R.cu.d}. רק מי שקורא את לחש הנגד <b>בדיוק כמו שהוא כתוב</b>, ו${esc(R.how)}, יכול לבטל אותו!</p>`}
+ ${ezOn()?`<p class="eztext" style="color:#fff">מְכַשֵּׁף רַע הִטִּיל כָּאן כִּישׁוּף! קוֹרְאִים אֶת הַלַּחַשׁ בְּדִיּוּק כְּמוֹ שֶׁהוּא כָּתוּב:</p>`:`<p class="readintro">מכשף רע הטיל כאן את <b>${R.cu.n}</b>, ${R.cu.d}. רק מי שקורא את לחש הנגד <b>בדיוק כמו שהוא כתוב</b>, ו${esc(R.how)}, יכול לבטל אותו!</p>`}
+ <p class="small" style="text-align:center;color:var(--ink-dim)">${ezOn()?"קוֹרְאִים לְבַד. כָּל מִלָּה שֶׁקָּרְאוּ נָכוֹן, לוֹחֲצִים עָלֶיהָ!</p><p hidden>":""}${esc(L.heroName)} ${f?"קוראת":"קורא"} לבד. כל מילה שנקראה נכון, לוחצים עליה והיא נדלקת.</p>
  <div class="spell" role="group" aria-label="לחש הנגד">${words.map((w,i)=>`<button class="sw ${lit.includes(i)?"lit":""}" data-a="readw" data-v="${i}">${esc(w)}</button>`).join(" ")}</div>
- <p class="small" style="text-align:center;color:var(--ink-dim)">${esc(L.heroName)} ${f?"קוראת":"קורא"} לבד. כל מילה שנקראה נכון, לוחצים עליה והיא נדלקת.</p>
  ${stageBox("תנו לקרוא לבד, בקצב שלו. נתקעים? הצביעו על האות הראשונה, ועזרו רק עם ההברה הראשונה. גם קריאה משותפת נחשבת. כשהלחש מתבטל, הקובייה צריכה 1 פחות.")}
  <button class="chip" data-a="readskip">דילוג על הלחש הפעם</button></div>`;
 }
@@ -2176,7 +2204,7 @@ function vBoss(st,hs,c,enter){
  </div>`;
  h+=`<div class="bossbar" aria-label="${esc(ch.hpName)}: נשארו ${hp} מתוך ${hpMax}"><b>${esc(E(ch.hpName))}</b><div class="hp">${Array.from({length:hpMax},(_,i)=>i<hp?HP_ON:hpOff(i===hp&&state==="hit")).join("")}</div></div>`;
  h+=P.bossLine?`<div class="parch slide"><span class="kind" style="background:${P.lastHit?"#21b84a":"#e0306f"}">${P.lastHit?"פגיעה":"התחמק"}</span>${ezText(P.lastHit?EASY_UI.hit:EASY_UI.miss,P.bossLine)}</div>`
-  :`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">קרב בוס · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${ezText(st.easy,st.read)}${ezToggle()}</div>${stageBox(st.stage)}${stageBox(`כל גיבור בתורו מטיל קובייה. כל הצלחה מורידה ${ch.hpName} אחד. אי אפשר להפסיד, רק לנסות שוב. פעם אחת בקרב אפשר לעשות מכה משותפת: ${hs.length>1?"כל הגיבורים":"הגיבור וההורה"} מטילים ביחד ומחברים את המספרים. בסוף כל גיבור בוחר שדרוג.`)}`;
+  :`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">קרב בוס · תחנה ${st.node+1}</span><span class="tt">${esc(E(st.title))}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div>${stageBox(st.stage)}${stageBox(`כל גיבור בתורו מטיל קובייה. כל הצלחה מורידה ${ch.hpName} אחד. אי אפשר להפסיד, רק לנסות שוב. פעם אחת בקרב אפשר לעשות מכה משותפת: ${hs.length>1?"כל הגיבורים":"הגיבור וההורה"} מטילים ביחד ומחברים את המספרים. בסוף כל גיבור בוחר שדרוג.`)}`;
  if(hp<=0)return h+`<button class="btn wide grn" data-a="bosswin"><span>ניצחתם! מה קרה לבוס?</span></button>`;
  h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what))}<br>צריך <b>${d.target}</b> ומעלה${bonus?`<br>${esc(R.heroName)} ${R.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
  if(c.dice==="digital"){
@@ -2200,7 +2228,7 @@ function vBoss(st,hs,c,enter){
   if(!P.lastHit&&luckLeft(R)>0)h+=`<button class="btn wide" data-a="reroll"><span>הטלה חוזרת · מזל (נשארו ${luckLeft(R)})</span></button>`;
   h+=`<button class="btn wide grn" data-a="bossnext"><span>${hs.length>1?"התור של "+esc(nx.heroName):"עוד הטלה!"}</span></button>`;
  } else if(c.dice==="digital"){
-  h+=`<button class="btn wide" data-a="roll"><span>${esc(R.heroName)}, ${R.gender==="f"?"הטילי":"הטל"}!</span></button>`;
+  h+=`<button class="btn wide" data-a="roll"><span>${esc(R.heroName)}, ${ezOn()?(R.gender==="f"?"הַטִּילִי":"הָטֵל"):(R.gender==="f"?"הטילי":"הטל")}!</span></button>`;
  } else {
   const tg=Math.max(1,d.target-bonus);
   h+=`<p class="muted small" style="text-align:center">${esc(R.heroName)} ${R.gender==="f"?"מטילה":"מטיל"} את הקובייה האמיתית.</p><div class="row" style="width:100%"><button class="btn grn" data-a="bossmark" data-ok="1"><span>יצא ${tg} ומעלה</span></button><button class="btn pnk" data-a="bossmark" data-ok="0"><span>יצא פחות</span></button></div>`;
