@@ -370,7 +370,7 @@ svg.hero,.fx svg{overflow:visible}
 .tile svg *{animation:none!important}
 .tile span{font-weight:900;font-size:.8rem;line-height:1.2;text-align:center}
 .tile[aria-pressed=true]{background:#ffd23f;outline:3px solid var(--pnk);outline-offset:1px}
-@media (min-width:700px){.dress{left:50%;width:560px;margin-left:-280px;border-inline:3px solid var(--o)}}
+@media (min-width:700px){.dress{left:0;right:0;width:auto;max-width:860px;margin:0 auto;border-inline:3px solid var(--o)}.dmain{grid-template-columns:96px 1fr 96px}.dcat svg{max-height:9vh}.dcat span{font-size:.8rem}.dopt span{font-size:.75rem}.drow .swatch{width:36px;height:36px}}
 
 .dress{height:100dvh;overflow:hidden;box-sizing:border-box}.dress *{box-sizing:border-box}
 .dmain{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:66px 1fr 66px;grid-template-rows:minmax(0,1fr);gap:4px;padding:0 max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))}
@@ -434,6 +434,17 @@ svg.hero,.fx svg{overflow:visible}
 .kids .playhead+.row{grid-template-columns:repeat(3,minmax(0,1fr))}
 .brand{white-space:nowrap}.brand .ol{font-size:clamp(1rem,4.6vw,1.3rem)}
 .topbar .tools{flex-wrap:nowrap}
+
+.playgrid,.pg-main{display:flex;flex-direction:column;gap:16px}
+@media (min-width:700px){html{font-size:112.5%}#app{max-width:780px}}
+@media (min-width:900px) and (orientation:landscape){
+ #app[data-screen=play]{max-width:1240px}
+ .playgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:start}
+ .pg-map{position:sticky;top:12px}
+ .pg-map .mapwrap svg{max-height:calc(100vh - 40px);width:100%}
+ #app[data-screen=play] .arena{height:330px}
+ #app[data-screen=play] .kids .arena,.kids#app .arena{height:400px}
+}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1492,7 +1503,7 @@ function vPlay(){
   <button class="btn wide grn" data-a="endsession"><span>סיימנו להיום</span></button>`;
  } else if(P.phase==="upgrade")body=vUpgrade(hs);
  else if(P.phase==="heart")body=vHeart(hs,c);
- else body=(ch.stations[P.idx].type==="boss"&&P.phase!=="result"?"":map)+vStation(ch.stations[P.idx],hs,c);
+ else{const m=(ch.stations[P.idx].type==="boss"&&P.phase!=="result"?"":map);body=m?`<div class="playgrid"><div class="pg-map">${m}</div><div class="pg-main">${vStation(ch.stations[P.idx],hs,c)}</div></div>`:vStation(ch.stations[P.idx],hs,c);}
  return `${topbar()}${head}${body}`;
 }
 
