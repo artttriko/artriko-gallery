@@ -510,6 +510,11 @@ svg.hero,.fx svg{overflow:visible}
 .sw.lit{background:#ffd23f;border:3px solid var(--o);color:var(--o);box-shadow:0 0 18px #ffd23f;animation:popin .4s cubic-bezier(.2,1.7,.4,1)}
 .kids .sw{font-size:2.8rem}
 .readok{display:flex;align-items:center;gap:10px;background:#21b84a;border:3px solid var(--o);border-radius:16px;padding:8px 12px;font-weight:900;box-shadow:0 4px 0 var(--o)}
+
+.eztext{display:block;font-family:"Frank Ruhl Libre","David Libre","Times New Roman",serif;font-size:1.65rem;line-height:1.9;font-weight:700;color:#2b1a0e}
+.kids .eztext{font-size:2rem}
+.eztog{margin-top:10px;font-size:.8rem;background:#f0e6c8;color:var(--parch-ink);box-shadow:0 2px 0 var(--o);min-height:34px}
+.narrcard{background:linear-gradient(180deg,#5b3bd0,#3a24a0)}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1330,7 +1335,7 @@ function fallbackChapter(c,count){
   if(t.type==="physical")ch.action=c.mode==="bed"?(ch.calm||ch.action):ch.action;
   if(t.type==="boss")ch.hp=n===8?4:3;
   if(ch.options)ch.options=ch.options.map(o=>({label:fill(o.label,hs,L,M.name),result:fill(o.result,hs,L,M.name)}));
-  return {node:n,leaderId:L&&L.id,title:t.title,type:t.type,npc:t.npc,bubble:t.bubble,read:fill(t.read,hs,L,M.name),stage:t.stage,challenge:ch,success:fill(t.success,hs,L,M.name),fail:fill(t.fail,hs,L,M.name),reward:t.reward};
+  return {node:n,easy:ageGroup(c.age)==="old"||c.custom?"":(EASY[c.mapId]||[])[n]||"",leaderId:L&&L.id,title:t.title,type:t.type,npc:t.npc,bubble:t.bubble,read:fill(t.read,hs,L,M.name),stage:t.stage,challenge:ch,success:fill(t.success,hs,L,M.name),fail:fill(t.fail,hs,L,M.name),reward:t.reward};
  });
  const first=c.node===0;
  const last=c.log&&c.log.length?c.log[c.log.length-1]:"";
@@ -1364,7 +1369,7 @@ Map stops 5 and 9 are BOSS stations and must have type "boss"; no other stop may
 Each station has a character the heroes meet, drawn on screen. Pick "npc" from exactly this list: ${NPC_KEYS.join(", ")} (queen = a friendly queen, sprite = a small glowing magic creature, door = a talking magic door). Write the station so it fits that character.
 "bubble": what that character says, in Hebrew, max 6 words, playful.
 Riddles: an original 2-line Hebrew riddle whose lines rhyme, with a one-word answer a child of ${c.age} knows, and a hint.
-"read": 2-4 short sentences, vivid and funny, with sounds the parent can perform. "stage": one short tip to the parent on how to perform it (voice, gesture, pause).
+"read": 2-4 short sentences, vivid and funny, with sounds the parent can perform. "stage": one short tip to the parent on how to perform it (voice, gesture, pause).${c.narr==="young"?'\nIMPORTANT: a 6-7 year old child who is just learning to read will read this aloud. Give EVERY station an extra field "easy": the same moment in 1-2 very short, simple Hebrew sentences with FULL NIKUD (vowel points on every letter), only common words.':c.narr==="kid"?'\nAn older kid (not the parent) is the narrator. Write "stage" tips addressed to that kid narrator, in casual, cool Hebrew the way teens talk (never babyish).':""}
 ${first?"Because this is the first chapter, also write the campaign: a short title and a premise of 3-5 sentences to read aloud that introduces the world, the problem and the heroes by name.":"The opening starts with a one-sentence recap of last time."}
 Reply with ONLY this JSON:
 {${first?`"campaign":{"title":"...","premise":"...","goal":"..."},`:""}
@@ -1394,7 +1399,7 @@ function cleanChapter(r,c,count){
   if(type==="boss"){const ls=a=>Array.isArray(a)?a.filter(x=>typeof x==="string"&&x.trim()).map(x=>x.trim().slice(0,160)).slice(0,5):[];cc={what:str(ch.what,f.challenge.what||"לנצח את הבוס"),hpName:str(ch.hpName,f.challenge.hpName||"כוח הבוס").slice(0,28),hit:ls(ch.hit),miss:ls(ch.miss),hp:f.challenge.hp||3};okc=cc.hit.length>=2&&cc.miss.length>=1;}
   if(!okc||!str(s.read,"")){out.stations.push(f);return;}
   const rw=s.reward&&typeof s.reward==="object"?{name:str(s.reward.name,f.reward.name).slice(0,30),icon:ICONS.includes(s.reward.icon)?s.reward.icon:"star"}:f.reward;
-  out.stations.push({node:f.node,leaderId:f.leaderId,title:str(s.title,f.title),type,npc:NPC_KEYS.includes(s.npc)?s.npc:f.npc,bubble:str(s.bubble,f.bubble).slice(0,60),read:str(s.read,f.read),stage:str(s.stage,""),challenge:cc,success:str(s.success,"הצלחתם!"),fail:str(s.fail,"לא נורא! ממשיכים בדרך אחרת."),reward:rw});
+  out.stations.push({node:f.node,easy:str(s.easy,""),leaderId:f.leaderId,title:str(s.title,f.title),type,npc:NPC_KEYS.includes(s.npc)?s.npc:f.npc,bubble:str(s.bubble,f.bubble).slice(0,60),read:str(s.read,f.read),stage:str(s.stage,""),challenge:cc,success:str(s.success,"הצלחתם!"),fail:str(s.fail,"לא נורא! ממשיכים בדרך אחרת."),reward:rw});
  });
  if(r.campaign&&typeof r.campaign==="object")out.campaign={title:str(r.campaign.title,""),premise:str(r.campaign.premise,""),goal:str(r.campaign.goal,"")};
  return out;
@@ -1409,7 +1414,8 @@ function render(){
  app.dataset.screen=S.screen;
  const v={home:vHome,hero:vHero,setup:vSetup,loading:vLoading,intro:vIntro,play:vPlay}[S.screen]||vHome;
  const keep={};app.querySelectorAll("[data-keep]").forEach(e=>keep[e.dataset.keep]=[e.scrollTop,e.scrollLeft]);
- app.innerHTML=v();
+ let html=v();if((S.screen==="play"||S.screen==="intro")&&narr()!=="parent")html=html.replace(/מסך הורה/g,"מסך מספר").replace(/רק להורה/g,"רק למספר").replace(/להורה/g,"למספר").replace(/ההורה/g,"המספר");
+ app.innerHTML=html;
  app.querySelectorAll("[data-keep]").forEach(e=>{const k=keep[e.dataset.keep];if(k){e.scrollTop=k[0];e.scrollLeft=k[1];}});
  if(S.lock)app.insertAdjacentHTML("beforeend",lockModal());
  if(S.toast)app.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${esc(S.toast)}</div>`);
@@ -1539,6 +1545,8 @@ function vSetup(){
  <h3>גיל הילדים</h3><div class="chips">${AGES.map(a=>`<button class="chip" data-a="sage" data-v="${a.id}" aria-pressed="${s.age===a.id}">${a.l}</button>`).join("")}</div>
  <h3>כמה זמן לפרק?</h3><div class="chips">${LENGTHS.map(l=>`<button class="chip" data-a="slen" data-v="${l.m}" aria-pressed="${s.minutes===l.m}">${l.m} דק׳ · ${l.n} תחנות</button>`).join("")}</div>
  <h3>קוביות</h3><div class="chips"><button class="chip" data-a="sdice" data-v="digital" aria-pressed="${s.dice==="digital"}">קובייה במסך</button><button class="chip" data-a="sdice" data-v="physical" aria-pressed="${s.dice==="physical"}">יש לנו קובייה אמיתית</button></div>
+ <h3>מי מספר את הסיפור?</h3><div class="chips">${[["parent","הורה"],["kid","ילד או ילדה שקוראים בקלות"],["young","ילד או ילדה שמתחילים לקרוא"]].map(([v,l])=>`<button class="chip" data-a="snarr" data-v="${v}" aria-pressed="${(s.narr||"parent")===v}">${l}</button>`).join("")}</div>
+ <p class="muted small">${(s.narr||"parent")==="young"?"הסיפור יוצג בטקסט קצר וקל, עם ניקוד מלא, והטיפים הארוכים יוסתרו. תמיד אפשר להציג את הסיפור המלא.":(s.narr==="kid"?"מספר צעיר מקבל הסבר קצר בשפה שלו, והטיפים מופנים אליו.":"ההורה מקריא, והילדים הם הגיבורים.")}</p>
  <h3>תרגול קריאה <span class="muted small">(לא חובה)</span></h3><div class="chips">${[["off","בלי"],["words","מילות קסם קצרות"],["sent","משפטי קסם"]].map(([v,l])=>`<button class="chip" data-a="sread" data-v="${v}" aria-pressed="${(s.read||"off")===v}">${l}</button>`).join("")}</div>
  <p class="muted small">מתאים לגילאי 5–7, כשלומדים לקרוא. פעם או פעמיים בפרק, כישוף חוסם את הדרך, והילד מבטל אותו כשהוא קורא בעצמו לחש קצר בניקוד.</p>
  </section>
@@ -1574,7 +1582,7 @@ function vIntro(){
  const c=SAVE.campaign,hs=campHeroes();
  return `${topbar()}<section class="panel"><div class="eyebrow">${esc(campMap(c).name)}</div><h1 class="ol">${esc(c.title)}</h1>
  <div class="arena a-${c.mapId}" style="display:flex;justify-content:center;align-items:flex-end;direction:ltr"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,"hero cheer","joy")).join("")}</div></div></section>
- <div class="parch big"><span class="tt">איך הכול התחיל...</span>${esc(c.premise)}</div>
+ <div class="parch big"><span class="tt">איך הכול התחיל...</span>${(c.narr==="young"&&EASY_PREMISE[c.mapId]&&!c.custom&&ageGroup(c.age)!=="old")?`<span class="eztext">${esc(EASY_PREMISE[c.mapId])}</span>`:esc(c.premise)}</div>
  <div class="stage parent-only">${MASK}<span>קראו לאט, בקול של מספר סיפורים. בסוף, הראו לילדים את המפה.</span></div>
  <div class="mapwrap">${mapSVG(c.mapId,c.node,hs)}</div>
  <button class="btn wide grn" data-a="beginplay"><span>התחילו את הפרק</span></button>`;
@@ -1588,11 +1596,11 @@ function vPlay(){
  const map=S.showMap?`<div class="mapwrap">${mapSVG(c.mapId,P.walk?P.walk.from:Math.min(c.node,NODES-1),hs,{win:true})}</div>`:"";
  let body="";
  if(P.idx<0){
-  body=`${map}<div class="parch slide"><span class="tt">${esc(ch.title)}</span>${esc(ch.opening.read)}</div>${stageBox(ch.opening.stage)}<button class="btn wide grn" data-a="next"><span>יוצאים לדרך!</span></button>`;
+  body=`${narrIntro()}${map}<div class="parch slide"><span class="tt">${esc(ch.title)}</span>${ezText(c.node===0&&!(c.sessions)?EASY_UI.open1:EASY_UI.open2,ch.opening.read)}${ezToggle()}</div>${stageBox(ch.opening.stage)}<button class="btn wide grn" data-a="next"><span>יוצאים לדרך!</span></button>`;
  } else if(P.idx>=n){
   const bed=c.mode==="bed";const finished=P.mapDone;
   body=`<div class="arena a-${c.mapId}" style="display:flex;align-items:flex-end;direction:ltr${bed&&!finished?";background:radial-gradient(120% 80% at 50% 0%,#2a3a7a,#0f1640 80%)":""}"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,bed&&!finished?"hero":"hero cheer",bed&&!finished?"sleep":"joy")).join("")}</div>${finished?`<div class="banner">ניצחון!</div>`:""}</div>
-  <div class="parch slide"><span class="tt">${finished?"הממלכה ניצלה!":(bed?"לילה טוב, גיבורים":"להמשך יבוא...")}</span>${esc(ch.closing.read)}</div>${stageBox(ch.closing.stage)}
+  <div class="parch slide"><span class="tt">${finished?"הממלכה ניצלה!":(bed?"לילה טוב, גיבורים":"להמשך יבוא...")}</span>${ezText(finished?EASY_UI.fin:bed?EASY_UI.bed:EASY_UI.more,ch.closing.read)}${ezToggle()}</div>${stageBox(ch.closing.stage)}
   ${bed?`<div class="panel"><div class="breath" aria-hidden="true"></div><div class="breathlbl" id="breathlbl">שואפים...</div><p class="muted small" style="text-align:center">שלוש נשימות של דרקון: שואפים באף, ונושפים לאט כמו עשן.</p></div>`:""}
   <div class="panel heartpanel"><div class="eyebrow">ספר האגדות</div><p class="small" style="color:var(--ink-dim)">ספר האגדות של ${esc(campMap(c).name)} כותב את עצמו לבד, אבל בסוף כל פרק חסרה לו שורה אחת, שרק הגיבורים יכולים למלא:</p><p class="sharq">${esc(fill(SHARE_Q[ageGroup(c.age)==="old"?"old":"young"][(c.sessions||0)%3],hs,hs[0],""))}</p><p class="muted small parent-only">שאלה פתוחה, אין תשובה נכונה. הקשיבו עד הסוף, ושתפו גם אתם רגע משלכם.</p>
   ${bed?(()=>{const H=HEART_BED[(c.sessions||0)%HEART_BED.length];return P.endHeart?`<div class="heartok">${HEART_SVG(40)}<b>שומר החלומות קיבל את מה שביקש. לילה טוב!</b></div>`:`<div class="bedheart"><div class="bh-npc">${npcSVG(H.who,c.mapId)}</div><div><b class="tt" style="color:var(--yel);font-size:1.15rem">${esc(H.t)}</b><p>${esc(fill(H.read,hs,hs[0],""))}</p></div></div><div class="heartask">${esc(fill(H.task,hs,hs[0],""))}</div><button class="btn pnk" data-a="endheart"><span>עשינו!</span></button>`;})():""}</div>
@@ -1671,7 +1679,58 @@ function vHeart(hs,c){
 }
 function heartsOf(h){return h.hearts||0;}
 const HEART_MINI=`<svg viewBox="0 0 24 22" width="18" height="16" aria-hidden="true"><path d="${heartPath(12,11,7.5)}" fill="#ff4f8a" stroke="${O}" stroke-width="2"/></svg>`;
-function stageBox(t){return t?`<div class="stage parent-only">${MASK}<span>${esc(t)}</span></div>`:"";}
+
+/* ---------- child narrator: easy vowel-marked text for beginning readers ---------- */
+const EASY={
+ ice:["לִפְנֵי הַגִּבּוֹרִים יֵשׁ גֶּשֶׁר שֶׁל קֶרַח. הַגֶּשֶׁר חָלָק מְאוֹד! מִי יַעֲבֹר בְּלִי לְהַחְלִיק?",
+  "עַל עַמּוּד שֶׁל קֶרַח יוֹשֵׁב יַנְשׁוּף לָבָן. 'מִי שֶׁפּוֹתֵר אֶת הַחִידָה, עוֹבֵר!'",
+  "בַּמְּעָרָה עָפִים פְּתִיתֵי שֶׁלֶג שֶׁל קֶסֶם. הֵם אוֹהֲבִים רַק שֶׁקֶט. שֶׁקֶט, שֶׁקֶט...",
+  "הַשְּׁבִיל נֶחְלָק לִשְׁנַיִם. לְאָן הוֹלְכִים? בּוֹחֲרִים בְּיַחַד!",
+  "דֹּב גָּדוֹל שׁוֹכֵב עַל הַשְּׁבִיל וְנוֹהֵם. קַר לוֹ, וְהוּא כּוֹעֵס. צָרִיךְ לְהַצְחִיק אוֹתוֹ!",
+  "מֶלֶךְ הַפִּינְגְּוִינִים עָצוּב. הַכֶּתֶר שֶׁלּוֹ הָלַךְ לְאִבּוּד. מִי יַצְחִיק אֶת הַמֶּלֶךְ?",
+  "מוּל הַגִּבּוֹרִים יֵשׁ דֶּלֶת שֶׁל קֶרַח. לַדֶּלֶת יֵשׁ פָּנִים! 'אֶפְתַּח רַק לְמִי שֶׁיּוֹדֵעַ אֶת הַתְּשׁוּבָה.'",
+  "יֵשׁ כָּאן מַגְלֵשָׁה עֲנָקִית שֶׁל שֶׁלֶג. מִתְגַּלְגְּלִים לְמַטָּה כְּמוֹ כַּדּוּר שֶׁלֶג!",
+  "סְעָרָה גְּדוֹלָה מִסְתּוֹבֶבֶת מוּל הַגִּבּוֹרִים. הָרוּחַ חֲזָקָה מְאוֹד! צָרִיךְ לְהַרְגִּיעַ אֶת הַסְּעָרָה.",
+  "בָּאַרְמוֹן יוֹשֶׁבֶת הַמַּלְכָּה. הִיא בּוֹכָה. הַדְּרָקוֹן שֶׁלָּהּ עָף רָחוֹק. אֵיךְ נַעֲזֹר לָהּ?"],
+ swamp:["בַּבִּצָּה יֵשׁ עָלִים יְרֻקִּים עַל הַמַּיִם. קוֹפְצִים מֵעָלֶה לְעָלֶה, וְלֹא נוֹפְלִים לַמַּיִם!",
+  "עַל אֶבֶן גְּדוֹלָה יוֹשֶׁבֶת סַבְתָּא צְפַרְדֵּעַ. 'קֹדֶם פּוֹתְרִים חִידָה,' הִיא אוֹמֶרֶת.",
+  "הַצְּפַרְדְּעִים עֲצוּבוֹת בַּחֹשֶׁךְ. הֵן רוֹצוֹת שֶׁמִּישֶׁהוּ יִרְקֹד אִתָּן!",
+  "יֵשׁ שְׁתֵּי דְּרָכִים: מִנְהָרָה בְּתוֹךְ עֵץ, אוֹ סִירָה קְטַנָּה. בְּמָה בּוֹחֲרִים?",
+  "תַּנִּין גָּדוֹל בּוֹכֶה עַל הַחוֹף. 'הַשֵּׁן שֶׁלִּי כּוֹאֶבֶת!' צָרִיךְ לַעֲזֹר לוֹ.",
+  "בְּתוֹךְ עֵץ יְשֵׁנוֹת גַּחֲלִילִיּוֹת. צָרִיךְ לְהָעִיר אוֹתָן, כְּדֵי שֶׁיִּהְיֶה אוֹר!",
+  "עֵץ גָּדוֹל פּוֹקֵחַ עֵינַיִם. 'רַק מִי שֶׁעוֹנֶה נָכוֹן עוֹבֵר,' הוּא לוֹחֵשׁ.",
+  "הַשָּׁרָשִׁים נְמוּכִים מְאוֹד. אִי אֶפְשָׁר לָלֶכֶת. זוֹחֲלִים כְּמוֹ תַּנִּינִים!",
+  "רוּחַ לְבָנָה שֶׁל עֲרָפֶל מוֹפִיעָה. 'בְּתוֹכִי כֻּלָּם הוֹלְכִים לְאִבּוּד!' צָרִיךְ לְפַזֵּר אֶת הָעֲרָפֶל.",
+  "בַּבְּרֵכָה שׁוֹכֵב הַיָּרֵחַ. הוּא רָטֹב וְעָצוּב. אֵיךְ נַחְזִיר אוֹתוֹ לַשָּׁמַיִם?"],
+ sky:["קֶשֶׁת צִבְעוֹנִית הִיא סֻלָּם אֶל הָאִי הַבָּא. מְטַפְּסִים לְאַט לְאַט!",
+  "עָנָן סַקְרָן עָף מִסָּבִיב. 'יֵשׁ לִי חִידָה בִּשְׁבִילְכֶם!' הוּא צוֹחֵק.",
+  "צִפּוֹרִים צִבְעוֹנִיּוֹת רוֹקְדוֹת בָּאֲוִיר. הֵן רוֹצוֹת שֶׁכֻּלָּם יִרְקְדוּ אִתָּן!",
+  "שְׁנֵי אִיִּים עָפִים בַּשָּׁמַיִם. עַל אֶחָד יֵשׁ בָּלוֹנִים, וְעַל הַשֵּׁנִי פַּעֲמוֹנִים. לְאָן טָסִים?",
+  "רוּחַ שׁוֹבָבָה נוֹשֶׁפֶת חָזָק. הִיא מְפַזֶּרֶת אֶת כָּל הַכּוֹכָבִים! צָרִיךְ לַעֲצֹר אוֹתָהּ.",
+  "כּוֹכָב קָטָן נִתְקַע בְּתוֹךְ עָנָן. צָרִיךְ לְשַׁחְרֵר אוֹתוֹ!",
+  "צִפּוֹר שֶׁל לַיְלָה עוֹמֶדֶת עַל הַדֶּרֶךְ. 'מִי שֶׁפּוֹתֵר אֶת הַחִידָה, עוֹבֵר.'",
+  "הַכּוֹכָבִים מִתְעוֹרְרִים רַק מִקְּפִיצוֹת. קוֹפְצִים כְּמוֹ כּוֹכָב!",
+  "עֲנַן רַעַם שָׁחֹר רוֹעֵם: 'בּוּם! אַף אֶחָד לֹא עוֹבֵר!' צָרִיךְ לְהַרְגִּיעַ אוֹתוֹ.",
+  "בְּרֹאשׁ הַמִּגְדָּל מְחַכֶּה דְּרָקוֹן קָטָן. הוּא שׁוֹמֵר עַל הַכּוֹכָבִים. אֵיךְ נַחְזִיר אוֹתָם לַשָּׁמַיִם?"]
+};
+const EASY_PREMISE={ice:"בְּמַמְלֶכֶת הַקֶּרַח גָּרָה מַלְכָּה. הַחָבֵר שֶׁלָּהּ, דְּרָקוֹן קָטָן, עָף רָחוֹק. הַמַּלְכָּה בָּכְתָה, וְהַכֹּל קָפָא. רַק גִּבּוֹרִים יְכוֹלִים לַעֲזֹר!",
+ swamp:"בַּלַּיְלָה הַיָּרֵחַ הִתְעַטֵּשׁ, וְנָפַל לַבִּצָּה! עַכְשָׁו חֹשֶׁךְ, וְכֻלָּם מְפַחֲדִים. רַק גִּבּוֹרִים יְכוֹלִים לְהַחְזִיר אוֹתוֹ!",
+ sky:"בְּאִיֵּי הָעֲנָנִים הַכּוֹכָבִים הִתְפַּזְּרוּ. הַשָּׁמַיִם חֲשׁוּכִים. רַק גִּבּוֹרִים יְכוֹלִים לֶאֱסֹף אוֹתָם!"};
+const EASY_UI={ok:["$L [הִצְלִיחַ|הִצְלִיחָה]! מַמְשִׁיכִים בַּדֶּרֶךְ.","יֵשׁ! זֶה עָבַד!"],fail:["לֹא נוֹרָא! מְנַסִּים דֶּרֶךְ אַחֶרֶת.","אוּפְס! אֲבָל גִּבּוֹרִים לֹא מְוַתְּרִים!"],
+ hit:"פְּגִיעָה! הַבּוֹס מִתְנַדְנֵד!",miss:"הַבּוֹס קָפַץ הַצִּדָּה! עוֹד נִסָּיוֹן!",
+ open1:"הַהַרְפַּתְקָה מַתְחִילָה! שָׁלֹשׁ, שְׁתַּיִם, אַחַת... יוֹצְאִים!",open2:"הַהַרְפַּתְקָה מַמְשִׁיכָה! מָה יִקְרֶה עַכְשָׁו?",
+ bed:"לַיְלָה טוֹב, גִּבּוֹרִים. מָחָר הַהַרְפַּתְקָה מַמְשִׁיכָה.",more:"פִּתְאוֹם נִשְׁמָע רַעַשׁ מוּזָר... הֶמְשֵׁךְ יָבוֹא!",fin:"נִצַּחְתֶּם! הָעוֹלָם נִצַּל, וְכֻלָּם חוֹגְגִים!",
+ me:"הַיּוֹם אַתֶּם מְסַפְּרִים אֶת הַסִּפּוּר! קוֹרְאִים בְּקוֹל רָם, לְאַט, וּבְשִׂמְחָה."};
+function narr(){const c=SAVE&&SAVE.campaign;return (c&&c.narr)||"parent";}
+function ezOn(){return S.screen==="play"&&narr()==="young"&&!(S.play&&S.play.full);}
+function ezText(easy,full){return ezOn()&&easy?`<span class="eztext">${esc(easy)}</span>`:esc(full);}
+function ezToggle(){return narr()==="young"?`<button class="chip eztog" data-a="eztoggle">${S.play&&S.play.full?"חזרה לטקסט הקל":"להציג את הסיפור המלא"}</button>`:"";}
+function narrIntro(){
+ const n=narr();if(n==="parent")return "";
+ if(n==="young")return `<div class="panel narrcard"><div class="eyebrow">המספר של הערב</div><p class="eztext" style="font-size:1.5rem">${esc(EASY_UI.me)}</p></div>`;
+ return `<div class="panel narrcard"><div class="eyebrow">המספר של הערב: אתם</div><p>ככה זה עובד. מקריאים את הקלף בקול, עם קולות מטורפים לדמויות. הקטעים המקווקווים הם רק בשבילכם, טיפים של מספרים. ובחידות? לא מגלים את התשובה, גם אם ממש בא לכם. אתם שולטים בקצב: עוצרים רגע לפני הקטע המותח, ורק אז ממשיכים.</p></div>`;
+}
+function stageBox(t){if(!t)return "";const n=(S.screen==="play"||S.screen==="intro")?narr():"parent";if(n==="young")return "";return `<div class="stage parent-only">${MASK}<span>${n==="kid"?"<b>טיפ למספר: </b>":""}${esc(t)}</span></div>`;}
 function bubbleText(st){
  if(st.bubble)return st.bubble;
  const ch=st.challenge||{};
@@ -1707,7 +1766,7 @@ function vStation(st,hs,c){
  if(P.phase==="result"){
   const R=P.result;
   h+=arenaHTML(st,L,c.mapId,R.ok?"win":"lose",false);
-  h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${R.ok?"הצלחה":"תפנית"}</span>${esc(R.text)}</div>`;
+  h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${R.ok?"הצלחה":"תפנית"}</span>${ezText(fill(EASY_UI[R.ok?"ok":"fail"][P.idx%2],hs,L,""),R.text)}</div>`;
   const X=P.xpInfo||{};
   if(P.noReward)h+=`<div class="panel slide" style="text-align:center"><div class="small muted">התשובה הייתה</div><div class="answer ol">${esc(P.answer)}</div><p>הפעם בלי פרס. תזכרו את התשובה, ובחידה הבאה תנצחו!</p></div>`;
   else h+=`<div class="panel slide"><div class="reward"><div class="chestbox"><div class="rays"></div>${CHEST}<div class="itempop">${itemIcon(st.reward.icon)}</div></div><div style="min-width:0"><div class="small muted">${st.type==="boss"&&hs.length>1?"כל הגיבורים קיבלו":esc(L.heroName)+(L.gender==="f"?" קיבלה":" קיבל")}:</div><div class="rname ol">${esc(st.reward.name)}</div><div class="xp"><div class="xpbar"><i data-to="${X.to??0}" style="width:${X.from??0}%"></i></div><span>דרגה ${X.lvlFrom??heroLevel(L)}</span></div></div></div>
@@ -1716,7 +1775,7 @@ function vStation(st,hs,c){
   return h;
  }
  h+=arenaHTML(st,L,c.mapId,P.tries?"retry":"idle",enter);
- h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL[st.type]};color:${O}">${KIND[st.type]} · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${esc(st.read)}</div>${stageBox(st.stage)}`;
+ h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL[st.type]};color:${O}">${KIND[st.type]} · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${ezText(st.easy,st.read)}${ezToggle()}</div>${stageBox(st.stage)}`;
  if(["riddle","meet","choice"].includes(st.type)&&!P.opened)return h+`<div class="panel" style="text-align:center;align-items:center"><p style="font-weight:900;font-size:1.1rem">${S.kids?"":"תנו "+(hs.length>1?"לילדים":(hs[0]&&hs[0].gender==="f"?"לילדה":"לילד"))+" ללחוץ על "}${st.type==="riddle"?"סימן השאלה":st.type==="meet"?"בועת הדיבור":"סימן השבילים"} שבזירה!</p><button class="btn wide" data-a="openq"><span>${st.type==="riddle"?"גלו את החידה":st.type==="meet"?"מה יש לו להגיד?":"לאן אפשר ללכת?"}</span></button></div>`;
  const ch=st.challenge||{};
  if(st.type==="dice"){
@@ -1800,8 +1859,8 @@ function vBoss(st,hs,c,enter){
   ${state==="hit"?`<div class="banner ol">${hp<=0?"ניצחון!":"פגיעה!"}</div>`:state==="miss"?`<div class="banner ol lose">התחמק!</div>`:""}
  </div>`;
  h+=`<div class="bossbar" aria-label="${esc(ch.hpName)}: נשארו ${hp} מתוך ${hpMax}"><b>${esc(ch.hpName)}</b><div class="hp">${Array.from({length:hpMax},(_,i)=>i<hp?HP_ON:hpOff(i===hp&&state==="hit")).join("")}</div></div>`;
- h+=P.bossLine?`<div class="parch slide"><span class="kind" style="background:${P.lastHit?"#21b84a":"#e0306f"}">${P.lastHit?"פגיעה":"התחמק"}</span>${esc(P.bossLine)}</div>`
-  :`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">קרב בוס · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${esc(st.read)}</div>${stageBox(st.stage)}${stageBox(`כל גיבור בתורו מטיל קובייה. כל הצלחה מורידה ${ch.hpName} אחד. אי אפשר להפסיד, רק לנסות שוב. פעם אחת בקרב אפשר לעשות מכה משותפת: ${hs.length>1?"כל הגיבורים":"הגיבור וההורה"} מטילים ביחד ומחברים את המספרים. בסוף כל גיבור בוחר שדרוג.`)}`;
+ h+=P.bossLine?`<div class="parch slide"><span class="kind" style="background:${P.lastHit?"#21b84a":"#e0306f"}">${P.lastHit?"פגיעה":"התחמק"}</span>${ezText(P.lastHit?EASY_UI.hit:EASY_UI.miss,P.bossLine)}</div>`
+  :`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">קרב בוס · תחנה ${st.node+1}</span><span class="tt">${esc(st.title)}</span>${ezText(st.easy,st.read)}${ezToggle()}</div>${stageBox(st.stage)}${stageBox(`כל גיבור בתורו מטיל קובייה. כל הצלחה מורידה ${ch.hpName} אחד. אי אפשר להפסיד, רק לנסות שוב. פעם אחת בקרב אפשר לעשות מכה משותפת: ${hs.length>1?"כל הגיבורים":"הגיבור וההורה"} מטילים ביחד ומחברים את המספרים. בסוף כל גיבור בוחר שדרוג.`)}`;
  if(hp<=0)return h+`<button class="btn wide grn" data-a="bosswin"><span>ניצחתם! מה קרה לבוס?</span></button>`;
  h+=`<div class="panel dicebox"><div class="need">${esc(ch.what)}<br>צריך <b>${d.target}</b> ומעלה${bonus?`<br>${esc(R.heroName)} ${R.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
  if(c.dice==="digital"){
@@ -2000,7 +2059,7 @@ async function startCampaign(){
  let mapId=s.mapId&&mapOpen(s.mapId)?s.mapId:(MAP_ORDER.find(m=>mapOpen(m)&&!U().done.includes(m))||MAP_ORDER[0]);
  const cm=String(mapId).startsWith("c_")?SAVE.customMaps.find(x=>x.id===mapId):null;if(cm)mapId=cm.base;
  const M=cm?campMap({mapId,age:s.age,custom:cm}):mapOf(mapId,s.age);
- SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,read:s.read||"off",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
+ SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
  const c=SAVE.campaign;c.premise=fill(M.premise,campHeroes(),null,M.name);
  persist();
  await loadChapter(true);
@@ -2174,7 +2233,9 @@ app.addEventListener("click",e=>{
    const n=document.querySelectorAll(".spell .sw").length;
    if(P.readLit.length>=n){P.readDone=true;P.readBonus=true;P.readCount=(P.readCount||0)+1;const st=P.chapter.stations[P.idx],hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];L.words=(L.words||0)+1;persist();sfx("win");if(SAVE.campaign.mode!=="bed")confetti(36);render();}
    else{b.classList.toggle("lit");sfx("pop");}break;}
+  case "eztoggle": P.full=!P.full;render();break;
   case "readskip": P.readDone=true;render();break;
+  case "snarr": S.setup.narr=b.dataset.v;render();sfx("pop");break;
   case "sread": S.setup.read=b.dataset.v;render();sfx("pop");break;
   case "unlock": S.lock={kind:b.dataset.kind,id:b.dataset.v,name:b.dataset.kind==="map"?mapOf(b.dataset.v,(S.setup||{}).age).name:""};sfx("pop");render();setTimeout(()=>{const i=$("#lockcode");if(i)i.focus();},60);break;
   case "lockcancel": S.lock=null;render();break;
