@@ -445,6 +445,10 @@ svg.hero,.fx svg{overflow:visible}
  #app[data-screen=play] .arena{height:330px}
  #app[data-screen=play] .kids .arena,.kids#app .arena{height:400px}
 }
+
+.bedheart{display:flex;gap:10px;align-items:center}
+.bh-npc{flex:0 0 84px}.bh-npc svg{width:100%;height:auto}
+.bedheart p{font-family:var(--f-tale);font-size:1.08rem;line-height:1.55}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1496,8 +1500,8 @@ function vPlay(){
   body=`<div class="arena a-${c.mapId}" style="display:flex;align-items:flex-end;direction:ltr${bed&&!finished?";background:radial-gradient(120% 80% at 50% 0%,#2a3a7a,#0f1640 80%)":""}"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,bed&&!finished?"hero":"hero cheer",bed&&!finished?"sleep":"joy")).join("")}</div>${finished?`<div class="banner">ניצחון!</div>`:""}</div>
   <div class="parch slide"><span class="tt">${finished?"הממלכה ניצלה!":(bed?"לילה טוב, גיבורים":"להמשך יבוא...")}</span>${esc(ch.closing.read)}</div>${stageBox(ch.closing.stage)}
   ${bed?`<div class="panel"><div class="breath" aria-hidden="true"></div><div class="breathlbl" id="breathlbl">שואפים...</div><p class="muted small" style="text-align:center">שלוש נשימות של דרקון: שואפים באף, ונושפים לאט כמו עשן.</p></div>`:""}
-  <div class="panel heartpanel"><div class="eyebrow">רגע לשתף</div><p class="sharq">${esc(fill(SHARE_Q[ageGroup(c.age)==="old"?"old":"young"][(c.sessions||0)%3],hs,hs[0],""))}</p><p class="muted small parent-only">שאלה פתוחה, אין תשובה נכונה. הקשיבו עד הסוף, ושתפו גם אתם רגע משלכם.</p>
-  ${P.endHeart?`<div class="heartok">${HEART_SVG(40)}<b>עוד לב נאסף לאוצר!</b></div>`:(bed?`<div class="heartask">${esc(fill(HEART.bed[(c.sessions||0)%HEART.bed.length],hs,hs[0],""))}</div><button class="btn pnk" data-a="endheart"><span>עשינו!</span></button>`:"")}</div>
+  <div class="panel heartpanel"><div class="eyebrow">ספר האגדות</div><p class="small" style="color:var(--ink-dim)">ספר האגדות של ${esc(mapOf(c.mapId,c.age).name)} כותב את עצמו לבד, אבל בסוף כל פרק חסרה לו שורה אחת, שרק הגיבורים יכולים למלא:</p><p class="sharq">${esc(fill(SHARE_Q[ageGroup(c.age)==="old"?"old":"young"][(c.sessions||0)%3],hs,hs[0],""))}</p><p class="muted small parent-only">שאלה פתוחה, אין תשובה נכונה. הקשיבו עד הסוף, ושתפו גם אתם רגע משלכם.</p>
+  ${bed?(()=>{const H=HEART_BED[(c.sessions||0)%HEART_BED.length];return P.endHeart?`<div class="heartok">${HEART_SVG(40)}<b>שומר החלומות קיבל את מה שביקש. לילה טוב!</b></div>`:`<div class="bedheart"><div class="bh-npc">${npcSVG(H.who,c.mapId)}</div><div><b class="tt" style="color:var(--yel);font-size:1.15rem">${esc(H.t)}</b><p>${esc(fill(H.read,hs,hs[0],""))}</p></div></div><div class="heartask">${esc(fill(H.task,hs,hs[0],""))}</div><button class="btn pnk" data-a="endheart"><span>עשינו!</span></button>`;})():""}</div>
   ${finished?"":(()=>{const nb=BOSS_NODES.find(b=>b>=c.node);const left=nb!=null?nb-c.node:NODES-c.node;const what=nb!=null?"הבוס הבא":"סוף העולם";return `<div class="panel teaser"><div class="eyebrow">בפרק הבא</div><div class="tzrow"><div class="tzbox">${typeBadgeSVG(nb!=null?"boss":"meet")}</div><p><b>עוד ${left===1?"תחנה אחת":left+" תחנות"} עד ${what}!</b><br><span class="muted small">על המפה כבר רואים מה מחכה. מי יודע מה יהיה שם?</span></p></div></div>`;})()}
   <div class="panel"><div class="eyebrow">האוצר של הגיבורים</div>${hs.map(h=>`<div style="display:flex;gap:10px;align-items:center"><div style="flex:0 0 70px">${heroSVG(h,"hero")}</div><div style="min-width:0"><b>${esc(h.heroName)}</b> <span class="muted small">· דרגה ${heroLevel(h)}</span>${heartsOf(h)?` <span class="hcount">${HEART_MINI}${heartsOf(h)}</span>`:""}${statRow(h)}<div class="items">${(h.items||[]).slice(-6).map(it=>`<span>${itemIcon(it.icon)}${esc(it.name)}</span>`).join("")||`<span>עוד אין</span>`}</div></div></div>`).join("")}</div>
   <button class="btn wide grn" data-a="endsession"><span>סיימנו להיום</span></button>`;
@@ -1508,28 +1512,67 @@ function vPlay(){
 }
 
 /* ---------- heart moments: small real-world acts of warmth ---------- */
-const HEART={
- young:{solo:["חיבוק דוב ענק להורה! הכי חזק שאפשר, אבל בעדינות.","נשיקה על הלחי להורה, וההורה מחזיר נשיקה.","{ספר|ספרי|ספרו} להורה: מה היה הדבר הכי כיף שקרה ל{ך|ך|כם} היום?","{תגיד|תגידי|תגידו} להורה דבר אחד שאת{ה||ם} הכי {אוהב|אוהבת|אוהבים} בו."],
-  group:["חיבוק קבוצתי של כל הגיבורים ביחד!","כל גיבור אומר לגיבור שלידו משהו שהוא עשה יפה במשחק.","כיף כפול לחבר שלידכם, וצועקים ביחד: 'צוות מנצח!'","כל אחד מספר לחברים מה הדבר שהכי הצחיק אותו היום."]},
- old:{solo:["כיף להורה, ואז {ספר|ספרי|ספרו}: מה הדבר הכי טוב שקרה ל{ך|ך|כם} השבוע?","{ספר|ספרי|ספרו} להורה על פעם שהיי{ת|ת|תם} אמי{ץ|צה|צים} באמת, גם אם זה היה משהו קטן.","{תגיד|תגידי|תגידו} להורה תודה על משהו אחד מהיום.","חיבוק להורה. כן, גם גיבורים גדולים מתחבקים."],
-  group:["כל שחקן נותן מחמאה אמיתית לשחקן אחר, על משהו שהוא עשה טוב במשחק.","בחרו ביחד את הרגע הכי מצחיק במשחק עד עכשיו, וספרו אותו להורה.","המציאו ביחד לחיצת יד סודית של הצוות, ותעשו אותה!","כל אחד מספר על משהו שהוא למד מחבר שלו."]},
- bed:["חיבוק ונשיקת לילה טוב להורה.","{לחש|לחשי|לחשו} להורה את הרגע הכי טוב של היום.","{ספר|ספרי|ספרו} להורה: למה את{ה||ם} הכי {מחכה|מחכה|מחכים} מחר?"]
-};
-const HEART_NPC={ice:"queen",swamp:"grandmafrog",sky:"bird"};
+/* each heart moment lives inside the story: a character needs something real from the kids, and says why */
+const HEART=[
+ {who:"door",t:"המנעול המכושף",bub:"אני נפתח רק בסוד טוב!",ages:"all",kind:"any",
+  read:"הדרך נחסמת בדלת עתיקה עם מנעול בצורת לב. המנעול פוקח עין אחת ולוחש: 'אותי אי אפשר לפתוח במפתח. הקסם שלי ניזון מזיכרונות טובים, ובלעדיהם אני נשאר נעול לנצח. גלו לי סוד טוב, משהו נעים שקרה היום, ואפתח.'",
+  task:"{ספר|ספרי|ספרו} למנעול, בקול שגם ההורה ישמע: מה היה הדבר הכי טוב שקרה ל{ך|ך|כם} היום?"},
+ {who:"owl",t:"אספן סיפורי האומץ",bub:"תביאו לי סיפור אומץ!",ages:"all",kind:"any",
+  read:"על גשר צר עומד ינשוף זקן עם גלימה מלאה בכיסים. 'אני אוסף סיפורי אומץ,' הוא מסביר. 'מכל סיפור אני מבשל שיקוי אומץ קטן, בשביל גיבורים שמפחדים לעבור כאן אחריכם. אף אחד לא עובר בלי להשאיר לי סיפור אחד.'",
+  task:"{ספר|ספרי|ספרו} לינשוף על פעם שהיי{ת|ת|תם} אמי{ץ|צה|צים} באמת. גם משהו קטן נחשב: לנסות מאכל חדש, לדבר מול הכיתה, להגיד סליחה."},
+ {who:"bear",t:"הדוב שקפא מבדידות",bub:"קר לי... כל כך לבד...",ages:"young",kind:"solo",
+  read:"מתחת לעץ יושב דוב קטן, קפוא כולו, ורק העיניים שלו זזות. 'קפאתי כי הייתי לבד יותר מדי זמן,' הוא רועד. 'רק חום של חיבוק אמיתי יכול להפשיר אותי. אבל אני קפוא מדי בשביל לחבק... אולי אם תחבקו מישהו שאתם אוהבים, החום יעבור גם אליי?'",
+  task:"חיבוק דוב גדול להורה! חזק וארוך, כדי שיהיה מספיק חום גם בשביל הדוב."},
+ {who:"bear",t:"הדוב שקפא מבדידות",bub:"קר לי... כל כך לבד...",ages:"all",kind:"group",
+  read:"מתחת לעץ יושב דוב קפוא, ורק העיניים שלו זזות. 'קפאתי כי הייתי לבד יותר מדי זמן,' הוא רועד. 'חיבוק של אחד לא מספיק בשבילי. רק החום של צוות שלם, ביחד, יכול להפשיר קרח כזה.'",
+  task:"חיבוק קבוצתי של כל הגיבורים ביחד, וההורה מצטרף! סופרים עד 5, והקרח נמס."},
+ {who:"star",t:"הכוכב שאיבד את האור",bub:"כל תודה היא ניצוץ...",ages:"all",kind:"any",
+  read:"כוכב קטן נפל לשביל, והאור שלו כמעט כבה. 'בלי אור לא אוכל לחזור לשמיים,' הוא לוחש. 'סוד שאף אחד לא יודע: כוכבים מאירים מתודה. כל פעם שמישהו אומר תודה מכל הלב, נדלק בי ניצוץ.'",
+  task:"{תגיד|תגידי|תגידו} להורה תודה על דבר אחד מהיום, ו{תסביר|תסבירי|תסבירו} למה."},
+ {who:"tree",t:"עץ הזיכרונות המצחיקים",bub:"העלים שלי נשרו!",ages:"all",kind:"group",
+  read:"עץ ענק עומד בלי אף עלה. 'כל עלה שלי עשוי מזיכרון מצחיק,' הוא נאנח, 'אבל רוח עצובה עברה כאן ופיזרה את כולם. בלי עלים אין לי צל, והגיבורים שאחריכם יישרפו בשמש. רק צחוק אמיתי מגדל עלים חדשים.'",
+  task:"{ספר|ספרי|ספרו} ביחד לעץ ולהורה מה היה הרגע הכי מצחיק במשחק עד עכשיו. כל צחוק מגדל עלה!"},
+ {who:"tree",t:"עץ הזיכרונות המצחיקים",bub:"העלים שלי נשרו!",ages:"all",kind:"solo",
+  read:"עץ ענק עומד בלי אף עלה. 'כל עלה שלי עשוי מזיכרון מצחיק,' הוא נאנח. 'רוח עצובה פיזרה את כולם, ובלי עלים אין צל לגיבורים שיבואו אחריכם. רק צחוק אמיתי מגדל עלים חדשים.'",
+  task:"{ספר|ספרי|ספרו} להורה על הדבר הכי מצחיק שקרה ל{ך|ך|כם} השבוע. אם ההורה צוחק, העץ מקבל עלה כפול!"},
+ {who:"sprite",t:"הפיה שלא יכולה לעוף",bub:"הכנפיים שלי כבדות...",ages:"all",kind:"group",
+  read:"פיה קטנה יושבת על פטרייה, והכנפיים שלה אפורות. 'פיות עפות על מילים טובות,' היא מסבירה, 'אבל כבר מזמן אף אחד לא אמר כאן מילה טובה למישהו אחר. אם אשמע מחמאות אמיתיות, הכנפיים שלי יחזרו לנצנץ.'",
+  task:"כל גיבור אומר לגיבור אחר מחמאה אמיתית, על משהו שהוא עשה טוב במשחק או בחיים."},
+ {who:"door",t:"שער הצוות הסודי",bub:"רק צוות אמיתי עובר!",ages:"all",kind:"group",
+  read:"שער אבן ענק חוסם את הדרך. 'אני נפתח רק לצוות אמיתי,' רועם השער. 'וצוות אמיתי, כולם יודעים, יש לו סימן סודי שרק חבריו מכירים. אין סימן? אין צוות. אין צוות? אין מעבר.'",
+  task:"{המצא|המציאי|המציאו} ביחד לחיצת יד סודית של הצוות, עם לפחות שלושה חלקים, ו{עשה|עשי|עשו} אותה מול השער!"},
+ {who:"dragon",t:"הדרקון הקטן שמתגעגע",bub:"אני מתגעגע לאמא שלי...",ages:"young",kind:"solo",
+  read:"דרקון תינוק יושב ובוכה דמעות של עשן. 'אמא שלי עפה לחפש אוכל,' הוא מייבב, 'ואני כבר לא זוכר איך מרגישה נשיקה של לילה טוב. אם רק אראה פעם אחת, אזכור, ואוכל לחכות לה בלי לפחד.'",
+  task:"{תן|תני|תנו} להורה נשיקה על הלחי, וההורה מחזיר נשיקה, כדי שהדרקון יראה ויזכור."},
+ {who:"door",t:"המראה המדברת",bub:"מי את{ה||ם} באמת?",ages:"old",kind:"any",
+  read:"באמצע המערה עומדת מראה עתיקה. מי שמסתכל בה רואה רק ערפל. 'אני מראה רק את מי שמכיר את עצמו,' אומרת המראה. 'גיבור שלא יודע במה הוא טוב, הולך לאיבוד במערות האלה. אז אמרו לי: במה אתם טובים?'",
+  task:"{ספר|ספרי|ספרו} על משהו שהצלח{ת|ת|תם} בו השבוע ושאת{ה||ם} גא{ה|ה|ים} בו. אחר כך ההורה מוסיף דבר אחד שהוא רואה ב{ך|ך|כם}."}
+];
+const HEART_BED=[
+ {who:"moon",t:"שומר החלומות",bub:"ששש... אני אוסף רגעים טובים",
+  read:"כשהלילה יורד, מגיע שומר החלומות. 'אני אורג חלומות מהרגעים הכי טובים של היום,' הוא לוחש. 'מי שמספר לי רגע טוב, מקבל חלום טוב. ככה זה עובד כבר אלף שנה.'",
+  task:"{לחש|לחשי|לחשו} להורה באוזן את הרגע הכי טוב של היום, כדי ששומר החלומות יארוג ממנו חלום."},
+ {who:"moon",t:"שומר החלומות",bub:"ששש... חיבוק שומר מפחדים",
+  read:"שומר החלומות מרחף מעל המיטה. 'חלומות רעים לא מתקרבים למי שקיבל חיבוק לפני השינה,' הוא מגלה סוד. 'חיבוק ונשיקה הם כמו מגן שקוף, ששומר עליכם כל הלילה.'",
+  task:"חיבוק ונשיקת לילה טוב להורה, כדי שהמגן השקוף יעטוף אות{ך|ך|כם} כל הלילה."},
+ {who:"moon",t:"שומר החלומות",bub:"מה מחכה מחר?",
+  read:"שומר החלומות מחייך. 'אני צריך לדעת למה אתם מחכים מחר, כדי שהחלום של הלילה יוביל אתכם לשם בדרך הכי יפה.'",
+  task:"{ספר|ספרי|ספרו} להורה: למה את{ה||ם} הכי {מחכה|מחכה|מחכים} מחר?"}
+];
 const SHARE_Q={young:["מה היה הרגע הכי אמיץ של{ך|ך|כם} במשחק?","איזה יצור במשחק הכי {אהבת|אהבת|אהבתם}, ולמה?","אם {היית|היית|הייתם} {יכול|יכולה|יכולים} לקחת חפץ אחד מהמשחק הביתה, מה {היית|היית|הייתם} {בוחר|בוחרת|בוחרים}?"],
  old:["איזו החלטה במשחק הייתה הכי קשה, ולמה {בחרת|בחרת|בחרתם} בה?","מתי גם בחיים האמיתיים {היית|היית|הייתם} {צריך|צריכה|צריכים} אומץ כמו הגיבורים?","מה {היית|היית|הייתם} {משנה|משנה|משנים} בסוף הפרק, אם {היית|היית|הייתם} {כותב|כותבת|כותבים} אותו?"]};
-function heartTask(c,hs,end){
- const ag=ageGroup(c.age)==="old"?"old":"young",grp=hs.length>1;
- const pool=end&&c.mode==="bed"?HEART.bed:HEART[ag][grp?"group":"solo"];
- const P=S.play;P.heartPick=(P.heartPick==null?Math.floor(Math.random()*pool.length):P.heartPick)%pool.length;
- return fill(pool[P.heartPick],hs,hs[0],"");
-}
+function heartPool(c,hs){const ag=ageGroup(c.age)==="old"?"old":"young",grp=hs.length>1;return HEART.filter(h=>(h.ages==="all"||h.ages===ag)&&(h.kind==="any"||h.kind===(grp?"group":"solo")));}
+function heartStory(c,hs){const pool=heartPool(c,hs);const P=S.play;if(P.heartPick==null)P.heartPick=((c.sessions||0)*3+Math.floor(Math.random()*pool.length));return pool[P.heartPick%pool.length];}
 const HEART_SVG=(w=96)=>`<svg viewBox="0 0 100 92" width="${w}" height="${Math.round(w*.92)}" aria-hidden="true"><path class="hbeat" d="${heartPath(50,46,30)}" fill="#ff4f8a"${K(4)}/><path d="M30 34 Q34 24 44 26" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/></svg>`;
+function heartScene(H,hs,c){
+ const L=hs[0];
+ return `<div class="arena a-${c.mapId}" style="height:270px"><div class="ground"></div><div class="fx ent-l">${npcSVG(H.who,c.mapId)}</div><div class="vs pop" style="background:#ff4f8a">${HEART_SVG(30)}</div><div class="fx ent-r">${heroSVG(L,"hero",H.who==="bear"||H.who==="dragon"?"happy":"wow")}</div><div class="bubble">${esc(fill(H.bub,hs,L,""))}</div></div>`;
+}
 function vHeart(hs,c){
- const t=heartTask(c,hs,false);
- return `<div class="arena a-${c.mapId}" style="height:250px;display:flex;align-items:flex-end;justify-content:center;direction:ltr"><div class="ground"></div><div class="lineup n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,"hero","joy")).join("")}</div><div class="heartfloat">${HEART_SVG(84)}</div></div>
- <div class="parch slide big"><span class="tt">רגע של לב</span>הקסם של ${esc(mapOf(c.mapId,c.age).name)} מתחזק מאהבה ומחברות. לפני שממשיכים, משימה קטנה בעולם האמיתי:<div class="heartask">${esc(t)}</div></div>
- <div class="stage parent-only">${MASK}<span>רגע קצר וחם. אם מישהו מתבייש או לא רוצה לגעת, זה בסדר גמור: לחצו "משימה אחרת".</span></div>
+ const H=heartStory(c,hs),M=mapOf(c.mapId,c.age);
+ return `${heartScene(H,hs,c)}
+ <div class="parch slide big"><span class="kind" style="background:#ff4f8a">רגע של לב</span><span class="tt">${esc(H.t)}</span>${esc(fill(H.read,hs,hs[0],M.name))}<div class="heartask">${esc(fill(H.task,hs,hs[0],M.name))}</div></div>
+ <div class="stage parent-only">${MASK}<span>זו משימה בעולם האמיתי. הקשיבו עד הסוף ושתפו גם אתם. אם מישהו מתבייש או לא רוצה מגע, זה בסדר גמור: לחצו "משימה אחרת".</span></div>
  <div class="row"><button class="btn sm blu" data-a="heartswap"><span>משימה אחרת</span></button><button class="btn pnk" data-a="heartdone"><span>עשינו!</span></button></div>`;
 }
 function heartsOf(h){return h.hearts||0;}
