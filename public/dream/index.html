@@ -3,10 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dream · הרפתקאות לילדים | ARTRIKO</title>
 <meta name="theme-color" content="#1d2fa8">
 <meta name="robots" content="noindex">
+<meta name="description" content="משחק הרפתקאות לילדים: ההורה מספר, הילדים הם הגיבורים">
+<link rel="manifest" href="/dream/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/dream/favicon.png">
+<link rel="apple-touch-icon" href="/dream/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dream">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}*{box-sizing:border-box}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>הקוביה המספרת</title>
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("/dream/sw.js",{scope:"/dream/"}).catch(()=>{}));</script>
+
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -436,7 +446,18 @@ svg.hero,.fx svg{overflow:visible}
 .topbar .tools{flex-wrap:nowrap}
 
 .playgrid,.pg-main{display:flex;flex-direction:column;gap:16px}
-@media (min-width:700px){html{font-size:112.5%}#app{max-width:780px}}
+@media (min-width:700px) and (min-height:560px){html{font-size:112.5%}#app{max-width:780px}}
+@media (orientation:landscape) and (max-height:520px){
+ #app{max-width:980px}
+ .playgrid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:12px;align-items:start}
+ .pg-map{position:sticky;top:8px}
+ .pg-map .mapwrap svg{max-height:calc(100vh - 24px);width:100%}
+ .arena,.kids .arena{height:230px}.arena.tall,.kids .arena.tall{height:280px}
+ .fx svg,.kids .fx svg{max-height:170px}
+ .ovhero>svg{max-height:44vh}.choose .ovhero>svg{max-height:22vh}
+ .btitle{font-size:2rem}.bnpc>svg{max-height:34vh}.bhero>svg{max-height:26vh}
+ .reveal svg.hero{width:170px}
+}
 @media (min-width:900px) and (orientation:landscape){
  #app[data-screen=play]{max-width:1240px}
  .playgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:start}

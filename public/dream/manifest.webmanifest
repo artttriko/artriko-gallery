@@ -1,0 +1,19 @@
+{
+  "name": "Dream by ARTRIKO",
+  "short_name": "Dream",
+  "description": "משחק הרפתקאות לילדים: ההורה מספר, הילדים הם הגיבורים",
+  "lang": "he",
+  "dir": "rtl",
+  "id": "/dream/",
+  "start_url": "/dream/",
+  "scope": "/dream/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1d2fa8",
+  "theme_color": "#1d2fa8",
+  "icons": [
+    {"src": "/dream/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/dream/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/dream/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
