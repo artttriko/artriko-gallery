@@ -630,6 +630,12 @@ svg.hero,.fx svg{overflow:visible}
 @keyframes bwh{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),-120px) scale(1.3)}}
 .bw-heroes{display:flex;gap:4px;width:min(46vw,300px)}.bw-heroes svg{flex:1}
 .bw-sub{font-weight:900;font-size:1.5rem;color:#fff;text-shadow:0 3px 0 var(--o);animation:slideup .5s 3s both}
+
+.fx.boss .band{position:absolute;width:13%;min-width:34px;z-index:3;pointer-events:none;animation:popin .4s cubic-bezier(.2,1.7,.4,1)}
+.fx.boss .sweat{position:absolute;right:34%;top:18%;width:5%;min-width:14px;z-index:3;animation:floaty 1s ease-in-out infinite}
+.fx.boss.dmg1>svg:first-child{filter:drop-shadow(0 0 12px #ff3d4e) saturate(.85)}
+.fx.boss.dmg2>svg:first-child{filter:drop-shadow(0 0 8px #ff3d4e) saturate(.6) brightness(.95);transform:scale(1.08) rotate(-5deg)!important}
+.fx.boss.dmg3:not(.ko)>svg:first-child{filter:saturate(.4) brightness(.9);transform:scale(1) rotate(-9deg) translateY(6px)!important;animation:wob 1.6s ease-in-out infinite}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1553,7 +1559,7 @@ function fallbackChapter(c,count){
   const ch=JSON.parse(JSON.stringify(t.challenge||{}));
   if(t.type==="riddle")Object.assign(ch,nextRiddle(c));
   if(t.type==="physical")ch.action=c.mode==="bed"?(ch.calm||ch.action):ch.action;
-  if(t.type==="boss")ch.hp=n===8?4:3;
+  if(t.type==="boss")ch.hp=[3,4,4,5,5,5][Math.min(5,(c.mapsDone||[]).length*2+(n===8?1:0))];
   if(ch.options)ch.options=ch.options.map(o=>({label:fill(o.label,hs,L,M.name),result:fill(o.result,hs,L,M.name)}));
   return {node:n,easy:(c.narr!=="young"&&ageGroup(c.age)==="old")?"":(EASY[c.mapId]||[])[n]||"",leaderId:L&&L.id,title:t.title,type:t.type,npc:t.npc,bubble:t.bubble,read:fill(t.read,hs,L,M.name),stage:t.stage,challenge:ch,success:fill(t.success,hs,L,M.name),fail:fill(t.fail,hs,L,M.name),reward:t.reward};
  });
@@ -2294,7 +2300,7 @@ function vBoss(st,hs,c,enter){
  const ko=hp<=0;
  let h=intro+turnHead(R);
  h+=`<div class="arena a-${c.mapId}"><div class="ground"></div>
-  <div class="fx boss ${ko?"ko":""} ${enter&&!intro?"ent-l":""}">${npcSVG(st.npc||"sprite",c.mapId,state==="hit"&&!ko?"oops":"")}${ko?`<div class="dizzy"><div><i></i><i></i><i></i></div></div>`:""}</div>
+  <div class="fx boss ${ko?"ko":""} ${enter&&!intro?"ent-l":""} dmg${ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3))}">${(()=>{const d=ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3));const ba=(x,y,r)=>`<svg class="band" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)" viewBox="0 0 40 16"><rect x="1" y="1" width="38" height="14" rx="6" fill="#f6c28b" stroke="${O}" stroke-width="2"/><rect x="14" y="1" width="12" height="14" fill="#e8a868"/><circle cx="18" cy="6" r="1" fill="#b37a45"/><circle cx="22" cy="10" r="1" fill="#b37a45"/></svg>`;return (d>=1?ba(50,30,-25):"")+(d>=2?ba(36,52,20)+`<svg class="sweat" viewBox="0 0 20 28"><path d="M10 2 Q19 16 10 26 Q1 16 10 2 Z" fill="#8fd8ff" stroke="${O}" stroke-width="2"/></svg>`:"")+(d>=3&&!ko?`<div class="dizzy" style="opacity:1;animation:none"><div><i></i><i></i><i></i></div></div>`:"");})()}${npcSVG(st.npc||"sprite",c.mapId,state==="hit"&&!ko?"oops":"")}${ko?`<div class="dizzy"><div><i></i><i></i><i></i></div></div>`:""}</div>
   <div></div>
   <div class="fx ${enter?"ent-r":""} ${state==="miss"?"hurt":""}">${heroSVG(R,"hero "+(state==="hit"?"cheer":state==="miss"?"oops":""),state==="miss"?"oops":state==="hit"?"joy":"happy")}${state==="miss"?`<div class="hurtpop"><svg viewBox="0 0 100 92" width="44" height="40"><path d="${heartPath(50,46,30)}" fill="#ff4f8a" stroke="${O}" stroke-width="5"/><path d="M50 22 L42 44 L56 52 L48 74" fill="none" stroke="${O}" stroke-width="6" stroke-linejoin="round"/></svg><b>-1</b></div>`:""}</div>
   <div class="bubble ${enter?"pop":""}">${esc(hp<=0?"טוב, טוב... ניצחתם!":state==="hit"?"אוי! זה עבד עליי!":state==="miss"?"חה! התחמקתי!":(st.bubble||"מי מעז לעבור?"))}</div>
