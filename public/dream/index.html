@@ -639,6 +639,30 @@ svg.hero,.fx svg{overflow:visible}
 .th-info{margin-inline-start:auto;background:#fff;color:var(--o);border:3px solid var(--o);border-radius:999px;font-weight:900;padding:4px 14px;box-shadow:0 3px 0 var(--o);animation:tapme 1.8s ease-in-out infinite}
 .hinfo{max-width:440px;text-align:start;border-color:var(--tc)}.hi-top{display:flex;gap:12px;align-items:center}.hi-top svg{width:90px;height:auto}
 .hi-lv .xpbar{height:16px;margin:4px 0}.hi-lv .xpbar i{transition:none}.hi-st{display:flex;flex-direction:column;gap:4px}.hi-st svg{width:16px;height:16px;vertical-align:-3px}
+
+.bhp{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:120%;display:flex;align-items:center;gap:4px;z-index:4;direction:ltr}
+.bhp-n{font-weight:900;font-size:.72rem;color:#fff;background:var(--o);border-radius:999px;padding:0 6px;white-space:nowrap}
+.bhp-bar{position:relative;flex:1;height:14px;background:#3a3456;border:3px solid var(--o);border-radius:999px;overflow:hidden}
+.bhp-bar i{position:absolute;inset:0 auto 0 0;border-radius:999px;transition:width .6s cubic-bezier(.3,1.4,.5,1)}
+.bhp-bar b{position:absolute;top:0;bottom:0;width:2px;background:var(--o);opacity:.6}
+.bossarena .fx.boss{padding-top:18px}
+.hhearts{display:inline-flex;gap:2px;vertical-align:middle}
+.th-txt .hhearts{margin-top:3px}
+.teambar .tb-list{display:flex;flex-wrap:wrap;gap:6px 14px}
+.tb-h{font-weight:700;font-size:.85rem;color:#c3cdff;display:inline-flex;align-items:center;gap:4px}.tb-h.on{color:#fff}
+.actgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+.actbtn{display:flex;flex-direction:column;align-items:center;gap:2px;border:3px solid var(--o);border-radius:18px;padding:12px 8px;color:#fff;box-shadow:0 5px 0 var(--o);text-align:center}
+.actbtn b{font-size:1.25rem;font-weight:900;text-shadow:0 2px 0 var(--o)}.actbtn small{font-weight:700;font-size:.8rem;opacity:.95}
+.actbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--o)}
+.actbtn.atk{background:linear-gradient(180deg,#ff6b6b,#d62f4a)}.actbtn.mag{background:linear-gradient(180deg,#b98cff,#7a3bd0)}.actbtn.def{background:linear-gradient(180deg,#5fd2ff,#2a7bd8)}.actbtn.team{background:linear-gradient(180deg,#ff8ad0,#ff4f8a)}
+.fx.shielded>svg{filter:drop-shadow(0 0 10px #5fd2ff)}
+.shieldfx{position:absolute;inset:10% 0 0 0;border-radius:50%;border:4px solid #5fd2ff;background:radial-gradient(circle,#5fd2ff00 55%,#5fd2ff55);animation:pulse 1.4s ease-out infinite;pointer-events:none}
+.fx.boss.lunge>svg:last-of-type{animation:lunge .6s ease-in-out}
+@keyframes lunge{40%{transform:translateX(30%) scale(1.15) rotate(8deg)}}
+.rescue .rs-hero{width:120px;margin:0 auto}.rescue .rs-hero svg{width:100%;height:auto;filter:saturate(.5)}
+.hurtnote{display:flex;align-items:center;gap:10px;background:#3a1030;border:3px solid #ff4f8a;border-radius:16px;padding:8px 12px;font-weight:900;color:#ffb3cf}
+.tm-ok{color:var(--grn);font-size:1.4rem}
+.tmem .btn{min-height:40px;padding:0 14px}
 .roll-note{font-weight:900;font-size:1.1rem;text-align:center}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:11px;height:15px;border:2px solid var(--o);border-radius:3px;animation:fall linear forwards}
@@ -1365,6 +1389,10 @@ function heroInner(p,level=1,o={}){
  if((p.bottom||"pants")==="skirt")g+=`<path d="M43 126 L97 126 L105 143 Q70 150 35 143 Z" fill="${se}"${K(2.6)}/><path d="M55 129 L51 145 M70 129 V147 M85 129 L89 145" stroke="${shade(se,-.3)}" stroke-width="2.2" stroke-linecap="round"/>`;
  g+=`<path d="M42.5 120 Q70 127 97.5 120 L98 128 Q70 135 42 128 Z" fill="${se}"${K(2.5)}/><rect x="63" y="119" width="14" height="11" rx="3" fill="#ffd23f"${K(2.5)}/>`;
  if(hro&&lv>=7)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
+ const wt=o.wt!=null?o.wt:(typeof worldTier==="function"?worldTier():0);
+ if(wt>=1)g+=`<rect x="28" y="114" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/><rect x="100" y="${W!=="none"?78:114}" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/>`;
+ if(wt>=2)g+=`<path d="M52 98 L88 98 L86 118 Q70 124 54 118 Z" fill="#d6dde8" fill-opacity=".55" stroke="${O}" stroke-width="2.2"/><path d="M56 101 L84 101" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
+ if(wt>=3)s+=`<circle class="spin" cx="70" cy="92" r="74" fill="none" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="2 8" opacity=".9"/>`;
  if(spk&&lv>=4)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
  if(nat&&lv>=7)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
  if(mag&&lv>=7)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
@@ -2153,10 +2181,10 @@ const ITEM_POW={feather:"קַל כְּמוֹ נוֹצָה",crystal:"נוֹצֵץ
 const ITEM_POW_P={feather:"קל כמו נוצה",crystal:"נוצץ ומאיר",shield:"שומר ומגן",star:"מביא מזל",key:"פותח דרכים",scroll:"יודע סודות",gem:"מלא קסם",crown:"של מנהיגים",moon:"מאיר בחושך",potion:"נותן כוח"};
 function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const lv=heroLevel(H),xp=(H.xp||0)%4,left=4-xp;
  return `<div class="lockov" data-a="hinfoclose" role="dialog"><div class="lockbox slide hinfo" style="--tc:${H.params.primary}"><div class="hi-top">${heroSVG(H,"hero","joy")}<div><b class="ol" style="font-size:1.5rem">${esc(H.heroName)}</b><div class="small">${esc(H.title||"")}</div></div></div>
- <div class="hi-lv"><b>דרגה ${lv}</b><div class="xpbar"><i style="width:${xp/4*100}%"></i></div><span class="small">עוד ${left} ${left===1?"הצלחה":"הצלחות"} לדרגה ${lv+1}${lv<TOPLV?` · הסגנון המיוחד נפתח בדרגה ${TOPLV}`:""}</span></div>
+ <div class="hi-lv"><b>דרגה ${lv}</b> ${heartsHTML(H,20)}<div class="xpbar"><i style="width:${xp/4*100}%"></i></div><span class="small">עוד ${left} ${left===1?"הצלחה":"הצלחות"} לדרגה ${lv+1}${lv<TOPLV?` · הסגנון המיוחד נפתח בדרגה ${TOPLV}`:""}</span></div>
  ${statRow(H)||""}<div class="hi-st">${STATS.map(x=>`<div>${statIcon(x.k)} ${x.n}: <b>${statOf(H,x.k)}</b>/3 <span class="small muted">${statOf(H,x.k)?x.d(statOf(H,x.k)):"עוד לא שודרג"}</span></div>`).join("")}</div>
  <div class="eyebrow">החפצים (${(H.items||[]).length}) · לחצו על חפץ</div><div class="items">${(H.items||[]).slice(-12).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" style="cursor:pointer">${itemIcon(it.icon)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||"<span>עוד אין</span>"}</div>
- ${H.hearts?`<div>${HEART_MINI} לבים: <b>${H.hearts}</b></div>`:""}<button class="btn sm grn" data-a="hinfoclose"><span>סגירה</span></button></div></div>`;}
+ ${H.hearts?`<div>${HEART_MINI} לבבות שנאספו ברגעי לב: <b>${H.hearts}</b></div>`:""}<div class="small muted">ציוד העולמות: ${["בסיסי","צמידי זהב","שריון כסף","מראה אגדי"][worldTier()]}</div><button class="btn sm grn" data-a="hinfoclose"><span>סגירה</span></button></div></div>`;}
 function itemInfo(){const I=S.info;if(!I)return "";const ez=ezOn();
  return `<div class="lockov" role="dialog" aria-label="החפץ"><div class="lockbox slide"><div class="iinfo-ic">${itemIcon(I.icon)}</div><h3>${esc(E(I.name))}</h3><p class="tierb">${esc(ez?ITEM_POW[I.icon]||"":ITEM_POW_P[I.icon]||"")}</p>
  <p>${ez?"כֹּחַ הַחֵפֶץ: פַּעַם אַחַת, בְּתַחֲנַת קוּבִּיּוֹת אוֹ מוּל בּוֹס, הַקּוּבִּיָּה צְרִיכָה 1 פָּחוֹת. אַחֲרֵי שֶׁמִּשְׁתַּמְּשִׁים בּוֹ, הוּא נִשְׁאָר בָּאוֹצָר לְמַזְכֶּרֶת.":"כוח החפץ: פעם אחת, בתחנת קוביות או מול בוס, הקובייה צריכה 1 פחות. אחרי שמשתמשים בו, הוא נשאר באוצר למזכרת."}</p>
@@ -2227,10 +2255,12 @@ function vStation(st,hs,c){
  const P=S.play;const L=hs.find(h=>h.id===st.leaderId)||hs[0];
  const enter=P.entered!==P.idx;P.entered=P.idx;
  if(st.type==="boss"&&P.phase!=="result")return vBoss(st,hs,c,enter);
+ if(P.phase==="read"&&heroHp(L)<=0)return turnHead(L)+rescueBox(L,hs,c);
  let h=turnHead(L);
  if(P.phase==="result"){
   const R=P.result;
   h+=arenaHTML(st,L,c.mapId,R.ok?"win":"lose",false);
+  if(P.hurtNow)h+=`<div class="hurtnote slide">${heartsHTML(L,22)}<b>${ezOn()?`${esc(L.heroName)} אִיבֵּד לֵב אֶחָד`:`${esc(L.heroName)} ${L.gender==="f"?"איבדה":"איבד"} לב אחד`}</b></div>`;
   h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${st.type==="choice"?(ezOn()?"בְּחִירָה מְצוּיֶּנֶת":"בחירה מצוינת"):st.type==="meet"?(ezOn()?"רַעְיוֹן מְצוּיָּן":"רעיון מצוין"):ezOn()?(R.ok?"הַצְלָחָה":"תַּפְנִית"):(R.ok?"הצלחה":"תפנית")}</span>${ezText(P.ezRes||fill(EASY_UI[R.ok?"ok":"fail"][P.idx%2],hs,L,""),R.text)}</div>`;
   const X=P.xpInfo||{};
   if(P.noReward)h+=`<div class="panel slide" style="text-align:center"><div class="small muted">התשובה הייתה</div><div class="answer ol">${esc(E(P.answer))}</div><p>הפעם בלי פרס. תזכרו את התשובה, ובחידה הבאה תנצחו!</p></div>`;
@@ -2309,81 +2339,113 @@ const HELP_ICON=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="tr
 function teamMembers(hs){return hs.length>1?hs.map(h=>({name:h.heroName,h})):[{name:hs[0].heroName,h:hs[0]},{name:"ההורה",h:null}];}
 function teamTarget(c,n,hs){const d=diceFor(c,"easy");const t=Math.round(n*(d.target-.5));return Math.max(n,t-hs.reduce((a,h)=>a+statOf(h,"str"),0));}
 function bossLv(hs){return Math.max(...hs.map(h=>heroLevel(h)))+1;}
-function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${H.gender==="f"?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b></div><button class="th-info" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
+function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${H.gender==="f"?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${heartsHTML(H,18)}</div><button class="th-info" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
 function stLeader(st,hs){const P=S.play;if(st.type==="boss"&&P.bossTurn!=null)return hs[P.bossTurn%hs.length];return hs.find(h=>h.id===st.leaderId)||hs[0];}
+/* ---------- hero hearts (no death: 0 hearts = too tired, a friend can rescue) ---------- */
+function heroHpMax(h){const l=heroLevel(h);return 3+(l>=5?1:0)+(l>=8?1:0);}
+function heroHp(h){return h.hp==null?heroHpMax(h):Math.max(0,Math.min(h.hp,heroHpMax(h)));}
+function hurt(h,n){h.hp=Math.max(0,heroHp(h)-(n||1));}
+const HEALS=["potion","crystal","moon","star"];
+function heartsHTML(h,sz){const m=heroHpMax(h),v=heroHp(h);return `<span class="hhearts" aria-label="${v} מתוך ${m} לבבות">${Array.from({length:m},(_,i)=>`<svg viewBox="0 0 100 92" width="${sz||18}" height="${Math.round((sz||18)*.92)}"><path d="${heartPath(50,46,30)}" fill="${i<v?"#ff4f8a":"#3a3456"}" stroke="${O}" stroke-width="7"/></svg>`).join("")}</span>`;}
+function healGivers(R,hs){const o=[];hs.forEach(g=>{if(g.id===R.id||heroHp(g)<=0)return;const it=(g.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(it)o.push({g,it});});
+ const own=(R.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(own)o.push({g:R,it:own});return o;}
+function rescueBox(R,hs,c){const ez=ezOn(),f=R.gender==="f",G=healGivers(R,hs),solo=hs.length<2;
+ return `<div class="panel dicebox rescue"><div class="eyebrow">${ez?"מִבְצַע הַצָּלָה!":"מבצע הצלה!"}</div>
+ <div class="rs-hero">${heroSVG(R,"hero","sleep")}</div>
+ <p class="need">${ez?`${esc(R.heroName)} ${f?"עֲיֵפָה":"עָיֵף"} מִדַּי לְהַמְשִׁיךְ.`:`${esc(R.heroName)} ${f?"עייפה":"עייף"} מדי להמשיך במסע.`}<br>${ez?"צָרִיךְ לְהַצִּיל!":(solo?"המספר יכול להציל!":"חבר יכול להציל!")}</p>
+ ${G.map(x=>`<button class="btn wide grn" data-a="healgive" data-g="${x.g.id}" data-r="${R.id}">${itemIcon(x.it.icon)}<span>${esc(x.g.id===R.id?(ez?"מִשְׁתַּמְּשִׁים בְּ":"משתמשים ב"):x.g.heroName+(x.g.gender==="f"?" נותנת ":" נותן "))}${esc(E(x.it.name))}</span></button>`).join("")}
+ <button class="btn wide" data-a="healtask" data-r="${R.id}"><span>${ez?"מְשִׂימַת הַצָּלָה":"משימת הצלה"}: ${esc(c.mode==="bed"?(ez?"3 נְשִׁימוֹת שֶׁל כּוֹחַ, בְּיַחַד":"3 נשימות של כוח, ביחד"):(solo?(ez?"כִּיף לַמְּסַפֵּר וְ־5 קְפִיצוֹת":"כיף למספר ו־5 קפיצות"):(ez?"חִיבּוּק שֶׁל כּוּלָּם וְ־5 קְפִיצוֹת":"חיבוק של כולם ו־5 קפיצות")))}</span></button>
+ <p class="small muted">${ez?"חֵפֶץ מַחְזִיר אֶת כָּל הַלְּבָבוֹת. מְשִׂימָה מַחְזִירָה 2.":"חפץ מחזיר את כל הלבבות. משימה מחזירה 2 לבבות."}</p></div>`;}
+/* ---------- world gear: the look grows with each finished world ---------- */
+function worldTier(){try{return Math.min(3,U().done.length);}catch(e){return 0;}}
+/* ---------- boss: turn-based (hero acts, then the boss answers) ---------- */
+const MAGIC_N={heart:"מכת אהבה",star:"קרן כוכבים",bolt:"ברק קסום",moon:"אור ירח",paw:"שאגת אומץ",flower:"גשם פרחים",note:"שיר קסום",fire:"להבת אומץ",crown:"פקודת מלכות",diamond:"קרן יהלום"};
+Object.assign(EZC,{"מכת אהבה":"מַכַּת אַהֲבָה","קרן כוכבים":"קֶרֶן כּוֹכָבִים","ברק קסום":"בָּרָק קָסוּם","אור ירח":"אוֹר יָרֵחַ","שאגת אומץ":"שַׁאֲגַת אוֹמֶץ","גשם פרחים":"גֶּשֶׁם פְּרָחִים","שיר קסום":"שִׁיר קָסוּם","להבת אומץ":"לֶהָבַת אוֹמֶץ","פקודת מלכות":"פְּקוּדַת מַלְכוּת","קרן יהלום":"קֶרֶן יַהֲלוֹם"});
+function bossTarget(c,act){const d=diceFor(c,"easy");return act==="magic"?Math.min(d.sides,d.target+(d.sides===6?1:3)):d.target;}
 function vBoss(st,hs,c,enter){
- const P=S.play,ch=st.challenge;
- if(P.bossHp==null){P.bossHp=ch.hp||3;P.teamHp=3;P.bossRound=0;P.bossQ=null;P.bossQhint=false;P.bossTurn=Math.max(0,hs.findIndex(h=>h.id===st.leaderId));P.bossPhase="ready";P.bossLine=null;P.roll=null;}
+ const P=S.play,ch=st.challenge,ez=ezOn();
+ if(P.bossHp==null){P.bossHp=ch.hp||3;P.bossRound=0;P.bossQ=null;P.bossQhint=false;P.bossTurn=Math.max(0,hs.findIndex(h=>h.id===st.leaderId));P.bossPhase="choose";P.bossLine=null;P.roll=null;P.bAct=null;P.bAtk=null;P.defend=false;}
  const R=hs[P.bossTurn%hs.length],d=diceFor(c,"easy"),bonus=statOf(R,"str"),hpMax=ch.hp||3,hp=P.bossHp;
- const state=P.bossPhase==="rolled"?(P.lastHit?"hit":"miss"):"idle";
- const intro=P.bossIntro!==P.idx?`<div class="bossov" data-a="introgo" role="dialog" aria-label="קרב בוס"><div class="bstripes"></div><div class="btitle ol">קרב בוס!</div><div class="bstage"><div class="bnpc">${npcSVG(st.npc||"sprite",c.mapId)}</div><div class="bvs"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M23 2 L8 22 L18 22 L14 38 L32 15 L21 15 Z" fill="#ffd23f"${K(3)}/></svg></div><div class="bhero">${heroSVG(R,"hero")}</div></div><div class="bname"><b>${esc(E(st.title))}</b><span>${ezOn()?`רָמָה ${bossLv(hs)} · חָזָק מִכֶּם בְּדַרְגָּה אַחַת!`:`רמה ${bossLv(hs)} · חזק מכם בדרגה אחת!`}</span></div><div class="tapnote">לחצו כדי להתחיל!</div></div>`:"";
- const ko=hp<=0;
+ const ph=P.bossPhase,heroHit=ph==="rolled"&&P.lastHit,heroMiss=ph==="rolled"&&!P.lastHit,bAtk=ph==="bossatk"?P.bAtk:null;
+ const intro=P.bossIntro!==P.idx?`<div class="bossov" data-a="introgo" role="dialog" aria-label="קרב בוס"><div class="bstripes"></div><div class="btitle ol">${ez?"קְרַב בּוֹס!":"קרב בוס!"}</div><div class="bstage"><div class="bnpc">${npcSVG(st.npc||"sprite",c.mapId)}</div><div class="bvs"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M23 2 L8 22 L18 22 L14 38 L32 15 L21 15 Z" fill="#ffd23f"${K(3)}/></svg></div><div class="bhero">${heroSVG(R,"hero")}</div></div><div class="bname"><b>${esc(E(st.title))}</b><span>${ez?`רָמָה ${bossLv(hs)} · חָזָק מִכֶּם בְּדַרְגָּה אַחַת!`:`רמה ${bossLv(hs)} · חזק מכם בדרגה אחת!`}</span></div><div class="tapnote">${ez?"לַחֲצוּ כְּדֵי לְהַתְחִיל!":"לחצו כדי להתחיל!"}</div></div>`:"";
+ const ko=hp<=0,dmg=ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3));
+ const band=(x,y,r)=>`<svg class="band" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)" viewBox="0 0 40 16"><rect x="1" y="1" width="38" height="14" rx="6" fill="#f6c28b" stroke="${O}" stroke-width="2"/><rect x="14" y="1" width="12" height="14" fill="#e8a868"/></svg>`;
+ const bossHurt=(dmg>=1?band(50,30,-25):"")+(dmg>=2?band(36,52,20)+`<svg class="sweat" viewBox="0 0 20 28"><path d="M10 2 Q19 16 10 26 Q1 16 10 2 Z" fill="#8fd8ff" stroke="${O}" stroke-width="2"/></svg>`:"")+(dmg>=3&&!ko?`<div class="dizzy" style="opacity:1;animation:none"><div><i></i><i></i><i></i></div></div>`:"");
+ const hpPct=Math.max(0,hp/hpMax*100);
+ const bar=`<div class="bhp" aria-label="${hp} מתוך ${hpMax}"><span class="bhp-n">${ez?"בּוֹס":"בוס"} ${ez?"רָמָה":"רמה"} ${bossLv(hs)}</span><div class="bhp-bar"><i style="width:${hpPct}%;background:${hpPct>60?"#4fe36b":hpPct>30?"#ffd23f":"#ff3d4e"}"></i>${Array.from({length:hpMax-1},(_,i)=>`<b style="left:${(i+1)/hpMax*100}%"></b>`).join("")}</div><span class="bhp-n">${hp}/${hpMax}</span></div>`;
+ const heroHurtNow=bAtk&&bAtk.hit&&!bAtk.blocked;
+ let bub=st.bubble||"מי מעז לעבור?";if(ko)bub="טוב, טוב... ניצחתם!";else if(heroHit)bub="אוי! זה עבד עליי!";else if(heroMiss)bub="חה! התחמקתי!";else if(bAtk)bub=bAtk.blocked?"מה? המגן עצר אותי!":bAtk.hit?"הנה מכה ממני!":"פספסתי! אוף!";
+ Object.assign(EZC,{"מה? המגן עצר אותי!":"מָה? הַמָּגֵן עָצַר אוֹתִי!","הנה מכה ממני!":"הִנֵּה מַכָּה מִמֶּנִּי!","פספסתי! אוף!":"פִּסְפַסְתִּי! אוּף!"});
  let h=intro+turnHead(R);
- h+=`<div class="arena a-${c.mapId}"><div class="ground"></div>
-  <div class="fx boss ${ko?"ko":""} ${enter&&!intro?"ent-l":""} dmg${ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3))}">${(()=>{const d=ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3));const ba=(x,y,r)=>`<svg class="band" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)" viewBox="0 0 40 16"><rect x="1" y="1" width="38" height="14" rx="6" fill="#f6c28b" stroke="${O}" stroke-width="2"/><rect x="14" y="1" width="12" height="14" fill="#e8a868"/><circle cx="18" cy="6" r="1" fill="#b37a45"/><circle cx="22" cy="10" r="1" fill="#b37a45"/></svg>`;return (d>=1?ba(50,30,-25):"")+(d>=2?ba(36,52,20)+`<svg class="sweat" viewBox="0 0 20 28"><path d="M10 2 Q19 16 10 26 Q1 16 10 2 Z" fill="#8fd8ff" stroke="${O}" stroke-width="2"/></svg>`:"")+(d>=3&&!ko?`<div class="dizzy" style="opacity:1;animation:none"><div><i></i><i></i><i></i></div></div>`:"");})()}${npcSVG(st.npc||"sprite",c.mapId,state==="hit"&&!ko?"oops":"")}${ko?`<div class="dizzy"><div><i></i><i></i><i></i></div></div>`:""}</div>
+ h+=`<div class="arena a-${c.mapId} bossarena"><div class="ground"></div>
+  <div class="fx boss ${ko?"ko":""} ${enter&&!intro?"ent-l":""} ${bAtk&&!ko?"lunge":""} dmg${dmg}">${bar}${bossHurt}${npcSVG(st.npc||"sprite",c.mapId,heroHit&&!ko?"oops":"")}${ko?`<div class="dizzy"><div><i></i><i></i><i></i></div></div>`:""}</div>
   <div></div>
-  <div class="fx ${enter?"ent-r":""} ${state==="miss"?"hurt":""}">${heroSVG(R,"hero "+(state==="hit"?"cheer":state==="miss"?"oops":""),state==="miss"?"oops":state==="hit"?"joy":"happy")}${state==="miss"?`<div class="hurtpop"><svg viewBox="0 0 100 92" width="44" height="40"><path d="${heartPath(50,46,30)}" fill="#ff4f8a" stroke="${O}" stroke-width="5"/><path d="M50 22 L42 44 L56 52 L48 74" fill="none" stroke="${O}" stroke-width="6" stroke-linejoin="round"/></svg><b>-1</b></div>`:""}</div>
-  <div class="bubble ${enter?"pop":""}">${esc(E(hp<=0?"טוב, טוב... ניצחתם!":state==="hit"?"אוי! זה עבד עליי!":state==="miss"?"חה! התחמקתי!":(st.bubble||"מי מעז לעבור?")))}</div>
-  ${state==="hit"?`<div class="banner ol">${hp<=0?"ניצחון!":"פגיעה!"}</div>`:state==="miss"?`<div class="banner ol lose">התחמק!</div>`:""}
+  <div class="fx ${enter?"ent-r":""} ${heroHurtNow?"hurt":""} ${P.defend&&ph!=="rolled"?"shielded":""}">${heroSVG(R,"hero "+(heroHit?"cheer":heroHurtNow?"oops":""),heroHurtNow?"oops":heroHit?"joy":"happy")}${P.defend&&ph!=="rolled"?`<div class="shieldfx"></div>`:""}${heroHurtNow?`<div class="hurtpop"><svg viewBox="0 0 100 92" width="44" height="40"><path d="${heartPath(50,46,30)}" fill="#ff4f8a" stroke="${O}" stroke-width="5"/><path d="M50 22 L42 44 L56 52 L48 74" fill="none" stroke="${O}" stroke-width="6" stroke-linejoin="round"/></svg><b>-1</b></div>`:""}</div>
+  <div class="bubble ${enter?"pop":""}">${esc(E(bub))}</div>
+  ${heroHit?`<div class="banner ol">${ko?(ez?"נִיצָּחוֹן!":"ניצחון!"):(ez?"פְּגִיעָה!":"פגיעה!")}</div>`:heroMiss?`<div class="banner ol lose">${ez?"הִתְחַמֵּק!":"התחמק!"}</div>`:bAtk?`<div class="banner ol ${bAtk.blocked||!bAtk.hit?"":"lose"}">${bAtk.blocked?(ez?"נֶחְסַם!":"נחסם!"):bAtk.hit?(ez?"אַוּוּץ'!":"אאוץ'!"):(ez?"פִּסְפֵּס!":"פספס!")}</div>`:""}
  </div>`;
- h+=`<div class="bossbar" aria-label="נשארו ${hp} פגיעות"><b>${ezOn()?`בּוֹס רָמָה ${bossLv(hs)} · עוֹד ${hp} ${hp===1?"פְּגִיעָה":"פְּגִיעוֹת"} לְנִיצָּחוֹן`:`בוס רמה ${bossLv(hs)} · עוד ${hp} ${hp===1?"פגיעה":"פגיעות"} לניצחון`}</b><div class="hp">${Array.from({length:hpMax},(_,i)=>i<hp?HP_ON:hpOff(i===hp&&state==="hit")).join("")}</div></div>
- <div class="bossbar teambar"><b>${ezOn()?"כֹּחַ הַגִּיבּוֹרִים":"כוח הגיבורים"}</b><div class="hp">${[0,1,2].map(i=>`<svg viewBox="0 0 100 92" width="30" height="28" class="${i<(P.teamHp??3)?"":"lost"} ${i===(P.teamHp??3)&&state==="miss"?"justlost":""}"><path d="${heartPath(50,46,30)}" fill="${i<(P.teamHp??3)?"#ff4f8a":"#3a3456"}" stroke="${O}" stroke-width="6"/></svg>`).join("")}</div></div>`;
- h+=P.bossLine?`<div class="parch slide"><span class="kind" style="background:${P.lastHit?"#21b84a":"#e0306f"}">${P.lastHit?"פגיעה":"התחמק"}</span>${ezText(P.lastHit?EASY_UI.hit:EASY_UI.miss,P.bossLine)}</div>`
-  :`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">קרב בוס · תחנה ${st.node+1}</span><span class="tt">${esc(E(st.title))}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div>${stageBox(st.stage)}${stageBox(`כל גיבור בתורו מטיל קובייה, ובכל סיבוב שלישי הבוס שואל חידה. כל הצלחה היא פגיעה אחת בבוס. כשמחטיאים, הבוס מחזיר מכה והגיבורים מאבדים לב. נגמרו הלבים? עושים משימת כוח קצרה וממשיכים. אי אפשר להפסיד, רק לנסות שוב. פעם אחת בקרב אפשר לעשות מכה משותפת: ${hs.length>1?"כל הגיבורים":"הגיבור וההורה"} מטילים ביחד ומחברים את המספרים. בסוף כל גיבור בוחר שדרוג.`)}`;
- if(hp<=0)return h+`<div class="bwinov" data-a="bosswin" role="dialog" aria-label="ניצחון"><div class="lvrays"></div><div class="bw-title ol">${ezOn()?"נִיצַּחְתֶּם!":"ניצחתם!"}</div><div class="bw-stage"><div class="bw-boss">${npcSVG(st.npc||"sprite",c.mapId)}<div class="bw-hearts">${[0,1,2,3,4].map(i=>`<i style="--d:${i*.18}s;--x:${(i-2)*26}px"></i>`).join("")}</div></div><div class="bw-heroes">${hs.map(h=>heroSVG(h,"hero cheer","joy")).join("")}</div></div><div class="bw-sub">${ezOn()?"הַבּוֹס נִהְיָה חָבֵר!":"הבוס נהיה חבר!"}</div><div class="tapnote">${ezOn()?"לַחֲצוּ לְהַמְשִׁיךְ":"לחצו להמשיך"}</div></div><button class="btn wide grn" data-a="bosswin"><span>ניצחתם! מה קרה לבוס?</span></button>`;
- if(P.bossPhase==="ready"&&(P.teamHp??3)<=0)return h+`<div class="panel dicebox"><div class="eyebrow">${ezOn()?"הַגִּיבּוֹרִים עֲיֵפִים!":"הגיבורים עייפים!"}</div><p class="need">${ezOn()?(c.mode==="bed"?"אוֹסְפִים כֹּחַ: 3 נְשִׁימוֹת גְּדוֹלוֹת, לְאַט לְאַט.":"אוֹסְפִים כֹּחַ: 5 קְפִיצוֹת בַּמָּקוֹם, כּוּלָּם בְּיַחַד!"):(c.mode==="bed"?"אוספים כוח: 3 נשימות גדולות, לאט לאט.":"אוספים כוח: 5 קפיצות במקום, כולם ביחד!")}</p><button class="btn wide grn" data-a="bossrest"><span>${ezOn()?"אָסַפְנוּ כֹּחַ!":"אספנו כוח!"}</span></button></div>`;
- if(P.bossPhase==="ready"&&(P.bossRound||0)%3===2){if(!P.bossQ)P.bossQ=nextRiddle(c);const Q=P.bossQ;
-  return h+`<div class="panel dicebox bossq"><div class="eyebrow">${ezOn()?"הַבּוֹס שׁוֹאֵל חִידָה!":"הבוס שואל חידה!"}</div><div class="riddle" style="color:#fff">${esc(E(Q.q))}</div>${P.bossQhint?`<p class="need">${ezOn()?"רֶמֶז":"רמז"}: ${esc(E(Q.hint)||letterClue(Q.a))}</p>`:""}
-  <p class="small muted">${ezOn()?"תְּשׁוּבָה נְכוֹנָה = פְּגִיעָה בַּבּוֹס!":"תשובה נכונה = פגיעה בבוס!"}</p><div class="row" style="width:100%"><button class="btn grn" data-a="bqok"><span>ענו נכון!</span></button><button class="btn pnk" data-a="bqno"><span>${P.bossQhint?"טעו":"טעו, רמז בבקשה"}</span></button></div>
+ h+=`<div class="bossbar teambar"><b>${ez?"הַלְּבָבוֹת שֶׁל הַגִּיבּוֹרִים":"הלבבות של הגיבורים"}</b><div class="tb-list">${hs.map(x=>`<span class="tb-h ${x.id===R.id?"on":""}">${esc(x.heroName)} ${heartsHTML(x,16)}</span>`).join("")}</div></div>`;
+ const lineBox=(kind,col,txt)=>`<div class="parch slide"><span class="kind" style="background:${col}">${kind}</span>${txt}</div>`;
+ if(ph==="rolled"&&P.bossLine)h+=lineBox(P.lastHit?(ez?"פְּגִיעָה":"פגיעה"):(ez?"הִתְחַמֵּק":"התחמק"),P.lastHit?"#21b84a":"#e0306f",ezText(P.lastHit?EASY_UI.hit:EASY_UI.miss,P.bossLine));
+ else if(bAtk)h+=lineBox(ez?"תּוֹר הַבּוֹס":"תור הבוס",TYPE_COL.boss,esc(bAtk.blocked?(ez?`${R.heroName} הֵגֵן וְהַמַּכָּה נֶחְסְמָה!`:`${R.heroName} ${R.gender==="f"?"התגוננה":"התגונן"}, והמכה של הבוס נחסמה!`):bAtk.hit?(ez?`הַבּוֹס פָּגַע בְּ${R.heroName}. לֵב אֶחָד פָּחוֹת.`:`הבוס פגע ב${R.heroName}. ${R.gender==="f"?"היא מאבדת":"הוא מאבד"} לב אחד.`):(ez?"הַבּוֹס נִיסָּה לִתְקוֹף, אֲבָל פִּסְפֵּס!":"הבוס ניסה לתקוף, אבל פספס!")));
+ else if(ph==="choose"&&!P.bossRound)h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL.boss}">${ez?"קְרַב בּוֹס":"קרב בוס"} · ${ez?"תַּחֲנָה":"תחנה"} ${st.node+1}</span><span class="tt">${esc(E(st.title))}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div>${stageBox(st.stage)}${stageBox("הקרב בתורות: הגיבור בוחר פעולה (התקפה, קסם חזק או הגנה) ומטיל, ואז הבוס מחזיר מכה. מכה של הבוס מורידה לב. גיבור בלי לבבות לא נפסל, הוא רק עייף, וחבר יכול להציל אותו עם חפץ או משימת הצלה. בכל סיבוב שלישי הבוס שואל חידה.")}`;
+ if(ko)return h+`<div class="bwinov" data-a="bosswin" role="dialog" aria-label="ניצחון"><div class="lvrays"></div><div class="bw-title ol">${ez?"נִיצַּחְתֶּם!":"ניצחתם!"}</div><div class="bw-stage"><div class="bw-boss">${npcSVG(st.npc||"sprite",c.mapId)}<div class="bw-hearts">${[0,1,2,3,4].map(i=>`<i style="--d:${i*.18}s;--x:${(i-2)*26}px"></i>`).join("")}</div></div><div class="bw-heroes">${hs.map(x=>heroSVG(x,"hero cheer","joy")).join("")}</div></div><div class="bw-sub">${ez?"הַבּוֹס נִהְיָה חָבֵר!":"הבוס נהיה חבר!"}</div><div class="tapnote">${ez?"לַחֲצוּ לְהַמְשִׁיךְ":"לחצו להמשיך"}</div></div><button class="btn wide grn" data-a="bosswin"><span>ניצחתם! מה קרה לבוס?</span></button>`;
+ if(ph==="choose"&&heroHp(R)<=0)return h+rescueBox(R,hs,c);
+ if(ph==="bossatk"){const nx=hs[(P.bossTurn+1)%hs.length];return h+`<div class="panel dicebox"><button class="btn wide grn" data-a="bossnext"><span>${hs.length>1?(ez?"הַתּוֹר שֶׁל ":"התור של ")+esc(nx.heroName):(ez?"עוֹד סִיבּוּב!":"עוד סיבוב!")}</span></button></div>`;}
+ if(ph==="rolled")return h+`<div class="panel dicebox">${P.lastTeam?`<div class="teamres">${P.teamRolls.map(r=>`<span class="tdie">${r}</span>`).join("<b>+</b>")}<b>=</b><span class="tsum">${P.teamRolls.reduce((a,b)=>a+b,0)}</span></div>`:(d.sides===6?cubeHTML(P.roll,P.lastHit?"win":"lose"):d20HTML(P.roll,P.lastHit?"win":"lose"))}${!P.lastTeam&&P.roll!=null&&bonus?`<div class="roll-note">${ez?"יָצָא":"יצא"} ${P.roll} + ${bonus} = ${P.roll+bonus}</div>`:""}
+  ${!P.lastHit&&!P.lastTeam&&luckLeft(R)>0?`<button class="btn wide" data-a="reroll"><span>${ez?"הֲטָלָה חוֹזֶרֶת":"הטלה חוזרת"} · ${ez?"מַזָּל":"מזל"} (${luckLeft(R)})</span></button>`:""}
+  <button class="btn wide pnk" data-a="bossturn"><span>${ez?"תּוֹר הַבּוֹס!":"תור הבוס!"}</span></button></div>`;
+ if(ph==="choose"&&(P.bossRound||0)%3===2){if(!P.bossQ)P.bossQ=nextRiddle(c);const Q=P.bossQ;
+  return h+`<div class="panel dicebox bossq"><div class="eyebrow">${ez?"הַבּוֹס שׁוֹאֵל חִידָה!":"הבוס שואל חידה!"}</div><div class="riddle" style="color:#fff">${esc(E(Q.q))}</div>${P.bossQhint?`<p class="need">${ez?"רֶמֶז":"רמז"}: ${esc(E(Q.hint)||letterClue(Q.a))}</p>`:""}
+  <p class="small muted">${ez?"תְּשׁוּבָה נְכוֹנָה = פְּגִיעָה בַּבּוֹס!":"תשובה נכונה = פגיעה בבוס!"}</p><div class="row" style="width:100%"><button class="btn grn" data-a="bqok"><span>ענו נכון!</span></button><button class="btn pnk" data-a="bqno"><span>${P.bossQhint?"טעו":"טעו, רמז בבקשה"}</span></button></div>
   <div class="parent-only">${P.reveal?`<div class="answer ol">${esc(E(Q.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div></div>`;}
- h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what))}<br>${ezOn()?"צָרִיךְ":"צריך"} <b>${d.target-(P.itemBonus?1:0)}</b> ${ezOn()?"וּמַעְלָה":"ומעלה"}${bonus?`<br>${esc(R.heroName)} ${R.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
- if(c.dice==="digital"){
-  const v=P.bossPhase==="rolled"?P.roll:null;const cls=v==null?"":(P.lastHit?"win":"lose");
-  if(P.lastTeam&&P.bossPhase==="rolled")h+=`<div class="teamres">${P.teamRolls.map((r,i)=>`<span class="tdie">${r}</span>`).join("<b>+</b>")}<b>=</b><span class="tsum">${P.teamRolls.reduce((a,b)=>a+b,0)}</span></div>`;
-  else h+=d.sides===6?cubeHTML(v,cls):d20HTML(v,cls);
-  if(v!=null&&P.rollPair&&!P.lastTeam)h+=`<div class="roll-note">בזכות העזרה: ${P.rollPair[0]} ו־${P.rollPair[1]}. לוקחים את הגבוה!</div>`;
-  if(v!=null&&bonus&&!P.lastTeam)h+=`<div class="roll-note">יצא ${v} + ${bonus} כוח = ${v+bonus}</div>`;
- }
- if(P.bossPhase==="team"){
-  const T=teamMembers(hs),tt=teamTarget(c,T.length,hs);
-  h=h.replace(/<div class="panel dicebox">[\s\S]*$/,"");
-  h+=`<div class="panel dicebox teambox"><div class="eyebrow">מכה משותפת!</div><p class="need">${hs.length>1?"כל הגיבורים תוקפים ביחד, כמו צוות אמיתי. כל אחד מטיל קובייה, ומחברים את כל המספרים.":"ההורה נכנס להרפתקה! הגיבור וההורה מטילים יחד, ומחברים את שני המספרים."}<br>צריך סכום של <b>${tt}</b> ומעלה. הצלחה מורידה <b>2</b>!</p>
-  <div class="teamrow">${T.map((m,i)=>`<div class="tmem">${m.h?heroSVG(m.h,"hero"):`<svg viewBox="0 0 60 70" aria-hidden="true"><circle cx="30" cy="22" r="14" fill="#ffd9c0" stroke="${O}" stroke-width="3"/><path d="M8 66 Q8 40 30 40 Q52 40 52 66 Z" fill="#4fe36b" stroke="${O}" stroke-width="3"/><path d="${heartPath(30,54,6)}" fill="#ff4f8a"/></svg>`}<span class="tdie" id="td${i}">?</span><small>${esc(m.name)}</small></div>`).join("")}</div>
-  ${c.dice==="digital"?`<button class="btn wide pnk" data-a="teamroll"><span>מטילים ביחד! 3, 2, 1...</span></button>`:`<p class="muted small" style="text-align:center">כל אחד מטיל קובייה אמיתית, ומחברים.</p><div class="row" style="width:100%"><button class="btn grn" data-a="teammark" data-ok="1"><span>יצא ${tt} ומעלה</span></button><button class="btn pnk" data-a="teammark" data-ok="0"><span>יצא פחות</span></button></div>`}
-  <button class="chip" data-a="teamcancel">חזרה להטלה רגילה</button></div>`;
-  return h;
- }
- if(P.bossPhase==="rolled"){
-  const nx=hs[(P.bossTurn+1)%hs.length];
-  if(!P.lastHit&&luckLeft(R)>0)h+=`<button class="btn wide" data-a="reroll"><span>הטלה חוזרת · מזל (נשארו ${luckLeft(R)})</span></button>`;
-  h+=`<button class="btn wide grn" data-a="bossnext"><span>${hs.length>1?"התור של "+esc(nx.heroName):"עוד הטלה!"}</span></button>`;
- } else if(c.dice==="digital"){
-  h+=`<button class="btn wide" data-a="roll"><span>${esc(R.heroName)}, ${ezOn()?(R.gender==="f"?"הַטִּילִי":"הָטֵל"):(R.gender==="f"?"הטילי":"הטל")}!</span></button>`;
- } else {
-  const tg=Math.max(1,d.target-bonus);
-  h+=`<p class="muted small" style="text-align:center">${esc(R.heroName)} ${R.gender==="f"?"מטילה":"מטיל"} את הקובייה האמיתית.</p><div class="row" style="width:100%"><button class="btn grn" data-a="bossmark" data-ok="1"><span>יצא ${tg} ומעלה</span></button><button class="btn pnk" data-a="bossmark" data-ok="0"><span>יצא פחות</span></button></div>`;
- }
- if(P.bossPhase!=="rolled"){h+=helpChip(hs,R,c);h+=itemChip(R);if(!P.teamUsed&&hp>=1)h+=`<button class="btn wide teambtn" data-a="team"><span>מכה משותפת! ${hs.length>1?"כל הצוות":"עם ההורה"} ביחד</span></button><p class="small muted" style="text-align:center;margin-top:-6px">פעם אחת בקרב · מורידה 2</p>`;}
+ if(ph==="team"){
+  const T=teamMembers(hs),tt=teamTarget(c,T.length,hs),rolls=P.teamRolls||[];
+  return h+`<div class="panel dicebox teambox"><div class="eyebrow">${ez?"מַכָּה מְשׁוּתֶּפֶת!":"מכה משותפת!"}</div><p class="need">${ez?`כָּל אֶחָד מַטִּיל בַּכַּפְתּוֹר שֶׁלּוֹ, וּמְחַבְּרִים. צָרִיךְ <b>${tt}</b> וּמַעְלָה!`:`כל אחד לוחץ על הכפתור שלו ומטיל, ומחברים את כל המספרים. צריך <b>${tt}</b> ומעלה. הצלחה מורידה <b>2</b>!`}</p>
+  <div class="teamrow">${T.map((m,i)=>`<div class="tmem">${m.h?heroSVG(m.h,"hero"):`<svg viewBox="0 0 60 70" aria-hidden="true"><circle cx="30" cy="22" r="14" fill="#ffd9c0" stroke="${O}" stroke-width="3"/><path d="M8 66 Q8 40 30 40 Q52 40 52 66 Z" fill="#4fe36b" stroke="${O}" stroke-width="3"/></svg>`}<span class="tdie ${rolls[i]!=null?"landed":""}" id="td${i}">${rolls[i]??"?"}</span><small>${esc(m.name)}</small>${c.dice==="digital"?(rolls[i]==null?`<button class="btn sm" data-a="teamone" data-i="${i}"><span>${ez?"הָטֵל!":"הטל!"}</span></button>`:`<b class="tm-ok">✓</b>`):""}</div>`).join("")}</div>
+  ${c.dice==="digital"?"":`<div class="row" style="width:100%"><button class="btn grn" data-a="teammark" data-ok="1"><span>יצא ${tt} ומעלה</span></button><button class="btn pnk" data-a="teammark" data-ok="0"><span>יצא פחות</span></button></div>`}
+  ${rolls.some(x=>x!=null)?"":`<button class="chip" data-a="teamcancel">${ez?"חֲזָרָה":"חזרה לבחירת פעולה"}</button>`}</div>`;}
+ if(ph==="choose"){
+  const mg=MAGIC_N[R.params.emblem]||"קרן כוכבים";
+  return h+`<div class="panel dicebox"><div class="eyebrow">${ez?"מָה עוֹשִׂים?":"מה עושים בתור הזה?"}</div><div class="actgrid">
+  <button class="actbtn atk" data-a="bact" data-v="atk"><b>${ez?"הַתְקָפָה":"התקפה"}</b><small>${ez?`צָרִיךְ ${bossTarget(c,"atk")} · מוֹרִיד 1`:`צריך ${bossTarget(c,"atk")}+ · מוריד 1`}</small></button>
+  <button class="actbtn mag" data-a="bact" data-v="magic"><b>${esc(E(mg))}</b><small>${ez?`צָרִיךְ ${bossTarget(c,"magic")} · מוֹרִיד 2`:`קסם חזק · צריך ${bossTarget(c,"magic")}+ · מוריד 2`}</small></button>
+  <button class="actbtn def" data-a="bact" data-v="def"><b>${ez?"הֲגָנָה":"הגנה"}</b><small>${ez?"בְּלִי הֲטָלָה · חוֹסֵם אֶת הַבּוֹס":"בלי הטלה · חוסם את המכה של הבוס"}</small></button>
+  ${!P.teamUsed?`<button class="actbtn team" data-a="team"><b>${ez?"מַכָּה מְשׁוּתֶּפֶת":"מכה משותפת"}</b><small>${hs.length>1?(ez?"כּוּלָּם בְּיַחַד · מוֹרִיד 2":"כל הצוות ביחד · פעם אחת · מוריד 2"):(ez?"עִם הַמְּסַפֵּר · מוֹרִיד 2":"עם ההורה · פעם אחת · מוריד 2")}</small></button>`:""}
+  </div>${itemChip(R)}</div>`;}
+ // roll phase
+ const tg=bossTarget(c,P.bAct)-(P.itemBonus?1:0);
+ h+=`<div class="panel dicebox"><div class="need">${P.bAct==="magic"?esc(E(MAGIC_N[R.params.emblem]||"קרן כוכבים")):esc(E(ch.what))}<br>${ez?"צָרִיךְ":"צריך"} <b>${tg}</b> ${ez?"וּמַעְלָה":"ומעלה"}${bonus?`<br>+${bonus} ${ez?"כּוֹחַ":"כוח"}`:""}</div>`;
+ if(c.dice==="digital"){h+=(d.sides===6?cubeHTML(null,""):d20HTML(null,""))+`<button class="btn wide" data-a="roll"><span>${esc(R.heroName)}, ${ez?(R.gender==="f"?"הַטִּילִי":"הָטֵל"):(R.gender==="f"?"הטילי":"הטל")}!</span></button>`;}
+ else{const t2=Math.max(1,tg-bonus);h+=`<div class="row" style="width:100%"><button class="btn grn" data-a="bossmark" data-ok="1"><span>יצא ${t2} ומעלה</span></button><button class="btn pnk" data-a="bossmark" data-ok="0"><span>יצא פחות</span></button></div>`;}
+ h+=helpChip(hs,R,c)+`<button class="chip" data-a="bactback">${ez?"חֲזָרָה":"חזרה לבחירת פעולה"}</button>`;
  return h+`</div>`;
 }
 function teamHit(sum,ok){
  const P=S.play,c=SAVE.campaign,hs=campHeroes(),T=teamMembers(hs),tt=teamTarget(c,T.length,hs);
  const hit=ok!=null?ok:sum>=tt;
  P.bossPhase="rolled";P.lastHit=hit;P.lastTeam=true;P.teamUsed=true;P.roll=sum;
- if(hit)P.bossHp=Math.max(0,P.bossHp-2);else P.teamHp=Math.max(0,(P.teamHp??3)-1);
+ if(hit)P.bossHp=Math.max(0,P.bossHp-2);
  const names=T.map(m=>m.name);const nm=names.length>1?names.slice(0,-1).join(", ")+" ו"+names[names.length-1]:names[0];
  P.bossLine=hit?`${nm} תקפו ביחד, בדיוק באותו רגע! הבוס לא ידע לאן להסתכל קודם. מכה כפולה!`:`${nm} תקפו ביחד, אבל הבוס הספיק לקפוץ הצידה ברגע האחרון. לא נורא, צוות טוב לא מוותר!`;
- render();sfx(hit?"win":"lose");if(hit)confetti(P.bossHp?40:90);
+ persist();render();sfx(hit?"win":"lose");if(hit)confetti(P.bossHp?40:90);
  const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});
 }
 function bossHit(v,ok){
- const P=S.play,c=SAVE.campaign,st=P.chapter.stations[P.idx],hs=campHeroes(),R=hs[P.bossTurn%hs.length];
- const hit=ok!=null?ok:(v+statOf(R,"str")>=diceFor(c,"easy").target-(P.itemBonus?1:0));P.help=false;P.itemBonus=null;
+ const P=S.play,c=SAVE.campaign,st=P.chapter.stations[P.idx],hs=campHeroes(),R=hs[P.bossTurn%hs.length],act=P.bAct||"atk";
+ const hit=ok!=null?ok:(v+statOf(R,"str")>=bossTarget(c,act)-(P.itemBonus?1:0));P.help=false;P.itemBonus=null;
  P.roll=v;P.bossPhase="rolled";P.lastHit=hit;P.lastTeam=false;
- if(hit)P.bossHp=Math.max(0,P.bossHp-1);else P.teamHp=Math.max(0,(P.teamHp??3)-1);
+ if(hit)P.bossHp=Math.max(0,P.bossHp-(act==="magic"?2:1));
  const lines=hit?st.challenge.hit:st.challenge.miss;
- P.bossLine=fill(pick(lines&&lines.length?lines:["הבוס מתנדנד!"]),hs,R,campMap(c).name);
- render();sfx(hit?"win":"lose");if(hit)confetti(P.bossHp?18:90);
+ P.bossLine=(hit&&act==="magic"?fill(`${R.heroName} [השתמש|השתמשה] ב`+(MAGIC_N[R.params.emblem]||"קרן כוכבים")+"! ",hs,R,""):"")+fill(pick(lines&&lines.length?lines:["הבוס מתנדנד!"]),hs,R,campMap(c).name);
+ persist();render();sfx(hit?"win":"lose");if(hit)confetti(P.bossHp?18:90);
+ const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});
+}
+function bossAttack(){
+ const P=S.play,c=SAVE.campaign,hs=campHeroes(),R=hs[P.bossTurn%hs.length];
+ const chance=ageGroup(c.age)==="old"?.55:.4;const blocked=!!P.defend,hit=blocked?true:Math.random()<chance;
+ P.bAtk={hit,blocked};if(hit&&!blocked)hurt(R,1);P.defend=false;P.bossPhase="bossatk";persist();
+ render();sfx(blocked?"chest":hit?"lose":"pop");
  const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});
 }
 const CROP={str:"76 6 80 80",wis:"18 -40 104 104",luck:"-8 46 156 124"};
@@ -2556,6 +2618,7 @@ function startPlay(ch,first){
  const c=SAVE.campaign;
  if(ch.campaign&&first){if(ch.campaign.title)c.title=ch.campaign.title;if(ch.campaign.premise)c.premise=ch.campaign.premise;if(ch.campaign.goal)c.goal=ch.campaign.goal;persist();}
  assignMoves(ch,c);
+ campHeroes().forEach(h=>{h.hp=heroHpMax(h);});
  S.play={chapter:ch,idx:-1,phase:"read",startedAt:Date.now(),roll:null,help:false,hint:false,reveal:false,walk:null,entered:null,mapDone:false,luckUsed:{},bossHp:null};
  go(first?"intro":"play");
 }
@@ -2569,6 +2632,7 @@ function resolveStation(ok,text,opt={}){
  P.result={ok,text:text||(ok?st.success:st.fail)||(ok?"הצלחתם!":"לא נורא, ממשיכים!")};P.phase="result";
  P.noReward=!!opt.noReward;P.answer=opt.answer||"";P.xpInfo=null;P.upQueue=[];
  const hs=campHeroes();const L=hs.find(h=>h.id===st.leaderId)||hs[0];
+ P.hurtNow=false;if(L&&!ok&&(st.type==="dice"||P.noReward)){hurt(L,1);P.hurtNow=true;}
  if(L&&!P.noReward){
   const before=L.xp||0,lf=heroLevel(L);
   (opt.boss?hs:[L]).forEach(h=>{h.items=h.items||[];h.items.push({name:st.reward.name,icon:st.reward.icon});if(h.items.length>40)h.items=h.items.slice(-40);});
@@ -2594,7 +2658,7 @@ function advance(){
  const from=Math.min(c.node,NODES-1);c.node=Math.min(c.node+1,NODES);
  if(c.node>=NODES)P.mapDone=true;
  persist();
- P.idx++;P.phase="read";P.roll=null;P.help=false;P.plan=false;P.readDone=false;P.readBonus=false;P.readItem=null;P.readLit=[];P.ezRes=null;P.itemBonus=null;P.opened=false;P.moveDone=false;P.mcount=0;P.hint=false;P.reveal=false;P.xpInfo=null;P.tries=0;P.noReward=false;P.answer="";P.bossHp=null;P.bossLine=null;P.bossPhase=null;P.teamHp=3;P.bossRound=0;P.bossQ=null;P.bossQhint=false;P.teamUsed=false;P.lastTeam=false;P.teamRolls=null;P.rollPair=null;P.upIdx=0;P.upQueue=[];P.upStep=null;P.bossIntro=null;
+ P.idx++;P.phase="read";P.roll=null;P.help=false;P.plan=false;P.readDone=false;P.readBonus=false;P.readItem=null;P.readLit=[];P.ezRes=null;P.itemBonus=null;P.opened=false;P.moveDone=false;P.mcount=0;P.hint=false;P.reveal=false;P.xpInfo=null;P.tries=0;P.noReward=false;P.answer="";P.bossHp=null;P.bossLine=null;P.bossPhase=null;P.bAct=null;P.bAtk=null;P.defend=false;P.bossRound=0;P.bossQ=null;P.bossQhint=false;P.teamUsed=false;P.lastTeam=false;P.teamRolls=null;P.rollPair=null;P.upIdx=0;P.upQueue=[];P.upStep=null;P.bossIntro=null;
  snapStation();
  if(P.idx<P.chapter.stations.length&&S.showMap)P.walk={from,to:Math.min(c.node,NODES-1)};
  if(P.idx>=P.chapter.stations.length&&P.mapDone)setTimeout(()=>confetti(80),300);
@@ -2687,15 +2751,22 @@ app.addEventListener("click",e=>{
   case "plan": P.plan=!P.plan;sfx("pop");render();break;
   case "mcount": {const st=P.chapter.stations[P.idx];P.mcount=(P.mcount||0)+1;if(P.mcount>=st.move.n){P.moveDone=true;sfx("win");confetti(40);render();const t=document.querySelector(".dicebox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}else{sfx("pop");const el=b.querySelector("b");if(el)el.textContent=P.mcount;b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump");}break;}
   case "mdone": P.moveDone=true;sfx("win");confetti(40);render();{const t=document.querySelector(".dicebox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}break;
-  case "reroll": {const st=P.chapter.stations[P.idx],hs=campHeroes();const R=st.type==="boss"?hs[P.bossTurn%hs.length]:(hs.find(h=>h.id===st.leaderId)||hs[0]);if(luckLeft(R)<=0)break;P.luckUsed[R.id]=(P.luckUsed[R.id]||0)+1;P.roll=null;if(st.type==="boss"){P.bossPhase="ready";P.bossLine=fill(`${R.heroName} [משתמש|משתמשת] במזל, ו[מטיל|מטילה] שוב!`,hs,R,"");}sfx("pop");render();break;}
+  case "reroll": {const st=P.chapter.stations[P.idx],hs=campHeroes();const R=st.type==="boss"?hs[P.bossTurn%hs.length]:(hs.find(h=>h.id===st.leaderId)||hs[0]);if(luckLeft(R)<=0)break;P.luckUsed[R.id]=(P.luckUsed[R.id]||0)+1;P.roll=null;if(st.type==="boss"){P.bossPhase="roll";P.bossLine=fill(`${R.heroName} [משתמש|משתמשת] במזל, ו[מטיל|מטילה] שוב!`,hs,R,"");}sfx("pop");render();break;}
   case "introgo": P.bossIntro=P.idx;sfx("pop");render();break;
-  case "bossnext": P.bossRound=(P.bossRound||0)+1;P.reveal=false;P.bossTurn++;P.bossPhase="ready";P.roll=null;P.lastTeam=false;P.rollPair=null;P.help=false;sfx("pop");render();{const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;
+  case "bossnext": P.bossRound=(P.bossRound||0)+1;P.reveal=false;P.bossTurn++;P.bossPhase="choose";P.bAct=null;P.bAtk=null;P.teamRolls=null;P.roll=null;P.lastTeam=false;P.rollPair=null;P.help=false;sfx("pop");render();{const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;
   case "bossmark": bossHit(null,b.dataset.ok==="1");break;
-  case "bossrest": P.teamHp=3;sfx("win");confetti(30);render();break;
+  case "bossrest": break;
+  case "bact": {const v=b.dataset.v;if(v==="def"){P.defend=true;P.bAct="def";sfx("chest");bossAttack();break;}P.bAct=v;P.bossPhase="roll";sfx("pop");render();break;}
+  case "bactback": P.bossPhase="choose";P.bAct=null;render();break;
+  case "bossturn": if(P.bossHp<=0)break;bossAttack();break;
+  case "healgive": {const g=SAVE.heroes.find(x=>x.id===b.dataset.g),r=SAVE.heroes.find(x=>x.id===b.dataset.r);const it=g&&(g.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(!it||!r)break;it.used=true;r.hp=heroHpMax(r);persist();sfx("win");confetti(50);toast(r.heroName+(ezOn()?(r.gender==="f"?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(r.gender==="f"?" חזרה למסע!":" חזר למסע!")));break;}
+  case "healtask": {const r=SAVE.heroes.find(x=>x.id===b.dataset.r);if(!r)break;r.hp=Math.min(heroHpMax(r),2);persist();sfx("win");confetti(40);toast(r.heroName+(ezOn()?(r.gender==="f"?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(r.gender==="f"?" חזרה למסע!":" חזר למסע!")));break;}
+  case "teamone": {const i=+b.dataset.i,hs=campHeroes(),T=teamMembers(hs),d=diceFor(SAVE.campaign,"easy");P.teamRolls=P.teamRolls||T.map(()=>null);if(P.teamRolls[i]!=null)break;P.teamRolls[i]=1+Math.floor(Math.random()*d.sides);sfx("roll");
+   if(P.teamRolls.every(x=>x!=null)){render();setTimeout(()=>teamHit(P.teamRolls.reduce((a,x)=>a+x,0)),700);}else render();break;}
   case "bqok": {P.bossQ=null;P.bossQhint=false;bossHit(null,true);break;}
   case "bqno": if(!P.bossQhint){P.bossQhint=true;sfx("lose");render();}else{P.bossQ=null;P.bossQhint=false;bossHit(null,false);}break;
-  case "team": P.bossPhase="team";sfx("boss");render();{const t=document.querySelector(".teambox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}break;
-  case "teamcancel": P.bossPhase="ready";render();break;
+  case "team": P.bossPhase="team";P.teamRolls=null;sfx("boss");render();{const t=document.querySelector(".teambox");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}break;
+  case "teamcancel": P.bossPhase="choose";P.teamRolls=null;render();break;
   case "teammark": teamHit(null,b.dataset.ok==="1");break;
   case "teamroll": {const hs=campHeroes(),T=teamMembers(hs),d=diceFor(SAVE.campaign,"easy");const rolls=T.map(()=>1+Math.floor(Math.random()*d.sides));P.teamRolls=rolls;b.disabled=true;sfx("roll");
    if(RM){teamHit(rolls.reduce((a,x)=>a+x,0));break;}
