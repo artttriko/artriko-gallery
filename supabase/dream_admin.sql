@@ -31,6 +31,7 @@ create table if not exists public.dream_riddles (
   young boolean not null default false,
   active boolean not null default true
 );
+alter table public.dream_riddles add column if not exists level smallint not null default 1 check (level between 1 and 3);
 alter table public.dream_riddles enable row level security;
 drop policy if exists "dream riddles read" on public.dream_riddles;
 create policy "dream riddles read" on public.dream_riddles for select to anon, authenticated using (active or (select public.dream_owner()));

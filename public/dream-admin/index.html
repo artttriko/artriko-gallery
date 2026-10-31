@@ -53,7 +53,7 @@ const SB_URL="https://qbsdrmjjgpdcdbkovfyj.supabase.co",SB_KEY="sb_publishable_j
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=s=>document.querySelector(s),esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const R=$("#root");
-const S={open:{},user:null,tab:"dash",days:30,stats:null,riddles:null,cat:null,over:{},q:"",edit:null,toast:"",admin:null,err:"",unlocked:false,cerr:"",rage:"all"};
+const S={open:{},user:null,tab:"dash",days:30,stats:null,riddles:null,cat:null,over:{},q:"",edit:null,toast:"",admin:null,err:"",unlocked:false,cerr:"",rage:"all",rlev:"all"};
 const OWNER="ssaharr@gmail.com",CODEH="f520d2e05caee148d178644c25080856972004f68259ab2f7099a58246bb2df1";
 const okSess=()=>{try{return sessionStorage.getItem("dreamAdminOk")==="1";}catch(e){return false;}};
 S.unlocked=okSess();
@@ -113,19 +113,20 @@ function riddles(){
   if(!S.riddles)return `<h2>מאגר חידות</h2><p class="sub">טוען...</p>`;
   const e=S.edit,q=S.q.trim();
   const cy=S.riddles.filter(r=>r.young).length,co=S.riddles.length-cy,ay=S.riddles.filter(r=>r.young&&r.active).length,ao=S.riddles.filter(r=>!r.young&&r.active).length;
-  const list=S.riddles.filter(r=>(S.rage==="all"||(S.rage==="young")===!!r.young)&&(!q||r.q.includes(q)||(r.opts||[]).some(o=>String(o).includes(q))));
+  const LV={1:"קלה",2:"בינונית",3:"קשה"};
+  const list=S.riddles.filter(r=>(S.rage==="all"||(S.rage==="young")===!!r.young)&&(S.rlev==="all"||+S.rlev===(r.level||1))&&(!q||r.q.includes(q)||(r.opts||[]).some(o=>String(o).includes(q)))).sort((a,b)=>(a.level||1)-(b.level||1));
   const form=e?`<div class="card" style="margin-bottom:14px"><b>${e.id?"עריכת חידה":"חידה חדשה"}</b>
    <label>השאלה</label><textarea id="rq">${esc(e.q)}</textarea>
    ${[0,1,2,3].map(i=>`<div class="opt"><input type="radio" name="rc" value="${i}" ${e.ans===i?"checked":""} aria-label="תשובה נכונה"><input type="text" class="ro" value="${esc(e.opts[i]||"")}" placeholder="תשובה ${i+1}"></div>`).join("")}
    <div class="note" style="margin-top:8px">סמנו בעיגול את התשובה הנכונה.</div>
    <label>רמז (לא חובה)</label><input type="text" id="rh" value="${esc(e.hint||"")}">
-   <div class="row" style="margin-top:12px"><label style="margin:0"><input type="checkbox" id="ry" ${e.young?"checked":""}> לילדים קטנים (3 עד 6)</label><label style="margin:0"><input type="checkbox" id="ra" ${e.active?"checked":""}> פעילה במשחק</label></div>
+   <div class="row" style="margin-top:12px"><label style="margin:0"><input type="checkbox" id="ry" ${e.young?"checked":""}> לילדים קטנים (3 עד 6)</label><label style="margin:0">רמת קושי <select id="rl">${[1,2,3].map(i=>`<option value="${i}" ${(e.level||1)===i?"selected":""}>${LV[i]}</option>`).join("")}</select></label><label style="margin:0"><input type="checkbox" id="ra" ${e.active?"checked":""}> פעילה במשחק</label></div>
    <div class="row" style="margin-top:14px"><button class="btn pri" data-a="rsave">שמירה</button><button class="btn" data-a="rcancel">ביטול</button></div></div>`:"";
   return `<h2>מאגר חידות</h2><p class="sub">חידות טריוויה עם 4 תשובות. חידות פעילות מתערבבות במשחק עם החידות המובנות.</p>
   <div class="row" style="margin-bottom:14px"><input type="text" id="rs" placeholder="חיפוש..." value="${esc(S.q)}" style="max-width:300px"><button class="btn pri" data-a="radd">+ חידה חדשה</button><span class="tag">${S.riddles.length} חידות</span></div>
   <div class="row" style="margin-bottom:14px"><button class="btn sm ${S.rage==="all"?"pri":""}" data-a="rage" data-v="all">הכול</button><button class="btn sm ${S.rage==="young"?"pri":""}" data-a="rage" data-v="young">קטנים (${cy})</button><button class="btn sm ${S.rage==="old"?"pri":""}" data-a="rage" data-v="old">גדולים (${co})</button>
-  <span class="tag ${ay===ao?"ok":"off"}">פעילות: קטנים ${ay} · גדולים ${ao}</span>${ay===ao?"":`<span class="note">המספר שונה בין הגילאים. כדאי להשוות.</span>`}</div>${form}
-  <div class="list">${list.map(r=>`<div class="card rid"><div><b style="white-space:pre-line">${esc(r.q)}</b><ol>${(r.opts||[]).map((o,i)=>`<li class="${i===r.ans?"c":""}">${esc(o)}</li>`).join("")}</ol><div style="margin-top:8px"><span class="tag ${r.active?"ok":"off"}">${r.active?"פעילה":"מושבתת"}</span> <span class="tag">${r.young?"קטנים":"גדולים"}</span></div></div><div class="row"><button class="btn sm" data-a="redit" data-id="${r.id}">עריכה</button><button class="btn sm bad" data-a="rdel" data-id="${r.id}">מחיקה</button></div></div>`).join("")||`<div class="card sub">אין חידות עדיין. הוסיפו את הראשונה!</div>`}</div>`;
+  <span class="note">קושי:</span>${["all",1,2,3].map(v=>`<button class="btn sm ${String(S.rlev)===String(v)?"pri":""}" data-a="rlev" data-v="${v}">${v==="all"?"הכול":LV[v]}</button>`).join("")}<span class="tag ${ay===ao?"ok":"off"}">פעילות: קטנים ${ay} · גדולים ${ao}</span>${ay===ao?"":`<span class="note">המספר שונה בין הגילאים. כדאי להשוות.</span>`}</div>${form}
+  <div class="list">${list.map(r=>`<div class="card rid"><div><b style="white-space:pre-line">${esc(r.q)}</b><ol>${(r.opts||[]).map((o,i)=>`<li class="${i===r.ans?"c":""}">${esc(o)}</li>`).join("")}</ol><div style="margin-top:8px"><span class="tag ${r.active?"ok":"off"}">${r.active?"פעילה":"מושבתת"}</span> <span class="tag">${r.young?"קטנים":"גדולים"}</span> <span class="tag">${LV[r.level||1]}</span></div></div><div class="row"><button class="btn sm" data-a="redit" data-id="${r.id}">עריכה</button><button class="btn sm bad" data-a="rdel" data-id="${r.id}">מחיקה</button></div></div>`).join("")||`<div class="card sub">אין חידות עדיין. הוסיפו את הראשונה!</div>`}</div>`;
 }
 function texts(){
   loadCatalog();
@@ -162,16 +163,17 @@ document.addEventListener("click",async e=>{
   else if(a==="google")sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dream-admin/",queryParams:{login_hint:OWNER}}});
   else if(a==="out"){await sb.auth.signOut();try{sessionStorage.removeItem("dreamAdminOk");}catch(x){}S.unlocked=false;S.user=null;S.admin=null;S.err="";draw();}
   else if(a==="rage"){S.rage=b.dataset.v;draw();}
+  else if(a==="rlev"){S.rlev=b.dataset.v;draw();}
   else if(a==="tab"){S.tab=b.dataset.t;S.q="";S.edit=null;draw();window.scrollTo({top:0});}
   else if(a==="refresh")load();
-  else if(a==="radd"){S.edit={id:null,q:"",opts:["","","",""],ans:0,hint:"",young:false,active:true};draw();}
+  else if(a==="radd"){S.edit={id:null,q:"",opts:["","","",""],ans:0,hint:"",young:false,level:1,active:true};draw();}
   else if(a==="redit"){const r=S.riddles.find(x=>x.id===b.dataset.id);if(r){S.edit={...r,opts:[...r.opts]};draw();window.scrollTo({top:0});}}
   else if(a==="rcancel"){S.edit=null;draw();}
   else if(a==="rsave"){
     const q=$("#rq").value.trim(),opts=[...document.querySelectorAll(".ro")].map(i=>i.value.trim()),ans=+(document.querySelector("input[name=rc]:checked")||{value:0}).value;
     if(q.length<3||opts.some(o=>!o)){say("צריך שאלה וארבע תשובות");return;}
     if(new Set(opts).size<4){say("התשובות צריכות להיות שונות זו מזו");return;}
-    const row={q,opts,ans,hint:$("#rh").value.trim()||null,young:$("#ry").checked,active:$("#ra").checked};
+    const row={q,opts,ans,hint:$("#rh").value.trim()||null,young:$("#ry").checked,level:+$("#rl").value,active:$("#ra").checked};
     const {error}=S.edit.id?await sb.from("dream_riddles").update(row).eq("id",S.edit.id):await sb.from("dream_riddles").insert(row);
     if(error){say("שגיאה: "+error.message);return;}S.edit=null;say("נשמר");loadRiddles();}
   else if(a==="rdel"){if(!confirm("למחוק את החידה?"))return;const {error}=await sb.from("dream_riddles").delete().eq("id",b.dataset.id);if(error){say("שגיאה: "+error.message);return;}say("נמחק");loadRiddles();}
