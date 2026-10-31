@@ -53,7 +53,11 @@ const SB_URL="https://qbsdrmjjgpdcdbkovfyj.supabase.co",SB_KEY="sb_publishable_j
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=s=>document.querySelector(s),esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const R=$("#root");
-const S={open:{},user:null,tab:"dash",days:30,stats:null,riddles:null,cat:null,over:{},q:"",edit:null,toast:"",admin:null,err:""};
+const S={open:{},user:null,tab:"dash",days:30,stats:null,riddles:null,cat:null,over:{},q:"",edit:null,toast:"",admin:null,err:"",unlocked:false,cerr:""};
+const OWNER="ssaharr@gmail.com",CODEH="f520d2e05caee148d178644c25080856972004f68259ab2f7099a58246bb2df1";
+const okSess=()=>{try{return sessionStorage.getItem("dreamAdminOk")==="1";}catch(e){return false;}};
+S.unlocked=okSess();
+async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
 const say=t=>{S.toast=t;draw();setTimeout(()=>{if(S.toast===t){S.toast="";draw();}},2400);};
 
 async function boot(){
@@ -62,7 +66,7 @@ async function boot(){
   if(S.user)await load();else draw();
 }
 async function load(){
-  if(!S.user){draw();return;}
+  if(!S.user||!S.unlocked||String(S.user.email||"").toLowerCase()!==OWNER){draw();return;}
   const {data,error}=await sb.rpc("dream_stats",{days:S.days});
   if(error){S.admin=null;S.err=error.message;}else if(data===null){S.admin=false;}else{S.admin=true;S.stats=data;}
   draw();
@@ -78,11 +82,14 @@ function loadCatalog(){
   setTimeout(()=>{if(!S.cat){S.catLoading=false;S.err="לא ניתן לטעון את קטלוג הטקסטים";draw();}},15000);
 }
 
+function lock(){
+  return `<div class="login"><div class="card"><h2>Dream · ניהול</h2><p class="sub">העמוד נעול. הקלידו את קוד הגישה.</p>
+  <input type="password" id="code" inputmode="numeric" autocomplete="off" placeholder="קוד גישה" dir="ltr" style="text-align:center;letter-spacing:4px"><button class="btn pri" data-a="unlock">כניסה</button>
+  ${S.cerr?`<div class="err">${esc(S.cerr)}</div>`:""}</div></div>`;
+}
 function login(){
-  return `<div class="login"><div class="card"><h2>Dream · ניהול</h2><p class="sub">כניסה למנהלים בלבד</p>
+  return `<div class="login"><div class="card"><h2>Dream · ניהול</h2><p class="sub">כניסה למנהל בלבד</p>
   <button class="btn pri" data-a="google">כניסה עם Google</button>
-  <div class="note">או קבלת קישור כניסה למייל</div>
-  <input type="email" id="mail" placeholder="המייל שלך" autocomplete="email" dir="ltr"><button class="btn" data-a="magic">שלחו לי קישור</button>
   ${S.err?`<div class="err">${esc(S.err)}</div>`:""}</div></div>`;
 }
 const TABS=[["dash","📊","סטטיסטיקות"],["riddles","🧩","מאגר חידות"],["texts","✍️","טקסטים"],["pay","💳","תשלומים"]];
@@ -134,7 +141,9 @@ function pay(){
   <div class="card pay" style="margin-top:14px"><b>מסלולים (דוגמה)</b><div class="list" style="margin-top:10px"><div class="row"><span class="tag">חינמי</span> גישה מלאה כרגע</div><div class="row"><span class="tag off">בקרוב</span> מנוי משפחתי</div></div></div>`;
 }
 function draw(){
+  if(!S.unlocked){R.innerHTML=lock();const c=$("#code");if(c)c.focus();return;}
   if(!S.user){R.innerHTML=login();return;}
+  if(String(S.user.email||"").toLowerCase()!==OWNER){R.innerHTML=`<div class="login"><div class="card"><h2>אין הרשאה</h2><p class="sub">העמוד פתוח רק לחשבון המנהל.</p><button class="btn" data-a="out">יציאה</button></div></div>`;return;}
   if(S.admin===null&&!S.err){R.innerHTML=`<div class="login"><p class="sub">טוען...</p></div>`;return;}
   if(S.admin===false||S.err&&!S.admin){R.innerHTML=`<div class="login"><div class="card"><h2>אין הרשאה</h2><p class="sub">${esc(S.user.email||"")} אינו ברשימת המנהלים.${S.err?`<br><span class="err">${esc(S.err)}</span>`:""}</p><button class="btn" data-a="out">יציאה</button></div></div>`;return;}
   R.innerHTML=shell(S.tab==="dash"?dash():S.tab==="riddles"?riddles():S.tab==="texts"?texts():pay());
@@ -143,11 +152,12 @@ function draw(){
 document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.k)S.open[d.dataset.k]=d.open;},true);
 document.addEventListener("input",e=>{if(e.target.id==="rs"){S.q=e.target.value;clearTimeout(window.__t);window.__t=setTimeout(()=>{draw();const i=$("#rs");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250);}});
 document.addEventListener("change",e=>{if(e.target.id==="days"){S.days=+e.target.value;load();}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="code")document.querySelector("[data-a=unlock]").click();});
 document.addEventListener("click",async e=>{
   const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
-  if(a==="google")sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dream-admin/"}});
-  else if(a==="magic"){const m=($("#mail")||{}).value||"";if(!/^\S+@\S+\.\S+$/.test(m.trim())){S.err="כתבו כתובת מייל תקינה";draw();return;}const {error}=await sb.auth.signInWithOtp({email:m.trim(),options:{emailRedirectTo:location.origin+"/dream-admin/"}});S.err=error?error.message:"";draw();if(!error)say("שלחנו קישור למייל");}
-  else if(a==="out"){await sb.auth.signOut();S.user=null;S.admin=null;S.err="";draw();}
+  if(a==="unlock"){const v=(($("#code")||{}).value||"").trim();let ok=false;try{ok=(await sha(v))===CODEH;}catch(x){}if(ok){S.unlocked=true;S.cerr="";try{sessionStorage.setItem("dreamAdminOk","1");}catch(x){}load();}else{S.cerr="קוד שגוי";draw();}}
+  else if(a==="google")sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dream-admin/",queryParams:{login_hint:OWNER}}});
+  else if(a==="out"){await sb.auth.signOut();try{sessionStorage.removeItem("dreamAdminOk");}catch(x){}S.unlocked=false;S.user=null;S.admin=null;S.err="";draw();}
   else if(a==="tab"){S.tab=b.dataset.t;S.q="";S.edit=null;draw();window.scrollTo({top:0});}
   else if(a==="refresh")load();
   else if(a==="radd"){S.edit={id:null,q:"",opts:["","","",""],ans:0,hint:"",young:false,active:true};draw();}
