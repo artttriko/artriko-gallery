@@ -795,6 +795,7 @@ svg.hero,.fx svg{overflow:visible}
 .mapov-box .mapwrap{width:auto;display:inline-block}.mapov-box .mapwrap svg{height:calc(100vh - 110px);width:auto;max-width:92vw;max-height:none}
 .mapov-x{position:absolute;top:-6px;left:-6px;z-index:2;width:44px;height:44px;border-radius:50%;border:3px solid var(--o);background:#ffd23f;color:#2a2340;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 var(--o)}
 .mapov-note{color:#fff;font-weight:700;font-size:.9rem;opacity:.85}
+.lvlup{box-shadow:0 0 0 3px #ffd23f,0 0 26px #ffd23f99}@media (prefers-reduced-motion:no-preference){.lvlup{animation:lvpop .7s cubic-bezier(.2,1.5,.4,1)}@keyframes lvpop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -1018,7 +1019,7 @@ function lockModal(){
  if(L.kind==="item"){const tr=tierOf(L.k,L.v),pr=PRICE[tr],need=pr-gems(),leg=tr===4&&!legendOK(),q={...S.draft.result.params};dSet(q,L.k,L.v);const T=DTABS.find(t=>t.k===L.k)||DTABS[0];
   return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${L.k==="style"?"silh":""}">${heroInner(q,L.k==="style"?TOPLV:1,{fem:isF(S.draft),mood:"happy"})}</svg></div>
   <h3>${esc(dLbl(L.k,L.v))}</h3><p class="tierb t${tr}">${TIER_N[tr]}</p>
-  ${leg?`<p>${L.k==="style"?"סגנון העל נפתח רק בסוף המשחק, אחרי שמסיימים את כל העולמות, וכשהדמות מגיעה לרמה הכי גבוהה.":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
+  ${leg?`<p>${L.k==="style"?"סגנון העל נפתח רק בסוף המשחק, אחרי שמסיימים את כל העולמות, וכשהדמות מגיעה לדרגה "+TOPLV+", הדרגה הגבוהה ביותר.":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
   <button class="btn wide ${need>0||leg?"":"grn"}" data-a="buygem" ${need>0||leg?"disabled":""}><span>פתיחה ב־${pr} יהלומים</span></button>
   <p class="small muted">יש לכם ${gems()} יהלומים</p>
   <details class="pcode" ${L.err?"open":""}><summary>פתיחה עם קוד הורים</summary><input type="text" id="lockcode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="• • • •" dir="ltr" class="${L.err?"shake":""}">${L.err?`<p class="lockerr">הקוד לא נכון. נסו שוב.</p>`:""}<button class="btn sm grn" data-a="lockok"><span>פתיחה עם קוד</span></button></details>
@@ -1488,7 +1489,12 @@ function petSVG(P){
 }
 function hueWrap(svg,h,id){if(!svg||!h)return svg||"";return `<defs><filter id="${id}" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="${h}"/></filter></defs><g filter="url(#${id})">${svg}</g>`;}
 const HUES=[0,40,90,150,200,250,300];
-const TOPLV=10;
+const TOPLV=12;
+function xpAt(L){return 3*(L-1)+L*(L-1)/2;}
+function lvInfo(xp){let L=1;while(L<TOPLV&&xp>=xpAt(L+1))L++;return {lv:L,into:xp-xpAt(L),need:L>=TOPLV?0:xpAt(L+1)-xpAt(L)};}
+const PROGF=1;
+function stashProg(c){if(!c)return;c.prog=c.prog||{};SAVE.heroes.forEach(h=>{c.prog[h.id]={xp:h.xp||0,stats:h.stats?{...h.stats}:null,items:JSON.parse(JSON.stringify(h.items||[])),hp:h.hp};});}
+function loadProg(c){if(!c||!c.prog)return;SAVE.heroes.forEach(h=>{const q=c.prog[h.id];h.xp=q?q.xp:0;h.stats=q&&q.stats?{...q.stats}:{str:0,wis:0,luck:0};h.items=q?JSON.parse(JSON.stringify(q.items||[])):[];if(q&&q.hp!=null)h.hp=q.hp;else delete h.hp;});}
 function heroInner(p,level=1,o={}){
  const mood=o.mood||"happy",st=o.stats||{};
  const tS=Math.min(3,st.str||0),tW=Math.min(3,st.wis||0),tL=Math.min(3,st.luck||0),tH=Math.min(3,st.hp||0),tP=Math.min(3,st.pow||0),tD=Math.min(3,st.def||0);
@@ -1505,9 +1511,9 @@ function heroInner(p,level=1,o={}){
  if(level>=5||power>=7)s+=`<circle class="spin" cx="70" cy="92" r="66" fill="none" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 10"/>`;
  if(level>=4||power>=5)for(let i=0;i<5;i++){const a=i*1.26+.3;s+=`<polygon class="tw" style="animation-delay:${(i*.4).toFixed(1)}s" points="${starPts(70+60*Math.cos(a),80+56*Math.sin(a),5,2)}" fill="#fff"/>`;}
  s+=shadowE();
- if(lv>=4)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
+ if(lv>=5)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
  let g=`<defs><radialGradient id="${gid}f" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="${shade(sk,.28)}"/><stop offset=".68" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${gid}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(pr,.2)}"/><stop offset="1" stop-color="${shade(pr,-.12)}"/></linearGradient><linearGradient id="${gid}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(hc,.25)}"/><stop offset="1" stop-color="${shade(hc,-.12)}"/></linearGradient></defs>`;
- g+=hueWrap(backSVG((hro&&lv>=7&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=7?1:0),p),p.hue_back,gid+"hb");
+ g+=hueWrap(backSVG((hro&&lv>=8&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=8?1:0),p),p.hue_back,gid+"hb");
  if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="url(#${gid}h)"${K()}/>`;
  const BT=p.bottom||"pants",legc=BT==="shorts"?sk:BT==="jeans"?"#3a5fb8":BT==="armor"?"#9aa6c0":"#2e2552";
  g+=limb("M60 130 L58 146",legc,11)+limb("M80 130 L82 146",legc,11);
@@ -1518,14 +1524,14 @@ function heroInner(p,level=1,o={}){
  if(BT==="jeans")g+=`<path d="M56 131 L55 145 M84 131 L85 145" stroke="#9cc0ff" stroke-width="1.4" stroke-dasharray="2 2"/>`;
  if(BT==="rainbow")g+=["#ff4d6d","#ffd23f","#4fe36b","#3ec2ff"].map((c,i)=>`<path d="M53 ${132+i*3.5} H63 M77 ${132+i*3.5} H87" stroke="${c}" stroke-width="3"/>`).join("");
  if(BT==="shorts")g+=`<path d="M45 130 L95 130 L97 141 L72 141 L70 136 L68 141 L43 141 Z" fill="#2e2552"${K(2.6)}/>`;
- g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=7?se:prd)}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=7?se:prd)}"${K(2.8)}/>`+(tL>=3?`<path d="M50 150 h10 M80 150 h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`:"");
+ g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=8?se:prd)}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=8?se:prd)}"${K(2.8)}/>`+(tL>=3?`<path d="M50 150 h10 M80 150 h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`:"");
  g+=`<path d="M46 96 Q70 86 94 96 Q102 116 98 134 Q70 142 42 134 Q38 116 46 96 Z" fill="url(#${gid}c)"${K()}/>`;
  g+=`<path d="M47 98 Q40 117 43 132 Q49 135 56 136 Q50 118 54 96 Z" fill="${prd}"/>`;
  g+=`<path d="M86 98 Q93 110 93 122" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3.5" stroke-linecap="round"/>`;
  if((p.bottom||"pants")==="tutu")g+=`<path d="M40 127 Q44 140 50 133 Q55 143 60 134 Q65 144 70 134 Q75 144 80 134 Q85 143 90 133 Q96 140 100 127 Z" fill="${se}" fill-opacity=".9"${K(2.4)}/><path d="M46 129 Q58 136 70 130 Q82 136 94 129" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>`;
  if((p.bottom||"pants")==="skirt")g+=`<path d="M43 126 L97 126 L105 143 Q70 150 35 143 Z" fill="${se}"${K(2.6)}/><path d="M55 129 L51 145 M70 129 V147 M85 129 L89 145" stroke="${shade(se,-.3)}" stroke-width="2.2" stroke-linecap="round"/>`;
  g+=`<path d="M42.5 120 Q70 127 97.5 120 L98 128 Q70 135 42 128 Z" fill="${se}"${K(2.5)}/><rect x="63" y="119" width="14" height="11" rx="3" fill="#ffd23f"${K(2.5)}/>`;
- if(hro&&lv>=7)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
+ if(hro&&lv>=8)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
  const wt=o.wt!=null?o.wt:(typeof worldTier==="function"?worldTier():0);
  if(wt>=1)g+=`<rect x="28" y="114" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/><rect x="100" y="${W!=="none"?78:114}" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/>`;
  if(wt>=2)g+=`<path d="M52 98 L88 98 L86 118 Q70 124 54 118 Z" fill="#d6dde8" fill-opacity=".55" stroke="${O}" stroke-width="2.2"/><path d="M56 101 L84 101" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
@@ -1533,17 +1539,17 @@ function heroInner(p,level=1,o={}){
  if(tP>=1)g+=[0,1,2].slice(0,tP).map(k=>`<path class="flame" transform="translate(${[116,124,108][k]} ${[58,66,52][k]}) scale(${(.7+tP*.12).toFixed(2)})" d="M0 0 C-5 -7 -1 -11 0 -16 C3 -11 5 -7 0 0Z" fill="${k?"#ffd23f":"#ff7a1f"}" stroke="${O}" stroke-width="1.6"/>`).join("");
  if(tD>=1)g+=`<circle cx="25" cy="108" r="${8+tD*1.6}" fill="${tD>=3?"#9fe8ff":"#3ec5ff"}" stroke="${tD>=3?"#ffd23f":O}" stroke-width="${tD>=3?3:2.4}"/><polygon points="${starPts(25,108,4+tD,2+tD*.5)}" fill="#fff" opacity=".9"/>`;
  if(wt>=3)s+=`<circle class="spin" cx="70" cy="92" r="74" fill="none" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="2 8" opacity=".9"/>`;
- if(spk&&lv>=4)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
- if(nat&&lv>=7)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
- if(mag&&lv>=7)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
- if(spk&&lv>=7)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
+ if(spk&&lv>=5)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
+ if(nat&&lv>=8)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
+ if(mag&&lv>=8)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
+ if(spk&&lv>=8)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
  if(tL>=2)g+=`<g transform="translate(70 124.5)"><circle r="6.5" fill="${GOLD}"${K(2)}/><circle cx="-2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="-2" cy="2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="2" r="2.2" fill="#3ed45e"/></g>`;
  g+=limb("M50 101 Q37 110 34 123",pr,10);
  const raise=W!=="none";
  g+=raise?limb("M90 101 Q104 98 108 88",pr,10):limb("M90 101 Q103 110 106 123",pr,10);
  if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,tS),p.hue_weapon,gid+"hw")}</g>`;
  if(tS>=2)g+=`<path d="M34 104 Q34 88 52 91 Q56 100 46 108 Z" fill="${GOLD}"${K(2.6)}/><path d="M106 104 Q106 88 88 91 Q84 100 94 108 Z" fill="${GOLD}"${K(2.6)}/><circle cx="44" cy="97" r="2.4" fill="#fff"/><circle cx="96" cy="97" r="2.4" fill="#fff"/>`;
- const hand=tS>=3?GOLD:(hro&&lv>=7?se:sk);
+ const hand=tS>=3?GOLD:(hro&&lv>=8?se:sk);
  g+=`<circle cx="34" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  g+=raise?`<circle cx="108" cy="84" r="8.5" fill="${hand}"${K(2.8)}/>`:`<circle cx="106" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  if(W==="shield"){const k=(1+tS*.1).toFixed(2);g+=`<g transform="translate(30 122) scale(${k})">${fxBack(0,-4,tS,"#8fe3ff")}<path d="M-17 -19 L0 -25 L17 -19 Q17 6 0 17 Q-17 6 -17 -19 Z" fill="${se}"${K()}/><path d="M-11 -15 L0 -19 L11 -15 Q11 3 0 11 Q-11 3 -11 -15 Z" fill="${tS>=2?"#ffd23f":sed}"/><polygon points="${starPts(0,-4,7,3)}" fill="${pr}"${K(1.8)}/>${fxFront(0,-4,tS)}</g>`;}
@@ -1554,18 +1560,18 @@ function heroInner(p,level=1,o={}){
  g+=`<circle cx="70" cy="58" r="36" fill="url(#${gid}f)"${K(3.2)}/>`;
  g+=`<path d="M37 66 Q44 92 70 94 Q47 87 42 63 Z" fill="${skd}"/>`;
  g+=hairFront(H,hc,`url(#${gid}h)`,se);
- if(nat&&lv>=4)g+=`<path d="M40 98 q-14 -10 -10 -22 q14 6 10 22 z M100 98 q14 -10 10 -22 q-14 6 -10 22 z" fill="#3ed45e"${K(2.2)}/>`;
- if(mag&&lv>=4)g+=`<g class="orbit"><circle cx="128" cy="92" r="6" fill="#a978ff"${K(2)}/><circle cx="12" cy="92" r="5" fill="#3ee0ff"${K(2)}/><circle cx="70" cy="34" r="4" fill="#ff7ec8"${K(1.6)}/></g>`;
- if(spk&&lv>=4)g+=`<polygon points="${starPts(39,50,6.5,2.8)}" fill="#ff8ad0"${K(2)}/><path d="${heartPath(101,48,5.5)}" fill="#ffd23f"${K(2)}/>`;
- const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=4&&(p.eyes||"round")!=="cool");
+ if(nat&&lv>=5)g+=`<path d="M40 98 q-14 -10 -10 -22 q14 6 10 22 z M100 98 q14 -10 10 -22 q-14 6 -10 22 z" fill="#3ed45e"${K(2.2)}/>`;
+ if(mag&&lv>=5)g+=`<g class="orbit"><circle cx="128" cy="92" r="6" fill="#a978ff"${K(2)}/><circle cx="12" cy="92" r="5" fill="#3ee0ff"${K(2)}/><circle cx="70" cy="34" r="4" fill="#ff7ec8"${K(1.6)}/></g>`;
+ if(spk&&lv>=5)g+=`<polygon points="${starPts(39,50,6.5,2.8)}" fill="#ff8ad0"${K(2)}/><path d="${heartPath(101,48,5.5)}" fill="#ffd23f"${K(2)}/>`;
+ const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=5&&(p.eyes||"round")!=="cool");
  if(mask)g+=`<path d="M37 57 Q53 49 70 55 Q87 49 103 57 Q105 69 95 72 Q82 74 70 66 Q58 74 45 72 Q35 69 37 57 Z" fill="${shade(pr,-.45)}"${K(2.6)}/><path d="M42 58 Q53 53 64 57" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
  g+=faceSVG(mood,p,fem);
- if(spk&&lv>=7)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
+ if(spk&&lv>=8)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
  g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
  if(tW>=3)g+=`<g class="floaty"><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${O}" stroke-width="8"/><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${GOLD}" stroke-width="4"/>${sparkles([[46,-18,4],[94,-18,4],[70,-24,4.5]],"#fff")}</g>`;
  return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
 }
-function heroLevel(h){return 1+Math.floor((h.xp||0)/4);}
+function heroLevel(h){return lvInfo(h.xp||0).lv;}
 function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats})}</svg>`;}
 function lvlBadge(h){const l=heroLevel(h);return `<svg class="lvlb" viewBox="0 0 40 40" aria-label="דרגה ${l}"><polygon points="${starPts(20,21,18,9)}" fill="#ffd23f"${K(2.5)}/><text x="20" y="27" text-anchor="middle" font-family="Rubik,sans-serif" font-weight="900" font-size="15" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">${l}</text></svg>`;}
 
@@ -2097,7 +2103,7 @@ function vHero(){
  const d=S.draft;const r=d.result;const g=isF(d);if(r)r.params.fem=g;
  let prev="";
  if(r){
-  const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,12,24,(TOPLV-1)*4][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
+  const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,xpAt(5),xpAt(8),xpAt(TOPLV)][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
   prev=`<section class="panel ov"><div class="reveal">${d.fresh?`<div class="rays"></div>`:""}${heroSVG(fake,d.fresh?"hero cheer":"hero",d.fresh?"joy":"happy")}<h2 class="ol">${esc(r.heroName)}</h2>${d.existing&&!d.fresh?`<button class="chip" data-a="renameopen" data-id="${d.id}">✏️ שינוי שם · 5 💎</button>`:""}<div class="muted">${esc(r.title)}</div><div class="catch">"${esc(r.catch)}"</div></div>
   <div class="fl"><span>איך ${g?"היא":"הוא"} ${g?"תיראה":"ייראה"} אחרי שדרוגים?</span><div class="chips">${["עכשיו","רמה 2","רמה 3","רמה מקסימלית"].map((l,i)=>`<button class="chip" data-a="pv" data-v="${i}" aria-pressed="${pv===i}">${l}</button>`).join("")}</div></div>
   <label class="fl">רוצים לשנות משהו? <span class="muted small">${d.fixesLeft===1?"נשאר תיקון אחד":d.fixesLeft===0?"נגמרו התיקונים, אפשר להמשיך בכוונון הידני":"נשארו "+d.fixesLeft+" תיקונים"}</span>
@@ -2155,10 +2161,10 @@ if(!d.origP)d.origP={...d.result.params};
  <div class="dtop"><div style="display:flex;gap:6px;align-items:center"><button class="ib" data-a="dressrand">ערבוב</button>${gemPill()}</div><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
  <div class="dmain">
   <div class="dside">${L.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
-  <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:(TOPLV-1)*4,stats:{str:3,wis:3,luck:3}},"hero silh")}<div class="silnote">החליפה הנדירה נחשפת ברמה הכי גבוהה</div></div>`:heroSVG(fake,"hero")}</div>
+  <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:xpAt(TOPLV),stats:{str:3,wis:3,luck:3}},"hero silh")}<div class="silnote">החליפה הנדירה נחשפת בדרגה ${TOPLV}, הדרגה הגבוהה ביותר</div></div>`:heroSVG(fake,"hero")}</div>
   <div class="dside">${Rt.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
  </div>
- <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"?"הסגנון נחשף רק ברמה הכי גבוהה":esc(dLbl(T.k,opts[i]))}</span></div>
+ <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"?"הסגנון נחשף בדרגה "+TOPLV+" (הגבוהה ביותר)":esc(dLbl(T.k,opts[i]))}</span></div>
  <div class="dgrid" style="--n:${opts.length<=7?Math.max(4,opts.length):Math.min(7,Math.ceil(opts.length/2))}">${opts.map((v,j)=>{const q={...p};dSet(q,T.k,v);const lk=itemLocked(T.k,v)&&j!==i,tr=tierOf(T.k,v),sil=T.k==="style";return `<button class="dopt ${lk?"plock":""} ${sil?"silh":""} t${tr}" data-a="dpick" data-v="${j}" aria-pressed="${j===i}" aria-label="${esc(dLbl(T.k,v))}${lk?" (נעול)":""}">${lk?`<i class="olock">${LOCK_SVG}</i><i class="oprice">${GEM(13)}${PRICE[tr]}</i>`:""}${T.k==="pet"?`<svg viewBox="-8 100 54 64" aria-hidden="true">${v==="none"?`<path d="M8 120 L40 152 M40 120 L8 152" stroke="#ffffff88" stroke-width="5" stroke-linecap="round"/>`:hueWrap(petSVG(v),q.hue_pet,"pt"+j)}`:`<svg viewBox="${T.crop}" aria-hidden="true">${heroInner(q,T.lv?TOPLV:1,{fem,mood:"happy"})}`}</svg><span>${esc(dLbl(T.k,v))}</span></button>`;}).join("")}</div></div>
  ${cols?`<div class="dcols">${cols}</div>`:""}
  </div>`;
@@ -2186,6 +2192,7 @@ function vSetup(){
  <p class="muted small">${(s.narr||"parent")==="young"?"הסיפור יוצג בטקסט קצר וקל, עם ניקוד מלא, והטיפים הארוכים יוסתרו. תמיד אפשר להציג את הסיפור המלא.":(s.narr==="kid"?"מספר צעיר מקבל הסבר קצר בשפה שלו, והטיפים מופנים אליו.":"ההורה מקריא, והילדים הם הגיבורים.")}</p>
  <h3>תרגול קריאה <span class="muted small">(לא חובה)</span></h3><div class="chips">${[["off","בלי"],["words","מילות קסם קצרות"],["sent","משפטי קסם"]].map(([v,l])=>`<button class="chip" data-a="sread" data-v="${v}" aria-pressed="${(s.read||"off")===v}">${l}</button>`).join("")}</div>
  <p class="muted small">מתאים לגילאי 5–7, כשלומדים לקרוא. פעם או פעמיים בפרק, כישוף חוסם את הדרך, והילד מבטל אותו כשהוא קורא בעצמו לחש קצר בניקוד.</p>
+ ${hs.some(h=>(h.xp||0)>0)?`<h3>דרגות הגיבורים</h3><div class="chips"><button class="chip" data-a="skeep" data-v="0" aria-pressed="${!s.keep}">התחלה מאפס, דרגה 1 (אתגר)</button><button class="chip" data-a="skeep" data-v="1" aria-pressed="${!!s.keep}">להמשיך עם הדרגות והשדרוגים שיש</button></div><p class="muted small">בכל שמירה חדשה הדרגות מתחילות מחדש, ושמירות ישנות נשארות בדרגות שלהן.</p>`:""}
  </section>
  <section class="panel"><h3>באיזה עולם?</h3>
  <p class="small muted">כל עולם הוא סיפור אחר, בסגנון אחר. העולמות נפתחים אחד אחרי השני: מסיימים עולם, והבא בתור נפתח.</p>
@@ -2440,12 +2447,12 @@ const EZUI=[["מגילת לחש הנגד","מְגִילַּת לַחַשׁ הַ�
 const ITEM_POW={feather:"קַל כְּמוֹ נוֹצָה",crystal:"נוֹצֵץ וּמֵאִיר",shield:"שׁוֹמֵר וּמֵגֵן",star:"מֵבִיא מַזָּל",key:"פּוֹתֵחַ דְּרָכִים",scroll:"יוֹדֵעַ סוֹדוֹת",gem:"מְלֵא קֶסֶם",crown:"שֶׁל מַנְהִיגִים",moon:"מֵאִיר בַּחוֹשֶׁךְ",potion:"נוֹתֵן כֹּחַ",boots:"מַהֵר וְקַל",glove:"חַם וְנָעִים",scarf:"עוֹטֵף בְּחֹם",snowball:"קַר וְזוֹהֵר",badge:"סֵמֶל שֶׁל אֹמֶץ",amulet:"שׁוֹמֵר מִפְּנֵי רוּחוֹת",leaf:"קַל עַל הַמַּיִם",lily:"פּוֹרֵחַ וְיָפֶה",frogpend:"קוֹפֵץ וּמַצְחִיק",tooth:"חַד וּמַבְרִיק",jar:"שׁוֹמֵר אוֹר",oar:"מַשִּׁיט בְּבִטָּחוֹן",beetle:"חָזָק כְּמוֹ שִׁרְיוֹן",compass:"מַרְאֶה אֶת הַדֶּרֶךְ",cloud:"רַךְ כְּמוֹ עָנָן",bell:"מְצַלְצֵל וּמְשַׂמֵּחַ",bag:"מָלֵא הַפְתָּעוֹת",sparkles:"נוֹצֵץ בַּחֹשֶׁךְ",rainbow:"צִבְעוֹנִי וְקוֹסֵם",note:"שָׁר וּמַצְחִיק"};
 const ITEM_POW_P={feather:"קל כמו נוצה",crystal:"נוצץ ומאיר",shield:"שומר ומגן",star:"מביא מזל",key:"פותח דרכים",scroll:"יודע סודות",gem:"מלא קסם",crown:"של מנהיגים",moon:"מאיר בחושך",potion:"נותן כוח",boots:"מהר וקל",glove:"חם ונעים",scarf:"עוטף בחום",snowball:"קר וזוהר",badge:"סמל של אומץ",amulet:"שומר מפני רוחות",leaf:"קל על המים",lily:"פורח ויפה",frogpend:"קופץ ומצחיק",tooth:"חד ומבריק",jar:"שומר אור",oar:"משיט בביטחון",beetle:"חזק כמו שריון",compass:"מראה את הדרך",cloud:"רך כמו ענן",bell:"מצלצל ומשמח",bag:"מלא הפתעות",sparkles:"נוצץ בחושך",rainbow:"צבעוני וקוסם",note:"שר ומצחיק"};
 function blocks(n,max,c,delay){return `<span class="blks" style="--c:${c||"#4fe36b"}">${Array.from({length:max},(_,i)=>`<i class="blk ${i<n?"on":""}" style="animation-delay:${(delay||0)+i*.08}s"></i>`).join("")}</span>`;}
-function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const ez=ezOn(),lv=heroLevel(H),xp=(H.xp||0)%4,left=4-xp;
+function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const ez=ezOn(),LI=lvInfo(H.xp||0),lv=LI.lv,xp=LI.into,left=LI.need-LI.into;
  const T=(a,b)=>ez?b:a;
  return `<div class="lockov" data-a="hinfoclose" role="dialog"><div class="lockbox slide hinfo" style="--tc:${H.params.primary}"><div class="hi-top">${heroSVG(H,"hero","joy")}<div><b class="ol" style="font-size:1.5rem">${esc(H.heroName)}</b><div class="small">${esc(E(H.title||""))}</div><button class="chip" data-a="renameopen" data-id="${H.id}" style="margin-top:6px">✏️ ${T("שינוי שם · 5 💎","שִׁנּוּי שֵׁם · 5 💎")}</button></div></div>
- <div class="hi-lv"><b>${T("דרגה","דַּרְגָּה")} ${lv}</b> ${heartsHTML(H,22)}</div>
- <div class="hi-row"><span class="hi-l">${T("התקדמות","הִתְקַדְּמוּת")}</span>${blocks(xp,4,"#ffd23f")}</div>
- <span class="small">${T(`עוד ${left} ${left===1?"הצלחה":"הצלחות"} לדרגה ${lv+1}`,`עוֹד ${left} ${left===1?"הַצְלָחָה":"הַצְלָחוֹת"} לְדַרְגָּה ${lv+1}`)}${lv<TOPLV?T(` · החליפה הנדירה נפתחת בדרגה ${TOPLV}`,` · הַחֲלִיפָה הַנְּדִירָה נִפְתַּחַת בְּדַרְגָּה ${TOPLV}`):""}</span>
+ <div class="hi-lv"><b>${T("דרגה","דַּרְגָּה")} ${lv} ${T("מתוך","מִתּוֹךְ")} ${TOPLV}</b> ${heartsHTML(H,22)}</div>
+ <div class="hi-row"><span class="hi-l">${T("התקדמות","הִתְקַדְּמוּת")}</span>${blocks(xp,LI.need||1,"#ffd23f")}</div>
+ <span class="small">${lv>=TOPLV?T("זו הדרגה הגבוהה ביותר!","זוֹ הַדַּרְגָּה הַגְּבוֹהָה בְּיוֹתֵר!"):T(`עוד ${left} נקודות התקדמות לדרגה ${lv+1}`,`עוֹד ${left} נְקֻדּוֹת הִתְקַדְּמוּת לְדַרְגָּה ${lv+1}`)}${lv<TOPLV?T(` · החליפה הנדירה נפתחת בדרגה ${TOPLV}`,` · הַחֲלִיפָה הַנְּדִירָה נִפְתַּחַת בְּדַרְגָּה ${TOPLV}`):""}</span>
  <div class="hi-st">${STATS.map(x=>{const v=statOf(H,x.k);return `<div class="hi-s"><div class="hi-row">${statIcon(x.k)}<b class="hi-l">${esc(E(x.n))}</b>${blocks(v,3,x.c,.2)}</div><span class="small muted">${v?esc(x.d(v)):T("עוד לא שודרג","עוֹד לֹא שֻׁדְרַג")}</span></div>`;}).join("")}</div>
  <div class="eyebrow">${T("החפצים","הַחֲפָצִים")} (${(H.items||[]).length}) · ${T("לחצו על חפץ","לַחֲצוּ עַל חֵפֶץ")}</div><div class="items">${(H.items||[]).slice(-12).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" style="cursor:pointer">${itemIcon(it.icon,it.name)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||`<span>${T("עוד אין","עוֹד אֵין")}</span>`}</div>
  ${H.hearts?`<div>${HEART_MINI} ${T("לבבות שנאספו ברגעי לב","לְבָבוֹת שֶׁנֶּאֶסְפוּ בְּרַגְעֵי לֵב")}: <b>${H.hearts}</b></div>`:""}<button class="btn sm grn" data-a="hinfoclose"><span>${T("סגירה","סְגִירָה")}</span></button></div></div>`;}
@@ -3065,9 +3072,10 @@ async function startCampaign(){
  let mapId=s.mapId&&mapOpen(s.mapId)?s.mapId:(MAP_ORDER.find(m=>mapOpen(m)&&!U().done.includes(m))||MAP_ORDER[0]);
  const cm=String(mapId).startsWith("c_")?SAVE.customMaps.find(x=>x.id===mapId):null;if(cm)mapId=cm.base;
  const M=cm?campMap({mapId,age:s.age,custom:cm}):mapOf(mapId,s.age);
- if(SAVE.campaign){SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,8);}
+ if(SAVE.campaign){stashProg(SAVE.campaign);SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,8);}
  SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
- const c=SAVE.campaign;c.premise=fill(M.premise,campHeroes(),null,M.name);
+ const c=SAVE.campaign;if(s.keep)stashProg(c);else{c.prog={};loadProg(c);}
+ c.premise=fill(M.premise,campHeroes(),null,M.name);
  persist();
  await loadChapter(true);
 }
@@ -3109,10 +3117,10 @@ function resolveStation(ok,text,opt={}){
   if(!opt.boss){const bs=P.chapter.stations.find(x=>x.type==="boss"&&x.node>st.node);if(bs){const th=threatOf(bs.npc),have=partyItems(hs).some(x=>isGoodWard(th,x.it.icon));const usedI=new Set();hs.forEach(h=>(h.items||[]).forEach(x=>usedI.add(x.icon)));const want=th.good.filter(i=>!usedI.has(i));if(!have&&want.length&&!th.good.includes(st.reward.icon)&&Math.random()<.7){const i=want[Math.floor(Math.random()*want.length)];st.reward={name:ITEM_N[i],icon:i};}}}{const used=new Set();rcv.forEach(h=>(h.items||[]).forEach(x=>{used.add(x.icon);}));if(used.has(st.reward.icon)){const fr=ICONS.find(i=>!used.has(i));if(fr)st.reward={name:ITEM_N[fr],icon:fr};else P.dupGem=2;}}
   if(!P.dupGem)rcv.forEach(h=>{h.items=h.items||[];h.items.push({name:st.reward.name,icon:st.reward.icon});if(h.items.length>40)h.items=h.items.slice(-40);});
   const lvB={};hs.forEach(h=>lvB[h.id]=heroLevel(h));const first=st.type==="riddle"?!P.tries:P.rr!==P.idx;P.firstTry=ok&&first;const bonus=ok?(first?3:1):1;hs.forEach(h=>{h.xp=(h.xp||0)+(opt.boss?2:(h===L?bonus:1));});
-  P.upQueue=hs.filter(h=>(opt.boss||heroLevel(h)>lvB[h.id])&&STATS.some(x=>statOf(h,x.k)<3)).map(h=>h.id);
+  P.upQueue=hs.filter(h=>(heroLevel(h)>lvB[h.id])&&STATS.some(x=>statOf(h,x.k)<3)).map(h=>h.id);
   P.upLv={};hs.forEach(h=>P.upLv[h.id]={from:lvB[h.id],to:heroLevel(h)});
   const lt=heroLevel(L);
-  P.xpInfo={from:(before%4)/4*100,to:lt>lf?100:((L.xp%4)/4*100),lvlFrom:lf,lvlTo:lt};
+  {const a=lvInfo(before),b=lvInfo(L.xp||0);P.xpInfo={from:a.need?a.into/a.need*100:100,to:lt>lf?100:(b.need?b.into/b.need*100:100),lvlFrom:lf,lvlTo:lt};}
   if(lt>lf)sfx("lvl");
  }
  persist();
@@ -3206,6 +3214,7 @@ app.addEventListener("click",e=>{
   case "smode": S.setup.mode=b.dataset.v;render();break;
   case "sage": S.setup.age=b.dataset.v;render();break;
   case "slen": S.setup.minutes=+b.dataset.v;render();break;
+  case "skeep": S.setup.keep=b.dataset.v==="1";render();break;
   case "sdice": S.setup.dice=b.dataset.v;render();break;
   case "smap": S.setup.mapId=b.dataset.v;render();sfx("pop");break;
   case "startcamp": startCampaign();break;
@@ -3286,7 +3295,7 @@ app.addEventListener("click",e=>{
   case "iteminfo": S.info={name:b.dataset.n,icon:b.dataset.i};sfx("pop");render();break;
   case "infoclose": S.info=null;render();break;
   case "useitem": {const H=SAVE.heroes.find(x=>x.id===b.dataset.id);const it=H&&(H.items||[]).slice().reverse().find(x=>!x.used);if(!it)break;it.used=true;P.itemBonus={name:it.name,icon:it.icon};persist();sfx("chest");confetti(20);render();break;}
-  case "swapcamp": {const i=+b.dataset.i;const o=(SAVE.camps||[]).splice(i,1)[0];if(!o)break;if(SAVE.campaign)SAVE.camps.unshift(SAVE.campaign);SAVE.campaign=o;persist();sfx("pop");render();window.scrollTo({top:0});toast("ממשיכים מאיפה שעצרתם!");break;}
+  case "swapcamp": {const i=+b.dataset.i;const o=(SAVE.camps||[]).splice(i,1)[0];if(!o)break;if(SAVE.campaign){stashProg(SAVE.campaign);SAVE.camps.unshift(SAVE.campaign);}SAVE.campaign=o;loadProg(o);persist();sfx("pop");render();window.scrollTo({top:0});toast("ממשיכים מאיפה שעצרתם!");break;}
   case "shopgo": {const h=SAVE.heroes.find(x=>x.id===b.dataset.id);if(!h)break;S.returnTo="home";S.draft=newDraft(h);S.draft.dress=true;S.draft.tab=b.dataset.tab;document.documentElement.style.overflow="hidden";go("hero");break;}
   case "splashgo": jingle();S.screen="home";render();window.scrollTo({top:0});break;
   case "readw": {const i=+b.dataset.v;P.readLit=P.readLit||[];if(!P.readLit.includes(i))P.readLit.push(i);else P.readLit=P.readLit.filter(x=>x!==i);
