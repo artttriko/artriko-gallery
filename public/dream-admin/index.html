@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Dream · ניהול</title>
+<style>
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1c1d3a;--mut:#6b6e8f;--line:#e3e5f2;--pri:#3a4bd6;--pri2:#eef0ff;--ok:#1f9d5c;--bad:#d6334f;--warn:#e08a1e;--r:16px}
+@media (prefers-color-scheme:dark){:root{--bg:#12132b;--card:#1b1d3d;--ink:#eceeff;--mut:#9ea2c9;--line:#2c2f5a;--pri:#7d8bff;--pri2:#252858;--ok:#4fe3a0;--bad:#ff7a92;--warn:#ffb85c}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Rubik,Arial,sans-serif;line-height:1.5}
+button,input,textarea,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{background:var(--card);border-inline-end:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+nav h1{font-size:1.25rem;margin:0 8px 14px}nav h1 small{display:block;font-size:.75rem;color:var(--mut);font-weight:500}
+nav button{display:flex;align-items:center;gap:10px;background:none;border:0;padding:11px 12px;border-radius:12px;cursor:pointer;font-weight:600;color:var(--mut);text-align:start}
+nav button.on{background:var(--pri2);color:var(--pri)}nav button:hover{background:var(--pri2)}
+nav .sp{flex:1}
+main{padding:24px clamp(14px,3vw,36px) 60px;min-width:0}
+h2{margin:0 0 4px;font-size:1.5rem}.sub{color:var(--mut);margin:0 0 20px}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.kpi b{display:block;font-size:2rem;line-height:1.1}.kpi span{color:var(--mut);font-size:.9rem}.kpi i{font-style:normal;font-size:.8rem;color:var(--mut)}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;padding-top:8px}.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.bars i{display:block;width:100%;background:var(--pri);border-radius:6px 6px 0 0;min-height:2px}.bars small{font-size:.65rem;color:var(--mut);margin-top:4px;white-space:nowrap}.bars em{font-style:normal;font-size:.7rem;margin-bottom:2px}
+.dev{display:flex;flex-direction:column;gap:10px}.dev div{display:grid;grid-template-columns:70px 1fr 44px;gap:8px;align-items:center}.dev span.t{height:12px;background:var(--pri2);border-radius:999px;overflow:hidden}.dev span.t i{display:block;height:100%;background:var(--pri);border-radius:999px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:12px;cursor:pointer;font-weight:600}.btn:hover{border-color:var(--pri)}
+.btn.pri{background:var(--pri);color:#fff;border-color:var(--pri)}.btn.bad{color:var(--bad)}.btn:disabled{opacity:.5;cursor:not-allowed}.btn.sm{padding:5px 11px;font-size:.85rem}
+input[type=text],input[type=email],textarea,select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+textarea{min-height:90px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid var(--pri);outline-offset:1px}
+label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;background:var(--pri2);color:var(--pri);font-weight:600}.tag.off{background:#8882;color:var(--mut)}.tag.ok{background:#1f9d5c22;color:var(--ok)}
+.list{display:flex;flex-direction:column;gap:10px}
+.rid{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}.rid ol{margin:6px 0 0;padding-inline-start:22px;color:var(--mut);font-size:.9rem}.rid li.c{color:var(--ok);font-weight:700}
+.opt{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;margin-top:8px}
+details.w{border:1px solid var(--line);border-radius:var(--r);background:var(--card);margin-bottom:10px}details.w>summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none}details.w>summary::-webkit-details-marker{display:none}
+details.n{border-top:1px solid var(--line)}details.n>summary{cursor:pointer;padding:10px 16px;font-weight:600;color:var(--mut);list-style:none}
+.tx{padding:8px 16px 16px;border-top:1px dashed var(--line)}.tx small{color:var(--mut)}.tx textarea{min-height:70px}
+.login{max-width:420px;margin:12vh auto;text-align:center}.login .card{display:flex;flex-direction:column;gap:12px;padding:28px}
+.note{background:var(--pri2);border-radius:12px;padding:10px 14px;font-size:.9rem;color:var(--ink)}.err{color:var(--bad)}
+.toast{position:fixed;inset-inline:0;bottom:20px;margin:auto;width:max-content;max-width:90vw;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;z-index:9}
+.pay{opacity:.75;border-style:dashed}
+@media (max-width:760px){.app{grid-template-columns:1fr}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:10px}nav h1{width:100%;margin:0 4px 4px}nav button{padding:8px 12px}nav .sp{display:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL="https://qbsdrmjjgpdcdbkovfyj.supabase.co",SB_KEY="sb_publishable_jdN3h-CSJTPXhLWIyXFdjA_yRuw3lDm";
+const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
+const $=s=>document.querySelector(s),esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const R=$("#root");
+const S={open:{},user:null,tab:"dash",days:30,stats:null,riddles:null,cat:null,over:{},q:"",edit:null,toast:"",admin:null,err:""};
+const say=t=>{S.toast=t;draw();setTimeout(()=>{if(S.toast===t){S.toast="";draw();}},2400);};
+
+async function boot(){
+  const {data}=await sb.auth.getSession();S.user=data.session?data.session.user:null;
+  sb.auth.onAuthStateChange((_e,s)=>{const u=s?s.user:null;if((u&&u.id)!==(S.user&&S.user.id)){S.user=u;load();}});
+  if(S.user)await load();else draw();
+}
+async function load(){
+  if(!S.user){draw();return;}
+  const {data,error}=await sb.rpc("dream_stats",{days:S.days});
+  if(error){S.admin=null;S.err=error.message;}else if(data===null){S.admin=false;}else{S.admin=true;S.stats=data;}
+  draw();
+  if(S.admin){loadRiddles();loadOver();}
+}
+async function loadRiddles(){const {data}=await sb.from("dream_riddles").select("*").order("created_at",{ascending:false});S.riddles=data||[];draw();}
+async function loadOver(){const {data}=await sb.from("dream_texts").select("key,value");S.over={};(data||[]).forEach(x=>S.over[x.key]=x.value);draw();}
+function loadCatalog(){
+  if(S.cat||S.catLoading)return;S.catLoading=true;
+  const f=document.createElement("iframe");f.style.display="none";f.src="/dream/?catalog=1";
+  const h=e=>{if(e.origin!==location.origin||!e.data||!e.data.dreamCatalog)return;S.cat=e.data.dreamCatalog;removeEventListener("message",h);f.remove();draw();};
+  addEventListener("message",h);document.body.appendChild(f);
+  setTimeout(()=>{if(!S.cat){S.catLoading=false;S.err="לא ניתן לטעון את קטלוג הטקסטים";draw();}},15000);
+}
+
+function login(){
+  return `<div class="login"><div class="card"><h2>Dream · ניהול</h2><p class="sub">כניסה למנהלים בלבד</p>
+  <button class="btn pri" data-a="google">כניסה עם Google</button>
+  <div class="note">או קבלת קישור כניסה למייל</div>
+  <input type="email" id="mail" placeholder="המייל שלך" autocomplete="email" dir="ltr"><button class="btn" data-a="magic">שלחו לי קישור</button>
+  ${S.err?`<div class="err">${esc(S.err)}</div>`:""}</div></div>`;
+}
+const TABS=[["dash","📊","סטטיסטיקות"],["riddles","🧩","מאגר חידות"],["texts","✍️","טקסטים"],["pay","💳","תשלומים"]];
+function shell(inner){
+  return `<div class="app"><nav><h1>Dream · ניהול<small>${esc(S.user.email||"")}</small></h1>${TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" data-a="tab" data-t="${t[0]}">${t[1]} ${t[2]}</button>`).join("")}<div class="sp"></div><a class="btn sm" href="/dream/" target="_blank" rel="noopener" style="text-decoration:none;text-align:center">פתיחת המשחק ↗</a><button data-a="out">יציאה</button></nav><main>${inner}</main></div>${S.toast?`<div class="toast">${esc(S.toast)}</div>`:""}`;
+}
+function fmtT(s){s=+s||0;if(s<60)return s+" שנ׳";const m=Math.floor(s/60);return m+" דק׳ "+(s%60?(s%60)+" שנ׳":"");}
+function dash(){
+  const st=S.stats||{},dev=st.devices||{},tot=Math.max(1,(dev.phone||0)+(dev.tablet||0)+(dev.desktop||0));
+  const daily=st.daily||[],mx=Math.max(1,...daily.map(d=>d.v));
+  const names={phone:"📱 טלפון",tablet:"📟 טאבלט",desktop:"💻 מחשב"};
+  return `<h2>סטטיסטיקות</h2><p class="sub">נתוני שימוש אמיתיים מהמשחק. הנתונים מתחילים להצטבר מרגע הפעלת המעקב.</p>
+  <div class="row" style="margin-bottom:14px"><select id="days" style="width:auto"><option value="7" ${S.days==7?"selected":""}>7 ימים אחרונים</option><option value="30" ${S.days==30?"selected":""}>30 ימים אחרונים</option><option value="90" ${S.days==90?"selected":""}>90 ימים אחרונים</option></select><button class="btn sm" data-a="refresh">רענון</button></div>
+  <div class="grid g4"><div class="card kpi"><b>${st.visitors??0}</b><span>מבקרים ייחודיים</span><br><i>${st.visits??0} כניסות</i></div>
+  <div class="card kpi"><b>${st.registered??0}</b><span>משתמשים רשומים</span><br><i>עם משחק שמור בענן</i></div>
+  <div class="card kpi"><b>${fmtT(st.avg_seconds)}</b><span>זמן שהייה ממוצע למבקר</span></div></div>
+  <div class="grid g2" style="margin-top:14px"><div class="card"><b>כניסות לפי יום</b><div class="bars">${daily.length?daily.map(d=>`<div title="${esc(d.d)}: ${d.v}"><em>${d.v}</em><i style="height:${Math.max(3,d.v/mx*100)}%"></i><small>${esc(String(d.d).slice(8,10)+"/"+String(d.d).slice(5,7))}</small></div>`).join(""):`<span class="sub" style="margin:auto">אין נתונים עדיין</span>`}</div></div>
+  <div class="card"><b>התפלגות מכשירים</b><div class="dev" style="margin-top:14px">${["phone","tablet","desktop"].map(k=>`<div><span>${names[k]}</span><span class="t"><i style="width:${Math.round((dev[k]||0)/tot*100)}%"></i></span><b>${Math.round((dev[k]||0)/tot*100)}%</b></div>`).join("")}</div></div></div>`;
+}
+function riddles(){
+  if(!S.riddles)return `<h2>מאגר חידות</h2><p class="sub">טוען...</p>`;
+  const e=S.edit,q=S.q.trim();
+  const list=S.riddles.filter(r=>!q||r.q.includes(q)||(r.opts||[]).some(o=>String(o).includes(q)));
+  const form=e?`<div class="card" style="margin-bottom:14px"><b>${e.id?"עריכת חידה":"חידה חדשה"}</b>
+   <label>השאלה</label><textarea id="rq">${esc(e.q)}</textarea>
+   ${[0,1,2,3].map(i=>`<div class="opt"><input type="radio" name="rc" value="${i}" ${e.ans===i?"checked":""} aria-label="תשובה נכונה"><input type="text" class="ro" value="${esc(e.opts[i]||"")}" placeholder="תשובה ${i+1}"></div>`).join("")}
+   <div class="note" style="margin-top:8px">סמנו בעיגול את התשובה הנכונה.</div>
+   <label>רמז (לא חובה)</label><input type="text" id="rh" value="${esc(e.hint||"")}">
+   <div class="row" style="margin-top:12px"><label style="margin:0"><input type="checkbox" id="ry" ${e.young?"checked":""}> לילדים קטנים (3 עד 6)</label><label style="margin:0"><input type="checkbox" id="ra" ${e.active?"checked":""}> פעילה במשחק</label></div>
+   <div class="row" style="margin-top:14px"><button class="btn pri" data-a="rsave">שמירה</button><button class="btn" data-a="rcancel">ביטול</button></div></div>`:"";
+  return `<h2>מאגר חידות</h2><p class="sub">חידות טריוויה עם 4 תשובות. חידות פעילות מתערבבות במשחק עם החידות המובנות.</p>
+  <div class="row" style="margin-bottom:14px"><input type="text" id="rs" placeholder="חיפוש..." value="${esc(S.q)}" style="max-width:300px"><button class="btn pri" data-a="radd">+ חידה חדשה</button><span class="tag">${S.riddles.length} חידות</span></div>${form}
+  <div class="list">${list.map(r=>`<div class="card rid"><div><b style="white-space:pre-line">${esc(r.q)}</b><ol>${(r.opts||[]).map((o,i)=>`<li class="${i===r.ans?"c":""}">${esc(o)}</li>`).join("")}</ol><div style="margin-top:8px"><span class="tag ${r.active?"ok":"off"}">${r.active?"פעילה":"מושבתת"}</span> <span class="tag">${r.young?"קטנים":"גדולים"}</span></div></div><div class="row"><button class="btn sm" data-a="redit" data-id="${r.id}">עריכה</button><button class="btn sm bad" data-a="rdel" data-id="${r.id}">מחיקה</button></div></div>`).join("")||`<div class="card sub">אין חידות עדיין. הוסיפו את הראשונה!</div>`}</div>`;
+}
+function texts(){
+  loadCatalog();
+  if(!S.cat)return `<h2>טקסטים</h2><p class="sub">${S.err?esc(S.err):"טוען את טקסטי המשחק..."}</p>`;
+  const worlds={};S.cat.forEach(x=>{((worlds[x.world]=worlds[x.world]||{})[x.variant]=worlds[x.world][x.variant]||{})[x.node]=(worlds[x.world][x.variant][x.node]||[]).concat(x);});
+  const FL={title:"כותרת",bubble:"בועת דיבור",read:"סיפור התחנה",stage:"הנחיה למספר",success:"הצלחה",fail:"כישלון"};
+  const VL={y:"גרסת ילדים קטנים",o:"גרסת ילדים גדולים"};
+  const q=S.q.trim();
+  return `<h2>טקסטים</h2><p class="sub">עריכת טקסטי הסיפורים לפי עולם ותחנה. בטקסט אפשר להשתמש ב־$N (שמות הגיבורים), $L (הגיבור שתורו) ו־$W (שם העולם). טקסט ששונה מחליף את המקורי בסיפורים המובנים. בקריאה למתחילים הניקוד אוטומטי רק לטקסט המקורי.</p>
+  <div class="row" style="margin-bottom:14px"><input type="text" id="rs" placeholder="חיפוש טקסט..." value="${esc(S.q)}" style="max-width:300px"><span class="tag">${Object.keys(S.over).length} טקסטים ששונו</span></div>
+  ${Object.keys(worlds).map(w=>`<details class="w" data-k="${esc(w)}" ${q?"open":""}><summary>🌍 ${esc(w)}</summary>${Object.keys(worlds[w]).map(v=>`<details class="n" data-k="${esc(w+"|"+v)}" ${q?"open":""}><summary>${VL[v]||v}</summary>${Object.keys(worlds[w][v]).map(n=>{const it=worlds[w][v][n].filter(x=>!q||x.text.includes(q)||(S.over[x.key]||"").includes(q));if(!it.length)return"";return `<div class="tx"><b>תחנה ${+n+1}</b> <span class="tag">${esc(it[0].type||"")}</span>${it.map(x=>{const ch=S.over[x.key]!=null;return `<label>${FL[x.field]||x.field} ${ch?`<span class="tag ok">שונה</span>`:""}</label><textarea data-key="${esc(x.key)}" data-orig="${esc(x.text)}">${esc(ch?S.over[x.key]:x.text)}</textarea><div class="row" style="margin-top:6px"><button class="btn sm pri" data-a="tsave" data-key="${esc(x.key)}">שמירה</button>${ch?`<button class="btn sm" data-a="treset" data-key="${esc(x.key)}">חזרה למקור</button>`:""}</div>`;}).join("")}</div>`;}).join("")}</details>`).join("")}</details>`).join("")}`;
+}
+function pay(){
+  return `<h2>תשלומים</h2><p class="sub">הכנה בלבד. בשלב זה האתר חינמי ואין חיבור לסליקה.</p>
+  <div class="grid g4"><div class="card kpi pay"><b>₪0</b><span>הכנסות החודש</span></div><div class="card kpi pay"><b>0</b><span>מנויים פעילים</span></div><div class="card kpi pay"><b>0%</b><span>המרה לתשלום</span></div></div>
+  <div class="card pay" style="margin-top:14px"><b>מסלולים (דוגמה)</b><div class="list" style="margin-top:10px"><div class="row"><span class="tag">חינמי</span> גישה מלאה כרגע</div><div class="row"><span class="tag off">בקרוב</span> מנוי משפחתי</div></div></div>`;
+}
+function draw(){
+  if(!S.user){R.innerHTML=login();return;}
+  if(S.admin===null&&!S.err){R.innerHTML=`<div class="login"><p class="sub">טוען...</p></div>`;return;}
+  if(S.admin===false||S.err&&!S.admin){R.innerHTML=`<div class="login"><div class="card"><h2>אין הרשאה</h2><p class="sub">${esc(S.user.email||"")} אינו ברשימת המנהלים.${S.err?`<br><span class="err">${esc(S.err)}</span>`:""}</p><button class="btn" data-a="out">יציאה</button></div></div>`;return;}
+  R.innerHTML=shell(S.tab==="dash"?dash():S.tab==="riddles"?riddles():S.tab==="texts"?texts():pay());
+  R.querySelectorAll("details[data-k]").forEach(d=>{if(S.open[d.dataset.k])d.open=true;});
+}
+document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.k)S.open[d.dataset.k]=d.open;},true);
+document.addEventListener("input",e=>{if(e.target.id==="rs"){S.q=e.target.value;clearTimeout(window.__t);window.__t=setTimeout(()=>{draw();const i=$("#rs");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250);}});
+document.addEventListener("change",e=>{if(e.target.id==="days"){S.days=+e.target.value;load();}});
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
+  if(a==="google")sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dream-admin/"}});
+  else if(a==="magic"){const m=($("#mail")||{}).value||"";if(!/^\S+@\S+\.\S+$/.test(m.trim())){S.err="כתבו כתובת מייל תקינה";draw();return;}const {error}=await sb.auth.signInWithOtp({email:m.trim(),options:{emailRedirectTo:location.origin+"/dream-admin/"}});S.err=error?error.message:"";draw();if(!error)say("שלחנו קישור למייל");}
+  else if(a==="out"){await sb.auth.signOut();S.user=null;S.admin=null;S.err="";draw();}
+  else if(a==="tab"){S.tab=b.dataset.t;S.q="";S.edit=null;draw();window.scrollTo({top:0});}
+  else if(a==="refresh")load();
+  else if(a==="radd"){S.edit={id:null,q:"",opts:["","","",""],ans:0,hint:"",young:false,active:true};draw();}
+  else if(a==="redit"){const r=S.riddles.find(x=>x.id===b.dataset.id);if(r){S.edit={...r,opts:[...r.opts]};draw();window.scrollTo({top:0});}}
+  else if(a==="rcancel"){S.edit=null;draw();}
+  else if(a==="rsave"){
+    const q=$("#rq").value.trim(),opts=[...document.querySelectorAll(".ro")].map(i=>i.value.trim()),ans=+(document.querySelector("input[name=rc]:checked")||{value:0}).value;
+    if(q.length<3||opts.some(o=>!o)){say("צריך שאלה וארבע תשובות");return;}
+    if(new Set(opts).size<4){say("התשובות צריכות להיות שונות זו מזו");return;}
+    const row={q,opts,ans,hint:$("#rh").value.trim()||null,young:$("#ry").checked,active:$("#ra").checked};
+    const {error}=S.edit.id?await sb.from("dream_riddles").update(row).eq("id",S.edit.id):await sb.from("dream_riddles").insert(row);
+    if(error){say("שגיאה: "+error.message);return;}S.edit=null;say("נשמר");loadRiddles();}
+  else if(a==="rdel"){if(!confirm("למחוק את החידה?"))return;const {error}=await sb.from("dream_riddles").delete().eq("id",b.dataset.id);if(error){say("שגיאה: "+error.message);return;}say("נמחק");loadRiddles();}
+  else if(a==="tsave"){const ta=document.querySelector(`textarea[data-key="${CSS.escape(b.dataset.key)}"]`),v=ta.value.trim();
+    if(!v){say("הטקסט ריק");return;}
+    if(v===ta.dataset.orig){const {error}=await sb.from("dream_texts").delete().eq("key",b.dataset.key);if(!error){delete S.over[b.dataset.key];say("זהה למקור");draw();}return;}
+    const {error}=await sb.from("dream_texts").upsert({key:b.dataset.key,value:v,updated_at:new Date().toISOString()});if(error){say("שגיאה: "+error.message);return;}S.over[b.dataset.key]=v;say("נשמר");draw();}
+  else if(a==="treset"){const {error}=await sb.from("dream_texts").delete().eq("key",b.dataset.key);if(error){say("שגיאה: "+error.message);return;}delete S.over[b.dataset.key];say("הוחזר למקור");draw();}
+});
+boot();
+</script>
+</body>
+</html>
