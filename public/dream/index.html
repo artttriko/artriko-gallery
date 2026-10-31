@@ -680,12 +680,12 @@ svg.hero,.fx svg{overflow:visible}
 
 /* ---- Pokemon-style boss battle ---- */
 .pk{height:clamp(330px,74vw,440px);padding:0;display:block;direction:ltr}
-.pk .fx.pk-foe{position:absolute;right:7%;top:5%;width:30%;max-width:200px}
-.pk .fx.pk-me{position:absolute;left:5%;bottom:3%;width:28%;max-width:200px}
+.pk .fx.pk-foe{position:absolute;right:7%;top:27%;width:30%;max-width:200px;z-index:2}
+.pk .fx.pk-me{position:absolute;left:5%;bottom:3%;width:28%;max-width:200px;z-index:2}
 .pk .fx.pk-foe>svg:first-child{max-height:none}
 .pk-box{position:absolute;z-index:5;background:#fffbe8;color:#2a2340;border:3px solid var(--o);border-radius:14px;padding:5px 9px;box-shadow:0 4px 0 var(--o);direction:rtl;font-weight:800}
-.pk-fbox{left:3%;top:4%;width:52%;max-width:300px}
-.pk-mbox{right:3%;bottom:4%;width:50%;max-width:280px}
+.pk-fbox{right:3%;top:3%;width:46%;max-width:300px}
+.pk-mbox{left:3%;top:3%;width:46%;max-width:300px}
 .pk-nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.95rem;margin-bottom:2px}
 .pk-nm b{font-size:1.05rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk-nm span{font-size:.78rem;opacity:.75;white-space:nowrap}
 .pk-hp{display:flex;align-items:center;gap:6px}.pk-hp em{font-style:normal;font-size:.72rem;background:var(--o);color:#fff;border-radius:6px;padding:1px 6px;white-space:nowrap}
@@ -726,6 +726,7 @@ svg.hero,.fx svg{overflow:visible}
 .tv{display:flex;align-items:center;gap:8px;min-height:68px;padding:8px 12px;border:3px solid var(--o);border-radius:16px;background:#fff;color:#2a2340;font-weight:900;font-size:1.2rem;box-shadow:0 5px 0 var(--o);text-align:right}
 .tv .tvd{flex:0 0 18px;height:18px;border-radius:50%;background:var(--c);border:2px solid var(--o)}.tv span{min-width:0;overflow-wrap:anywhere}
 .tv:active:not(.gone){transform:translateY(4px);box-shadow:0 1px 0 var(--o)}
+.tv.shake{animation:tvshake .45s;border-color:#ff3d4e}@keyframes tvshake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 .tv.gone{opacity:.4;text-decoration:line-through;box-shadow:none;background:#ddd}
 .tv.ok{background:#4fe36b;animation:popin .4s}
 @media (max-width:360px){.trivia{grid-template-columns:1fr}}
@@ -740,15 +741,62 @@ svg.hero,.fx svg{overflow:visible}
 .bw-rn{font-size:1.3rem;text-shadow:0 2px 0 rgba(0,0,0,.35)}.bw-in{font-weight:800}
 .bw-gems{display:flex;flex-direction:column;align-items:center;gap:2px;color:#fff;font-weight:900;font-size:1.4rem;text-shadow:0 3px 0 var(--o);animation:slideup .5s 3.8s both}.bw-gems em{font-style:normal;font-size:1rem}
 #app .arena.pk,#app[data-screen=play] .arena.pk,#app[data-screen=play] .kids .arena.pk,.kids#app .arena.pk{height:clamp(340px,74vw,440px)}.arena.pk{max-width:820px;margin-inline:auto;width:100%}.pk-dlg,.pk-menu,.pk-story,.pk-panel{max-width:820px;margin-inline:auto}.pk-dlg,.pk-menu,.arena.pk,.pk-story,.pk-team{box-sizing:border-box;width:100%}.pk-team{max-width:820px;margin-inline:auto}
-@media (min-width:700px){#app .arena.pk,#app[data-screen=play] .arena.pk,#app[data-screen=play] .kids .arena.pk,.kids#app .arena.pk{height:440px}.pk-menu{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:700px){#app .arena.pk,#app[data-screen=play] .arena.pk,#app[data-screen=play] .kids .arena.pk,.kids#app .arena.pk{height:440px}}
 
 .ptbox{align-items:center;text-align:center}.pt-lbl{font-weight:900;font-size:1.25rem}
 .pt-big{font-size:clamp(5rem,28vw,9rem);font-weight:900;line-height:1;color:var(--yel);text-shadow:0 6px 0 var(--o);animation:popin .5s both}.pt-big.go{color:#4fe36b;animation:none}
 .pt-bar{width:100%;height:18px;border:3px solid var(--o);border-radius:999px;background:#3a3456;overflow:hidden}.pt-bar i{display:block;height:100%;background:linear-gradient(90deg,#4fe36b,#ffd23f);transition:width 1s linear}
+
+.pchip{cursor:pointer;font:inherit;color:inherit;text-align:center;min-width:96px;min-height:104px;-webkit-tap-highlight-color:transparent}
+.pchip.in{border:2px solid #4fe36b;background:var(--panel2)}
+.pchip.out{opacity:1;border:2px dashed var(--line,#5b4a86)}
+.pchip.out .pc-av{filter:grayscale(1) brightness(.85);opacity:.6}
+.pchip.out b,.pchip.out small{opacity:.6}
+.pchip[aria-disabled=true]{opacity:.45}
+.pc-st{font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;margin-top:2px}
+.pchip.in .pc-st{background:#4fe36b;color:#1b1030}
+.pchip.out .pc-st{background:#ffffff1f;color:var(--ink)}
+.pchip:active{transform:scale(.97)}
+
+.pk-menu .pkb:last-child:nth-child(odd){grid-column:1/-1}
+@media (max-width:480px){.pk-hp em{display:none}.pk-box{padding:4px 7px}.pk-nm b{font-size:.95rem}}
+.pk-bagbtn{position:absolute;z-index:6;right:3%;bottom:3%;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:74px;padding:7px 10px 6px;border-radius:16px;border:3px solid var(--o);background:linear-gradient(#ffd66b,#f0a93a);color:#2a2340;font:inherit;font-weight:900;cursor:pointer;box-shadow:0 4px 0 var(--o);animation:bagpulse 3.4s ease-in-out infinite}
+.pk-bagbtn i{font-style:normal;font-size:1.7rem;line-height:1}.pk-bagbtn b{font-size:.8rem}
+.pk-bagbtn u{position:absolute;top:-9px;left:-9px;min-width:24px;height:24px;border-radius:99px;background:#e0306f;color:#fff;border:2px solid var(--o);text-decoration:none;display:grid;place-items:center;font-size:.8rem;padding:0 4px}
+.pk-bagbtn[disabled]{animation:none;filter:grayscale(.8);opacity:.6;cursor:default}
+.pk-bagbtn:active{transform:scale(.95)}
+@keyframes bagpulse{0%,70%,100%{transform:scale(1);box-shadow:0 4px 0 var(--o)}78%{transform:scale(1.16);box-shadow:0 4px 0 var(--o),0 0 0 8px rgba(255,214,107,.55)}86%{transform:scale(.97)}93%{transform:scale(1.08);box-shadow:0 4px 0 var(--o),0 0 0 5px rgba(255,214,107,.3)}}
+.pk-bg{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;border-radius:inherit}
+.pk-bg.cold{background:linear-gradient(rgba(190,230,255,.35),rgba(255,255,255,0) 60%),
+ radial-gradient(circle,#fff 1.6px,transparent 2.4px) 0 0/46px 52px,radial-gradient(circle,#fff 2.4px,transparent 3.2px) 20px 24px/78px 84px,radial-gradient(circle,rgba(255,255,255,.9) 1.2px,transparent 2px) 8px 40px/34px 38px;animation:snowfall 7s linear infinite}
+@keyframes snowfall{to{background-position:0 0,-14px 52px,-22px 84px,-10px 78px}}
+.pk-bg.bite{background:linear-gradient(rgba(20,70,50,.35),rgba(20,60,40,.05) 55%,rgba(20,90,70,.4)),
+ radial-gradient(circle,#d8ff7a 2px,rgba(216,255,122,.25) 5px,transparent 7px) 10px 20px/90px 70px,radial-gradient(circle,#d8ff7a 1.6px,rgba(216,255,122,.2) 4px,transparent 6px) 55px 50px/120px 90px;animation:fireflies 4s ease-in-out infinite alternate}
+@keyframes fireflies{0%{background-position:0 0,10px 20px,55px 50px;opacity:.7}100%{background-position:0 0,22px 8px,40px 60px;opacity:1}}
+.pk-bg.bite::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:repeating-linear-gradient(90deg,rgba(150,230,200,.25) 0 14px,transparent 14px 30px);animation:ripple 3s linear infinite}
+@keyframes ripple{to{background-position:30px 0}}
+.pk-bg.wind{background:linear-gradient(rgba(60,70,110,.5),rgba(90,100,140,.15) 60%),
+ repeating-linear-gradient(8deg,transparent 0 22px,rgba(255,255,255,.5) 22px 24px,transparent 24px 60px);background-size:auto,220px 120px;animation:gust 1.6s linear infinite}
+@keyframes gust{to{background-position:0 0,-220px 20px}}
+.pk-bg.hit{background:radial-gradient(circle,rgba(255,255,255,.8) 1.4px,transparent 2.6px) 0 0/60px 60px;animation:twinkle 2.4s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.25}to{opacity:.8}}
+@media (prefers-reduced-motion:reduce){.pk-bg,.pk-bg::after,.pk-bagbtn{animation:none!important}}
+
+.pk-box{box-sizing:border-box;min-width:0}.pk-box .blks{gap:2px;flex-wrap:wrap}.pk-box .blk{width:18px;height:18px;border-radius:5px;border-width:2px}
+.pk-bagbtn{right:auto!important;left:50%;transform:translateX(-50%)}
+@keyframes bagpulse{0%,70%,100%{transform:translateX(-50%) scale(1);box-shadow:0 4px 0 var(--o)}78%{transform:translateX(-50%) scale(1.16);box-shadow:0 4px 0 var(--o),0 0 0 8px rgba(255,214,107,.55)}86%{transform:translateX(-50%) scale(.97)}93%{transform:translateX(-50%) scale(1.08);box-shadow:0 4px 0 var(--o),0 0 0 5px rgba(255,214,107,.3)}}
+.pk-bagbtn:active{transform:translateX(-50%) scale(.95)}
+@media (max-width:480px){.pk-box .blk{width:15px;height:15px}.pk-box .pk-row{flex-wrap:wrap}}
+
+.mapwrap.zoomable{position:relative;cursor:zoom-in}
+.mapzoomchip{position:absolute;left:8px;bottom:8px;background:#fffbe8;color:#2a2340;border:2.5px solid var(--o);border-radius:99px;padding:3px 10px;font-weight:900;font-size:.8rem;box-shadow:0 3px 0 var(--o);pointer-events:none}
+.mapov{position:fixed;inset:0;z-index:90;background:#0b1040e6;display:grid;place-items:center;padding:14px;animation:ovin .2s;cursor:zoom-out}
+.mapov-box{position:relative;width:min(96vw,720px);max-height:96vh;display:flex;flex-direction:column;gap:8px;align-items:center}
+.mapov-box .mapwrap{width:auto;display:inline-block}.mapov-box .mapwrap svg{height:calc(100vh - 110px);width:auto;max-width:92vw;max-height:none}
+.mapov-x{position:absolute;top:-6px;left:-6px;z-index:2;width:44px;height:44px;border-radius:50%;border:3px solid var(--o);background:#ffd23f;color:#2a2340;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 var(--o)}
+.mapov-note{color:#fff;font-weight:700;font-size:.9rem;opacity:.85}
 </style>
 
-</head>
-<body>
 <div id="app" dir="rtl" lang="he"></div>
 
 <script>
@@ -797,30 +845,38 @@ const O="#1b1030";
 
 /* ---------- story content (used when Claude is not available) ---------- */
 const RIDDLES=[
- {q:"אני ירוקה ומקפצת,\nבמים אני מתרוצצת.",a:"צפרדע",h:"אומרת קווא קווא",y:1},
- {q:"יש לי זנב ושפם,\nואני מגרגר כשחם.",a:"חתול",h:"אומר מיאו",y:1},
- {q:"צהובה ומעוקלת,\nהקוף אותי אוכל ולא מתבלבל.",a:"בננה",h:"פרי",y:1},
- {q:"בית קטן על הגב אני סוחב,\nלאט לאט זוחל, אף פעם לא ממהר.",a:"חילזון",h:"נכנס לקונכייה",y:1},
- {q:"לבן ורך מהשמיים יורד,\nנוגע בכף היד ונמס מיד.",a:"שלג",h:"יורד בחורף",y:1},
- {q:"בלילה בשמיים אני זורח,\nפעם עגול ופעם כמו חצי תפוח.",a:"ירח",h:"רואים אותו בלילה",y:1},
- {q:"יש לי שיניים אבל לא נושך,\nמסדר את השיער כשהוא מסתבך.",a:"מסרק",h:"משתמשים בו אחרי המקלחת",y:1},
- {q:"עף בלי כנפיים,\nבוכה בלי עיניים.",a:"ענן",h:"ממנו יורד גשם",y:0},
- {q:"יש לי מחוגים ואין לי ידיים,\nמתקתק כל היום בלי עיניים.",a:"שעון",h:"מראה מה השעה",y:0},
- {q:"ככל שתיקח ממני יותר,\nאני רק גדל ונעשה עמוק יותר.",a:"בור",h:"חופרים אותו באדמה",y:0},
- {q:"עולה ועולה כל שנה,\nואף פעם לא יורד למטה.",a:"הגיל",h:"חוגגים אותו ביום הולדת",y:0},
- {q:"יש לי מפתחות ואין לי דלת,\nלוחצים עליי ואני מנגנת.",a:"פסנתר",h:"כלי נגינה",y:0},
- {q:"יש לי צוואר ואין לי ראש,\nשני שרוולים ואף לא כף.",a:"חולצה",h:"לובשים אותה",y:0},
- {q:"כולם דורכים עליי כל היום,\nואני רק שוכב ומחכה בשקט במקום.",a:"שטיח",h:"על הרצפה בסלון",y:1},
- {q:"יש לי ערים ואין לי בתים,\nיש לי ימים ואין בהם דגים.",a:"מפה",h:"משתמשים בי כדי לא ללכת לאיבוד",y:0},
- {q:"ככל שאני מייבשת יותר,\nכך אני נעשית רטובה יותר.",a:"מגבת",h:"פוגשים אותי אחרי המקלחת",y:0},
- {q:"יש לי ראש ויש לי זנב, אבל אין לי גוף,\nזורקים אותי לאוויר כדי להחליט בסוף.",a:"מטבע",h:"אפשר לקנות איתי משהו קטן",y:0},
- {q:"עולות ויורדות כל היום,\nואף פעם לא זזות מהמקום.",a:"מדרגות",h:"יש אותן בכל בניין",y:0},
- {q:"יש לי עין אחת ואני לא רואה,\nעם חוט אני עוברת ותופרת בהנאה.",a:"מחט",h:"סבתא משתמשת בי לתפירה",y:0},
- {q:"אני כל כך עדין ושברירי,\nשמספיק להגיד את שמי, ואני נשבר מיד.",a:"שקט",h:"ההפך מרעש",y:0},
- {q:"הולך אחריך לכל מקום,\nונעלם כשהשמש הולכת לישון.",a:"צל",h:"רואים אותי על הרצפה ביום שמש",y:0},
- {q:"תמיד אני עומד להגיע,\nאבל אף פעם לא תראו אותי מופיע.",a:"מחר",h:"זה היום שאחרי היום",y:0},
- {q:"צריך לשבור אותי,\nלפני שאפשר להשתמש בי.",a:"ביצה",h:"התרנגולת מטילה אותי",y:0},
- {q:"ככל שאני גדל, רואים פחות,\nאני מגיע כשהשמש הולכת לנוח.",a:"חושך",h:"ההפך מאור",y:0}
+ {q:"אני ירוקה ומקפצת,\nבמים אני מתרוצצת.",a:"צפרדע",h:"אומרת קווא קווא",y:1,w:["ציפור", "דג", "ארנב"]},
+ {q:"יש לי זנב ושפם,\nואני מגרגר כשחם.",a:"חתול",h:"אומר מיאו",y:1,w:["כלב", "סוס", "עכבר"]},
+ {q:"צהובה ומעוקלת,\nהקוף אותי אוכל ולא מתבלבל.",a:"בננה",h:"פרי",y:1,w:["תפוח", "ענבים", "תפוז"]},
+ {q:"בית קטן על הגב אני סוחב,\nלאט לאט זוחל, אף פעם לא ממהר.",a:"חילזון",h:"נכנס לקונכייה",y:1,w:["ציפור", "נמלה", "דג"]},
+ {q:"לבן ורך מהשמיים יורד,\nנוגע בכף היד ונמס מיד.",a:"שלג",h:"יורד בחורף",y:1,w:["גשם", "חול", "קמח"]},
+ {q:"בלילה בשמיים אני זורח,\nפעם עגול ופעם כמו חצי תפוח.",a:"ירח",h:"רואים אותו בלילה",y:1,w:["שמש", "כוכב", "ענן"]},
+ {q:"יש לי שיניים אבל לא נושך,\nמסדר את השיער כשהוא מסתבך.",a:"מסרק",h:"משתמשים בו אחרי המקלחת",y:1,w:["מזלג", "מפתח", "מסור"]},
+ {q:"כולם דורכים עליי כל היום,\nואני רק שוכב ומחכה בשקט במקום.",a:"שטיח",h:"על הרצפה בסלון",y:1,w:["כיסא", "שולחן", "מיטה"]},
+ {q:"אני סוחב את הגור שלי בכיס,\nקופץ גבוה בלי לעצור לרגע.",a:"קנגורו",h:"חי באוסטרליה",y:1,w:["פיל", "ג'ירפה", "תנין"]},
+ {q:"אני נובח ושומר על הבית,\nאוהב עצם וגם לרוץ אחרי כדור.",a:"כלב",h:"החבר הכי טוב של ילדים",y:1,w:["חתול", "סוס", "ציפור"]},
+ {q:"אני ענק עם חדק ארוך,\nואוזניים גדולות כמו מניפות.",a:"פיל",h:"חי בספארי",y:1,w:["אריה", "קוף", "סוס"]},
+ {q:"אני עגול, אדום וקריספי,\nגדל על העץ ומתוק לאכול.",a:"תפוח",h:"פרי",y:1,w:["בננה", "גזר", "תות"]},
+ {q:"אני צהובה ועגולה בשמיים,\nמחממת ומאירה לכולם ביום.",a:"שמש",h:"רואים אותה ביום",y:1,w:["ירח", "כוכב", "נר"]},
+ {q:"יש לי פסים שחורים ולבנים,\nאני דומה לסוס בספארי.",a:"זברה",h:"חיה עם פסים",y:1,w:["סוס", "פרה", "כבשה"]},
+ {q:"אני אומרת מוּוּ,\nונותנת חלב טעים לכולם.",a:"פרה",h:"חיה בחווה",y:1,w:["כבשה", "סוס", "תרנגולת"]},
+ {q:"יש לי כנפיים צבעוניות,\nאני עפה בין הפרחים.",a:"פרפר",h:"היה פעם זחל",y:1,w:["ציפור", "נמלה", "חתול"]},
+ {q:"עף בלי כנפיים,\nבוכה בלי עיניים.",a:"ענן",h:"ממנו יורד גשם",y:0,w:["עפיפון", "ציפור", "רוח"]},
+ {q:"יש לי מחוגים ואין לי ידיים,\nמתקתק כל היום בלי עיניים.",a:"שעון",h:"מראה מה השעה",y:0,w:["מחשב", "מפתח", "מצפן"]},
+ {q:"ככל שתיקח ממני יותר,\nאני רק גדל ונעשה עמוק יותר.",a:"בור",h:"חופרים אותו באדמה",y:0,w:["הר", "ים", "קיר"]},
+ {q:"עולה ועולה כל שנה,\nואף פעם לא יורד למטה.",a:"הגיל",h:"חוגגים אותו ביום הולדת",y:0,w:["הגובה", "המשקל", "השם"]},
+ {q:"יש לי מפתחות ואין לי דלת,\nלוחצים עליי ואני מנגנת.",a:"פסנתר",h:"כלי נגינה",y:0,w:["גיטרה", "תוף", "חליל"]},
+ {q:"יש לי צוואר ואין לי ראש,\nשני שרוולים ואף לא כף.",a:"חולצה",h:"לובשים אותה",y:0,w:["כובע", "גרב", "נעל"]},
+ {q:"יש לי ערים ואין לי בתים,\nיש לי ימים ואין בהם דגים.",a:"מפה",h:"משתמשים בי כדי לא ללכת לאיבוד",y:0,w:["ספר", "תמונה", "מחברת"]},
+ {q:"ככל שאני מייבשת יותר,\nכך אני נעשית רטובה יותר.",a:"מגבת",h:"פוגשים אותי אחרי המקלחת",y:0,w:["סבון", "מברשת", "שמפו"]},
+ {q:"יש לי ראש ויש לי זנב, אבל אין לי גוף,\nזורקים אותי לאוויר כדי להחליט בסוף.",a:"מטבע",h:"אפשר לקנות איתי משהו קטן",y:0,w:["כפתור", "קובייה", "מפתח"]},
+ {q:"עולות ויורדות כל היום,\nואף פעם לא זזות מהמקום.",a:"מדרגות",h:"יש אותן בכל בניין",y:0,w:["דלת", "חלון", "רצפה"]},
+ {q:"יש לי עין אחת ואני לא רואה,\nעם חוט אני עוברת ותופרת בהנאה.",a:"מחט",h:"סבתא משתמשת בי לתפירה",y:0,w:["כפית", "מזלג", "עיפרון"]},
+ {q:"אני כל כך עדין ושברירי,\nשמספיק להגיד את שמי, ואני נשבר מיד.",a:"שקט",h:"ההפך מרעש",y:0,w:["זכוכית", "קרח", "רעש"]},
+ {q:"הולך אחריך לכל מקום,\nונעלם כשהשמש הולכת לישון.",a:"צל",h:"רואים אותי על הרצפה ביום שמש",y:0,w:["כלב", "אור", "רוח"]},
+ {q:"תמיד אני עומד להגיע,\nאבל אף פעם לא תראו אותי מופיע.",a:"מחר",h:"זה היום שאחרי היום",y:0,w:["אתמול", "היום", "שבוע"]},
+ {q:"צריך לשבור אותי,\nלפני שאפשר להשתמש בי.",a:"ביצה",h:"התרנגולת מטילה אותי",y:0,w:["אגוז", "תפוח", "בקבוק"]},
+ {q:"ככל שאני גדל, רואים פחות,\nאני מגיע כשהשמש הולכת לנוח.",a:"חושך",h:"ההפך מאור",y:0,w:["אור", "כוכב", "צבע"]}
 ];
 const ICON_WORDS=[["תליון צפרדע","frogpend"],["צפרדע","frogpend"],["אבקת קשת","rainbow"],["כדור שלג","snowball"],["תליון ירח","moon"],["נעל","boots"],["כפפ","glove"],["צעיף","scarf"],["סמל","badge"],["קמע","amulet"],["תליון","amulet"],["נופר","lily"],["עלה","leaf"],["שן ","tooth"],["צנצנת","jar"],["משוט","oar"],["שריון","beetle"],["מצפן","compass"],["ענן","cloud"],["פעמון","bell"],["שק ","bag"],["אבק","sparkles"],["קרקור","note"],["נוצ","feather"],["מפתח","key"],["כתר","crown"],["כוכב","star"],["ירח","moon"],["שיקוי","potion"],["גביש","crystal"],["יהלום","gem"],["מגן","shield"],["מגילה","scroll"]];
 function fitIcon(name,fallback){const n=String(name||"")+" ";for(const [w,i] of ICON_WORDS)if(n.includes(w))return i;return fallback;}
@@ -960,7 +1016,7 @@ const LOCK_SVG=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" w
 function lockModal(){
  const L=S.lock;if(!L)return "";
  if(L.kind==="item"){const tr=tierOf(L.k,L.v),pr=PRICE[tr],need=pr-gems(),leg=tr===4&&!legendOK(),q={...S.draft.result.params};dSet(q,L.k,L.v);const T=DTABS.find(t=>t.k===L.k)||DTABS[0];
-  return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${L.k==="style"?"silh":""}">${heroInner(q,L.k==="style"?TOPLV:1,{fem:S.draft.gender==="f",mood:"happy"})}</svg></div>
+  return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${L.k==="style"?"silh":""}">${heroInner(q,L.k==="style"?TOPLV:1,{fem:isF(S.draft),mood:"happy"})}</svg></div>
   <h3>${esc(dLbl(L.k,L.v))}</h3><p class="tierb t${tr}">${TIER_N[tr]}</p>
   ${leg?`<p>${L.k==="style"?"סגנון העל נפתח רק בסוף המשחק, אחרי שמסיימים את כל העולמות, וכשהדמות מגיעה לרמה הכי גבוהה.":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
   <button class="btn wide ${need>0||leg?"":"grn"}" data-a="buygem" ${need>0||leg?"disabled":""}><span>פתיחה ב־${pr} יהלומים</span></button>
@@ -1021,7 +1077,7 @@ const LS="kubiya-save-v1";
 function defaultSave(){
  return {v:1,updatedAt:0,heroes:[{id:"demo",demo:true,kidName:"ים",gender:"m",desc:"לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב",heroName:"ים דרקו",title:"לוחם הדרקונים",catch:"אף דרקון לא מפחיד אותי!",params:{skin:1,hair:"spiky",hairColor:"#7a4a2a",primary:"#ff3d4e",secondary:"#ffcf2e",head:"bandana",weapon:"sword",pet:"dragon"},fixesLeft:3,xp:0,items:[]}],campaign:null};
 }
-function normSave(){try{SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.unlocks.owned=SAVE.unlocks.owned||[];(SAVE.heroes||[]).forEach(h=>(h.items||[]).forEach(it=>{it.icon=fitIcon(it.name,it.icon);}));SAVE.gems=SAVE.gems||0;SAVE.unlocks.owned=SAVE.unlocks.owned.map(x=>x==="weapon:lantern"?"weapon:flamesword":x);SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params){h.params.fem=h.gender==="f";if(h.params.weapon==="lantern")h.params.weapon="flamesword";}});}catch(e){}}
+function normSave(){try{SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.unlocks.owned=SAVE.unlocks.owned||[];(SAVE.heroes||[]).forEach(h=>(h.items||[]).forEach(it=>{it.icon=fitIcon(it.name,it.icon);}));SAVE.gems=SAVE.gems||0;SAVE.unlocks.owned=SAVE.unlocks.owned.map(x=>x==="weapon:lantern"?"weapon:flamesword":x);SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params){h.params.fem=isF(h);if(h.params.weapon==="lantern")h.params.weapon="flamesword";}});}catch(e){}}
 function loadLocal(){try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r);}catch(e){}return null;}
 let db=null,uid=null,writing=false,pendingWrite=false;
 function persist(){
@@ -1136,10 +1192,10 @@ async function askJSON(prompt,signal){
 /* ---------- text inflection ---------- */
 function joinNames(hs){const n=hs.map(h=>h.heroName);if(n.length<2)return n[0]||"";return n.slice(0,-1).join(", ")+" ו"+n[n.length-1];}
 function fill(t,heroes,leader,mapName){
- const pl=heroes.length>1;const g=pl?2:(heroes[0]&&heroes[0].gender==="f"?1:0);
+ const pl=heroes.length>1;const g=pl?2:(heroes[0]&&isF(heroes[0])?1:0);
  return String(t||"")
   .replace(/\{([^|{}]*)\|([^|{}]*)\|([^|{}]*)\}/g,(m,a,b,c)=>[a,b,c][g])
-  .replace(/\[([^|\[\]]*)\|([^|\[\]]*)\]/g,(m,a,b)=>leader&&leader.gender==="f"?b:a)
+  .replace(/\[([^|\[\]]*)\|([^|\[\]]*)\]/g,(m,a,b)=>leader&&isF(leader)?b:a)
   .replace(/\$N/g,joinNames(heroes)).replace(/\$L/g,leader?leader.heroName:"").replace(/\$W/g,mapName||"");
 }
 
@@ -1732,14 +1788,19 @@ function mathVis(ch){
  else if(v.k==="div")h=Array.from({length:v.b},()=>`<span class="mvgrp">${Array.from({length:v.n},()=>dot()).join("")}</span>`).join("");
  return `<div class="mathvis" aria-hidden="true">${h}</div>`;
 }
-function nextRiddle(c){
+function nextRiddle(c,boss){const r0=nextRiddle0(c);r0.nopt=optN(c,!!boss);return r0;}
+function nextRiddle0(c){
  const yng=ageGroup(c.age)==="young";c.usedR=c.usedR||[];
  if(Math.random()<.5)return mathRiddle(c);
- {const dp=DB_R.map((r,i)=>({...r,i:"d"+r.id})).filter(r=>!!r.young===yng&&!c.usedR.includes(r.i));
-  if(dp.length&&Math.random()<.5){const r=pick(dp);c.usedR.push(r.i);const o=r.opts.map(x=>String(x).trim());return {q:r.q,a:o[r.ans],hint:r.hint||"",opts:shuf(o),gone:[],db:true};}}
+ const all=DB_R.filter(r=>!!r.young===yng);
+ if(all.length){
+  let dp=all.map(r=>({...r,i:"d"+r.id})).filter(r=>!c.usedR.includes(r.i));
+  if(!dp.length){c.usedR=c.usedR.filter(x=>String(x)[0]!=="d");dp=all.map(r=>({...r,i:"d"+r.id}));}
+  const r=pick(dp);c.usedR.push(r.i);const o=r.opts.map(x=>String(x).trim());return {q:r.q,a:o[r.ans],hint:r.hint||"",opts:shuf(o),gone:[],db:true};
+ }
  let pool=RIDDLES.map((r,i)=>({...r,i})).filter(r=>(yng?r.y:!r.y)&&!c.usedR.includes(r.i));
  if(!pool.length){c.usedR=[];pool=RIDDLES.map((r,i)=>({...r,i})).filter(r=>yng?r.y:!r.y);}
- const r=pick(pool);c.usedR.push(r.i);return {q:r.q,a:r.a,hint:r.h};
+ const r=pick(pool);c.usedR.push(r.i);return {q:r.q,a:r.a,hint:r.h,opts:shuf([r.a].concat(r.w)),gone:[]};
 }
 function fallbackChapter(c,count){
  const hs=campHeroes(),M=campMap(c);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
@@ -1764,7 +1825,7 @@ function chapterPrompt(c,count,first){
  const modeTxt={bed:"BEDTIME: a calm wind-down. Energy starts adventurous and gets calmer toward the end. No running or jumping. Any 'physical' station must be calm (slow breathing, freezing like a statue, slow stretching, whispering). The closing has the heroes find a cozy safe place to rest for the night, a slow calm image, and ends with 'tomorrow the adventure continues'.",
   active:"FAMILY EVENING: energetic. Include exactly one 'physical' station with real movement that the story justifies, with a count (for example: crossing a lily-pad lake in 10 frog jumps; crawling like crocodiles from one spot in the house to another so the crocodiles think you are one of them; breaking a spell by hopping on one foot 15 times while counting aloud). The closing is a small cliffhanger that makes kids want to continue next time.",
   friends:"FRIENDS PARTY: lively and social, every hero gets a moment. 'physical' stations use real movement that the story justifies (frog jumps across a lake, crawling like crocodiles, hopping on one foot to break a spell), with a count. The closing is a cheer plus a small cliffhanger."}[c.mode];
- const heroLines=hs.map(h=>`- ${h.heroName} (${h.gender==="f"?"girl, feminine Hebrew forms":"boy, masculine Hebrew forms"}; ${h.title}; carries: ${LBL.weapon[h.params.weapon]}; pet: ${LBL.pet[h.params.pet]}; items: ${(h.items||[]).slice(-5).map(i=>i.name).join(", ")||"none"})`).join("\n");
+ const heroLines=hs.map(h=>`- ${h.heroName} (${isF(h)?"girl, feminine Hebrew forms":"boy, masculine Hebrew forms"}; ${h.title}; carries: ${LBL.weapon[h.params.weapon]}; pet: ${LBL.pet[h.params.pet]}; items: ${(h.items||[]).slice(-5).map(i=>i.name).join(", ")||"none"})`).join("\n");
  const leaders=nodes.map((n,i)=>`station ${i+1} -> ${hs[leaderIdx(n,hs.length)].heroName}`).join("; ");
  const finale=nodes.includes(NODES-1);
  return `You write one chapter of a cozy Dungeons-&-Dragons-style adventure for children aged ${c.age}. A parent reads it aloud in Hebrew and acts as the game master while the kids play their heroes. All story text must be in natural, warm Hebrew suited to that age. Write ${AGE_STYLE[c.age]||AGE_STYLE["5-7"]}
@@ -1984,7 +2045,7 @@ function shopSuggest(){
  if(!all.length)return "";
  const can=all.filter(x=>x.pr<=gems());const pool=can.length?can:all.sort((a,b)=>a.pr-b.pr).slice(0,4);
  const seed=(SAVE.campaign&&SAVE.campaign.sessions||0)+gems();const pick2=[pool[seed%pool.length],pool[(seed+1)%pool.length]].filter((x,i,a)=>x&&a.indexOf(x)===i);
- return `<section class="panel shopsug"><div class="eyebrow">אפשר לשדרג את ${esc(h.heroName)}</div><div class="sugrow">${pick2.map(x=>{const q={...h.params};dSet(q,x.T.k,x.v);return `<button class="sugitem t${x.tr}" data-a="shopgo" data-id="${h.id}" data-tab="${x.T.id}">${x.T.k==="pet"?`<svg viewBox="-8 100 54 64">${petSVG(x.v)}</svg>`:`<svg viewBox="${x.T.crop}" class="${x.T.k==="style"?"silh":""}">${heroInner(q,1,{fem:h.gender==="f",mood:"happy"})}</svg>`}<b>${esc(x.T.k==="_face"?FACEL[x.v]:x.T.k==="style"?STYLE_N[x.v][h.gender==="f"?1:0]:LBL[x.T.k][x.v])}</b><span>${GEM(14)}${x.pr}</span></button>`;}).join("")}</div>
+ return `<section class="panel shopsug"><div class="eyebrow">אפשר לשדרג את ${esc(h.heroName)}</div><div class="sugrow">${pick2.map(x=>{const q={...h.params};dSet(q,x.T.k,x.v);return `<button class="sugitem t${x.tr}" data-a="shopgo" data-id="${h.id}" data-tab="${x.T.id}">${x.T.k==="pet"?`<svg viewBox="-8 100 54 64">${petSVG(x.v)}</svg>`:`<svg viewBox="${x.T.crop}" class="${x.T.k==="style"?"silh":""}">${heroInner(q,1,{fem:isF(h),mood:"happy"})}</svg>`}<b>${esc(x.T.k==="_face"?FACEL[x.v]:x.T.k==="style"?STYLE_N[x.v][isF(h)?1:0]:LBL[x.T.k][x.v])}</b><span>${GEM(14)}${x.pr}</span></button>`;}).join("")}</div>
  <p class="small muted">${can.length?`יש לכם ${gems()} יהלומים. מספיק כדי לפתוח!`:`יש לכם ${gems()} יהלומים. ממשיכים לשחק ואוספים עוד.`}</p></section>`;
 }
 function savedGames(){
@@ -1993,7 +2054,7 @@ function savedGames(){
 }
 function partyPanel(){
  const c=SAVE.campaign;if(!c)return "";const inP=campHeroes(),out=SAVE.heroes.filter(h=>!c.heroIds.includes(h.id));
- const chip=(h,mode)=>`<div class="pchip ${mode}"><div class="pc-av">${heroSVG(h,"hero")}</div><b>${esc(h.heroName)}</b><small>דרגה ${heroLevel(h)}</small>${mode==="in"?`<button class="pc-x" data-a="partyrm" data-id="${h.id}" ${inP.length<2?"disabled":""} aria-label="להוריד את ${esc(h.heroName)} מהמשחק">✕</button>`:`<button class="pc-add" data-a="partyadd" data-id="${h.id}" ${inP.length>=4?"disabled":""} aria-label="להוסיף את ${esc(h.heroName)} למשחק">+</button>`}</div>`;
+ const chip=(h,mode)=>{const isIn=mode==="in",dis=isIn?inP.length<2:inP.length>=4;return `<button class="pchip ${mode}" data-a="partytog" data-id="${h.id}" aria-pressed="${isIn}" ${dis?"aria-disabled=\"true\"":""} aria-label="${esc(h.heroName)}, ${isIn?"משחק עכשיו. לחצו כדי להוריד":"לא משחק. לחצו כדי להוסיף"}"><div class="pc-av">${heroSVG(h,"hero")}</div><b>${esc(h.heroName)}</b><small>דרגה ${heroLevel(h)}</small><span class="pc-st">${isIn?"✓ משחק":"לחצו להוספה"}</span></button>`;};
  return `<div class="party"><div class="eyebrow">מי משחק עכשיו? (${inP.length}/4)</div><div class="pchips">${inP.map(h=>chip(h,"in")).join("")}${out.map(h=>chip(h,"out")).join("")}${inP.length<4?`<button class="pchip pnew" data-a="partynew"><span class="pc-plus">+</span><b>חבר חדש מצטרף</b></button>`:""}</div><p class="muted small">חבר שמצטרף מתחיל מדרגה נמוכה, וממשיך איתכם מכאן. אפשר להוריד ולהחזיר חבר בכל רגע.</p></div>`;
 }
 function worldsPanel(){
@@ -2032,7 +2093,7 @@ function newDraft(h){
  return {id:null,kidName:"",gender:"m",desc:"",result:null,fixesLeft:3,fix:"",busy:false,manual:false,existing:false,xp:0,stats:null,pv:0,fresh:false};
 }
 function vHero(){
- const d=S.draft;const r=d.result;const g=d.gender==="f";if(r)r.params.fem=g;
+ const d=S.draft;const r=d.result;const g=isF(d);if(r)r.params.fem=g;
  let prev="";
  if(r){
   const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,12,24,(TOPLV-1)*4][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
@@ -2075,13 +2136,13 @@ function dGet(p,k){if(k==="style")return p.style||(p.fem?"sparkle":"hero");if(k=
 function dSet(p,k,v){if(k==="_face"){if(FACE_PAINT.includes(v)){p.facepaint=v;return;}p.facepaint=null;p.blush=v==="blush"||v==="both";p.freckles=v==="freckles"||v==="both";return;}p[k]=v;if(k==="mouth")p.tongue=v==="tongue";}
 function dOpts(k){return k==="_face"?FACEO:ENUM[k];}
 const STYLE_N={sparkle:["שומר הקשת","שומרת הקשת"],hero:["מגן הלילה","מגינת הלילה"],nature:["שומר היער","שומרת היער"],magic:["קוסם הגלקסיה","קוסמת הגלקסיה"]};
-function dLbl(k,v){if(k==="style")return STYLE_N[v][S.draft&&S.draft.gender==="f"?1:0];return k==="_face"?FACEL[v]:LBL[k][v];}
+function dLbl(k,v){if(k==="style")return STYLE_N[v][S.draft&&isF(S.draft)?1:0];return k==="_face"?FACEL[v]:LBL[k][v];}
 const DSAMPLE={pet:"cat",weapon:"sword",back:"wings",head:"crown"};
 function dSide(t,p,fem,on){const q={...p};if(DSAMPLE[t.k]&&(q[t.k]||"none")==="none")q[t.k]=DSAMPLE[t.k];if(t.k==="back"){q.pet="none";q.weapon="none";}return `<button class="dcat" data-a="dtab" data-v="${t.id}" aria-pressed="${on}"><svg viewBox="${t.crop}" aria-hidden="true" class="${t.k==="style"?"silh":""}">${heroInner(q,t.lv?TOPLV:1,{fem,mood:"happy"})}</svg><span>${t.l}</span></button>`;}
 function dRow(key,pal,cur,lbl){return `<div class="drow" aria-label="${lbl}"><b class="drl">${lbl}</b>${pal.map((c,i)=>{const v=key==="skin"?i:c;return `<button class="swatch" style="background:${c}" data-a="mset" data-k="${key}" data-v="${v}" aria-pressed="${cur===v}" aria-label="${lbl}"></button>`;}).join("")}</div>`;}
 function vDress(d,fake){
 if(!d.origP)d.origP={...d.result.params};
- const p=d.result.params,fem=d.gender==="f",tab=d.tab||"eyes",T=DTABS.find(t=>t.id===tab)||DTABS[0];
+ const p=d.result.params,fem=isF(d),tab=d.tab||"eyes",T=DTABS.find(t=>t.id===tab)||DTABS[0];
  const opts=dOpts(T.k),cur=dGet(p,T.k),i=Math.max(0,opts.indexOf(cur));
  const L=DTABS.slice(0,6),Rt=DTABS.slice(6);
  const arrow=dir=>`<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="${dir>0?"M9 4 L17 12 L9 20":"M15 4 L7 12 L15 20"}" fill="none" stroke="${O}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -2168,7 +2229,8 @@ function vPlay(){
  const dots=`<div class="dots" aria-label="התקדמות בפרק"><i class="${P.idx>=0?"on":"now"}"></i>${ch.stations.map((s,i)=>`<i class="${i<P.idx?"on":i===P.idx?"now":""}"></i>`).join("")}<i class="${P.idx>=n?"now":""}"></i></div>`;
  const head=`<div class="playhead">${dots}<span class="timer" id="timer">${fmt(Date.now()-P.startedAt)} / ${c.minutes}:00</span></div>
  <div class="row"><button class="ib" data-a="kids" aria-pressed="${S.kids}">${S.kids?"מסך הורה":"מסך ילדים"}</button><button class="ib" data-a="togglemap" aria-pressed="${S.showMap}">מפה</button><button class="ib" data-a="pause">עצירה</button><button class="ib parent-only" data-a="back" ${P.idx<0?"disabled":""}>אחורה</button><button class="ib parent-only" data-a="redo" ${P.idx<0||P.idx>=n?"disabled":""}>שוב</button></div>`;
- const map=S.showMap?`<div class="mapwrap">${mapSVG(c.mapId,P.walk?P.walk.from:Math.min(c.node,NODES-1),hs,{win:true})}</div>`:"";
+ const map=S.showMap?`<div class="mapwrap zoomable" data-a="mapzoom" role="button" tabindex="0" aria-label="פתיחת המפה בגדול">${mapSVG(c.mapId,P.walk?P.walk.from:Math.min(c.node,NODES-1),hs,{win:true})}<span class="mapzoomchip" aria-hidden="true">🔍 הגדלה</span></div>`:"";
+ const mapOv=S.mapZoom?`<div class="mapov" data-a="mapclose" role="dialog" aria-label="המפה"><div class="mapov-box"><button class="mapov-x" data-a="mapclose" aria-label="סגירה">✕</button><div class="mapwrap">${mapSVG(c.mapId,Math.min(c.node,NODES-1),hs)}</div><div class="mapov-note">לחצו בכל מקום כדי לסגור</div></div></div>`:"";
  let body="";
  if(P.idx<0){
   body=`${narrIntro()}${map}<div class="parch slide"><span class="tt">${esc(E(ch.title))}</span>${ezText(c.node===0&&!(c.sessions)?EASY_UI.open1:EASY_UI.open2,ch.opening.read)}${ezToggle()}</div>${stageBox(ch.opening.stage)}<button class="btn wide grn" data-a="next"><span>יוצאים לדרך!</span></button>`;
@@ -2184,8 +2246,8 @@ function vPlay(){
   <button class="btn wide grn" data-a="endsession"><span>סיימנו להיום</span></button>`;
  } else if(P.phase==="upgrade")body=vUpgrade(hs);
  else if(P.phase==="heart")body=vHeart(hs,c);
- else{const st0=ch.stations[P.idx],Ld=stLeader(st0,hs),tc=(Ld&&Ld.params.primary)||"#ffd23f";const tn=Ld?((ezOn()?(Ld.gender==="f"?"תּוֹרָהּ שֶׁל ":"תּוֹרוֹ שֶׁל "):(Ld.gender==="f"?"תורה של ":"תורו של "))+Ld.heroName).replace(/["\\<>]/g,""):"";const inner=`<div class="stwrap" style="--tc:${tc};--tn:&quot;${esc(tn)}&quot;">${vStation(st0,hs,c)}</div>`;const m=(st0.type==="boss"&&P.phase!=="result"?"":map);body=m?`<div class="playgrid"><div class="pg-main">${inner}</div><div class="pg-map">${m}</div></div>`:inner;}
- return `${topbar()}${head}${body}`;
+ else{const st0=ch.stations[P.idx],Ld=stLeader(st0,hs),tc=(Ld&&Ld.params.primary)||"#ffd23f";const tn=Ld?((ezOn()?(isF(Ld)?"תּוֹרָהּ שֶׁל ":"תּוֹרוֹ שֶׁל "):(isF(Ld)?"תורה של ":"תורו של "))+Ld.heroName).replace(/["\\<>]/g,""):"";const inner=`<div class="stwrap" style="--tc:${tc};--tn:&quot;${esc(tn)}&quot;">${vStation(st0,hs,c)}</div>`;const m=(st0.type==="boss"&&P.phase!=="result"?"":map);body=m?`<div class="playgrid"><div class="pg-main">${inner}</div><div class="pg-map">${m}</div></div>`:inner;}
+ return `${topbar()}${head}${body}${mapOv}`;
 }
 
 /* ---------- heart moments: small real-world acts of warmth ---------- */
@@ -2420,6 +2482,7 @@ EZUI.push(["ממלכת הקרח","מַמְלֶכֶת הַקֶּרַח"],["ביצ
  ["המספר עוזר: שתי קוביות!","הַמְּסַפֵּר עוֹזֵר: שְׁתֵּי קוּבִּיּוֹת!"],["חבר עוזר: שתי קוביות!","חָבֵר עוֹזֵר: שְׁתֵּי קוּבִּיּוֹת!"],["הצלחה! מה קורה עכשיו?","הַצְלָחָה! מָה קוֹרֶה עַכְשָׁיו?"],["לא הצליח... מה קורה עכשיו?","לֹא הִצְלִיחַ... מָה קוֹרֶה עַכְשָׁיו?"],["ניסיון ","נִיסָּיוֹן "],[" מתוך "," מִתּוֹךְ "],["השדרוגים נשמרו!","הַשִּׁדְרוּגִים נִשְׁמְרוּ!"],["עוד לב נאסף לאוצר!","עוֹד לֵב נֶאֱסַף לָאוֹצָר!"],["קרב בוס · תחנה","קְרַב בּוֹס · תַּחֲנָה"],[" מוסיף"," מוֹסִיף"],[" מוסיפה"," מוֹסִיפָה"],["> כוח<","> כּוֹחַ<"],[" כוח = "," כּוֹחַ = "],["עם המספר ביחד","עִם הַמְּסַפֵּר בְּיַחַד"],["כל הצוות ביחד","כָּל הַצֶּוֶות בְּיַחַד"],["פעם אחת בקרב · מורידה 2","פַּעַם אַחַת בַּקְּרָב · מוֹרִידָה 2"],
  ["<span>פגיעה</span>","<span>פְּגִיעָה</span>"],["פגיעה!","פְּגִיעָה!"],["התחמק!","הִתְחַמֵּק!"],[">התחמק<",">הִתְחַמֵּק<"],["יצא ","יָצָא "],["עוד הטלה!","עוֹד הֲטָלָה!"],["התור של ","הַתּוֹר שֶׁל "],["טעו, רמז בבקשה","טָעוּ, רֶמֶז בְּבַקָּשָׁה"],["ניצחון!","נִיצָּחוֹן!"],["ניצחתם! מה קרה לבוס?","נִיצַּחְתֶּם! מָה קָרָה לַבּוֹס?"],["להמשך יבוא...","הֶמְשֵׁךְ יָבוֹא..."],["לילה טוב, גיבורים","לַיְלָה טוֹב, גִּיבּוֹרִים"],["הממלכה ניצלה!","הַמַּמְלָכָה נִיצְּלָה!"],
  [" כותב את עצמו לבד, אבל בסוף כל פרק חסרה לו שורה אחת, שרק הגיבורים יכולים למלא:"," כּוֹתֵב אֶת עַצְמוֹ לְבַד, אֲבָל בְּסוֹף כָּל פֶּרֶק חֲסֵרָה לוֹ שׁוּרָה אַחַת, שֶׁרַק הַגִּיבּוֹרִים יְכוֹלִים לְמַלֵּא:"],[" של ממלכת הקרח"," שֶׁל מַמְלֶכֶת הַקֶּרַח"],["עוד ","עוֹד "],[" תחנות עד הבוס הבא!"," תַּחֲנוֹת עַד הַבּוֹס הַבָּא!"],["תחנה אחת","תַּחֲנָה אַחַת"],[" עד הבוס הבא!"," עַד הַבּוֹס הַבָּא!"],[" עד סוף העולם!"," עַד סוֹף הָעוֹלָם!"],["על המפה כבר רואים מה מחכה. מי יודע מה יהיה שם?","עַל הַמַּפָּה כְּבָר רוֹאִים מָה מְחַכֶּה. מִי יוֹדֵעַ מָה יִהְיֶה שָׁם?"],["לחשים: ","לְחָשִׁים: "],["עוד אין","עוֹד אֵין"],["לבים: ","לְבָבוֹת: "],[" קיבלה:"," קִיבְּלָה:"],[" קיבל:"," קִיבֵּל:"],["תשובה נכונה = פגיעה בבוס!","תְּשׁוּבָה נְכוֹנָה = פְּגִיעָה בַּבּוֹס!"],["הבוס שואל חידה!","הַבּוֹס שׁוֹאֵל חִידָה!"],["רמז: ","רֶמֶז: "],["הדרקון שעף רחוק","הַדְּרָקוֹן שֶׁעָף רָחוֹק"],["הירח שנפל לביצה","הַיָּרֵחַ שֶׁנָּפַל לַבִּיצָּה"],["הכוכבים שהתפזרו","הַכּוֹכָבִים שֶׁהִתְפַּזְּרוּ"],["ההורה עוזר: שתי קוביות!","הַמְּסַפֵּר עוֹזֵר: שְׁתֵּי קוּבִּיּוֹת!"],["עם ההורה ביחד","עִם הַמְּסַפֵּר בְּיַחַד"],[">פגיעה<",">פְּגִיעָה<"]);
+Object.assign(EZC,{"ציפור": "צִפּוֹר", "דג": "דָּג", "ארנב": "אַרְנָב", "כלב": "כֶּלֶב", "סוס": "סוּס", "עכבר": "עַכְבָּר", "תפוח": "תַּפּוּחַ", "ענבים": "עֲנָבִים", "תפוז": "תַּפּוּז", "נמלה": "נְמָלָה", "גשם": "גֶּשֶׁם", "חול": "חוֹל", "קמח": "קֶמַח", "שמש": "שֶׁמֶשׁ", "כוכב": "כּוֹכָב", "ענן": "עָנָן", "מזלג": "מַזְלֵג", "מפתח": "מַפְתֵּחַ", "מסור": "מַסּוֹר", "כיסא": "כִּסֵּא", "שולחן": "שֻׁלְחָן", "מיטה": "מִטָּה", "אני סוחב את הגור שלי בכיס,\nקופץ גבוה בלי לעצור לרגע.": "אֲנִי סוֹחֵב אֶת הַגּוּר שֶׁלִּי בַּכִּיס,\nקוֹפֵץ גָּבוֹהַּ בְּלִי לַעֲצֹר לְרֶגַע.", "חי באוסטרליה": "חַי בְּאוֹסְטְרַלְיָה", "קנגורו": "קָנְגּוּרוּ", "פיל": "פִּיל", "ג'ירפה": "גִּ'ירָפָה", "תנין": "תַּנִּין", "אני נובח ושומר על הבית,\nאוהב עצם וגם לרוץ אחרי כדור.": "אֲנִי נוֹבֵחַ וְשׁוֹמֵר עַל הַבַּיִת,\nאוֹהֵב עֶצֶם וְגַם לָרוּץ אַחֲרֵי כַּדּוּר.", "החבר הכי טוב של ילדים": "הֶחָבֵר הֲכִי טוֹב שֶׁל יְלָדִים", "אני ענק עם חדק ארוך,\nואוזניים גדולות כמו מניפות.": "אֲנִי עֲנָק עִם חֲדָק אָרֹךְ,\nוְאָזְנַיִם גְּדוֹלוֹת כְּמוֹ מְנִיפוֹת.", "חי בספארי": "חַי בַּסָּפָארִי", "אריה": "אַרְיֵה", "קוף": "קוֹף", "אני עגול, אדום וקריספי,\nגדל על העץ ומתוק לאכול.": "אֲנִי עָגוֹל, אָדוֹם וּקְרִיספִּי,\nגָּדֵל עַל הָעֵץ וּמָתוֹק לֶאֱכֹל.", "גזר": "גֶּזֶר", "תות": "תּוּת", "אני צהובה ועגולה בשמיים,\nמחממת ומאירה לכולם ביום.": "אֲנִי צְהֻבָּה וַעֲגֻלָּה בַּשָּׁמַיִם,\nמְחַמֶּמֶת וּמְאִירָה לְכֻלָּם בַּיּוֹם.", "רואים אותה ביום": "רוֹאִים אוֹתָהּ בַּיּוֹם", "נר": "נֵר", "יש לי פסים שחורים ולבנים,\nאני דומה לסוס בספארי.": "יֵשׁ לִי פַּסִּים שְׁחוֹרִים וּלְבָנִים,\nאֲנִי דּוֹמֶה לְסוּס בַּסָּפָארִי.", "חיה עם פסים": "חַיָּה עִם פַּסִּים", "זברה": "זֶבְּרָה", "פרה": "פָּרָה", "כבשה": "כִּבְשָׂה", "אני אומרת מוּוּ,\nונותנת חלב טעים לכולם.": "אֲנִי אוֹמֶרֶת מוּוּ,\nוְנוֹתֶנֶת חָלָב טָעִים לְכֻלָּם.", "חיה בחווה": "חַיָּה בַּחַוָּה", "תרנגולת": "תַּרְנְגֹלֶת", "יש לי כנפיים צבעוניות,\nאני עפה בין הפרחים.": "יֵשׁ לִי כְּנָפַיִם צִבְעוֹנִיּוֹת,\nאֲנִי עָפָה בֵּין הַפְּרָחִים.", "היה פעם זחל": "הָיָה פַּעַם זַחַל", "פרפר": "פַּרְפָּר"});
 function E(t){return ezOn()&&t&&EZC[t]?EZC[t]:t;}
 function ezCls(t){return ezOn()&&t&&EZC[t]?" ezline":"";}
 function narr(){const c=SAVE&&SAVE.campaign;return (c&&c.narr)||"parent";}
@@ -2468,38 +2531,38 @@ function vStation(st,hs,c){
  if(P.phase==="result"){
   const R=P.result;
   h+=arenaHTML(st,L,c.mapId,R.ok?"win":"lose",false);
-  if(P.hurtNow)h+=`<div class="hurtnote slide">${heartsHTML(L,22)}<b>${ezOn()?`${esc(L.heroName)} אִיבֵּד לֵב אֶחָד`:`${esc(L.heroName)} ${L.gender==="f"?"איבדה":"איבד"} לב אחד`}</b></div>`;
+  if(P.hurtNow)h+=`<div class="hurtnote slide">${heartsHTML(L,22)}<b>${ezOn()?`${esc(L.heroName)} אִיבֵּד לֵב אֶחָד`:`${esc(L.heroName)} ${isF(L)?"איבדה":"איבד"} לב אחד`}</b></div>`;
   h+=`<div class="parch slide"><span class="kind" style="background:${R.ok?"#21b84a":"#e0306f"}">${st.type==="choice"?(ezOn()?"בְּחִירָה מְצוּיֶּנֶת":"בחירה מצוינת"):st.type==="meet"?(ezOn()?"רַעְיוֹן מְצוּיָּן":"רעיון מצוין"):ezOn()?(R.ok?"הַצְלָחָה":"תַּפְנִית"):(R.ok?"הצלחה":"תפנית")}</span>${ezText(P.ezRes||fill(EASY_UI[R.ok?"ok":"fail"][P.idx%2],hs,L,""),R.text)}</div>`;
   const X=P.xpInfo||{};
   if(P.noReward)h+=`<div class="panel slide" style="text-align:center"><div class="small muted">התשובה הייתה</div><div class="answer ol">${esc(E(P.answer))}</div><p>הפעם בלי פרס. תזכרו את התשובה, ובחידה הבאה תנצחו!</p></div>`;
-  else h+=`<div class="panel slide"><div class="reward"><div class="chestbox" data-a="iteminfo" data-n="${esc(st.reward.name)}" data-i="${st.reward.icon}" role="button" aria-label="מה החפץ עושה?"><div class="rays"></div>${CHEST}<div class="itempop"><div class="iwig">${itemIcon(st.reward.icon,st.reward.name)}</div></div></div><div style="min-width:0"><div class="small muted">${st.type==="boss"&&hs.length>1?"כל הגיבורים קיבלו":esc(L.heroName)+(L.gender==="f"?" קיבלה":" קיבל")}:</div><button class="rname ol" data-a="iteminfo" data-n="${esc(st.reward.name)}" data-i="${st.reward.icon}">${esc(E(st.reward.name))}</button><div class="small" style="color:var(--ink-dim)">לחצו על החפץ</div><div class="xp"><div class="xpbar"><i data-to="${X.to??0}" style="width:${X.from??0}%"></i></div><span>דרגה ${X.lvlFrom??heroLevel(L)}</span></div></div></div>
-  ${X.lvlTo>X.lvlFrom?`<div class="lvlup" ${P.upQueue&&P.upQueue.length?`data-a="toupgrade" role="button"`:""}>${heroSVG(L,"hero cheer","joy")}<div><div class="ol" style="font-size:1.3rem">עלית דרגה!</div><div class="small">${esc(L.heroName)} ${L.gender==="f"?"הגיעה":"הגיע"} לדרגה ${X.lvlTo}. ועכשיו ${L.gender==="f"?"היא בוחרת":"הוא בוחר"} איזה פריט לשדרג!</div></div></div>`:""}</div>`;
+  else h+=`<div class="panel slide"><div class="reward"><div class="chestbox" data-a="iteminfo" data-n="${esc(st.reward.name)}" data-i="${st.reward.icon}" role="button" aria-label="מה החפץ עושה?"><div class="rays"></div>${CHEST}<div class="itempop"><div class="iwig">${itemIcon(st.reward.icon,st.reward.name)}</div></div></div><div style="min-width:0"><div class="small muted">${st.type==="boss"&&hs.length>1?"כל הגיבורים קיבלו":esc(L.heroName)+(isF(L)?" קיבלה":" קיבל")}:</div><button class="rname ol" data-a="iteminfo" data-n="${esc(st.reward.name)}" data-i="${st.reward.icon}">${esc(E(st.reward.name))}</button><div class="small" style="color:var(--ink-dim)">לחצו על החפץ</div><div class="xp"><div class="xpbar"><i data-to="${X.to??0}" style="width:${X.from??0}%"></i></div><span>דרגה ${X.lvlFrom??heroLevel(L)}</span></div></div></div>
+  ${X.lvlTo>X.lvlFrom?`<div class="lvlup" ${P.upQueue&&P.upQueue.length?`data-a="toupgrade" role="button"`:""}>${heroSVG(L,"hero cheer","joy")}<div><div class="ol" style="font-size:1.3rem">עלית דרגה!</div><div class="small">${esc(L.heroName)} ${isF(L)?"הגיעה":"הגיע"} לדרגה ${X.lvlTo}. ועכשיו ${isF(L)?"היא בוחרת":"הוא בוחר"} איזה פריט לשדרג!</div></div></div>`:""}</div>`;
   h+=P.upQueue&&P.upQueue.length?`<button class="btn wide" data-a="toupgrade"><span>${P.upQueue.length>1?"עליית רמה! כל גיבור בוחר שדרוג":"עליית רמה! בחרו שדרוג"}</span></button>`:`<button class="btn wide grn" data-a="advance"><span>${P.idx===S.play.chapter.stations.length-1?"לסיום הפרק":"ממשיכים לתחנה הבאה"}</span></button>`;
   return h;
  }
  h+=`<div class="parch ${enter?"slide":""}"><span class="kind" style="background:${TYPE_COL[st.type]};color:${O}">${ezOn()?EZK[st.type]+" · תַּחֲנָה "+(st.node+1):KIND[st.type]+" · תחנה "+(st.node+1)}</span><span class="tt">${esc(E(st.title))}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div>${stageBox(st.stage)}`;
  h+=arenaHTML(st,L,c.mapId,P.tries?"retry":"idle",enter);
- if(["riddle","meet","choice"].includes(st.type)&&!P.opened)return h+`<div class="panel" style="text-align:center;align-items:center"><p style="font-weight:900;font-size:1.1rem">${ezOn()?"לַחֲצוּ עַל "+(st.type==="riddle"?"סִימַן הַשְּׁאֵלָה":st.type==="meet"?"בּוּעַת הַדִּבּוּר":"הַמַּפָּה")+" בַּתְּמוּנָה לְמַעְלָה!":(S.kids||narr()!=="parent"?"לחצו על ":"תנו "+(hs.length>1?"לילדים":(hs[0]&&hs[0].gender==="f"?"לילדה":"לילד"))+" ללחוץ על ")+(st.type==="riddle"?"סימן השאלה":st.type==="meet"?"בועת הדיבור":"המפה")+" בתמונה למעלה!"}</p><button class="btn wide" data-a="openq"><span>${st.type==="riddle"?"גלו את החידה":st.type==="meet"?"מה יש לו להגיד?":"לאן אפשר ללכת?"}</span></button></div>`;
+ if(["riddle","meet","choice"].includes(st.type)&&!P.opened)return h+`<div class="panel" style="text-align:center;align-items:center"><p style="font-weight:900;font-size:1.1rem">${ezOn()?"לַחֲצוּ עַל "+(st.type==="riddle"?"סִימַן הַשְּׁאֵלָה":st.type==="meet"?"בּוּעַת הַדִּבּוּר":"הַמַּפָּה")+" בַּתְּמוּנָה לְמַעְלָה!":(S.kids||narr()!=="parent"?"לחצו על ":"תנו "+(hs.length>1?"לילדים":(hs[0]&&isF(hs[0])?"לילדה":"לילד"))+" ללחוץ על ")+(st.type==="riddle"?"סימן השאלה":st.type==="meet"?"בועת הדיבור":"המפה")+" בתמונה למעלה!"}</p><button class="btn wide" data-a="openq"><span>${st.type==="riddle"?"גלו את החידה":st.type==="meet"?"מה יש לו להגיד?":"לאן אפשר ללכת?"}</span></button></div>`;
  const ch=st.challenge||{};regMath(ch);
  if(st.type==="dice"){
   if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">${ezOn()?"מְשִׂימַת גּוּף · כּוּלָּם בְּיַחַד!":"משימת גוף · כולם ביחד!"}</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(E(m.t))}${m.n>1?`<div class="mgoal">${ezOn()?`כְּדֵי לַעֲבוֹר: <b>${m.n}</b> ${esc(E(m.u))}!`:`כדי לעבור צריך <b>${m.n}</b> ${esc(m.u)}. סופרים ביחד בקול!`}</div>`:""}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>${ezOn()?"מִתּוֹךְ":"מתוך"} ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(E(m.u))}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(E(m.u))}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
   if(c.read&&c.read!=="off"&&!P.readDone&&(P.readCount||0)<2&&P.roll==null)return h+readBox(st,hs,L,c);
   if(P.readBonus)h+=`<div class="readok slide">${HEART_SVG(28)}<b>הלחש עבד! ${esc(P.readItem?P.readItem.cu.n:"הכישוף")} התבטל, והקובייה צריכה 1 פחות.</b></div>`;
   const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));const bonus=statOf(L,"str");
-  h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>${ezOn()?`צָרִיךְ <b>${target}</b> וּמַעְלָה בַּקּוּבִּיָּה`:`צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}`}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${L.gender==="f"?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
+  h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>${ezOn()?`צָרִיךְ <b>${target}</b> וּמַעְלָה בַּקּוּבִּיָּה`:`צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}`}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${isF(L)?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
   if(c.dice==="digital"){
    const v=P.roll;const ok=v!=null&&v+bonus>=target;const cls=v==null?"":(ok?"win":"lose");
    h+=d.sides===6?cubeHTML(v,cls):d20HTML(v,cls);
    if(v!=null&&P.rollPair)h+=`<div class="roll-note">בזכות העזרה: ${P.rollPair[0]} ו־${P.rollPair[1]}. לוקחים את הגבוה!</div>`;
    if(v!=null&&bonus)h+=`<div class="roll-note">יצא ${v} + ${bonus} כוח = ${v+bonus}</div>`;
-   if(v==null)h+=`<button class="btn wide" data-a="roll"><span>${esc(L.heroName)}, ${ezOn()?(L.gender==="f"?"הַטִּילִי":"הָטֵל"):(L.gender==="f"?"הטילי":"הטל")}!</span></button>`;
+   if(v==null)h+=`<button class="btn wide" data-a="roll"><span>${esc(L.heroName)}, ${ezOn()?(isF(L)?"הַטִּילִי":"הָטֵל"):(isF(L)?"הטילי":"הטל")}!</span></button>`;
    else{if(!ok&&luckLeft(L)>0)h+=`<button class="btn wide" data-a="reroll"><span>הטלה חוזרת · מזל (נשארו ${luckLeft(L)})</span></button>`;h+=`<button class="btn wide ${ok?"grn":"pnk"}" data-a="dres" data-ok="${ok?1:0}"><span>${ok?"הצלחה! מה קורה עכשיו?":"לא הצליח... מה קורה עכשיו?"}</span></button>`;}
   } else {
    const tg=Math.max(1,target-bonus);
-   h+=`<p class="muted small" style="text-align:center">${esc(L.heroName)} ${L.gender==="f"?"מטילה":"מטיל"} את הקובייה האמיתית.${bonus?` הכוח כבר כלול במספר.`:""}</p><div class="row" style="width:100%"><button class="btn grn" data-a="dres" data-ok="1"><span>יצא ${tg} ומעלה</span></button><button class="btn pnk" data-a="dres" data-ok="0"><span>יצא פחות</span></button></div>`;
+   h+=`<p class="muted small" style="text-align:center">${esc(L.heroName)} ${isF(L)?"מטילה":"מטיל"} את הקובייה האמיתית.${bonus?` הכוח כבר כלול במספר.`:""}</p><div class="row" style="width:100%"><button class="btn grn" data-a="dres" data-ok="1"><span>יצא ${tg} ומעלה</span></button><button class="btn pnk" data-a="dres" data-ok="0"><span>יצא פחות</span></button></div>`;
   }
   if(P.roll==null){h+=helpChip(hs,L,c);}
-  if(ageGroup(c.age)==="old"&&P.roll==null)h+=`<button class="chip" data-a="plan" aria-pressed="${!!P.plan}">תכנית חכמה: צריך 2 פחות</button>`+stageBox(`לפני ההטלה שאלו את ${L.heroName}: איך בדיוק ${L.gender==="f"?"תעשי":"תעשה"} את זה? תכנית מקורית או מצחיקה מקבלת הנחה של 2.`);
+  if(ageGroup(c.age)==="old"&&P.roll==null)h+=`<button class="chip" data-a="plan" aria-pressed="${!!P.plan}">תכנית חכמה: צריך 2 פחות</button>`+stageBox(`לפני ההטלה שאלו את ${L.heroName}: איך בדיוק ${isF(L)?"תעשי":"תעשה"} את זה? תכנית מקורית או מצחיקה מקבלת הנחה של 2.`);
   h+=`</div>`;
  }
  if(st.type==="riddle"){
@@ -2534,7 +2597,7 @@ function readPick(c,hs,L){
  const R=P.readItem;return {...R,t:fill(R.t,hs,L,"")};
 }
 function readBox(st,hs,L,c){
- const P=S.play,R=readPick(c,hs,L),words=R.t.split(" "),lit=P.readLit||[],f=L.gender==="f";
+ const P=S.play,R=readPick(c,hs,L),words=R.t.split(" "),lit=P.readLit||[],f=isF(L);
  return `<div class="panel readbox slide"><div class="eyebrow">מגילת לחש הנגד</div>
  ${ezOn()?`<p class="eztext" style="color:#fff">מְכַשֵּׁף רַע הִטִּיל כָּאן כִּישׁוּף! קוֹרְאִים אֶת הַלַּחַשׁ בְּדִיּוּק כְּמוֹ שֶׁהוּא כָּתוּב:</p>`:`<p class="readintro">מכשף רע הטיל כאן את <b>${R.cu.n}</b>, ${R.cu.d}. רק מי שקורא את לחש הנגד <b>בדיוק כמו שהוא כתוב</b>, ו${esc(R.how)}, יכול לבטל אותו!</p>`}
  <p class="small" style="text-align:center;color:var(--ink-dim)">${ezOn()?"קוֹרְאִים לְבַד. כָּל מִלָּה שֶׁקָּרְאוּ נָכוֹן, לוֹחֲצִים עָלֶיהָ!</p><p hidden>":""}${esc(L.heroName)} ${f?"קוראת":"קורא"} לבד. כל מילה שנקראה נכון, לוחצים עליה והיא נדלקת.</p>
@@ -2561,7 +2624,7 @@ function ptRun(secs){clearInterval(ptInt);const P=S.play;P.pt={idx:P.idx,ph:"cou
 function teamMembers(hs){return hs.length>1?hs.map(h=>({name:h.heroName,h})):[{name:hs[0].heroName,h:hs[0]},{name:"ההורה",h:null}];}
 function teamTarget(c,n,hs){const d=diceFor(c,"easy");const t=Math.round(n*(d.target-.5));return Math.max(n,t-hs.reduce((a,h)=>a+statOf(h,"str"),0));}
 function bossLv(hs){return Math.max(...hs.map(h=>heroLevel(h)))+1;}
-function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${H.gender==="f"?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
+function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
 function stLeader(st,hs){const P=S.play;if(st.type==="boss"&&P.bossTurn!=null)return hs[P.bossTurn%hs.length];return hs.find(h=>h.id===st.leaderId)||hs[0];}
 /* ---------- hero hearts (no death: 0 hearts = too tired, a friend can rescue) ---------- */
 function heroHpMax(h){const l=heroLevel(h);return 3+(l>=5?1:0)+(l>=8?1:0)+statOf(h,"hp");}
@@ -2571,11 +2634,11 @@ const HEALS=["potion","jar","lily","moon"];
 function heartsHTML(h,sz){const m=heroHpMax(h),v=heroHp(h);return `<span class="hhearts" aria-label="${v} מתוך ${m} לבבות">${Array.from({length:m},(_,i)=>`<svg viewBox="0 0 100 92" width="${sz||18}" height="${Math.round((sz||18)*.92)}"><path d="${heartPath(50,46,30)}" fill="${i<v?"#ff4f8a":"#3a3456"}" stroke="${O}" stroke-width="7"/></svg>`).join("")}</span>`;}
 function healGivers(R,hs){const o=[];hs.forEach(g=>{if(g.id===R.id||heroHp(g)<=0)return;const it=(g.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(it)o.push({g,it});});
  const own=(R.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(own)o.push({g:R,it:own});return o;}
-function rescueBox(R,hs,c){const ez=ezOn(),f=R.gender==="f",G=healGivers(R,hs),solo=hs.length<2;
+function rescueBox(R,hs,c){const ez=ezOn(),f=isF(R),G=healGivers(R,hs),solo=hs.length<2;
  return `<div class="panel dicebox rescue"><div class="eyebrow">${ez?"מִבְצַע הַצָּלָה!":"מבצע הצלה!"}</div>
  <div class="rs-hero">${heroSVG(R,"hero","sleep")}</div>
  <p class="need">${ez?`${esc(R.heroName)} ${f?"עֲיֵפָה":"עָיֵף"} מִדַּי לְהַמְשִׁיךְ.`:`${esc(R.heroName)} ${f?"עייפה":"עייף"} מדי להמשיך במסע.`}<br>${ez?"צָרִיךְ לְהַצִּיל!":(solo?"המספר יכול להציל!":"חבר יכול להציל!")}</p>
- ${G.map(x=>`<button class="btn wide grn" data-a="healgive" data-g="${x.g.id}" data-r="${R.id}">${itemIcon(x.it.icon,x.it.name)}<span>${esc(x.g.id===R.id?(ez?"מִשְׁתַּמְּשִׁים בְּ":"משתמשים ב"):x.g.heroName+(x.g.gender==="f"?" נותנת ":" נותן "))}${esc(E(x.it.name))}</span></button>`).join("")}
+ ${G.map(x=>`<button class="btn wide grn" data-a="healgive" data-g="${x.g.id}" data-r="${R.id}">${itemIcon(x.it.icon,x.it.name)}<span>${esc(x.g.id===R.id?(ez?"מִשְׁתַּמְּשִׁים בְּ":"משתמשים ב"):x.g.heroName+(isF(x.g)?" נותנת ":" נותן "))}${esc(E(x.it.name))}</span></button>`).join("")}
  <button class="btn wide" data-a="healtask" data-r="${R.id}"><span>${ez?"מְשִׂימַת הַצָּלָה":"משימת הצלה"}: ${esc(c.mode==="bed"?(ez?"3 נְשִׁימוֹת שֶׁל כּוֹחַ, בְּיַחַד":"3 נשימות של כוח, ביחד"):(solo?(ez?"כִּיף לַמְּסַפֵּר וְ־5 קְפִיצוֹת":"כיף למספר ו־5 קפיצות"):(ez?"חִיבּוּק שֶׁל כּוּלָּם וְ־5 קְפִיצוֹת":"חיבוק של כולם ו־5 קפיצות")))}</span></button>
  <p class="small muted">${ez?"חֵפֶץ רִפּוּי מַחְזִיר 2 לְבָבוֹת. מְשִׂימָה מַחְזִירָה 2.":"חפץ ריפוי מחזיר 2 לבבות. משימה מחזירה 2 לבבות."}</p></div>`;}
 /* ---------- world gear: the look grows with each finished world ---------- */
@@ -2606,7 +2669,8 @@ const RARITY=[{k:"rare",n:["פרס נדיר!","פְּרַס נָדִיר!"],st:1
 function enMax(h){return Math.min(6,4+Math.floor(heroLevel(h)/3));}
 function en(h){const P=S.play;P.en=P.en||{};if(P.en[h.id]==null)P.en[h.id]=enMax(h);return P.en[h.id];}
 function enSet(h,v){const P=S.play;P.en=P.en||{};P.en[h.id]=Math.max(0,Math.min(enMax(h),v));}
-function gd(h,m,f){return h.gender==="f"?f:m;}
+function isF(h){return !!h&&(h.gender==="f"||!!(h.params&&h.params.fem));}
+function gd(h,m,f){return isF(h)?f:m;}
 function partyItems(hs){const o=[];hs.forEach(h=>(h.items||[]).forEach((it,idx)=>{if(!it.used&&ITEM_ROLE[it.icon])o.push({h,it,idx});}));return o;}
 function nextActor(hs,from){const P=S.play,n=hs.length;for(let k=0;k<n;k++){const j=(from+k)%n;if(heroHp(hs[j])>0&&!(P.acted||{})[hs[j].id])return j;}return -1;}
 function bossNewRound(hs,first){
@@ -2626,18 +2690,20 @@ function advanceTurn(){
 function pkScroll(){const a=document.querySelector(".pk");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}
 function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const GENERIC_W=["שמש","עץ","כדור","בית","כוכב","פרח","ענן","דג","ספר","לב"];
+function optN(c,boss){const w=worldIdx(c),yng=ageGroup(c.age)==="young";let n=boss?(w>=2?8:w>=1?6:4):(w>=2?6:4);if(yng)n=Math.min(n,6);return n;}
 function mkOpts(ch,wis){
- if(ch.opts&&ch.opts.length>=2){ch.gone=ch.gone||[];return ch.opts;}
- const ans=String(ch.a).trim();let w=[];
- if(ch.math&&/^\d+$/.test(ans)){const n=+ans;const near=shuf([n-2,n-1,n+1,n+2].filter(x=>x>=0)),far=shuf([n-3,n+3,n+5,n+10,n-5].filter(x=>x>=0&&x!==n));w=near.concat(far).map(String);}
- else{
-  w=(Array.isArray(ch.wrong)?ch.wrong:[]).map(x=>String(x).trim());
-  const yng=ageGroup(SAVE.campaign.age)==="young";
-  w=w.concat(shuf(RIDDLES.filter(r=>!!r.y===yng).map(r=>String(r.a).trim())),shuf(GENERIC_W));
+ const N=Math.max(4,ch.nopt||4);ch.gone=[];
+ if(ch.opts&&ch.opts.length>=N)return ch.opts;
+ const ans=String(ch.a).trim(),yng=ageGroup(SAVE.campaign.age)==="young";let w=[];
+ if(ch.opts&&ch.opts.length){w=ch.opts.map(x=>String(x).trim()).filter(x=>x!==ans);}
+ else if(ch.math&&/^\d+$/.test(ans)){const n=+ans;const near=shuf([n-2,n-1,n+1,n+2].filter(x=>x>=0)),far=shuf([n-3,n+3,n+5,n+10,n-5,n+4,n-4,n+7,n+6,n+8].filter(x=>x>=0&&x!==n));w=near.concat(far).map(String);}
+ else{w=(Array.isArray(ch.wrong)?ch.wrong:[]).map(x=>String(x).trim());}
+ if(!(ch.math&&/^\d+$/.test(ans))||w.length<N-1){
+  const pool=RIDDLES.filter(r=>!!r.y===yng).map(r=>String(r.a).trim()).concat(DB_R.filter(r=>!!r.young===yng).map(r=>String(r.opts[r.ans]).trim()),RIDDLES.filter(r=>!!r.y===yng).flatMap(r=>r.w||[]));
+  w=w.concat(shuf(pool),shuf(GENERIC_W));
  }
- const seen=new Set([ans]);w=w.filter(x=>x&&!seen.has(x)&&seen.add(x)).slice(0,3);
- ch.opts=shuf([ans].concat(w));ch.gone=[];
- const k=Math.min(2,wis||0);let pre=0;ch.opts.forEach((o,i)=>{if(pre<k&&o!==ans){ch.gone.push(i);pre++;}});
+ const seen=new Set([ans]);w=w.filter(x=>x&&!seen.has(x)&&seen.add(x)).slice(0,N-1);
+ ch.opts=shuf([ans].concat(w));
  return ch.opts;
 }
 function triviaHTML(ch,ctx){
@@ -2680,6 +2746,7 @@ function vBoss(st,hs,c,enter){
  const segs=Array.from({length:hpMax},(_,i)=>`<i class="${i<hp?"on":""}" style="${i<hp?`background:${hpCol}`:""}"></i>`).join("");
  const fbox=`<div class="pk-box pk-fbox"><div class="pk-nm"><b>${esc(E(st.title))}</b><span>${T("רמה","רָמָה")} ${bossLv(hs)}</span></div><div class="pk-hp" aria-label="${hp} מתוך ${hpMax}"><em>${T("חיי הבוס","חַיֵּי הַבּוֹס")}</em><div class="pk-segs">${segs}</div><b class="pk-hpn">${hp}/${hpMax}</b></div></div>`;
  const mbox=`<div class="pk-box pk-mbox"><div class="pk-nm"><b>${esc(view.heroName)}</b><span>${T("דרגה","דַּרְגָּה")} ${heroLevel(view)}</span></div><div class="pk-row">${heartsHTML(view,15)}</div><div class="pk-row"><em>⚡</em>${blocks(en(view),enMax(view),"#3ee0ff")}</div></div>`;
+ const nItems=partyItems(hs).length,bagBtn=(ph==="choose"&&!ko&&live.length)?`<button class="pk-bagbtn" data-a="bbag" ${nItems?"":"disabled"} aria-label="${T("פתיחת התיק","פְּתִיחַת הַתִּיק")}"><i>🎒</i><b>${T("תיק","תִּיק")}</b><u>${nItems}</u></button>`:"";
  const heroHurtNow=bAtk&&bAtk.hit&&!bAtk.blocked,prot=(P.defend||{})[view.id]||(P.guard||{})[view.id]||((P.ward||{})[view.id]>0);
  const frozenNow=P.frozen||(bAtk&&bAtk.frozen);
  let banner="";
@@ -2687,11 +2754,11 @@ function vBoss(st,hs,c,enter){
  else if(heroMiss)banner=`<div class="banner ol lose">${T("התחמק!","הִתְחַמֵּק!")}</div>`;
  else if(bAtk)banner=`<div class="banner ol ${bAtk.frozen||bAtk.blocked||!bAtk.hit?"":"lose"}">${bAtk.frozen?T("קפוא!","קָפוּא!"):bAtk.blocked?T("נחסם!","נֶחְסַם!"):bAtk.hit?T("אאוץ'!","אַוּוּץ'!"):T("פספס!","פִּסְפֵּס!")}</div>`;
  let h=intro+turnHead(ph==="bossatk"?view:R);
- h+=`<div class="pk arena a-${c.mapId}"><div class="ground"></div>
+ h+=`<div class="pk arena a-${c.mapId}"><div class="ground"></div><div class="pk-bg ${NPC_THREAT[st.npc]||"hit"}" aria-hidden="true"></div>
   ${fbox}
   <div class="fx boss pk-foe ${ko?"ko":""} ${enter&&!intro?"ent-l":""} ${bAtk&&!bAtk.frozen&&!ko?"lunge":""} dmg${dmg} ${frozenNow&&!ko?"frozen":""}">${npcSVG(st.npc||"sprite",c.mapId,heroHit&&!ko?"oops":"")}${bossBruises(dmg,ko)}${ko?`<div class="dizzy"><div><i></i><i></i><i></i></div></div>`:""}${frozenNow&&!ko?`<div class="pk-ice" aria-hidden="true"><b>❄️</b><b>❄️</b><b>❄️</b></div>`:""}</div>
   <div class="fx pk-me ${enter?"ent-r":""} ${heroHurtNow?"hurt":""} ${prot&&ph!=="rolled"&&!heroHurtNow?"shielded":""}">${heroSVG(view,"hero "+(heroHit?"cheer":heroHurtNow?"oops":""),heroHurtNow?"oops":heroHit?"joy":"happy")}${prot&&ph!=="rolled"&&!heroHurtNow?`<div class="shieldfx"></div>`:""}${(!ko&&P.intent===view.id&&(ph==="choose"||ph==="roll"||ph==="bag"||ph==="target"))?`<div class="pk-aim" aria-hidden="true">🎯</div>`:""}${heroHurtNow?`<div class="hurtpop"><svg viewBox="0 0 100 92" width="44" height="40"><path d="${heartPath(50,46,30)}" fill="#ff4f8a" stroke="${O}" stroke-width="5"/><path d="M50 22 L42 44 L56 52 L48 74" fill="none" stroke="${O}" stroke-width="6" stroke-linejoin="round"/></svg><b>-1</b></div>`:""}</div>
-  ${mbox}${banner}
+  ${mbox}${banner}${bagBtn}
  </div>`;
  if(n>1)h+=`<div class="pk-team" aria-label="${T("הצוות","הַצֶּוֶת")}">${hs.map(x=>{const t=heroHp(x)<=0;return `<div class="pk-t ${x.id===R.id&&ph!=="bossatk"?"on":""} ${t?"tired":""} ${(P.acted||{})[x.id]?"done":""}"><div class="pk-th">${heroSVG(x,"hero",t?"sleep":"happy")}${P.intent===x.id&&!t&&!ko?`<u>🎯</u>`:""}${t?`<u>😴</u>`:""}</div><b>${esc(x.heroName)}</b>${heartsHTML(x,11)}<span class="pk-en">⚡${en(x)}</span></div>`;}).join("")}</div>`;
  // ---- dialogue ----
@@ -2700,7 +2767,7 @@ function vBoss(st,hs,c,enter){
  const firstEver=!P.bossRound&&!Object.keys(P.acted||{}).length&&ph==="choose";
  if(ko)say=T("טוב, טוב... ניצחתם!","טוֹב, טוֹב... נִיצַּחְתֶּם!");
  else if(ph==="choose")say=(firstEver&&st.bubble?`«${E(st.bubble)}» `:"")+tele+" "+T(`מה עושה ${R.heroName}?`,`מָה עוֹשֶׂה ${R.heroName}?`);
- else if(ph==="roll")say=T(`${R.heroName}: כדי לפגוע צריך להטיל ${P.bAct==="magic"?bossTarget(c,"magic"):bossTarget(c,"atk")} או יותר.`,`${R.heroName}: כְּדֵי לִפְגֹּעַ צָרִיךְ לְהַטִּיל ${P.bAct==="magic"?bossTarget(c,"magic"):bossTarget(c,"atk")} אוֹ יוֹתֵר.`)+(bonus?T(` יש לך עוד ${bonus} מהכוח!`,` יֵשׁ לְךָ עוֹד ${bonus} מֵהַכֹּחַ!`):"");
+ else if(ph==="roll")say=T(`${R.heroName}: כדי לפגוע צריך להטיל ${P.bAct==="magic"?bossTarget(c,"magic"):bossTarget(c,"atk")} או יותר.`,`${R.heroName}: כְּדֵי לִפְגֹּעַ צָרִיךְ לְהַטִּיל ${P.bAct==="magic"?bossTarget(c,"magic"):bossTarget(c,"atk")} אוֹ יוֹתֵר.`)+(bonus?T(` יש ${gd(R,"לך","לך")} עוד ${bonus} מהכוח!`,` יֵשׁ ${gd(R,"לְךָ","לָךְ")} עוֹד ${bonus} מֵהַכֹּחַ!`):"");
  else if(ph==="rolled"&&P.bossLine)sayHTML=ezText(P.lastHit?EASY_UI.hit:EASY_UI.miss,P.bossLine);
  else if(ph==="bossatk"||ph==="msg")say=P.msg?T(P.msg.p,P.msg.v):"";
  else if(ph==="bag")say=T("מה לוקחים מהתיק?","מָה לוֹקְחִים מֵהַתִּיק?");
@@ -2728,14 +2795,14 @@ function vBoss(st,hs,c,enter){
   ${!P.lastHit&&!P.lastTeam&&P.bAct!=="q"&&luckLeft(R)>0?`<button class="btn wide" data-a="reroll"><span>${T("הטלה חוזרת","הֲטָלָה חוֹזֶרֶת")} · ${T("מזל","מַזָּל")} (${luckLeft(R)})</span></button>`:""}
   <button class="btn wide grn" data-a="bnext"><span>${T("המשך","הַמְשֵׁךְ")}</span></button>`);
  if(ph==="q"){
-  if(!P.bossQ){P.bossQ=nextRiddle(c);}
+  if(!P.bossQ){P.bossQ=nextRiddle(c,true);}
   const Q=P.bossQ;regMath(Q);mkOpts(Q,statOf(R,"wis"));
   return panel(`<div class="eyebrow">${T("חידה!","חִידָה!")}</div><div class="riddle" style="color:#fff">${esc(E(Q.q))}</div>${P.bossQhint?`<p class="need">${T("רמז","רֶמֶז")}: ${esc(E(Q.hint)||letterClue(Q.a))}</p>${mathVis(Q)}`:""}${triviaHTML(Q,"boss")}<div class="parent-only">${P.reveal?`<div class="answer ol">${esc(E(Q.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div>`);
  }
  if(ph==="team"){
   const Tm=teamMembers(hs),tt=teamTarget(c,Tm.length,hs),rolls=P.teamRolls||[];
   return panel(`<div class="eyebrow">${T("מכה משותפת!","מַכָּה מְשֻׁתֶּפֶת!")}</div><p class="need">${T(`כל אחד לוחץ על הכפתור שלו ומטיל, ומחברים את כל המספרים. צריך <b>${tt}</b> ומעלה. הצלחה מורידה <b>2</b>!`,`כָּל אֶחָד מַטִּיל בַּכַּפְתּוֹר שֶׁלּוֹ, וּמְחַבְּרִים. צָרִיךְ <b>${tt}</b> וּמַעְלָה!`)}</p>
-  <div class="teamrow">${Tm.map((m,i)=>`<div class="tmem">${m.h?heroSVG(m.h,"hero"):`<svg viewBox="0 0 60 70" aria-hidden="true"><circle cx="30" cy="22" r="14" fill="#ffd9c0" stroke="${O}" stroke-width="3"/><path d="M8 66 Q8 40 30 40 Q52 40 52 66 Z" fill="#4fe36b" stroke="${O}" stroke-width="3"/></svg>`}<span class="tdie ${rolls[i]!=null?"landed":""}" id="td${i}">${rolls[i]??"?"}</span><small>${esc(m.name)}</small>${c.dice==="digital"?(rolls[i]==null?`<button class="btn sm" data-a="teamone" data-i="${i}"><span>${T("הטל!","הָטֵל!")}</span></button>`:`<b class="tm-ok">✓</b>`):""}</div>`).join("")}</div>
+  <div class="teamrow">${Tm.map((m,i)=>`<div class="tmem">${m.h?heroSVG(m.h,"hero"):`<svg viewBox="0 0 60 70" aria-hidden="true"><circle cx="30" cy="22" r="14" fill="#ffd9c0" stroke="${O}" stroke-width="3"/><path d="M8 66 Q8 40 30 40 Q52 40 52 66 Z" fill="#4fe36b" stroke="${O}" stroke-width="3"/></svg>`}<span class="tdie ${rolls[i]!=null?"landed":""}" id="td${i}">${rolls[i]??"?"}</span><small>${esc(m.name)}</small>${c.dice==="digital"?(rolls[i]==null?`<button class="btn sm" data-a="teamone" data-i="${i}"><span>${T(gd(m.h||{},"הטל!","הטילי!"),gd(m.h||{},"הָטֵל!","הַטִּילִי!"))}</span></button>`:`<b class="tm-ok">✓</b>`):""}</div>`).join("")}</div>
   ${c.dice==="digital"?"":`<div class="row" style="width:100%"><button class="btn grn" data-a="teammark" data-ok="1"><span>${T(`יצא ${tt} ומעלה`,`יָצָא ${tt} וּמַעְלָה`)}</span></button><button class="btn pnk" data-a="teammark" data-ok="0"><span>${T("יצא פחות","יָצָא פָּחוֹת")}</span></button></div>`}
   ${rolls.some(x=>x!=null)?"":`<button class="chip" data-a="teamcancel">${T("חזרה לבחירת פעולה","חֲזָרָה")}</button>`}`);
  }
@@ -2749,7 +2816,7 @@ function vBoss(st,hs,c,enter){
   let list="";
   if(P.tmode==="friend"){
    list=hs.filter(x=>x.id!==R.id).map(x=>{const tired=heroHp(x)<=0,cost=tired?2:1,ok=en(R)>=cost;
-    return `<button class="tgt ${ok?"":"dis"}" ${ok?"":"disabled"} data-a="bfriend" data-id="${x.id}"><span class="tg-h">${heroSVG(x,"hero",tired?"sleep":"happy")}</span><span class="tg-t"><b>${esc(x.heroName)}</b>${heartsHTML(x,13)}<small>${tired?T("מעירים אותו/ה","מְעִירִים אוֹתוֹ/אוֹתָהּ"):T("מגינים עליו/עליה","מְגִינִים עָלָיו/עָלֶיהָ")} · ⚡${cost}</small></span></button>`;}).join("");
+    return `<button class="tgt ${ok?"":"dis"}" ${ok?"":"disabled"} data-a="bfriend" data-id="${x.id}"><span class="tg-h">${heroSVG(x,"hero",tired?"sleep":"happy")}</span><span class="tg-t"><b>${esc(x.heroName)}</b>${heartsHTML(x,13)}<small>${tired?T(gd(x,"מעירים אותו","מעירים אותה"),gd(x,"מְעִירִים אוֹתוֹ","מְעִירִים אוֹתָהּ")):T(gd(x,"מגינים עליו","מגינים עליה"),gd(x,"מְגִינִים עָלָיו","מְגִינִים עָלֶיהָ"))} · ⚡${cost}</small></span></button>`;}).join("");
   }else{
    const x0=P.pick&&hs.find(y=>y.id===P.pick.h),it0=x0&&(x0.items||[])[P.pick.i],role=it0&&ITEM_ROLE[it0.icon];
    list=hs.filter(x=>role==="heal"?heroHp(x)<heroHpMax(x):role==="energy"?(heroHp(x)>0&&en(x)<enMax(x)):heroHp(x)>0).map(x=>`<button class="tgt" data-a="btarget" data-id="${x.id}"><span class="tg-h">${heroSVG(x,"hero",heroHp(x)<=0?"sleep":"happy")}</span><span class="tg-t"><b>${esc(x.heroName)}</b>${heartsHTML(x,13)}<small>⚡${en(x)}/${enMax(x)}</small></span></button>`).join("");
@@ -2772,7 +2839,6 @@ function vBoss(st,hs,c,enter){
  let m=btn("atk","⚔️",T("התקפה","הַתְקָפָה"),eR>=1?T("מכה: מורידה 1","מַכָּה: מוֹרִידָה 1"):lowEn,1,"bact",'data-v="atk"',eR<1);
  m+=btn("mag","✨",esc(E(mg)),eR>=2?T("קסם חזק: מורידה 2","קֶסֶם חָזָק: מוֹרִידָה 2"):lowEn,2,"bact",'data-v="magic"',eR<2);
  m+=btn("def","🛡️",T("הגנה","הֲגָנָה"),T("חוסם מכה, מקבל +2 אנרגיה","חוֹסֵם מַכָּה, מְקַבֵּל +2 אֱנֶרְגְּיָה"),0,"bact",'data-v="def"');
- m+=btn("bag","🎒",T("תיק","תִּיק"),nIt?(nIt===1?T("חפץ אחד","חֵפֶץ אֶחָד"):T(`${nIt} חפצים`,`${nIt} חֲפָצִים`)):T("ריק","רֵיק"),null,"bbag","",!nIt);
  if(!P.teamUsed)m+=btn("team","🤝",T("מכה משותפת","מַכָּה מְשֻׁתֶּפֶת"),teamOk?(n>1?T("כולם ביחד: מורידה 2","כּוּלָּם יַחַד: מוֹרִידָה 2"):T("עם המספר: מורידה 2","עִם הַמְּסַפֵּר: מוֹרִידָה 2")):(allUp?lowEn:T("צריך שכולם ערים","צָרִיךְ שֶׁכּוּלָּם עֵרִים")),1,"team","",!teamOk);
  if(n>1)m+=btn("fri","💞",T("עזרה לחבר","עֶזְרָה לְחָבֵר"),canFriend?T("להגן או להעיר חבר","לְהָגֵן אוֹ לְהָעִיר חָבֵר"):lowEn,"1-2","bfriendmenu","",!canFriend);
  return h+`<div class="pk-menu">${m}</div>`+storyH;
@@ -2837,7 +2903,7 @@ function applyItem(oid,idx,tid){
 }
 const CROP={str:"76 6 80 80",wis:"18 -40 104 104",luck:"-8 46 156 124",hp:"30 70 80 80",pow:"72 20 72 72",def:"0 70 72 72"};
 function vUpgrade(hs){
- const P=S.play,R=hs.find(h=>h.id===(P.upQueue||[])[0])||hs[0],lv=(P.upLv||{})[R.id]||{from:heroLevel(R),to:heroLevel(R)},f=R.gender==="f";
+ const P=S.play,R=hs.find(h=>h.id===(P.upQueue||[])[0])||hs[0],lv=(P.upLv||{})[R.id]||{from:heroLevel(R),to:heroLevel(R)},f=isF(R);
  const step=P.upStep||"intro";
  if(step==="intro"){
   const up=lv.to>lv.from;
@@ -2985,7 +3051,7 @@ async function genHero(fix){
 }
 function saveHero(){
  const d=S.draft;if(!d.result)return;
- const rec={kidName:d.kidName.trim()||"גיבור",gender:d.gender,desc:d.desc,heroName:d.result.heroName,title:d.result.title,catch:d.result.catch,params:{...d.result.params,fem:d.gender==="f"},fixesLeft:d.fixesLeft};
+ const rec={kidName:d.kidName.trim()||"גיבור",gender:d.gender,desc:d.desc,heroName:d.result.heroName,title:d.result.title,catch:d.result.catch,params:{...d.result.params,fem:isF(d)},fixesLeft:d.fixesLeft};
  if(d.existing){const h=SAVE.heroes.find(x=>x.id===d.id);Object.assign(h,rec);delete h.demo;}
  else{const h={id:rid(),xp:0,items:[],...rec};SAVE.heroes.push(h);if(S.setup&&S.setup.heroIds.length<4)S.setup.heroIds.push(h.id);if(S.joinCamp&&SAVE.campaign&&SAVE.campaign.heroIds.length<4){SAVE.campaign.heroIds.push(h.id);}S.joinCamp=false;}
  persist();
@@ -3128,6 +3194,7 @@ app.addEventListener("click",e=>{
   case "delhero": S.confirmDel=true;render();break;
   case "delcancel": S.confirmDel=null;render();break;
   case "delhero2": {const id=S.draft.id;SAVE.heroes=SAVE.heroes.filter(h=>h.id!==id);if(SAVE.campaign){SAVE.campaign.heroIds=SAVE.campaign.heroIds.filter(x=>x!==id);if(!SAVE.campaign.heroIds.length)SAVE.campaign=null;}persist();go("home");toast("נמחק");break;}
+  case "partytog": {const c=SAVE.campaign,id=b.dataset.id;if(!c)break;if(c.heroIds.includes(id)){if(c.heroIds.length>1){c.heroIds=c.heroIds.filter(x=>x!==id);persist();sfx("pop");render();}else sfx("no");}else if(c.heroIds.length<4&&SAVE.heroes.some(h=>h.id===id)){c.heroIds.push(id);persist();sfx("win");render();}else sfx("no");break;}
   case "partyadd": {const c=SAVE.campaign,id=b.dataset.id;if(c&&c.heroIds.length<4&&!c.heroIds.includes(id)&&SAVE.heroes.some(h=>h.id===id)){c.heroIds.push(id);persist();sfx("win");render();}break;}
   case "partyrm": {const c=SAVE.campaign,id=b.dataset.id;if(c&&c.heroIds.length>1){c.heroIds=c.heroIds.filter(x=>x!==id);persist();sfx("pop");render();}break;}
   case "partynew": {if(SAVE.campaign&&SAVE.campaign.heroIds.length<4){S.joinCamp=true;S.returnTo="home";S.draft=newDraft();go("hero");}break;}
@@ -3145,6 +3212,8 @@ app.addEventListener("click",e=>{
   case "beginplay": S.play.startedAt=Date.now();go("play");break;
   case "kids": S.kids=!S.kids;render();break;
   case "togglemap": S.showMap=!S.showMap;render();break;
+  case "mapzoom": S.mapZoom=true;sfx("pop");render();break;
+  case "mapclose": S.mapZoom=false;render();break;
   case "pause": S.play=null;S.kids=false;go("home");toast("נעצר. ממשיכים מאותה תחנה");break;
   case "next": P.idx=0;P.phase="read";snapStation();sfx("pop");render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});break;
   case "help": P.help=!P.help;render();break;
@@ -3179,12 +3248,12 @@ app.addEventListener("click",e=>{
    P.acted[R.id]=true;P.tmode=null;P.msg={p,v};P.bossPhase="msg";persist();sfx("chest");confetti(25);render();break;}
   case "tpick": {if(P.tpLock)break;const i=+b.dataset.i,ctx=b.dataset.x;const ch=ctx==="boss"?P.bossQ:P.chapter.stations[P.idx].challenge;if(!ch||!ch.opts||ch.gone.includes(i))break;
    const ok=ch.opts[i]===String(ch.a).trim();
-   if(ctx==="st"){if(ok){P.tpLock=true;b.classList.add("ok");sfx("win");confetti(18);setTimeout(()=>{P.tpLock=false;if(S.play===P&&P.phase!=="result")resolveStation(true);},RM?0:650);}else{ch.gone.push(i);P.tries=(P.tries||0)+1;sfx("lose");render();}}
+   if(ctx==="st"){if(ok){P.tpLock=true;b.classList.add("ok");sfx("win");confetti(18);setTimeout(()=>{P.tpLock=false;if(S.play===P&&P.phase!=="result")resolveStation(true);},RM?0:650);}else{P.tries=(P.tries||0)+1;sfx("lose");render();setTimeout(()=>{const e=document.querySelector(`.tv[data-i="${i}"]`);if(e){e.classList.add("shake");}},0);}}
    else{if(ok){P.tpLock=true;b.classList.add("ok");sfx("win");setTimeout(()=>{P.tpLock=false;P.bossQ=null;P.bossQhint=false;P.qDone=P.bossRound;P.bAct="q";bossHit(null,true);},RM?0:600);}
-    else{ch.gone.push(i);sfx("lose");if(!P.bossQhint){P.bossQhint=true;render();}else{P.bossQ=null;P.bossQhint=false;P.qDone=P.bossRound;P.bAct="q";bossHit(null,false);}}}
+    else{sfx("lose");if(!P.bossQhint){P.bossQhint=true;render();}else{P.bossQ=null;P.bossQhint=false;P.qDone=P.bossRound;P.bAct="q";bossHit(null,false);}}}
    break;}
-  case "healgive": {const g=SAVE.heroes.find(x=>x.id===b.dataset.g),r=SAVE.heroes.find(x=>x.id===b.dataset.r);const it=g&&(g.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(!it||!r)break;it.used=true;r.hp=Math.min(heroHpMax(r),heroHp(r)+2);persist();sfx("win");confetti(50);render();toast(r.heroName+(ezOn()?(r.gender==="f"?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(r.gender==="f"?" חזרה למסע!":" חזר למסע!")));break;}
-  case "healtask": {const r=SAVE.heroes.find(x=>x.id===b.dataset.r);if(!r)break;r.hp=Math.min(heroHpMax(r),2);persist();sfx("win");confetti(40);render();toast(r.heroName+(ezOn()?(r.gender==="f"?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(r.gender==="f"?" חזרה למסע!":" חזר למסע!")));break;}
+  case "healgive": {const g=SAVE.heroes.find(x=>x.id===b.dataset.g),r=SAVE.heroes.find(x=>x.id===b.dataset.r);const it=g&&(g.items||[]).slice().reverse().find(x=>!x.used&&HEALS.includes(x.icon));if(!it||!r)break;it.used=true;r.hp=Math.min(heroHpMax(r),heroHp(r)+2);persist();sfx("win");confetti(50);render();toast(r.heroName+(ezOn()?(isF(r)?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(isF(r)?" חזרה למסע!":" חזר למסע!")));break;}
+  case "healtask": {const r=SAVE.heroes.find(x=>x.id===b.dataset.r);if(!r)break;r.hp=Math.min(heroHpMax(r),2);persist();sfx("win");confetti(40);render();toast(r.heroName+(ezOn()?(isF(r)?" חָזְרָה לַמַּסָּע!":" חָזַר לַמַּסָּע!"):(isF(r)?" חזרה למסע!":" חזר למסע!")));break;}
   case "teamone": {const i=+b.dataset.i,hs=campHeroes(),T=teamMembers(hs),d=diceFor(SAVE.campaign,"easy");P.teamRolls=P.teamRolls||T.map(()=>null);if(P.teamRolls[i]!=null)break;P.teamRolls[i]=1+Math.floor(Math.random()*d.sides);sfx("roll");
    if(P.teamRolls.every(x=>x!=null)){render();setTimeout(()=>teamHit(P.teamRolls.reduce((a,x)=>a+x,0)),700);}else render();break;}
   case "team": P.bossPhase="team";P.teamRolls=null;sfx("boss");render();{const t=document.querySelector(".teambox,.pk-panel");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});}break;
@@ -3269,6 +3338,7 @@ function devKind(){const w=Math.min(screen.width||innerWidth,screen.height||inne
  addEventListener("pagehide",flush);
 })();
 
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.mapZoom){S.mapZoom=false;render();}else if((e.key==="Enter"||e.key===" ")&&e.target&&e.target.classList&&e.target.classList.contains("zoomable")){e.preventDefault();S.mapZoom=true;render();}});
 /* ---------- boot ---------- */
 SAVE=loadLocal()||defaultSave();
 normSave();
