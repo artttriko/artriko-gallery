@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<style>html:not(.fr) body{opacity:0}body{transition:opacity .25s}</style>
+<script>(function(){var d=document.documentElement,g=function(){d.classList.add("fr")};setTimeout(g,1300);try{Promise.all([document.fonts.load("700 1em Rubik"),document.fonts.load("500 1em Rubik"),document.fonts.load("700 1em 'Frank Ruhl Libre'")]).then(g,g);}catch(e){g();}})();</script>
 <style>
 /* Layout: one chunky arcade column. Royal-blue game lobby, outlined toy-like panels, parchment pages for the read-aloud story. Single bright look by choice. */
 :root{
@@ -1279,8 +1281,8 @@ function initCloud(){
  const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js";
  sc.onload=async()=>{try{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
-  sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user||null;if((u&&u.id)!==(sbUser&&sbUser.id)){sbUser=u;if(u)syncCloud();if(!S.play)render();}});
-  const {data}=await sb.auth.getSession();sbUser=data&&data.session?data.session.user:null;if(sbUser)syncCloud();if(!S.play)render();
+  sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user||null;if((u&&u.id)!==(sbUser&&sbUser.id)){sbUser=u;if(u)syncCloud();if(!S.play&&S.screen!=="splash")render();}});
+  const {data}=await sb.auth.getSession();sbUser=data&&data.session?data.session.user:null;if(sbUser)syncCloud();if(!S.play&&S.screen!=="splash")render();
  }catch(e){sb=null;}};
  document.head.appendChild(sc);
 }
@@ -1288,7 +1290,7 @@ async function syncCloud(){
  if(!sb||!sbUser)return;
  try{const {data}=await sb.from("dream_saves").select("data").eq("user_id",sbUser.id).maybeSingle();
   const remote=data&&data.data;
-  if(remote&&remote.heroes&&(remote.updatedAt||0)>(SAVE.updatedAt||0)){SAVE=remote;normSave();try{localStorage.setItem(LS,JSON.stringify(SAVE));}catch(e){}if(!S.play){render();toast("ההתקדמות נטענה מהחשבון");}}
+  if(remote&&remote.heroes&&(remote.updatedAt||0)>(SAVE.updatedAt||0)){SAVE=remote;normSave();try{localStorage.setItem(LS,JSON.stringify(SAVE));}catch(e){}if(!S.play&&S.screen!=="splash"){render();toast("ההתקדמות נטענה מהחשבון");}}
   else pushCloud(true);
  }catch(e){}
 }
