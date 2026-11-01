@@ -836,6 +836,11 @@ svg.hero,.fx svg{overflow:visible}
 @media (max-height:720px){.spl-die{width:76px;height:76px}.spl-heroes>div{width:min(20vw,84px)}.spl-ben{height:100px}.spl-bi p{font-size:.88rem}.splash{gap:10px}}
 @media (max-width:400px){.spl-bi p{font-size:.86rem}.spl-bic{width:50px;height:50px;font-size:1.7rem}}
 @media (prefers-reduced-motion:reduce){.spl-fl span{display:none}.spl-bi{animation:none}.spl-bi:first-child{opacity:1}.spl-dots{display:none}}
+.saverow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:2px solid #ffffff2a;border-radius:14px;margin:6px 0;text-align:right}
+.saverow.sel{border-color:#ff4f8a;background:#ff4f8a22}
+.saveinfo{min-width:0}.saveinfo b{display:block;overflow:hidden;text-overflow:ellipsis}
+.saveacts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn.ghost{background:transparent;color:#ffd7e4;border:2px solid #ffffff44;box-shadow:none}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -1118,7 +1123,7 @@ const LS="kubiya-save-v1";
 function defaultSave(){
  return {v:1,updatedAt:0,heroes:[{id:"demo",demo:true,kidName:"ים",gender:"m",desc:"לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב",heroName:"ים דרקו",title:"לוחם הדרקונים",catch:"אף דרקון לא מפחיד אותי!",params:{skin:1,hair:"spiky",hairColor:"#7a4a2a",primary:"#ff3d4e",secondary:"#ffcf2e",head:"bandana",weapon:"sword",pet:"dragon"},fixesLeft:3,xp:0,items:[]}],campaign:null};
 }
-function normSave(){try{SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.unlocks.owned=SAVE.unlocks.owned||[];(SAVE.heroes||[]).forEach(h=>(h.items||[]).forEach(it=>{it.icon=fitIcon(it.name,it.icon);}));SAVE.gems=SAVE.gems||0;SAVE.unlocks.owned=SAVE.unlocks.owned.map(x=>x==="weapon:lantern"?"weapon:flamesword":x);SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params){h.params.fem=isF(h);if(h.params.weapon==="lantern")h.params.weapon="flamesword";}});}catch(e){}}
+function normSave(){try{SAVE.camps=SAVE.camps||[];{const mx=MAX_SAVES-(SAVE.campaign?1:0);if(SAVE.camps.length>mx)SAVE.camps=SAVE.camps.slice(0,mx);}SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};SAVE.unlocks.owned=SAVE.unlocks.owned||[];(SAVE.heroes||[]).forEach(h=>(h.items||[]).forEach(it=>{it.icon=fitIcon(it.name,it.icon);}));SAVE.gems=SAVE.gems||0;SAVE.unlocks.owned=SAVE.unlocks.owned.map(x=>x==="weapon:lantern"?"weapon:flamesword":x);SAVE.customMaps=SAVE.customMaps||[];(SAVE.heroes||[]).forEach(h=>{if(h.params){h.params.fem=isF(h);if(h.params.weapon==="lantern")h.params.weapon="flamesword";}});}catch(e){}}
 function loadLocal(){try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r);}catch(e){}return null;}
 let db=null,uid=null,writing=false,pendingWrite=false;
 function persist(){
@@ -1974,6 +1979,7 @@ function render(){
  app.innerHTML=html;
  app.querySelectorAll("[data-keep]").forEach(e=>{const k=keep[e.dataset.keep];if(k){e.scrollTop=k[0];e.scrollLeft=k[1];}});
  if(S.lock)app.insertAdjacentHTML("beforeend",lockModal());
+ if(S.savePick||S.saveDel!=null)app.insertAdjacentHTML("beforeend",saveModal());
  if(S.hinfo)app.insertAdjacentHTML("beforeend",heroInfo());
  if(S.ren)app.insertAdjacentHTML("beforeend",renameBox());
  if(S.info)app.insertAdjacentHTML("beforeend",itemInfo());
@@ -2139,9 +2145,25 @@ function shopSuggest(){
  return `<section class="panel shopsug"><div class="eyebrow">אפשר לשדרג את ${esc(h.heroName)}</div><div class="sugrow">${pick2.map(x=>{const q={...h.params};dSet(q,x.T.k,x.v);return `<button class="sugitem t${x.tr}" data-a="shopgo" data-id="${h.id}" data-tab="${x.T.id}">${x.T.k==="pet"?`<svg viewBox="-8 100 54 64">${petSVG(x.v)}</svg>`:`<svg viewBox="${x.T.crop}" class="${x.T.k==="style"?"silh":""}">${heroInner(q,1,{fem:isF(h),mood:"happy"})}</svg>`}<b>${esc(x.T.k==="_face"?FACEL[x.v]:x.T.k==="style"?STYLE_N[x.v][isF(h)?1:0]:LBL[x.T.k][x.v])}</b><span>${GEM(14)}${x.pr}</span></button>`;}).join("")}</div>
  <p class="small muted">${can.length?`יש לכם ${gems()} יהלומים. מספיק כדי לפתוח!`:`יש לכם ${gems()} יהלומים. ממשיכים לשחק ואוספים עוד.`}</p></section>`;
 }
+const MAX_SAVES=4;
+function allSaves(){return (SAVE.campaign?[SAVE.campaign]:[]).concat(SAVE.camps||[]);}
+function saveRow(c,extra){const names=(c.heroIds||[]).map(id=>(SAVE.heroes.find(h=>h.id===id)||{}).heroName).filter(Boolean);return `<div class="saverow ${extra&&extra.sel?"sel":""}"><div class="saveinfo"><b>${esc(names.join(", ")||"גיבורים")}</b><div class="small muted">${esc(campMap(c).name)} · תחנה ${Math.min((c.node||0)+1,NODES)} מתוך ${NODES}${(c.mapsDone||[]).length?` · ${(c.mapsDone||[]).length} עולמות הושלמו`:""}</div></div>${extra&&extra.btn||""}</div>`;}
+function saveModal(){
+ const L=allSaves();
+ if(S.savePick){const sel=S.savePick.sel;
+  return `<div class="lockov" role="dialog" aria-label="השמירות מלאות"><div class="lockbox slide" style="max-width:440px"><h3>כל ${MAX_SAVES} השמירות תפוסות</h3><p class="small">כדי להתחיל הרפתקה חדשה צריך להחליף אחת מהשמירות. בחרו איזו.</p>
+  ${L.map((c,i)=>saveRow(c,{sel:sel===i,btn:`<button class="btn sm ${sel===i?"pnk":"blu"}" data-a="saveover" data-i="${i}"><span>${sel===i?"נבחרה":"להחליף"}</span></button>`})).join("")}
+  ${sel!=null?`<p class="small" style="color:#ffd7e4">השמירה שנבחרה תימחק ותוחלף בהרפתקה החדשה. אי אפשר לבטל.</p><button class="btn wide pnk" data-a="saveoverok"><span>כן, להחליף ולהתחיל</span></button>`:""}
+  <button class="btn sm" data-a="savecancel"><span>ביטול</span></button></div></div>`;}
+ if(S.saveDel!=null){const c=L[S.saveDel];if(!c)return "";
+  return `<div class="lockov" role="dialog" aria-label="מחיקת שמירה"><div class="lockbox slide"><h3>למחוק את השמירה?</h3>${saveRow(c)}<p class="small">ההתקדמות בשמירה הזו תימחק. הגיבורים עצמם נשארים. אי אפשר לבטל.</p>
+  <button class="btn wide pnk" data-a="savedelok"><span>כן, למחוק</span></button><button class="btn sm" data-a="savecancel"><span>ביטול</span></button></div></div>`;}
+ return "";
+}
+function removeSave(i){if(SAVE.campaign){if(i===0){SAVE.campaign=null;return;}SAVE.camps.splice(i-1,1);}else SAVE.camps.splice(i,1);}
 function savedGames(){
- const L=SAVE.camps||[];if(!L.length)return "";
- return `<section class="panel"><div class="eyebrow">משחקים שמורים</div>${L.map((c,i)=>{const names=c.heroIds.map(id=>(SAVE.heroes.find(h=>h.id===id)||{}).heroName).filter(Boolean);return `<div class="savedrow"><div><b>${esc(names.join(", ")||"גיבורים")}</b><div class="small muted">${esc(campMap(c).name)} · תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES}</div></div><button class="btn sm blu" data-a="swapcamp" data-i="${i}"><span>להמשיך</span></button></div>`;}).join("")}</section>`;
+ const L=SAVE.camps||[];if(!L.length)return "";const off=SAVE.campaign?1:0;
+ return `<section class="panel"><div class="eyebrow">משחקים שמורים · ${allSaves().length} מתוך ${MAX_SAVES} שמירות</div>${L.map((c,i)=>saveRow(c,{btn:`<span class="saveacts"><button class="btn sm blu" data-a="swapcamp" data-i="${i}"><span>להמשיך</span></button><button class="btn sm ghost" data-a="savedel" data-i="${i+off}" aria-label="מחיקת שמירה"><span>🗑️ מחיקה</span></button></span>`})).join("")}</section>`;
 }
 function partyPanel(){
  const c=SAVE.campaign;if(!c)return "";const inP=campHeroes(),out=SAVE.heroes.filter(h=>!c.heroIds.includes(h.id));
@@ -2163,7 +2185,7 @@ function vHome(){
   <p class="muted small">תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES} · ${c.sessions===1?"פרק אחד שוחק":(c.sessions||0)+" פרקים שוחקו"}${(c.mapsDone||[]).length?` · ${(c.mapsDone||[]).length} עולמות הושלמו`:""}</p>
   <button class="btn wide grn" data-a="continue"><span>${c.sessions?"המשיכו את ההרפתקה":"התחילו את הפרק הראשון"}</span></button>
   ${partyPanel()}
-  <button class="btn sm blu" data-a="newcamp"><span>משחק חדש (נשמר גם הנוכחי)</span></button></section>`;
+  <div class="saveacts"><button class="btn sm blu" data-a="newcamp"><span>משחק חדש (${allSaves().length} מתוך ${MAX_SAVES} שמירות)</span></button><button class="btn sm ghost" data-a="savedel" data-i="0" aria-label="מחיקת שמירה"><span>🗑️ מחיקת השמירה הזו</span></button></div></section>`;
  } else {
   camp=`<section class="panel slide"><div class="eyebrow">ערב של הרפתקאות</div><h1 class="ol">אתם המספרים. הילדים הגיבורים.</h1>
   <p class="muted">צרו גיבור לכל ילד, בחרו עולם, וקבלו פרק קצר להקראה עם קוביות, חידות בחרוזים ומשימות. כל פרק ממשיך את הקודם, על אותה מפה.</p>
@@ -3157,7 +3179,7 @@ async function startCampaign(){
  let mapId=s.mapId&&mapOpen(s.mapId)?s.mapId:(MAP_ORDER.find(m=>mapOpen(m)&&!U().done.includes(m))||MAP_ORDER[0]);
  const cm=String(mapId).startsWith("c_")?SAVE.customMaps.find(x=>x.id===mapId):null;if(cm)mapId=cm.base;
  const M=cm?campMap({mapId,age:s.age,custom:cm}):mapOf(mapId,s.age);
- if(SAVE.campaign){stashProg(SAVE.campaign);SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,8);}
+ if(SAVE.campaign){stashProg(SAVE.campaign);SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,MAX_SAVES-1);}
  SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode,minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
  const c=SAVE.campaign;if(s.keep)stashProg(c);else{c.prog={};loadProg(c);}
  c.premise=fill(M.premise,campHeroes(),null,M.name);
@@ -3302,7 +3324,12 @@ app.addEventListener("click",e=>{
   case "skeep": S.setup.keep=b.dataset.v==="1";render();break;
   case "sdice": S.setup.dice=b.dataset.v;render();break;
   case "smap": S.setup.mapId=b.dataset.v;render();sfx("pop");break;
-  case "startcamp": startCampaign();break;
+  case "startcamp": if(allSaves().length>=MAX_SAVES){S.savePick={sel:null};sfx("pop");render();break;}startCampaign();break;
+  case "saveover": S.savePick.sel=+b.dataset.i;sfx("pop");render();break;
+  case "saveoverok": {const i=S.savePick&&S.savePick.sel;if(i==null)break;removeSave(i);S.savePick=null;persist();startCampaign();break;}
+  case "savedel": S.saveDel=+b.dataset.i;sfx("pop");render();break;
+  case "savedelok": {if(S.saveDel!=null){removeSave(S.saveDel);persist();toast("השמירה נמחקה");}S.saveDel=null;render();break;}
+  case "savecancel": S.savePick=null;S.saveDel=null;render();break;
   case "continue": loadChapter(false);break;
   case "skipai": if(loadCtl){loadCtl.abort();loadCtl=null;} {const c=SAVE.campaign;startPlay(fallbackChapter(c,chapterCount(c)),c.sessions===0&&c.node===0);}break;
   case "beginplay": S.play.startedAt=Date.now();go("play");break;
