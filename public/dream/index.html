@@ -102,6 +102,13 @@ textarea{min-height:92px;resize:vertical}
 .hcard.add b{font-size:3rem;line-height:1;width:64px;height:64px;border-radius:50%;background:var(--yel);color:#fff;border:3px solid var(--o);display:grid;place-items:center;box-shadow:0 4px 0 var(--o)}
 .hcard[aria-pressed=true]{outline:4px solid var(--yel);outline-offset:2px}
 .hcard[aria-pressed=false]{filter:saturate(.45) brightness(.8)}
+.clsgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}@media(max-width:420px){.clsgrid{grid-template-columns:repeat(2,1fr)}}
+.clsb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:3px solid var(--o);border-radius:16px;background:#fff;box-shadow:0 3px 0 var(--o);font-family:inherit;color:var(--o);cursor:pointer;min-height:44px;text-align:center}
+.clsb b{font-size:1.05rem}.clsb small{font-size:.72rem;line-height:1.15;opacity:.8}
+.clsb[aria-pressed=true]{background:var(--cc);color:#fff;transform:translateY(2px);box-shadow:0 1px 0 var(--o)}
+.clsnote{color:var(--o);margin-top:8px;padding:8px 10px;border-radius:12px;background:#fff8d6;border:2px solid var(--o);font-size:.92rem}
+.clsi{display:block;flex:none}.hcard .clsi{position:absolute;top:48px;inset-inline-start:8px;z-index:2;width:30px;height:30px}
+.clschip{color:var(--o);display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;padding:4px 10px 4px 6px;border-radius:999px;border:2px solid var(--o);background:#fff8d6;font-weight:800;font-size:.9rem}
 .lvlb{position:absolute;top:6px;inset-inline-start:6px;width:38px;height:38px;z-index:2}
 .tagd{position:absolute;top:40px;inset-inline-end:8px;z-index:2;font-size:.72rem;font-weight:900;background:var(--pnk);border:2.5px solid var(--o);border-radius:999px;padding:0 8px}
 /* reveal */
@@ -1052,9 +1059,34 @@ const TIER_N={1:"רגיל",2:"מיוחד",3:"נדיר",4:"אגדי"};
 function tkey(k){return k==="_face"?"face":k;}
 function tierOf(k,v){return (TIER[tkey(k)]||{})[v]||0;}
 function owned(k,v){const u=U();u.owned=u.owned||[];return u.owned.includes(tkey(k)+":"+v);}
-function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;return tierOf(k,v)>0&&!owned(k,v);}
+function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;if(S.draft&&clsSig(S.draft.cls,k,v))return false;return tierOf(k,v)>0&&!owned(k,v);}
 function styleOK(xp){return lvInfo(xp||0).lv>=TOPLV;}
 function styleRevealed(k,v,xp){return k!=="style"||owned(k,v)||styleOK(xp);}
+
+/* ---------- classes (roles) ---------- */
+const CLS={
+ fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1,pow:1},task:["physical","dice"],d:"חזק בקובייה ובמכות",dv:"חָזָק בַּקֻּבִּיָּה וּבַמַּכּוֹת",pl:["כוח","עוצמה"]},
+ tank:{m:"שומר",f:"שומרת",mv:"שׁוֹמֵר",fv:"שׁוֹמֶרֶת",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1,hp:1},task:["boss","physical"],d:"עמיד, והבוס מחטיא אותו",dv:"עָמִיד, וְהַבּוֹס מַחְטִיא אוֹתוֹ",pl:["הגנה","לב"]},
+ mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1,pow:1},task:["riddle","meet"],d:"חידות וקסם חזק",dv:"חִידוֹת וְקֶסֶם חָזָק",pl:["חוכמה","עוצמה"]},
+ archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1,str:1},task:["dice","choice"],d:"מזל ומטרה מדויקת",dv:"מַזָּל וּמַטָּרָה מְדֻיֶּקֶת",pl:["מזל","כוח"]},
+ healer:{m:"מרפא",f:"מרפאה",mv:"מְרַפֵּא",fv:"מְרַפְּאָה",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1,luck:1},task:["meet","choice"],d:"לבבות נוספים ומזל",dv:"לְבָבוֹת נוֹסָפִים וּמַזָּל",pl:["לב","מזל"]},
+ ninja:{m:"נינג'ה",f:"נינג'ית",mv:"נִינְגָ'ה",fv:"נִינְגָ'ית",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:2},task:["dice","boss"],d:"מכות חזקות במיוחד",dv:"מַכּוֹת חֲזָקוֹת מְאוֹד",pl:["עוצמה"]}};
+const CLS_KEYS=["fighter","tank","mage","archer","healer","ninja"];
+function clsOf(h){return CLS[h&&h.cls]||null;}
+function clsName(k,fem,nik){const c=CLS[k];return c?(nik?(fem?c.fv:c.mv):(fem?c.f:c.m)):"";}
+function clsIcon(k,w=34){const c=CLS[k];if(!c)return "";const G={
+ fighter:`<path d="M9 31 L27 13 M27 13 L31 9 L31 13 L27 13" ${K(2.6)} fill="none"/><path d="M31 31 L13 13" ${K(2.6)} fill="none"/><path d="M8 29 l4 4 M32 29 l-4 4" ${K(2.6)} fill="none"/>`,
+ tank:`<path d="M20 8 L31 12 V20 C31 27 26 31 20 34 C14 31 9 27 9 20 V12 Z" fill="#fff" ${K(2.2)}/><path d="M20 12 V30 M12 19 H28" stroke="${c.col}" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+ mage:`<polygon points="${starPts(20,20,12,5.2)}" fill="#ffe55c" ${K(2.2)}/><circle cx="29" cy="9" r="2" fill="#fff"/><circle cx="10" cy="30" r="1.6" fill="#fff"/>`,
+ archer:`<path d="M13 8 C26 14 26 26 13 32" ${K(2.6)} fill="none"/><path d="M13 8 V32" stroke="#fff" stroke-width="1.6"/><path d="M9 20 H33 M33 20 l-5 -4 M33 20 l-5 4" ${K(2.4)} fill="none"/>`,
+ healer:`<path d="M20 33 C8 25 6 17 10 12 C14 8 18 10 20 14 C22 10 26 8 30 12 C34 17 32 25 20 33Z" fill="#fff" ${K(2.2)}/><path d="M20 15 V27 M14 21 H26" stroke="${c.col}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`,
+ ninja:`<polygon points="${starPts(20,20,14,4.6)}" fill="#e8ecf5" ${K(2.2)}/><circle cx="20" cy="20" r="3" fill="${c.col}"/>`}[k];
+ return `<svg class="clsi" viewBox="0 0 40 40" width="${w}" height="${w}" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="${c.col}" ${K(2.4)}/>${G}</svg>`;}
+function applyCls(p,k,force){const c=CLS[k];if(!c)return p;[["weapon",c.w],["head",c.h],["back",c.b]].forEach(([f,v])=>{if(force||!p[f]||p[f]==="none")p[f]=v;});return p;}
+function clsSig(k,slot,v){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w===v)||(slot==="head"&&c.h===v)||(slot==="back"&&c.b===v));}
+function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;return Math.min(k==="pow"||k==="def"?3:4,raw+b);}
+function clsMatch(h,type){const c=clsOf(h);return !!c&&c.task.includes(type);}
+function clsLeader(n,hs,type){const base=hs[leaderIdx(n,hs.length)];if(!base||clsMatch(base,type))return base;const fit=hs.filter(h=>clsMatch(h,type));if(!fit.length||n%2)return base;return fit[n%fit.length];}
 function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
 function gems(){return SAVE.gems||0;}
 const GEM=(w=18)=>`<svg viewBox="0 0 24 24" width="${w}" height="${w}" aria-hidden="true"><path d="M5 9 L9 4 H15 L19 9 L12 20 Z" fill="#3ee0ff" stroke="${O}" stroke-width="2" stroke-linejoin="round"/><path d="M5 9 H19 M9 4 L10.5 9 L12 20 L13.5 9 L15 4" fill="none" stroke="${O}" stroke-width="1.2"/><path d="M8 7 l2 -1.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`;
@@ -1895,7 +1927,7 @@ function nextRiddle0(c,maxL){
 function fallbackChapter(c,count){
  const hs=campHeroes(),M=campMap(c);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
  const stations=nodes.map(n=>{
-  const t=(c.narr==="young"&&MAPS[c.mapId]?MAPS[c.mapId]:M).st[n];const L=hs[leaderIdx(n,hs.length)];
+  const t=(c.narr==="young"&&MAPS[c.mapId]?MAPS[c.mapId]:M).st[n];const L=clsLeader(n,hs,t.type);
   const ch=JSON.parse(JSON.stringify(t.challenge||{}));const vr=((c.narr==="young"&&MAPS[c.mapId]?MAPS[c.mapId]:M)===MAPS[c.mapId])?"y":"o",ov=(f,v)=>{const x=TXO[c.mapId+"."+vr+"."+n+"."+f];return x!=null?x:v;};const hasOvR=TXO[c.mapId+"."+vr+"."+n+".read"]!=null;
   if(t.type==="riddle")Object.assign(ch,nextRiddle(c));
   if(t.type==="physical")ch.action=c.mode==="bed"?(ch.calm||ch.action):ch.action;
@@ -1915,8 +1947,8 @@ function chapterPrompt(c,count,first){
  const modeTxt={bed:"BEDTIME: a calm wind-down. Energy starts adventurous and gets calmer toward the end. No running or jumping. Any 'physical' station must be calm (slow breathing, freezing like a statue, slow stretching, whispering). The closing has the heroes find a cozy safe place to rest for the night, a slow calm image, and ends with 'tomorrow the adventure continues'.",
   active:"FAMILY EVENING: energetic. Include exactly one 'physical' station with real movement that the story justifies, with a count (for example: crossing a lily-pad lake in 10 frog jumps; crawling like crocodiles from one spot in the house to another so the crocodiles think you are one of them; breaking a spell by hopping on one foot 15 times while counting aloud). The closing is a small cliffhanger that makes kids want to continue next time.",
   friends:"FRIENDS PARTY: lively and social, every hero gets a moment. 'physical' stations use real movement that the story justifies (frog jumps across a lake, crawling like crocodiles, hopping on one foot to break a spell), with a count. The closing is a cheer plus a small cliffhanger."}[c.mode];
- const heroLines=hs.map(h=>`- ${h.heroName} (${isF(h)?"girl, feminine Hebrew forms":"boy, masculine Hebrew forms"}; ${h.title}; carries: ${LBL.weapon[h.params.weapon]}; pet: ${LBL.pet[h.params.pet]}; items: ${(h.items||[]).slice(-5).map(i=>i.name).join(", ")||"none"})`).join("\n");
- const leaders=nodes.map((n,i)=>`station ${i+1} -> ${hs[leaderIdx(n,hs.length)].heroName}`).join("; ");
+ const heroLines=hs.map(h=>`- ${h.heroName} (${isF(h)?"girl, feminine Hebrew forms":"boy, masculine Hebrew forms"}; ${h.title}; role: ${h.cls?CLS[h.cls].m:"adventurer"}; carries: ${LBL.weapon[h.params.weapon]}; pet: ${LBL.pet[h.params.pet]}; items: ${(h.items||[]).slice(-5).map(i=>i.name).join(", ")||"none"})`).join("\n");
+ const leaders=nodes.map((n,i)=>`station ${i+1} -> ${clsLeader(n,hs,((c.narr==="young"&&MAPS[c.mapId]?MAPS[c.mapId]:M).st[n]||{}).type).heroName}`).join("; ");
  const finale=nodes.includes(NODES-1);
  return `You write one chapter of a cozy Dungeons-&-Dragons-style adventure for children aged ${c.age}. A parent reads it aloud in Hebrew and acts as the game master while the kids play their heroes. All story text must be in natural, warm Hebrew suited to that age. Write ${AGE_STYLE[c.age]||AGE_STYLE["5-7"]}
 Safety: no violence, blood, death, weapons hurting anyone, scary monsters, romance, or characters from movies, TV, games or brands. Conflicts are solved by cleverness, kindness, teamwork and dice luck. "Villains" are sad, lonely or mischievous and become friends. Failure is never punishment: a failed roll leads to a funny or gentle detour and the story still moves on.
@@ -1998,7 +2030,7 @@ const SND=()=>`<button class="ib" data-a="sound" aria-pressed="${soundOn}" aria-
 function topbar(extra=""){return `<div class="topbar"><button class="brand" data-a="home" aria-label="Dream by ARTRIKO, הרפתקה בקובייה">${LOGO}<span class="wm"><b class="ol">DREAM</b><small>by ARTRIKO</small></span></button><div class="tools">${extra}${S.screen==="home"||S.screen==="hero"?gemPill():""}${SND()}</div></div>`;}
 function cardVars(h){const p=h.params.primary||"#ff3d4e";return `--c1:${shade(p,.25)};--c2:${shade(p,-.38)}`;}
 const PEN=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L5 15 L16 4 L20 8 L9 19 Z" fill="#ffd23f" stroke="#1b1030" stroke-width="2" stroke-linejoin="round"/><path d="M14 6 L18 10" stroke="#1b1030" stroke-width="2"/></svg>`;
-function hcard(h,attrs,extra="",editBtn=false){const card=`<button class="hcard" style="${cardVars(h)}" ${attrs}>${lvlBadge(h)}${extra}${heroSVG(h)}<span class="nm">${esc(h.heroName)}<small>${esc(h.title)}</small>${statRow(h)}</span>${editBtn?"":`<span class="editlbl">${PEN}עריכה</span>`}</button>`;return editBtn?`<div class="hwrap">${card}<button class="editb" data-a="edithero" data-id="${h.id}" aria-label="עריכת ${esc(h.heroName)}">${PEN}</button></div>`:card;}
+function hcard(h,attrs,extra="",editBtn=false){const card=`<button class="hcard" style="${cardVars(h)}" ${attrs}>${lvlBadge(h)}${h.cls?clsIcon(h.cls,32):""}${extra}${heroSVG(h)}<span class="nm">${esc(h.heroName)}<small>${esc(h.title)}</small>${statRow(h)}</span>${editBtn?"":`<span class="editlbl">${PEN}עריכה</span>`}</button>`;return editBtn?`<div class="hwrap">${card}<button class="editb" data-a="edithero" data-id="${h.id}" aria-label="עריכת ${esc(h.heroName)}">${PEN}</button></div>`:card;}
 
 
 
@@ -2207,8 +2239,8 @@ function vHome(){
 
 /* hero editor */
 function newDraft(h){
- if(h)return {id:h.id,kidName:h.kidName,gender:h.gender,desc:h.desc,result:{heroName:h.heroName,title:h.title,catch:h.catch,params:{...h.params}},fixesLeft:h.fixesLeft??3,fix:"",busy:false,manual:false,existing:true,demo:!!h.demo,xp:h.xp||0,stats:h.stats||null,pv:0,fresh:false};
- return {id:null,kidName:"",gender:"m",desc:"",result:null,fixesLeft:3,fix:"",busy:false,manual:false,existing:false,xp:0,stats:null,pv:0,fresh:false};
+ if(h)return {id:h.id,kidName:h.kidName,gender:h.gender,desc:h.desc,result:{heroName:h.heroName,title:h.title,catch:h.catch,params:{...h.params}},fixesLeft:h.fixesLeft??3,fix:"",busy:false,manual:false,existing:true,demo:!!h.demo,xp:h.xp||0,stats:h.stats||null,cls:h.cls||null,pv:0,fresh:false};
+ return {id:null,kidName:"",gender:"m",desc:"",result:null,fixesLeft:3,fix:"",busy:false,manual:false,existing:false,xp:0,stats:null,cls:null,pv:0,fresh:false};
 }
 function vHero(){
  const d=S.draft;const r=d.result;const g=isF(d);if(r)r.params.fem=g;
@@ -2230,6 +2262,7 @@ function vHero(){
  <section class="panel"><div class="eyebrow">${d.gender==="f"?(d.existing?"עריכת גיבורה":"גיבורה חדשה"):(d.existing?"עריכת גיבור":"גיבור חדש")}</div><h2 class="ol">מי יוצא להרפתקה?</h2>
  <label class="fl">שם הילד או הילדה<input type="text" id="kidName" value="${esc(d.kidName)}" placeholder="למשל: ים" autocomplete="off"></label>
  <div class="chips" role="group" aria-label="בן או בת"><button class="chip" data-a="gender" data-v="m" aria-pressed="${!g}">בן</button><button class="chip" data-a="gender" data-v="f" aria-pressed="${g}">בת</button></div>
+ <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${c.d}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote"><b>${clsName(d.cls,g)}:</b> ${CLS[d.cls].d}. ${g?"היא מקבלת":"הוא מקבל"} כלים מתאימים בחינם, ומשימות שמתאימות לתפקיד.</div>`:""}</div>
  <label class="fl">איך ${g?"היא":"הוא"} ${g?"מתארת":"מתאר"} את הדמות?<textarea id="desc" placeholder="למשל: לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב, ויש לו פטריות על הראש">${esc(d.desc)}</textarea></label>
  <button class="btn wide" data-a="genhero" ${d.busy?"disabled":""}><span>${d.busy?(d.gender==="f"?"מציירים את הגיבורה...":"מציירים את הגיבור..."):(r?"צרו מחדש מהתיאור":(d.gender==="f"?"צרו את הגיבורה":"צרו את הגיבור"))}</span></button>
  </section>${prev}`;
@@ -2561,10 +2594,11 @@ function blocks(n,max,c,delay){return `<span class="blks" style="--c:${c||"#4fe3
 function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const ez=ezOn(),LI=lvInfo(H.xp||0),lv=LI.lv,xp=LI.into,left=LI.need-LI.into;
  const T=(a,b)=>ez?b:a;
  return `<div class="lockov" data-a="hinfoclose" role="dialog"><div class="lockbox slide hinfo" style="--tc:${H.params.primary}"><div class="hi-top">${heroSVG(H,"hero","joy")}<div><b class="ol" style="font-size:1.5rem">${esc(H.heroName)}</b><div class="small">${esc(E(H.title||""))}</div><button class="chip" data-a="renameopen" data-id="${H.id}" style="margin-top:6px">✏️ ${T("שינוי שם · 5 💎","שִׁנּוּי שֵׁם · 5 💎")}</button></div></div>
+ ${H.cls?`<div class="clsnote" style="display:flex;gap:10px;align-items:center">${clsIcon(H.cls,44)}<div><b>${clsName(H.cls,isF(H),ez)}</b><div class="small">${ez?CLS[H.cls].dv:CLS[H.cls].d}</div></div></div>`:`<button class="chip" data-a="clsfix" data-id="${H.id}">${T("בחרו תפקיד","בַּחֲרוּ תַּפְקִיד")}</button>`}
  <div class="hi-lv"><b>${T("דרגה","דַּרְגָּה")} ${lv} ${T("מתוך","מִתּוֹךְ")} ${TOPLV}</b> ${heartsHTML(H,22)}</div>
  <div class="hi-row"><span class="hi-l">${T("התקדמות","הִתְקַדְּמוּת")}</span>${blocks(xp,LI.need||1,"#ffd23f")}</div>
  <span class="small">${lv>=TOPLV?T("זו הדרגה הגבוהה ביותר!","זוֹ הַדַּרְגָּה הַגְּבוֹהָה בְּיוֹתֵר!"):T(`עוד ${left} נקודות התקדמות לדרגה ${lv+1}`,`עוֹד ${left} נְקֻדּוֹת הִתְקַדְּמוּת לְדַרְגָּה ${lv+1}`)}${lv<TOPLV?T(` · החליפה הנדירה נפתחת בדרגה ${TOPLV}`,` · הַחֲלִיפָה הַנְּדִירָה נִפְתַּחַת בְּדַרְגָּה ${TOPLV}`):""}</span>
- <div class="hi-st">${STATS.map(x=>{const v=statOf(H,x.k);return `<div class="hi-s"><div class="hi-row">${statIcon(x.k)}<b class="hi-l">${esc(E(x.n))}</b>${blocks(v,3,x.c,.2)}</div><span class="small muted">${v?esc(x.d(v)):T("עוד לא שודרג","עוֹד לֹא שֻׁדְרַג")}</span></div>`;}).join("")}</div>
+ <div class="hi-st">${STATS.map(x=>{const v=effS(H,x.k);return `<div class="hi-s"><div class="hi-row">${statIcon(x.k)}<b class="hi-l">${esc(E(x.n))}</b>${blocks(Math.min(v,3),3,x.c,.2)}</div><span class="small muted">${v?esc(x.d(v)):T("עוד לא שודרג","עוֹד לֹא שֻׁדְרַג")}${((clsOf(H)||{}).perk||{})[x.k]?` · ${T("כולל","כּוֹלֵל")} +${CLS[H.cls].perk[x.k]} ${T("מהתפקיד","מֵהַתַּפְקִיד")}`:""}</span></div>`;}).join("")}</div>
  <div class="eyebrow">${T("החפצים","הַחֲפָצִים")} (${(H.items||[]).length}) · ${T("לחצו על חפץ","לַחֲצוּ עַל חֵפֶץ")}</div><div class="items">${(H.items||[]).slice(-12).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" style="cursor:pointer">${itemIcon(it.icon,it.name)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||`<span>${T("עוד אין","עוֹד אֵין")}</span>`}</div>
  ${H.hearts?`<div>${HEART_MINI} ${T("לבבות שנאספו ברגעי לב","לְבָבוֹת שֶׁנֶּאֶסְפוּ בְּרַגְעֵי לֵב")}: <b>${H.hearts}</b></div>`:""}<button class="btn sm grn" data-a="hinfoclose"><span>${T("סגירה","סְגִירָה")}</span></button></div></div>`;}
 function renameBox(){const R=S.ren,H=SAVE.heroes.find(h=>h.id===R.id);if(!H)return "";const g=gems(),ok=g>=5;
@@ -2648,6 +2682,7 @@ function vStation(st,hs,c){
  if(st.type==="boss"&&P.phase!=="result")return vBoss(st,hs,c,enter);
  if(P.phase==="read"&&heroHp(L)<=0)return turnHead(L)+rescueBox(L,hs,c);
  let h=turnHead(L);
+ if(P.phase!=="result"&&clsMatch(L,st.type))h+=`<div style="text-align:center"><span class="clschip">${clsIcon(L.cls,26)}<span>${ezOn()?"הַמְּשִׂימָה הַזּוֹ מַתְאִימָה לְ"+clsName(L.cls,isF(L),true):"המשימה הזו מתאימה ל"+clsName(L.cls,isF(L))}</span></span></div>`;
  if(P.phase==="result"){
   const R=P.result;
   h+=arenaHTML(st,L,c.mapId,R.ok?"win":"lose",false);
@@ -2668,7 +2703,7 @@ function vStation(st,hs,c){
   if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">${ezOn()?"מְשִׂימַת גּוּף · כּוּלָּם בְּיַחַד!":"משימת גוף · כולם ביחד!"}</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(E(m.t))}${m.n>1?`<div class="mgoal">${ezOn()?`כְּדֵי לַעֲבוֹר: <b>${m.n}</b> ${esc(E(m.u))}!`:`כדי לעבור צריך <b>${m.n}</b> ${esc(m.u)}. סופרים ביחד בקול!`}</div>`:""}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>${ezOn()?"מִתּוֹךְ":"מתוך"} ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(E(m.u))}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(E(m.u))}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
   if(c.read&&c.read!=="off"&&!P.readDone&&(P.readCount||0)<2&&P.roll==null)return h+readBox(st,hs,L,c);
   if(P.readBonus)h+=`<div class="readok slide">${HEART_SVG(28)}<b>הלחש עבד! ${esc(P.readItem?P.readItem.cu.n:"הכישוף")} התבטל, והקובייה צריכה 1 פחות.</b></div>`;
-  const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));const bonus=statOf(L,"str");
+  const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));const bonus=effS(L,"str");
   h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>${ezOn()?`צָרִיךְ <b>${target}</b> וּמַעְלָה בַּקּוּבִּיָּה`:`צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}`}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${isF(L)?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
   if(c.dice==="digital"){
    const v=P.roll;const ok=v!=null&&v+bonus>=target;const cls=v==null?"":(ok?"win":"lose");
@@ -2688,7 +2723,7 @@ function vStation(st,hs,c){
  if(st.type==="riddle"){
   const t=P.tries||0,mx=3;
   if(t>=1)h+=`<div class="parch slide" style="background:#eafff1;box-shadow:inset 0 -6px 0 #c6f0d4,0 6px 0 ${O}"><span class="kind" style="background:${TYPE_COL.riddle}">${ezOn()?(t===1?"רֶמֶז רִאשׁוֹן":"עוֹד רֶמֶז"):(t===1?"רמז ראשון":"עוד רמז")}</span>${esc(t===1?(E(ch.hint)||letterClue(ch.a)):(ch.hint2?E(ch.hint2):letterClue(ch.a)))}${mathVis(ch)}</div>${stageBox(t===1?"קראו את הרמז בקול, ותנו להם לחשוב שוב בלי לעזור.":(t>=mx-1?"זה הניסיון האחרון. אפשר לרמוז עם תנועות ידיים, אבל לא לגלות.":"קראו את הרמז, ותנו להם לחשוב שוב."))}`;
-  mkOpts(ch,statOf(L,"wis"));
+  mkOpts(ch,effS(L,"wis"));
   h+=`<p class="muted small" style="text-align:center">${ezOn()?"בַּחֲרוּ אֶת הַתְּשׁוּבָה הַנְּכוֹנָה:":"בחרו את התשובה הנכונה:"}</p>`+triviaHTML(ch,"st");
   h+=`<div class="panel parent-only">${t===0?(P.hint?`<p>רמז: ${esc(E(ch.hint))}</p>${mathVis(ch)}`:`<button class="btn sm blu" data-a="hint"><span>הראו רמז</span></button>`):""}${P.reveal?`<div class="answer ol">${esc(E(ch.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div>`;
  }
@@ -2742,12 +2777,12 @@ function ptRun(secs){clearInterval(ptInt);const P=S.play;P.pt={idx:P.idx,ph:"cou
   else if(P.pt.ph==="run"){P.pt.v--;if(P.pt.v<=0){P.pt.ph="end";clearInterval(ptInt);sfx("chest");confetti(30);}else if(P.pt.v<=3)sfx("pop");}
   render();},1000);}
 function teamMembers(hs){return hs.length>1?hs.map(h=>({name:h.heroName,h})):[{name:hs[0].heroName,h:hs[0]},{name:"ההורה",h:null}];}
-function teamTarget(c,n,hs){const d=diceFor(c,"easy");const t=Math.round(n*(d.target-.5));return Math.max(n,t-hs.reduce((a,h)=>a+statOf(h,"str"),0));}
+function teamTarget(c,n,hs){const d=diceFor(c,"easy");const t=Math.round(n*(d.target-.5));return Math.max(n,t-hs.reduce((a,h)=>a+effS(h,"str"),0));}
 function bossLv(hs){return Math.max(...hs.map(h=>heroLevel(h)))+1;}
-function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
+function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${H.cls?`<small>${clsName(H.cls,isF(H),ezOn())}</small>`:""}${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
 function stLeader(st,hs){const P=S.play;if(st.type==="boss"&&P.bossTurn!=null)return hs[P.bossTurn%hs.length];return hs.find(h=>h.id===st.leaderId)||hs[0];}
 /* ---------- hero hearts (no death: 0 hearts = too tired, a friend can rescue) ---------- */
-function heroHpMax(h){const l=heroLevel(h);return 3+(l>=5?1:0)+(l>=8?1:0)+statOf(h,"hp");}
+function heroHpMax(h){const l=heroLevel(h);return 3+(l>=5?1:0)+(l>=8?1:0)+effS(h,"hp");}
 function heroHp(h){return h.hp==null?heroHpMax(h):Math.max(0,Math.min(h.hp,heroHpMax(h)));}
 function hurt(h,n){h.hp=Math.max(0,heroHp(h)-(n||1));}
 const HEALS=["potion","jar","lily","moon"];
@@ -2860,7 +2895,7 @@ function vBoss(st,hs,c,enter){
  const view=bAtk&&bAtk.target?(hs.find(x=>x.id===bAtk.target)||R):R;
  const tgt=hs.find(x=>x.id===P.intent&&heroHp(x)>0)||live[0]||R;
  const heroHit=ph==="rolled"&&P.lastHit,heroMiss=ph==="rolled"&&!P.lastHit;
- const bonus=statOf(R,"str"),d=diceFor(c,"easy");
+ const bonus=effS(R,"str"),d=diceFor(c,"easy");
  const intro=P.bossIntro!==P.idx?(()=>{const mine=partyItems(hs).filter(x=>isGoodWard(th,x.it.icon));return `<div class="bossov" data-a="introgo" role="dialog" aria-label="קרב בוס"><div class="bstripes"></div><div class="btitle ol">${T("קרב בוס!","קְרַב בּוֹס!")}</div><div class="bstage"><div class="bnpc">${npcSVG(st.npc||"sprite",c.mapId)}</div><div class="bvs"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M23 2 L8 22 L18 22 L14 38 L32 15 L21 15 Z" fill="#ffd23f"${K(3)}/></svg></div><div class="bhero">${heroSVG(R,"hero")}</div></div><div class="bname"><b>${esc(E(st.title))}</b><span>${T(`רמה ${bossLv(hs)} · חזק מכם בדרגה אחת!`,`רָמָה ${bossLv(hs)} · חָזָק מִכֶּם בְּדַרְגָּה אַחַת!`)}</span></div><div class="bthreat"><b>${th.ic} ${T("הבוס הזה: "+th.lbl[0],"הַבּוֹס הַזֶּה: "+th.lbl[1])}</b><span>${mine.length?T("יש לכם חפץ שמגן מזה!","יֵשׁ לָכֶם חֵפֶץ שֶׁמֵּגֵן מִזֶּה!"):T("חפץ מגן מתאים יעזור מאוד!","חֵפֶץ מָגֵן מַתְאִים יַעֲזֹר מְאוֹד!")}</span>${mine.length?`<span class="bth-it">${mine.slice(0,4).map(x=>itemIcon(x.it.icon,x.it.name)).join("")}</span>`:""}</div><div class="tapnote">${T("לחצו כדי להתחיל!","לַחֲצוּ כְּדֵי לְהַתְחִיל!")}</div></div>`;})():"";
  const dmg=ko?3:Math.min(3,Math.ceil((hpMax-hp)/hpMax*3));
  const hpPct=Math.max(0,hp/hpMax*100),hpCol=hpPct>60?"#4fe36b":hpPct>30?"#ffd23f":"#ff3d4e";
@@ -2917,7 +2952,7 @@ function vBoss(st,hs,c,enter){
   <button class="btn wide grn" data-a="bnext"><span>${T("המשך","הַמְשֵׁךְ")}</span></button>`);
  if(ph==="q"){
   if(!P.bossQ){P.bossQ=nextRiddle(c,true);}
-  const Q=P.bossQ;regMath(Q);mkOpts(Q,statOf(R,"wis"));
+  const Q=P.bossQ;regMath(Q);mkOpts(Q,effS(R,"wis"));
   return panel(`<div class="eyebrow">${T("חידה!","חִידָה!")}</div><div class="riddle" style="color:#fff">${esc(E(Q.q))}</div>${P.bossQhint?`<p class="need">${T("רמז","רֶמֶז")}: ${esc(E(Q.hint)||letterClue(Q.a))}</p>${mathVis(Q)}`:""}${triviaHTML(Q,"boss")}<div class="parent-only">${P.reveal?`<div class="answer ol">${esc(E(Q.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div>`);
  }
  if(ph==="team"){
@@ -2977,11 +3012,11 @@ function teamHit(sum,ok){
 }
 function bossHit(v,ok){
  const P=S.play,c=SAVE.campaign,st=P.chapter.stations[P.idx],hs=campHeroes(),R=hs[P.bossTurn%hs.length],act=P.bAct||"atk";
- const hit=ok!=null?ok:(v+statOf(R,"str")>=bossTarget(c,act));P.help=false;
+ const hit=ok!=null?ok:(v+effS(R,"str")>=bossTarget(c,act));P.help=false;
  if(act==="atk")enSet(R,en(R)-1);else if(act==="magic")enSet(R,en(R)-2);
  P.acted[R.id]=true;
  P.roll=v;P.bossPhase="rolled";P.lastHit=hit;P.lastTeam=false;
- let dmg=act==="magic"?2+(statOf(R,"pow")>=3?1:0):1+(statOf(R,"pow")>=2?1:0);if(hit&&statOf(R,"pow")>=1&&!P.firstHit){dmg+=1;P.firstHit=true;}
+ let dmg=act==="magic"?2+(effS(R,"pow")>=3?1:0):1+(effS(R,"pow")>=2?1:0);if(hit&&effS(R,"pow")>=1&&!P.firstHit){dmg+=1;P.firstHit=true;}
  if(hit&&P.power){dmg+=1;P.power=false;}
  if(hit&&act==="q"){enSet(R,en(R)+1);}
  if(hit)P.bossHp=Math.max(0,P.bossHp-dmg);
@@ -2995,7 +3030,7 @@ function bossAttack(){
  const live=hs.filter(h=>heroHp(h)>0);
  let tg=hs.find(h=>h.id===P.intent&&heroHp(h)>0)||live[Math.floor(Math.random()*live.length)]||hs[0];
  const widx=worldIdx(c);
- const chance=Math.max(.1,(ageGroup(c.age)==="old"?.55:.4)+.08*widx-.1*statOf(tg,"def"));
+ const chance=Math.max(.1,(ageGroup(c.age)==="old"?.55:.4)+.08*widx-.1*effS(tg,"def"));
  let atk={target:tg.id,hit:false,blocked:false,frozen:false,by:""},p,v;const nm=tg.heroName;
  if(P.frozen){P.frozen=false;atk.frozen=true;p=`הבוס קפוא ולא יכול להכות! הוא מדלג על התור שלו.`;v=`הַבּוֹס קָפוּא וְלֹא יָכוֹל לְהַכּוֹת! הוּא מְדַלֵּג עַל הַתּוֹר שֶׁלּוֹ.`;}
  else if((P.defend||{})[tg.id]){atk.blocked=true;atk.by="def";p=`המגן של ${nm} עצר את המכה!`;v=`הַמָּגֵן שֶׁל ${nm} עָצַר אֶת הַמַּכָּה!`;}
@@ -3063,7 +3098,7 @@ const STAT_ICON={hp:`<path d="M10 18.5 C2 12.5 1 7.5 4 5 C6.5 3 9 4.5 10 6.5 C11
 const statIcon=k=>`<svg viewBox="-1 -1 22 22" aria-hidden="true">${STAT_ICON[k]}</svg>`;
 const statOf=(h,k)=>(h&&h.stats&&h.stats[k])||0;
 function statRow(h){const s=STATS.filter(x=>statOf(h,x.k)>0);return s.length?`<span class="stats">${s.map(x=>`<span title="${x.n}">${statIcon(x.k)}${statOf(h,x.k)}</span>`).join("")}</span>`:"";}
-function luckLeft(h){return statOf(h,"luck")-((S.play&&S.play.luckUsed&&S.play.luckUsed[h.id])||0);}
+function luckLeft(h){return effS(h,"luck")-((S.play&&S.play.luckUsed&&S.play.luckUsed[h.id])||0);}
 const HP_ON=`<svg viewBox="0 0 30 30" aria-hidden="true"><path d="M8 22 a6 6 0 0 1 -.5 -12 a8 8 0 0 1 15.5 2 a5 5 0 0 1 0 10 z" fill="#5b4b8a"${K(2.2)}/><path d="M16 19 l-3 5 l4.5 -2 l-2 5" fill="none" stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const hpOff=g=>`<svg ${g?'class="gone" ':""}viewBox="0 0 30 30" aria-hidden="true"><polygon points="${starPts(15,15,13,6)}" fill="#ffd23f"${K(2.2)}/></svg>`;
 function d20HTML(v,cls){return `<div class="d20 ${cls||""}" id="d20"><div class="in"><span id="d20v">${v??"?"}</span></div></div>`;}
@@ -3166,13 +3201,14 @@ async function genHero(fix){
   if(!changed){render();toast(local&&local.understood?"זה כבר נראה ככה. אפשר לשנות גם בכוונון הידני למטה":"לא הבנתי את התיקון. כתבו למשל: בלי כתר, בלי סומק, שיער כחול. אפשר גם בכוונון הידני למטה");return;}
   d.fixesLeft=Math.max(0,d.fixesLeft-1);d.fix="";
  }
+ if(!fix&&d.cls)applyCls(res.params,d.cls,false);
  d.result=res;d.busy=false;d.fresh=true;render();d.fresh=false;
  sfx("win");confetti(30);
  const rv=document.querySelector(".reveal");if(rv)rv.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});
 }
 function saveHero(){
  const d=S.draft;if(!d.result)return;
- const rec={kidName:d.kidName.trim()||"גיבור",gender:d.gender,desc:d.desc,heroName:d.result.heroName,title:d.result.title,catch:d.result.catch,params:{...d.result.params,fem:isF(d)},fixesLeft:d.fixesLeft};
+ const rec={kidName:d.kidName.trim()||"גיבור",gender:d.gender,desc:d.desc,heroName:d.result.heroName,title:d.result.title,catch:d.result.catch,params:{...d.result.params,fem:isF(d)},fixesLeft:d.fixesLeft,cls:d.cls||null};
  if(d.existing){const h=SAVE.heroes.find(x=>x.id===d.id);Object.assign(h,rec);delete h.demo;}
  else{const h={id:rid(),xp:0,items:[],...rec};SAVE.heroes.push(h);if(S.setup&&S.setup.heroIds.length<4)S.setup.heroIds.push(h.id);if(S.joinCamp&&SAVE.campaign&&SAVE.campaign.heroIds.length<4){SAVE.campaign.heroIds.push(h.id);}S.joinCamp=false;}
  persist();
@@ -3279,7 +3315,7 @@ function rollDice(btn){
  if(P.help){const v2=1+Math.floor(Math.random()*d.sides);P.rollPair=[v,v2];v=Math.max(v,v2);}
  btn.disabled=true;sfx("roll");
  const hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];
- const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));if(v+statOf(L,"str")>=target){sfx("pop");confetti(24);}};
+ const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));if(v+effS(L,"str")>=target){sfx("pop");confetti(24);}};
  if(RM){done();return;}
  if(d.sides===6){const cube=$("#cube");if(cube){cube.classList.add("go");requestAnimationFrame(()=>{cube.style.transform=cubeTf(v,2);});}setTimeout(done,1400);}
  else{const el=$("#d20"),sp=$("#d20v");if(el)el.classList.add("rolling");let k=0;const iv=setInterval(()=>{if(sp)sp.textContent=1+Math.floor(Math.random()*20);if(++k>14){clearInterval(iv);done();}},80);}
@@ -3302,6 +3338,8 @@ app.addEventListener("click",e=>{
   case "newhero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft();go("hero");break;
   case "edithero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "gender": S.draft.gender=b.dataset.v;render();break;
+  case "setcls": {const d=S.draft,v=b.dataset.v;d.cls=d.cls===v?null:v;if(d.cls&&d.result){applyCls(d.result.params,d.cls,true);}sfx("pop");render();break;}
+  case "clsfix": S.hinfo=null;S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "pv": S.draft.pv=+b.dataset.v;render();sfx("pop");break;
   case "dress": S.draft.dress=true;S.draft.fresh=false;document.documentElement.style.overflow="hidden";render();sfx("pop");break;
   case "dressdone": S.draft.dress=false;document.documentElement.style.overflow="";render();sfx("pop");break;
@@ -3395,7 +3433,7 @@ app.addEventListener("click",e=>{
   case "upnext": P.upStep="choose";sfx("pop");render();break;
   case "upcont": P.upQueue.shift();P.upPick=null;if(P.upQueue.length){P.upStep="intro";sfx("lvl");render();confetti(40);}else{P.upStep=null;advance();toast("השדרוגים נשמרו!");}break;
   case "pickstat": {const hs=campHeroes(),R=hs.find(h=>h.id===(P.upQueue||[])[0]);if(!R)break;R.stats=R.stats||{str:0,wis:0,luck:0};const k=b.dataset.k;if((R.stats[k]||0)>=3)break;R.stats[k]=(R.stats[k]||0)+1;if(k==="hp"&&R.hp!=null)R.hp=Math.min(heroHpMax(R),(R.hp||0)+1);persist();P.upPick={k,to:R.stats[k]};P.upStep="reveal";sfx("chest");sfx("lvl");render();setTimeout(()=>confetti(50),650);break;}
-  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+statOf(L0,"wis")){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
+  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+effS(L0,"wis")){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
   case "renameopen": S.ren={id:b.dataset.id,val:"",err:""};sfx("pop");render();setTimeout(()=>{const i=$("#renameIn");if(i){i.focus();i.select();}},50);break;
   case "renameno": S.ren=null;render();break;
   case "renameok": {const R=S.ren,H=R&&SAVE.heroes.find(h=>h.id===R.id);if(!H)break;const v=(($("#renameIn")||{}).value||"").trim().replace(/\s+/g," ");
