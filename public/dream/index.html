@@ -1140,17 +1140,7 @@ function markSVG(k,col,sc=1,ol=true){const st=ol?` stroke="${O}" stroke-width="$
  crosshair:`<circle cx="0" cy="0" r="7" fill="none"${st}/><path d="M0 -11 V-4 M0 4 V11 M-11 0 H-4 M4 0 H11" fill="none"${st}/>`}[k]||`<circle r="7" fill="${col}"${st}/>`;
  return `<g transform="scale(${sc})">${G}</g>`;}
 function evoTier(lv){return lv>=20?4:lv>=15?3:lv>=10?2:lv>=5?1:0;}
-function evoLayers(o,lv,fem){
- const base=CLS[o.cls];if(!base)return {b:"",c:"",f:"",t:0};
- const t=evoTier(lv),sub=NODE[o.sub],mas=NODE[o.mas],c0=base.col,c1=sub?sub.col:c0,c2=mas?mas.col:c1,m1=sub?sub.mk:"star",m2=mas?mas.mk:m1;
- let b="",c="",f="";
- if(t>=3)b+=`<circle cx="70" cy="100" r="60" fill="${c1}" opacity=".12"/><ellipse class="glow" cx="70" cy="100" rx="64" ry="66" fill="none" stroke="${c1}" stroke-width="3" stroke-dasharray="3 7"/>`;
- if(t>=4)b+=`<circle cx="70" cy="96" r="80" fill="${c2}" opacity=".12"/><g class="spin" style="transform-origin:70px 96px">${[0,1,2,3].map(i=>{const a=i*Math.PI/2;return `<g transform="translate(${(70+76*Math.cos(a)).toFixed(1)} ${(96+76*Math.sin(a)).toFixed(1)})">${markSVG(m2,c2,.8)}</g>`;}).join("")}</g>`;
- if(t>=2)c=`<path d="M50 98 Q32 138 28 158 L112 158 Q108 138 90 98Z" fill="${c1}"${K()}/><path d="M50 98 Q34 130 32 150 M90 98 Q106 130 108 150" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
- if(t>=1)f+=`<circle cx="47" cy="98" r="7" fill="${c0}"${K(2.4)}/><circle cx="93" cy="98" r="7" fill="${c0}"${K(2.4)}/><path d="M42 97 Q47 92 52 97 M88 97 Q93 92 98 97" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>`;
- if(t>=2)f+=`<g transform="translate(47 98)">${markSVG(m1,c1,.62,false)}</g>`;
- return {b,c,f,t,c1,c2,m2,gem:t>=2,hd:t>=4?`<g class="floaty"><g transform="translate(70 -30)">${markSVG(m2,c2,1.5)}</g>${sparkles([[48,-34,4],[92,-34,4],[70,-50,4.5]],"#fff")}</g>`:""};
-}
+function evoLayers(o,lv,fem){const t=CLS[o.cls]?evoTier(lv):0;return {b:"",c:"",f:"",t,gem:false,hd:""};}
 const CLS_REQ={w:1,h:3,b:6};
 function clsApplyOver(){Object.keys(NODE).forEach(k=>["m","f","s"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){NODE[k][f]=v.trim();const nv=TXO["cls."+k+"."+f+".v"];if(f!=="s")NODE[k][f+"v"]=(nv&&nv.trim())||v.trim();else NODE[k].sv=(nv&&nv.trim())||v.trim();}}));CLS_KEYS.forEach(k=>{const v=TXO["cls."+k+".s"];if(v&&v.trim())CLS[k].s=v.trim();});CLS_KEYS.forEach(k=>["m","f","tm","tf","d"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){CLS[k][f]=v.trim();const nf={m:"mv",f:"fv",tm:"tmv",tf:"tfv",d:"dv"}[f],nv=TXO["cls."+k+"."+f+".v"];CLS[k][nf]=(nv&&nv.trim())||v.trim();}}));}
 const CLS_KEYS=["fighter","tank","mage","archer","healer","ninja"];
@@ -1485,7 +1475,7 @@ function weaponSVG(W,se,pr,t=0){
  if(W==="flower")w=limb("M0 14 L0 -24","#3ed45e",4)+`<path d="M0 -6 Q-12 -10 -10 -18 Q-4 -12 0 -6 Z" fill="#3ed45e"${K(1.8)}/>`+[0,1,2,3,4].map(i=>{const a=i*1.2566-1.57;return `<circle cx="${(10*Math.cos(a)).toFixed(1)}" cy="${(-36+10*Math.sin(a)).toFixed(1)}" r="7.5" fill="${t>=2?"#ffd23f":"#ff7ec8"}"${K(2.2)}/>`;}).join("")+`<circle cx="0" cy="-36" r="6" fill="#ffcf2e"${K(2)}/>`;
  if(W==="orb")w=`<circle cx="0" cy="-16" r="${9+t}" fill="#8fe3ff"${K(2.5)}/><circle cx="3" cy="-19" r="3" fill="#fff"/>`;
  let pre="",add="";
- if(t>=3&&(W==="sword"||W==="hammer"||W==="staff"||W==="bow"))pre+=`<path class="flame" d="M${tx} ${ty+8} C ${tx-17} ${ty-6} ${tx-7} ${ty-22} ${tx} ${ty-36} C ${tx+7} ${ty-22} ${tx+17} ${ty-6} ${tx} ${ty+8} Z" fill="#ff7a1f" opacity=".9"/><path class="flame" d="M${tx} ${ty+3} C ${tx-9} ${ty-5} ${tx-3} ${ty-14} ${tx} ${ty-23} C ${tx+3} ${ty-14} ${tx+9} ${ty-5} ${tx} ${ty+3} Z" fill="#ffd23f"/>`;
+
  if(t>=2&&(W==="wand"||W==="heartwand"||W==="staff"||W==="orb"))add+=`<path d="M${tx-8} ${ty} Q${tx-26} ${ty-14} ${tx-24} ${ty+5} Q${tx-16} ${ty+2} ${tx-8} ${ty+4} Z" fill="#fff"${K(2)}/><path d="M${tx+8} ${ty} Q${tx+26} ${ty-14} ${tx+24} ${ty+5} Q${tx+16} ${ty+2} ${tx+8} ${ty+4} Z" fill="#fff"${K(2)}/>`;
  if(t>=3&&(W==="wand"||W==="heartwand"||W==="orb"))add+=`<g class="orbit2" style="transform-origin:${tx}px ${ty}px">${sparkles([[tx+22,ty,5],[tx-22,ty,5],[tx,ty-22,4.5]],"#ffd23f")}</g>`;
  if(t>=2&&W==="sword")add+=`<path d="M-14 -12 Q-24 -22 -20 -30 Q-14 -20 -6 -16 Z M14 -12 Q24 -22 20 -30 Q14 -20 6 -16 Z" fill="#ffd23f"${K(2)}/>`;
@@ -1710,6 +1700,171 @@ function lvInfo(xp){let L=1;while(L<TOPLV&&xp>=xpAt(L+1))L++;return {lv:L,into:x
 const PROGF=1;
 function stashProg(c){if(!c)return;c.prog=c.prog||{};SAVE.heroes.forEach(h=>{c.prog[h.id]={xp:h.xp||0,stats:h.stats?{...h.stats}:null,items:JSON.parse(JSON.stringify(h.items||[])),hp:h.hp};});}
 function loadProg(c){if(!c||!c.prog)return;SAVE.heroes.forEach(h=>{const q=c.prog[h.id];h.xp=q?q.xp:0;h.stats=q&&q.stats?{...q.stats}:{str:0,wis:0,luck:0};h.items=q?JSON.parse(JSON.stringify(q.items||[])):[];if(q&&q.hp!=null)h.hp=q.hp;else delete h.hp;});}
+/* ---------- class costumes: every class / sub-class / master looks different ---------- */
+const KIT={
+ fighter:{c:"#c93a46",a:"#ffd23f",hd:["band","plain"],bd:["strap"],ov:["pad","round"],cp:"cape"},
+ tank:{c:"#7f8da8",a:"#e0a030",hd:["helm","iron"],bd:["plate"],ov:["pad","round"]},
+ mage:{c:"#6d4de0",a:"#ffe55c",hd:["wiz","star"],bd:["robe"]},
+ archer:{c:"#2f9e5b",a:"#e8d08a",hd:["hood","ranger"],bd:["vest"]},
+ healer:{c:"#eaf7ee",a:"#2fc47a",hd:["crown","leaf"],bd:["tabard","cross"]},
+ ninja:{c:"#272b40",a:"#e63946",hd:["band","ninja"],bd:["gi"],fm:"scarf"},
+ knight:{c:"#b4bfd4",a:"#3a6ee0",hd:["helm","knight"],bd:["plate"],ov:["pad","round"],cp:"cape"},
+ samurai:{c:"#b3262e",a:"#1b1b24",hd:["helm","kabuto"],bd:["lamellar"],ov:["pad","sode"]},
+ musketeer:{c:"#2b4fa8",a:"#f2e6c4",hd:["hat","musk"],bd:["coat"],cp:"cape"},
+ magicKnight:{c:"#8a6bff",a:"#d9e4ff",hd:["helm","magic"],bd:["plate"],ov:["pad","round"],cp:"cape",fx:"spark"},
+ fireSamurai:{c:"#c8321e",a:"#ffb02e",hd:["helm","kabutoF"],bd:["lamellar"],ov:["pad","sode"],fx:"flame"},
+ iceSamurai:{c:"#6fb7e8",a:"#eaf6ff",hd:["helm","kabutoI"],bd:["lamellar"],ov:["pad","sode"],fx:"snow"},
+ ironGuard:{c:"#8b93a7",a:"#e0a030",hd:["helm","iron"],bd:["plate"],ov:["pad","spike"]},
+ viking:{c:"#8b5a3c",a:"#d9d2c0",hd:["helm","horned"],bd:["fur"],ov:["pad","fur"],fm:"beard"},
+ ironKnight:{c:"#5c6578",a:"#c93a3a",hd:["helm","full"],bd:["plate"],ov:["pad","big"],cp:"cape"},
+ heartKnight:{c:"#e9d6e0",a:"#ff4f8a",hd:["helm","heart"],bd:["plate"],ov:["pad","round"],cp:"cape",fx:"heart"},
+ snowViking:{c:"#dfe9f2",a:"#4aa3df",hd:["helm","hornedS"],bd:["fur"],ov:["pad","fur"],fm:"beardW",fx:"snow"},
+ forestViking:{c:"#4e7a3b",a:"#c8a35a",hd:["helm","antler"],bd:["fur"],ov:["pad","fur"],fm:"beardB",fx:"leaf"},
+ iceMage:{c:"#4fb0ee",a:"#ffffff",hd:["wiz","ice"],bd:["robe"]},
+ fireMage:{c:"#e8501e",a:"#ffd23f",hd:["wiz","fire"],bd:["robe"]},
+ frostMage:{c:"#bfe7ff",a:"#3a78d0",hd:["wiz","frost"],bd:["robe"],fx:"snow"},
+ snowMage:{c:"#ffffff",a:"#8fcaf0",hd:["wiz","snow"],bd:["robeFur"],fx:"snow"},
+ lavaMage:{c:"#3a2a2e",a:"#ff6a1a",hd:["wiz","lava"],bd:["robe"],fx:"flame"},
+ torchMage:{c:"#8a3a1a",a:"#ffcf4a",hd:["hood","torch"],bd:["robe"],fx:"flame"},
+ slinger:{c:"#b7803d",a:"#3ec5ff",hd:["band","goggles"],bd:["vest"],fm:"goggles"},
+ arrowWizard:{c:"#1f9d8f",a:"#ffd23f",hd:["wiz","arrow"],bd:["robe"],fx:"spark"},
+ hawkEye:{c:"#7b5230",a:"#e8e0c8",hd:["helm","hawk"],bd:["vest"],cp:"cloak"},
+ sniper:{c:"#55612f",a:"#ff3d4e",hd:["hood","sniper"],bd:["vest"],fm:"scope",cp:"cloak"},
+ windArcher:{c:"#6fd6c0",a:"#ffffff",hd:["band","feather"],bd:["vest"],cp:"cloak",fx:"wind"},
+ fireArcher:{c:"#c8421e",a:"#ffcf4a",hd:["band","flameb"],bd:["vest"],fx:"flame"},
+ heartHealer:{c:"#fff1f6",a:"#ff4f8a",hd:["crown","heart"],bd:["tabard","heart"],fx:"heart"},
+ magicHealer:{c:"#e6ecff",a:"#7b5cff",hd:["crown","moon"],bd:["robe"],fx:"spark"},
+ potionMaster:{c:"#d8f0e0",a:"#2fa8a0",hd:["band","goggles"],bd:["tabard","flask"],fm:"goggles"},
+ spellMaster:{c:"#3c2f7a",a:"#c9b6ff",hd:["hood","rune"],bd:["robe"],fx:"spark"},
+ sorcerer:{c:"#4a1f6e",a:"#ff5fd0",hd:["wiz","witch"],bd:["robe"],fx:"spark"},
+ healerMaster:{c:"#f7f3d8",a:"#ffd23f",hd:["crown","halo"],bd:["tabard","gold"],fx:"spark"},
+ sailor:{c:"#2b5d9c",a:"#ffffff",hd:["band","bandana"],bd:["stripe"],fm:"eyepatch"},
+ snatcher:{c:"#1e2230",a:"#8a2234",hd:["hood","ninja"],bd:["gi"],fm:"mask",cp:"cloak"},
+ pirate:{c:"#8b1f2a",a:"#e8c04a",hd:["hat","tricorn"],bd:["coat"],fm:"eyepatch"},
+ captain:{c:"#1f3f7a",a:"#e8c04a",hd:["hat","captain"],bd:["coat"],ov:["pad","epaulet"],cp:"cape"},
+ ninjaMaster:{c:"#14161f",a:"#9b30ff",hd:["hood","ninja"],bd:["gi"],fm:"mask",cp:"cloak",fx:"shadow"},
+ ronin:{c:"#6b5a44",a:"#c8c8c8",hd:["hat","kasa"],bd:["robe"],fm:"scarf",cp:"cloak"}
+};
+function kitOf(o){return KIT[o.mas]||KIT[o.sub]||KIT[o.cls]||null;}
+const PA=(d,f,w)=>`<path d="${d}" fill="${f}"${K(w==null?2.6:w)}/>`;
+const mir=(f)=>f(0)+`<g transform="translate(140 0) scale(-1 1)">${f(1)}</g>`;
+function kHead(k,u){const [t,v]=k.hd,c=k.c,a=k.a,d=shade(c,-.3),l=shade(c,.3);let hb="",hd="";
+ const dome=(col)=>PA("M31 60 Q28 12 70 10 Q112 12 109 60 L99 60 Q96 38 70 36 Q44 38 41 60Z",col,2.8);
+ if(t==="band"){
+  if(v==="ninja"){hd=PA("M33 44 Q70 34 107 44 L107 55 Q70 45 33 55Z",c,2.6)+`<path d="M104 48 Q124 50 132 70 Q118 62 104 58Z M104 52 Q120 62 124 82 Q112 70 104 58Z" fill="${c}"${K(2.2)}/><rect x="56" y="38" width="28" height="14" rx="3" fill="#d4dbea"${K(2.4)}/><path d="M64 45 L70 41 L76 45 L70 49Z" fill="${a}"/>`;}
+  else if(v==="plain")hd=PA("M33 44 Q70 34 107 44 L107 54 Q70 44 33 54Z",a,2.6)+`<path d="M104 47 Q122 49 128 64 Q116 58 104 56Z" fill="${a}"${K(2.2)}/><path d="M42 47 Q70 39 98 47" fill="none" stroke="${c}" stroke-width="2.2"/>`;
+  else if(v==="goggles")hd=PA("M33 42 Q70 32 107 42 L107 50 Q70 40 33 50Z",c,2.4)+`<circle cx="54" cy="36" r="10" fill="${shade(a,.4)}"${K(2.6)}/><circle cx="86" cy="36" r="10" fill="${shade(a,.4)}"${K(2.6)}/><circle cx="54" cy="36" r="5.5" fill="${a}"/><circle cx="86" cy="36" r="5.5" fill="${a}"/><rect x="62" y="33" width="16" height="5" fill="${d}"${K(2)}/>`;
+  else if(v==="bandana")hd=PA("M32 54 Q30 14 70 12 Q110 14 108 54 Q70 40 32 54Z",c,2.8)+[[48,30],[66,22],[86,28],[58,38],[96,40]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.6" fill="${a}"/>`).join("")+`<path d="M104 44 Q124 44 130 62 Q116 56 102 54Z M104 48 Q122 58 124 76 Q112 64 102 54Z" fill="${c}"${K(2.2)}/>`;
+  else if(v==="feather")hd=PA("M33 44 Q70 34 107 44 L107 53 Q70 43 33 53Z",a,2.4)+`<path d="M100 40 Q118 8 132 -6 Q130 20 110 44Z" fill="${c}"${K(2.2)}/><path d="M106 38 Q120 18 128 6" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M94 42 Q104 14 112 0 Q114 24 100 46Z" fill="${shade(c,.2)}"${K(2.2)}/>`;
+  else if(v==="flameb")hd=PA("M32 54 Q30 14 70 12 Q110 14 108 54 Q70 40 32 54Z",c,2.8)+`<path d="M52 44 Q48 30 58 22 Q58 32 64 30 Q62 38 66 44Z M74 44 Q72 32 82 24 Q82 34 88 34 Q84 40 88 46Z" fill="${a}" stroke="${O}" stroke-width="1.6"/>`+`<path d="M104 44 Q124 46 128 62 Q114 54 102 54Z" fill="${c}"${K(2.2)}/>`;}
+ else if(t==="helm"){
+  const horn=(col,big)=>mir(m=>PA(`M36 32 Q${big?6:16} 30 ${big?6:12} ${big?-8:4} Q${big?26:28} 8 44 24Z`,col,2.4));
+  if(v==="iron"||v==="full"||v==="knight"||v==="magic"||v==="heart"||v==="hawk"){
+   hd=dome(c)+mir(m=>PA("M31 60 L34 84 L46 80 L43 60Z",d,2.4))+`<path d="M44 46 Q70 38 96 46" fill="none" stroke="${a}" stroke-width="3" stroke-linecap="round"/>`+[[40,52],[100,52]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2" fill="${a}"/>`).join("");
+   if(v==="iron")hd+=PA("M66 38 L66 60 L74 60 L74 38Z",d,2.2);
+   if(v==="knight")hd+=`<path d="M70 12 Q96 -16 124 -4 Q104 4 96 22Z" fill="${a}"${K(2.4)}/><path d="M70 12 Q86 -8 108 -8" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>`;
+   if(v==="full")hd+=PA("M44 40 L96 40 L94 50 L46 50Z",shade(c,-.5),2.2)+`<path d="M70 12 Q100 -22 132 -8 Q108 2 100 24 Z" fill="${a}"${K(2.4)}/><path d="M70 12 L70 -2" stroke="${d}" stroke-width="5"/>`;
+   if(v==="magic")hd+=`<polygon points="70,12 80,24 70,36 60,24" fill="${a}"${K(2.4)}/><path d="M34 40 Q16 30 12 8 Q28 14 38 30Z M106 40 Q124 30 128 8 Q112 14 102 30Z" fill="${shade(a,.1)}"${K(2.2)}/>`;
+   if(v==="heart")hd+=`<path d="${heartPath(70,22,13)}" fill="${a}"${K(2.6)}/><path d="M70 10 L70 -4" stroke="${a}" stroke-width="4"/>`;
+   if(v==="hawk")hd+=`<path d="M32 40 Q8 40 -2 22 Q16 26 34 30Z M34 28 Q10 20 4 2 Q22 8 38 20Z M108 40 Q132 40 142 22 Q124 26 106 30Z M106 28 Q130 20 136 2 Q118 8 102 20Z" fill="${a}"${K(2.2)}/><path d="M66 36 L70 52 L74 36Z" fill="#e8b84a"${K(2)}/>`;
+  }
+  else if(v==="kabuto"||v==="kabutoF"||v==="kabutoI"){
+   hd=dome(c)+mir(m=>PA("M30 56 Q20 74 28 90 L46 78 L42 58Z",shade(c,-.15),2.4))+`<path d="M44 40 Q70 32 96 40" fill="none" stroke="${a==="#1b1b24"?"#ffd23f":a}" stroke-width="3"/>`;
+   if(v==="kabuto")hd+=`<path d="M70 14 L60 -6 L70 4 L80 -6Z" fill="#ffd23f"${K(2.2)}/>`+mir(m=>`<path d="M54 14 Q36 -8 24 -2 Q36 4 50 24Z" fill="#ffd23f"${K(2.2)}/>`);
+   if(v==="kabutoF")hd+=`<path d="M50 16 Q42 -6 58 -20 Q56 -6 68 -10 Q66 0 72 -22 Q86 -4 84 -14 Q94 4 90 16Z" fill="${a}"${K(2.2)}/><path d="M60 14 Q58 0 68 -8 Q68 4 76 4 Q74 10 78 14Z" fill="#ffe66b"/>`;
+   if(v==="kabutoI")hd+=mir(m=>`<path d="M56 16 Q40 -10 34 -26 Q52 -12 62 12Z" fill="${a}"${K(2.2)}/><path d="M44 -2 L34 -8 M48 4 L38 2" stroke="#fff" stroke-width="1.6"/>`)+`<path d="M70 14 L64 -14 L70 -6 L76 -14Z" fill="${a}"${K(2.2)}/>`;
+  }
+  else if(v==="horned"||v==="hornedS"){const fr=v==="hornedS";hd=dome(fr?"#ffffff":c)+PA("M66 38 L66 58 L74 58 L74 38Z",d,2.2)+horn("#f2ead6",false)+(fr?`<path d="M31 60 Q26 40 36 28 Q40 44 44 36 Q48 46 52 34 Q70 28 88 34 Q92 46 96 36 Q100 44 104 28 Q114 40 109 60 Q98 44 70 40 Q42 44 31 60Z" fill="#fff"${K(2.2)}/>`:`<path d="M31 56 Q40 44 70 42 Q100 44 109 56" fill="none" stroke="${a}" stroke-width="3"/>`);}
+  else if(v==="antler"){const br=(m)=>`<path d="M40 24 Q26 8 22 -10 M30 12 Q16 8 10 -2 M34 16 Q40 0 36 -12 M24 -2 Q18 -12 20 -20" fill="none" stroke="${O}" stroke-width="8" stroke-linecap="round"/><path d="M40 24 Q26 8 22 -10 M30 12 Q16 8 10 -2 M34 16 Q40 0 36 -12 M24 -2 Q18 -12 20 -20" fill="none" stroke="#d9c08a" stroke-width="4" stroke-linecap="round"/>`;hd=mir(br)+dome(c)+`<path d="M34 44 Q46 36 70 36 Q94 36 106 44" fill="none" stroke="#3ed45e" stroke-width="3" stroke-dasharray="5 4"/>`;}
+ }
+ else if(t==="wiz"){
+  const tip={star:[88,-26],ice:[82,-26],fire:[70,-22],frost:[70,-34],snow:[78,-22],lava:[84,-30],arrow:[90,-24],witch:[96,-18]}[v]||[84,-26];
+  const brim=v==="witch"?"M16 44 Q70 22 124 44 Q70 54 16 44Z":"M24 42 Q70 26 116 42 Q70 52 24 42Z";
+  hd=`<path d="${brim}" fill="${shade(c,-.1)}"${K(2.8)}/>`;
+  if(v==="frost"){hd+=PA("M40 40 L48 6 L58 28 L70 -6 L82 28 L92 6 L100 40Z",c,2.6)+`<path d="M70 -6 L70 30 M48 6 L56 38 M92 6 L84 38" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>`;}
+  else{hd+=PA(`M42 40 Q46 10 ${tip[0]-6} ${tip[1]+14} Q${tip[0]} ${tip[1]-2} ${tip[0]+8} ${tip[1]+2} Q${tip[0]-4} 14 98 40Z`,c,2.8);}
+  if(v==="star")hd+=`<polygon points="${starPts(66,24,6,2.6)}" fill="${a}"${K(1.6)}/><circle cx="84" cy="8" r="2" fill="${a}"/>`;
+  if(v==="ice")hd+=`<path d="M24 42 Q70 26 116 42 Q70 52 24 42Z" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="1 9" stroke-linecap="round"/><g transform="translate(66 28)"><path d="M0 -7 V7 M-6 -3.5 L6 3.5 M-6 3.5 L6 -3.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></g>`;
+  if(v==="fire")hd+=`<path d="M62 -14 Q58 -24 70 -30 Q70 -22 80 -22 Q76 -16 78 -12Z" fill="${a}"${K(2)}/><path d="M42 36 Q70 28 98 36" fill="none" stroke="${a}" stroke-width="4"/>`;
+  if(v==="snow")hd+=`<circle cx="${tip[0]+6}" cy="${tip[1]+2}" r="9" fill="#fff"${K(2.2)}/><path d="M24 42 Q70 26 116 42 Q70 52 24 42Z" fill="#fff" fill-opacity=".9"${K(2.4)}/>`;
+  if(v==="lava")hd+=`<path d="M52 34 L58 22 L56 14 M80 34 L76 20 L82 10" fill="none" stroke="${a}" stroke-width="2.6" stroke-linecap="round"/><path d="M24 42 Q70 26 116 42" fill="none" stroke="${a}" stroke-width="3"/>`;
+  if(v==="arrow")hd+=`<path d="M116 -8 L58 18" stroke="${O}" stroke-width="5" stroke-linecap="round"/><path d="M116 -8 L58 18" stroke="#d9c08a" stroke-width="2.4" stroke-linecap="round"/><path d="M112 -14 l12 4 l-8 8z" fill="${a}"${K(1.6)}/>`;
+  if(v==="witch")hd+=PA("M42 36 L98 36 L92 18 Q104 0 112 -18 Q86 -4 70 -8 Q48 -2 46 20Z",c,2.6)+`<path d="M44 36 Q70 28 96 36" fill="none" stroke="${a}" stroke-width="5"/>`+mir(m=>`<path d="M40 30 Q28 24 24 10 Q36 14 46 24Z" fill="${shade(c,.15)}"${K(2)}/>`);
+ }
+ else if(t==="hat"){
+  if(v==="kasa")hd=PA("M8 46 Q70 -14 132 46 Q70 36 8 46Z",c,2.8)+`<path d="M30 40 Q70 -2 110 40 M46 36 Q70 4 94 36 M20 44 L120 44" fill="none" stroke="${shade(c,-.3)}" stroke-width="1.6"/><path d="M40 44 Q36 64 44 80 M100 44 Q104 64 96 80" fill="none" stroke="${a}" stroke-width="2.4"/>`;
+  else if(v==="tricorn")hd=PA("M12 44 Q22 30 44 22 Q70 -2 96 22 Q118 30 128 44 Q70 36 12 44Z",c,2.8)+`<path d="M18 42 Q70 34 122 42" fill="none" stroke="${a}" stroke-width="3.4"/><g transform="translate(70 22)"><circle r="6.5" fill="#f4f1e6"${K(1.8)}/><rect x="-3.2" y="2" width="6.4" height="4.6" fill="#f4f1e6"/><circle cx="-2.4" cy="-.6" r="1.6" fill="${O}"/><circle cx="2.4" cy="-.6" r="1.6" fill="${O}"/></g>`;
+  else if(v==="captain")hd=PA("M30 40 Q28 8 70 6 Q112 8 110 40 Q70 32 30 40Z",c,2.8)+PA("M26 44 Q70 30 114 44 Q114 54 70 50 Q26 54 26 44Z",O,2.4)+`<path d="M34 38 Q70 30 106 38" fill="none" stroke="${a}" stroke-width="3.6"/><g transform="translate(70 22)"><circle r="9" fill="${a}"${K(2)}/><path d="M0 -5 V6 M-4 -1 H4 M-5 3 Q0 8 5 3" fill="none" stroke="${O}" stroke-width="1.8" stroke-linecap="round"/></g>`;
+  else if(v==="musk")hd=PA("M8 44 Q70 22 132 44 Q70 56 8 44Z",c,2.8)+PA("M38 42 Q38 8 70 6 Q102 8 102 42Z",c,2.8)+`<path d="M38 36 Q70 30 102 36" fill="none" stroke="${a}" stroke-width="3.4"/><path d="M92 14 Q124 -14 140 6 Q122 6 116 20 Q124 4 108 4Z" fill="${a}"${K(2.2)}/>`;
+ }
+ else if(t==="hood"){
+  hb=`<path d="M24 74 Q18 10 70 4 Q122 10 116 74 L110 108 L30 108Z" fill="${d}"${K(2.8)}/>`;
+  hd=PA("M29 64 Q26 14 70 8 Q114 14 111 64 Q106 40 70 36 Q34 40 29 64Z",c,2.8);
+  if(v==="ranger")hd+=`<path d="M100 20 Q124 -6 142 -2 Q130 14 110 30Z" fill="${a}"${K(2.2)}/><path d="M104 20 Q122 6 134 2" fill="none" stroke="#fff" stroke-width="1.4"/>`;
+  if(v==="sniper")hd+=`<path d="M29 64 L24 74 L34 70 L30 82 L42 72Z M111 64 L116 74 L106 70 L110 82 L98 72Z" fill="${c}"${K(2)}/>`+[[44,24],[88,20],[70,14]].map(([x,y])=>`<path d="M${x} ${y} l3 -9 l3 9z" fill="${shade(c,.3)}"/>`).join("");
+  if(v==="ninja")hd+=`<rect x="56" y="36" width="28" height="9" rx="2" fill="#d4dbea"${K(2)}/>`;
+  if(v==="rune"){hd+=[[48,26],[70,18],[92,26]].map(([x,y])=>`<path d="M${x} ${y-5} V${y+5} M${x-4} ${y} L${x+4} ${y+3}" stroke="${a}" stroke-width="2.4" stroke-linecap="round"/>`).join("");}
+  if(v==="torch")hd+=`<path d="M70 4 Q58 -14 70 -30 Q72 -18 84 -22 Q78 -10 82 2Z" fill="${a}"${K(2)}/><path d="M70 2 Q64 -8 70 -16 Q74 -8 78 -4 Q74 0 72 4Z" fill="#fff3b0"/>`;
+ }
+ else if(t==="crown"){
+  if(v==="leaf")hd=mir(m=>[[40,30,-30],[34,40,-10],[32,52,10],[44,22,-50]].map(([x,y,r])=>`<path d="M${x} ${y} q-9 -5 -12 3 q8 4 12 -3z" transform="rotate(${r} ${x} ${y})" fill="${a}"${K(1.8)}/>`).join(""))+`<path d="M38 40 Q70 26 102 40" fill="none" stroke="#8fd9a8" stroke-width="3.4" stroke-linecap="round"/>`;
+  if(v==="heart")hd=PA("M40 38 Q70 26 100 38 L100 44 Q70 32 40 44Z",a,2.4)+`<path d="${heartPath(70,26,11)}" fill="#ff7eb6"${K(2.4)}/><circle cx="44" cy="38" r="2.4" fill="#fff"/><circle cx="96" cy="38" r="2.4" fill="#fff"/>`;
+  if(v==="moon")hd=PA("M40 38 Q70 26 100 38 L100 44 Q70 32 40 44Z",a,2.4)+`<path d="M60 30 A12 12 0 1 0 82 30 A9 9 0 1 1 60 30Z" fill="#ffe55c"${K(2.2)}/>`;
+  if(v==="halo")hd=`<ellipse class="glow" cx="70" cy="2" rx="28" ry="7" fill="none" stroke="${a}" stroke-width="5"/>`+mir(m=>[[38,36,-20],[34,46,0],[36,26,-45]].map(([x,y,r])=>`<path d="M${x} ${y} q-9 -5 -12 3 q8 4 12 -3z" transform="rotate(${r} ${x} ${y})" fill="${a}"${K(1.8)}/>`).join(""))+`<path d="M38 38 Q70 26 102 38" fill="none" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/>`;
+ }
+ return {hb,hd};}
+function kBody(k,u,fem){const [t,v]=k.bd,c=k.c,a=k.a,d=shade(c,-.3),l=shade(c,.3);const T="M46 96 Q70 86 94 96 Q102 116 98 134 Q70 142 42 134 Q38 116 46 96Z";let s="";
+ const belt=(col)=>`<path d="M42.5 120 Q70 127 97.5 120 L98 129 Q70 136 42 129Z" fill="${col}"${K(2.4)}/><rect x="63" y="120" width="14" height="11" rx="3" fill="${a}"${K(2.2)}/>`;
+ if(t==="gi"){s=PA(T,c,2.8)+`<path d="M56 92 L70 112 L84 92" fill="none" stroke="${d}" stroke-width="5" stroke-linejoin="round"/><path d="M48 100 L92 130 M92 100 L48 130" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/>`+belt(a)+`<path d="M66 128 L58 148 M74 128 L84 146" stroke="${a}" stroke-width="4.4" stroke-linecap="round"/>`;if(u>=2)s+=[0,1,2].map(i=>`<path d="M${58+i*9} 104 l2 9 l-4 0z" fill="#d4dbea"${K(1.4)}/>`).join("");}
+ if(t==="strap"){s=`<path d="M52 92 L90 134" stroke="${O}" stroke-width="10" stroke-linecap="round"/><path d="M52 92 L90 134" stroke="${c}" stroke-width="6.4" stroke-linecap="round"/><circle cx="71" cy="113" r="4" fill="${a}"${K(1.8)}/>`+belt(c);}
+ if(t==="plate"){s=PA("M48 96 Q70 88 92 96 Q98 116 94 130 Q70 136 46 130 Q42 116 48 96Z",c,2.8)+`<path d="M70 92 V132 M54 108 Q70 114 86 108" fill="none" stroke="${d}" stroke-width="2.6"/><path d="M50 98 Q70 92 90 98" fill="none" stroke="${l}" stroke-width="3" stroke-linecap="round"/><circle cx="58" cy="124" r="2" fill="${a}"/><circle cx="82" cy="124" r="2" fill="${a}"/>`+belt(shade(c,-.4));if(u>=2)s+=`<polygon points="${starPts(70,110,7,3,4)}" fill="${a}"${K(1.8)}/>`;}
+ if(t==="fur"){s=PA("M48 96 Q70 88 92 96 Q98 116 94 130 Q70 136 46 130 Q42 116 48 96Z",c,2.8)+`<path d="M44 98 Q56 106 70 98 Q84 106 96 98 Q98 90 70 88 Q42 90 44 98Z" fill="#f4efe2"${K(2.4)}/>`+`<path d="M48 108 L92 128 M92 108 L48 128" stroke="${a}" stroke-width="3" stroke-linecap="round" opacity=".8"/>`+belt("#4a2f1e");}
+ if(t==="robe"||t==="robeFur"){s=`<path d="M44 94 Q70 84 96 94 Q104 122 108 152 Q70 160 32 152 Q36 122 44 94Z" fill="${c}"${K(2.8)}/><path d="M70 96 L70 154" stroke="${d}" stroke-width="2.4"/><path d="M52 92 Q70 112 88 92" fill="none" stroke="${a}" stroke-width="4" stroke-linecap="round"/><path d="M36 148 Q70 156 104 148" fill="none" stroke="${a}" stroke-width="3.6" stroke-dasharray="1 7" stroke-linecap="round"/><rect x="44" y="119" width="52" height="8" rx="3" fill="${a}"${K(2.2)}/>`;if(t==="robeFur")s+=`<path d="M46 96 Q70 112 94 96 Q98 86 70 84 Q42 86 46 96Z" fill="#fff"${K(2.2)}/>`;if(u>=2)s+=`<polygon points="${starPts(70,140,6,2.6)}" fill="${a}"${K(1.6)}/>`;}
+ if(t==="vest"){s=PA("M48 96 Q70 90 92 96 L96 130 Q70 136 44 130Z",c,2.8)+`<path d="M70 94 V134" stroke="${d}" stroke-width="2.4"/><path d="M50 100 L88 128" stroke="${a}" stroke-width="5" stroke-linecap="round"/><path d="M50 100 L88 128" stroke="${O}" stroke-width="1.4" stroke-dasharray="3 4"/>`+belt(shade(c,-.45))+`<rect x="52" y="108" width="9" height="12" rx="2" fill="${d}"${K(1.6)}/>`;if(u>=2)s+=`<circle cx="86" cy="112" r="3" fill="${a}"${K(1.4)}/>`;}
+ if(t==="tabard"){s=PA("M50 92 L90 92 L96 148 Q70 156 44 148Z",c,2.8)+`<path d="M50 92 L90 92" stroke="${a}" stroke-width="5"/><path d="M44 148 Q70 156 96 148" fill="none" stroke="${a}" stroke-width="4"/>`;
+   if(v==="cross")s+=`<path d="M70 104 V130 M58 117 H82" stroke="${a}" stroke-width="7" stroke-linecap="round"/>`;
+   if(v==="heart")s+=`<path d="${heartPath(70,117,12)}" fill="${a}"${K(2.2)}/>`;
+   if(v==="gold")s+=`<circle cx="70" cy="117" r="12" fill="${a}"${K(2.4)}/><polygon points="${starPts(70,117,9,3.6)}" fill="#fff"/>`;
+   if(v==="flask")s+=`<path d="M66 106 h8 v8 l7 12 q2 5 -3 5 h-16 q-5 0 -3 -5 l7 -12z" fill="#7ee8d8"${K(2.2)}/><rect x="66" y="102" width="8" height="5" fill="#d9c08a"${K(1.6)}/>`;}
+ if(t==="lamellar"){s=PA("M47 96 Q70 88 93 96 Q98 116 95 132 Q70 138 45 132 Q42 116 47 96Z",c,2.8)+[102,108,114,120,126].map(y=>`<path d="M46 ${y} Q70 ${y+4} 94 ${y}" fill="none" stroke="${a}" stroke-width="2.2"/>`).join("")+`<path d="M70 92 V134" stroke="#ffd23f" stroke-width="2.4"/>`+belt("#2a2a33");}
+ if(t==="coat"){s=`<path d="M46 94 Q70 86 94 94 L104 148 L88 142 L70 150 L52 142 L36 148Z" fill="${c}"${K(2.8)}/><path d="M58 92 L70 130 L82 92" fill="${shade(c,.25)}"${K(2.2)}/><path d="M70 100 V146" stroke="${a}" stroke-width="2"/>`+[104,114,124].map(y=>`<circle cx="62" cy="${y}" r="2.2" fill="${a}"/><circle cx="78" cy="${y}" r="2.2" fill="${a}"/>`).join("")+`<path d="M44 122 Q70 130 96 122 L96 130 Q70 138 44 130Z" fill="#7a1f2a"${K(2.2)}/><path d="M46 96 L38 108 M94 96 L102 108" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/>`;}
+ if(t==="stripe"){s=PA(T,"#f4f4f4",2.8)+[100,108,116,124,132].map(y=>`<path d="M44 ${y} Q70 ${y+5} 96 ${y}" fill="none" stroke="${c}" stroke-width="4"/>`).join("")+`<path d="M54 92 L70 108 L86 92 L84 100 L70 112 L56 100Z" fill="${c}"${K(2)}/>`+belt("#6b4a2a");}
+ return s;}
+function kOver(k,u){const [t,v]=k.ov||[],c=k.c,a=k.a,d=shade(c,-.3);if(!t)return "";let s="";
+ const pad=(m)=>{const x=m?0:0;return "";};
+ if(v==="round")s=mir(m=>`<path d="M34 102 Q32 86 50 90 Q56 98 48 108Z" fill="${c}"${K(2.6)}/><path d="M38 100 Q42 92 50 93" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>`);
+ if(v==="big")s=mir(m=>`<path d="M30 106 Q26 82 52 86 Q60 98 50 112Z" fill="${c}"${K(2.8)}/><circle cx="40" cy="96" r="3" fill="${a}"/><path d="M32 100 Q40 90 52 90" fill="none" stroke="${a}" stroke-width="2.6"/>`);
+ if(v==="spike")s=mir(m=>`<path d="M34 102 Q32 86 50 90 Q56 98 48 108Z" fill="${c}"${K(2.6)}/><path d="M38 92 L34 78 L44 88Z M46 90 L46 74 L52 88Z" fill="${a}"${K(1.8)}/>`);
+ if(v==="sode")s=mir(m=>`<path d="M30 94 L52 90 L50 114 L32 116Z" fill="${c}"${K(2.6)}/>`+[98,104,110].map(y=>`<path d="M31 ${y} L51 ${y-2}" stroke="${a==="#1b1b24"?"#ffd23f":a}" stroke-width="2"/>`).join(""));
+ if(v==="fur")s=mir(m=>`<path d="M30 104 Q26 88 38 82 Q40 90 46 84 Q50 92 54 88 Q56 100 50 110Z" fill="#f4efe2"${K(2.4)}/>`);
+ if(v==="epaulet")s=mir(m=>`<rect x="32" y="92" width="22" height="9" rx="3" fill="${a}"${K(2.2)}/>`+[0,1,2,3].map(i=>`<path d="M${35+i*5} 101 v8" stroke="${a}" stroke-width="2.4" stroke-linecap="round"/>`).join(""));
+ return s;}
+function kFace(k,u){const f=k.fm,c=k.c,a=k.a;if(!f)return "";
+ if(f==="scarf")return `<path d="M42 90 Q70 106 98 90 L98 100 Q70 116 42 100Z" fill="${a}"${K(2.4)}/><path d="M92 98 Q104 112 100 130 L92 124Z" fill="${a}"${K(2.2)}/>`;
+ if(f==="mask")return `<path d="M36 68 Q70 62 104 68 Q106 86 70 98 Q34 86 36 68Z" fill="${c}"${K(2.8)}/><path d="M40 72 Q70 68 100 72" fill="none" stroke="${a}" stroke-width="2.4" opacity=".8"/>`;
+ if(f==="eyepatch")return `<path d="M30 40 Q70 52 110 38" fill="none" stroke="${O}" stroke-width="3"/><ellipse cx="86" cy="52" rx="9.5" ry="8" fill="${O}"/>`;
+ if(f==="goggles")return `<g><circle cx="54" cy="52" r="10.5" fill="${a}" fill-opacity=".35"${K(2.8)}/><circle cx="86" cy="52" r="10.5" fill="${a}" fill-opacity=".35"${K(2.8)}/><path d="M64 52 H76" stroke="${O}" stroke-width="3"/><path d="M47 47 Q52 44 56 46" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`;
+ if(f==="scope")return `<circle cx="86" cy="52" r="11.5" fill="${a}" fill-opacity=".25"${K(2.8)}/><path d="M86 42 V62 M76 52 H96" stroke="${a}" stroke-width="1.8"/><path d="M96 52 L110 52" stroke="${O}" stroke-width="3"/>`;
+ if(f==="beard"||f==="beardW"||f==="beardB"){const col=f==="beardW"?"#f4f4f8":f==="beardB"?"#5a3a22":"#c8793a";return `<path d="M36 68 Q70 74 104 68 Q108 98 90 112 Q80 100 70 114 Q60 100 50 112 Q32 98 36 68Z" fill="${col}"${K(2.8)}/><path d="M50 84 Q60 94 56 106 M90 84 Q80 94 84 106" fill="none" stroke="${O}" stroke-opacity=".3" stroke-width="2"/><path d="M62 78 Q70 82 78 78" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`;}
+ return "";}
+function kCape(k,u){const c=k.c,a=k.a,d=shade(c,-.3);
+ if(k.cp==="cape")return `<path d="M50 98 Q30 138 24 164 L116 164 Q110 138 90 98Z" fill="${shade(a==="#ffd23f"?c:a,-.05)}"${K()}/><path d="M50 98 Q34 130 30 156 M90 98 Q106 130 110 156" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
+ if(k.cp==="cloak")return `<path d="M48 96 Q22 130 16 164 L24 156 L34 166 L44 156 L54 168 L66 158 L74 158 L86 168 L96 156 L106 166 L116 156 L124 164 Q118 130 92 96Z" fill="${d}"${K(2.8)}/><path d="M50 100 Q34 130 32 156 M90 100 Q106 130 108 156" fill="none" stroke="${a}" stroke-opacity=".5" stroke-width="2.2"/>`;
+ return "";}
+function kFx(k,u){const f=k.fx,a=k.a,c=k.c;if(!f||u<3)return "";
+ const pts=[[18,60],[122,50],[10,108],[130,112],[24,150],[116,146],[40,8],[104,10]];
+ const sh={flame:(x,y,i)=>`<path class="flame" style="animation-delay:-${(i*.3).toFixed(1)}s" transform="translate(${x} ${y})" d="M0 8 Q-7 0 -2 -9 Q0 -4 3 -6 Q8 2 0 8Z" fill="${i%2?a:"#ff7a1f"}"${K(1.4)}/>`,
+  snow:(x,y,i)=>`<g class="tw" style="animation-delay:${(i*.35).toFixed(2)}s" transform="translate(${x} ${y})"><path d="M0 -6 V6 M-5 -3 L5 3 M-5 3 L5 -3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`,
+  leaf:(x,y,i)=>`<path class="tw" style="animation-delay:${(i*.35).toFixed(2)}s" transform="translate(${x} ${y}) rotate(${i*40})" d="M-6 4 Q-6 -6 6 -6 Q6 4 -6 4Z" fill="${i%2?"#6fd38a":"#3fa05f"}"${K(1.4)}/>`,
+  shadow:(x,y,i)=>`<ellipse class="tw" style="animation-delay:${(i*.35).toFixed(2)}s" cx="${x}" cy="${y}" rx="9" ry="6" fill="${a}" opacity=".45"/>`,
+  wind:(x,y,i)=>`<path class="tw" style="animation-delay:${(i*.35).toFixed(2)}s" transform="translate(${x} ${y})" d="M-9 0 H4 Q9 0 9 -4 M-9 5 H0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`,
+  heart:(x,y,i)=>`<path class="tw" style="animation-delay:${(i*.35).toFixed(2)}s" d="${heartPath(x,y,6)}" fill="${i%2?a:"#ff9ec7"}"${K(1.4)}/>`,
+  spark:(x,y,i)=>sparkles([[x,y,4.4]],i%2?a:"#fff")}[f];
+ return sh?pts.slice(0,u>=4?8:5).map(([x,y],i)=>sh(x,y,i)).join(""):"";}
+function kTier(k,u){let s="";const a=k.a;if(u>=1)s+=[[43,97],[97,97]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4" fill="${a}"${K(1.8)}/>`).join("");if(u>=2)s+=`<path d="M70 94 V118" stroke="${a}" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><path d="M52 100 Q70 108 88 100" fill="none" stroke="${a}" stroke-width="2.2" opacity=".8"/>`;if(u>=3)s+=[[43,97],[97,97]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5.6" fill="none" stroke="${a}" stroke-width="2.4"/>`).join("");return s;}
+function kAura(k,u){const a=k.a;let s="";if(u>=3)s+=`<ellipse cx="70" cy="100" rx="58" ry="62" fill="${a}" opacity=".13"/>`;if(u>=4)s+=`<ellipse class="glow" cx="70" cy="100" rx="64" ry="68" fill="none" stroke="${a}" stroke-width="3" stroke-dasharray="4 7"/>`;return s;}
+function kitParts(o,lv,fem){const k=kitOf(o);if(!k)return null;const u=evoTier(lv),H=kHead(k,u);return {c0:k.c,hb:H.hb,hd:H.hd,bd:kBody(k,u,fem),ov:kOver(k,u)+kTier(k,u),fm:kFace(k,u),cp:kCape(k,u),fx:kAura(k,u)+kFx(k,u),sub:!!(o.sub||o.mas)};}
+
 function heroInner(p,level=1,o={}){
  const mood=o.mood||"happy",st=o.stats||{};
  const tS=Math.min(3,st.str||0),tW=Math.min(3,st.wis||0),tL=Math.min(3,st.luck||0),tH=Math.min(3,st.hp||0),tP=Math.min(3,st.pow||0),tD=Math.min(3,st.def||0);
@@ -1718,19 +1873,19 @@ function heroInner(p,level=1,o={}){
  const fem=o.fem!=null?o.fem:!!p.fem,gid="h"+(gradN++),GOLD="#ffd23f";
  const power=tS+tW+tL,lv=level,sty=p.style||(fem?"sparkle":"hero"),spk=sty==="sparkle",hro=sty==="hero",mag=sty==="magic",nat=sty==="nature";
  let s="";
- const EV=o.cls?evoLayers(o,lv,fem):null;
+ const EV=o.cls?evoLayers(o,lv,fem):null,KT=o.cls?kitParts(o,lv,fem):null;
  if(lv>=TOPLV&&spk){const RB=["#ff4d6d","#ff9f1c","#ffe14d","#4fe36b","#3ec2ff","#a978ff"];RB.forEach((c,i)=>{const r=90-i*8.5;s+=`<path d="M${70-r} 100 A${r} ${r} 0 0 1 ${70+r} 100" fill="none" stroke="${c}" stroke-width="9"/>`;});s+=`<path d="M-20 100 A90 90 0 0 1 160 100 M27.5 100 A42.5 42.5 0 0 1 112.5 100" fill="none" stroke="${O}" stroke-width="2.4" opacity=".55"/>`;[[-6,98],[146,98]].forEach(([x,y])=>{s+=`<g><circle cx="${x-9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x+9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x}" cy="${y-5}" r="11" fill="#fff"${K(2.4)}/><rect x="${x-17}" y="${y+1}" width="34" height="9" fill="#fff"/></g>`;});}
- if(lv>=TOPLV&&hro)s+=`<path d="M18 160 L96 4 L126 6 Z" fill="#fff6b0" opacity=".2"/><circle class="glow" cx="110" cy="-2" r="27" fill="#fff3a0" opacity=".45"/><circle cx="110" cy="-2" r="20" fill="#fff3a0"${K(2.6)}/><g transform="translate(110 -2) scale(1.35) translate(-70 -106)">${emblemSVG(p.emblem,O,O)}</g>`;
+ if(lv>=TOPLV&&hro&&!KT)s+=`<path d="M18 160 L96 4 L126 6 Z" fill="#fff6b0" opacity=".2"/><circle class="glow" cx="110" cy="-2" r="27" fill="#fff3a0" opacity=".45"/><circle cx="110" cy="-2" r="20" fill="#fff3a0"${K(2.6)}/><g transform="translate(110 -2) scale(1.35) translate(-70 -106)">${emblemSVG(p.emblem,O,O)}</g>`;
  if(lv>=TOPLV&&mag)s+=`<circle cx="70" cy="80" r="86" fill="#2a1468" opacity=".9"/><circle cx="70" cy="80" r="86" fill="none" stroke="#a978ff" stroke-width="5"/><g class="spin" style="transform-origin:70px 80px"><path d="M70 0 A80 80 0 0 1 150 80 M70 160 A80 80 0 0 1 -10 80" fill="none" stroke="#3ee0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 10"/></g>`+[[20,40,3],[120,30,2.5],[30,120,2],[118,118,3],[70,-2,2.6],[-2,80,2],[142,76,2]].map(([x,y,r])=>`<circle class="tw" cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join("")+`<ellipse cx="70" cy="80" rx="40" ry="10" fill="#ff7ec8" opacity=".35" transform="rotate(-20 70 80)"/>`;
  if(lv>=TOPLV&&nat)s+=`<path d="M-14 160 Q-20 40 70 10 Q160 40 154 160" fill="none" stroke="#3fa05f" stroke-width="16" stroke-linecap="round"/><path d="M-14 160 Q-20 40 70 10 Q160 40 154 160" fill="none" stroke="#6fd38a" stroke-width="7" stroke-linecap="round"/>`+[[-8,110],[0,62],[24,30],[70,10],[116,30],[140,62],[148,110]].map(([x,y],i)=>`<path d="M${x} ${y} q-10 -6 -14 4 q10 4 14 -4 z" fill="#3ed45e"${K(1.8)}/>`+(i%2?`<g transform="translate(${x+6} ${y+4})">${[0,1,2,3,4].map(j=>{const a=j*1.2566;return `<circle cx="${(4*Math.cos(a)).toFixed(1)}" cy="${(4*Math.sin(a)).toFixed(1)}" r="3.2" fill="${["#ff7ec8","#ffd23f","#fff"][i%3]}"/>`;}).join("")}<circle r="2" fill="#ff8a1f"/></g>`:"")).join("")+`<g class="floaty"><path d="M120 120 q-8 -10 -12 0 q4 8 12 0 q8 -10 12 0 q-4 8 -12 0z" fill="#ffd23f"${K(1.6)}/></g>`;
  if(level>=2||power>=3)s+=`<circle cx="70" cy="92" r="70" fill="${se}" opacity=".16"/><circle cx="70" cy="92" r="54" fill="${se}" opacity=".18"/>`;
  if(level>=5||power>=7)s+=`<circle class="spin" cx="70" cy="92" r="66" fill="none" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 10"/>`;
  if(level>=4||power>=5)for(let i=0;i<5;i++){const a=i*1.26+.3;s+=`<polygon class="tw" style="animation-delay:${(i*.4).toFixed(1)}s" points="${starPts(70+60*Math.cos(a),80+56*Math.sin(a),5,2)}" fill="#fff"/>`;}
- if(EV)s+=EV.b;s+=shadowE();
+ if(KT)s+=KT.fx;s+=shadowE();
  if(lv>=6)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
  let g=`<defs><radialGradient id="${gid}f" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="${shade(sk,.28)}"/><stop offset=".68" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${gid}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(pr,.2)}"/><stop offset="1" stop-color="${shade(pr,-.12)}"/></linearGradient><linearGradient id="${gid}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(hc,.25)}"/><stop offset="1" stop-color="${shade(hc,-.12)}"/></linearGradient></defs>`;
- if(EV&&EV.c&&(p.back||"none")==="none")g+=EV.c;
- g+=hueWrap(backSVG((hro&&lv>=12&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=12?1:0),p),p.hue_back,gid+"hb");
+ if(KT&&KT.cp&&(p.back||"none")==="none"&&(evoTier(lv)>=1||KT.sub))g+=KT.cp;
+ g+=hueWrap(backSVG((hro&&lv>=12&&!KT&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=12&&!KT?1:0),p),p.hue_back,gid+"hb");
  if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="url(#${gid}h)"${K()}/>`;
  const BT=p.bottom||"pants",legc=BT==="shorts"?sk:BT==="jeans"?"#3a5fb8":BT==="armor"?"#9aa6c0":BT==="polka"?"#ffd9ec":BT==="camo"?"#6b8f45":BT==="ducks"?"#8fd8ff":"#2e2552";
  g+=limb("M60 130 L58 146",legc,11)+limb("M80 130 L82 146",legc,11);
@@ -1765,16 +1920,17 @@ function heroInner(p,level=1,o={}){
  if(mag&&lv>=12)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
  if(spk&&lv>=12)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
  if(tL>=2)g+=`<g transform="translate(70 124.5)"><circle r="6.5" fill="${GOLD}"${K(2)}/><circle cx="-2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="-2" cy="2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="2" r="2.2" fill="#3ed45e"/></g>`;
- g+=limb("M50 101 Q37 110 34 123",pr,10);
+ if(KT)g+=KT.bd;
+ const armC=KT?KT.c0:pr;g+=limb("M50 101 Q37 110 34 123",armC,10);
  const raise=W!=="none";
- g+=raise?limb("M90 101 Q104 98 108 88",pr,10):limb("M90 101 Q103 110 106 123",pr,10);
+ g+=raise?limb("M90 101 Q104 98 108 88",armC,10):limb("M90 101 Q103 110 106 123",armC,10);
  if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,Math.max(tS,EV?Math.min(3,EV.t):0,Math.min(3,o.wup||0))),p.hue_weapon,gid+"hw")}</g>`;
  if(tS>=2)g+=`<path d="M34 104 Q34 88 52 91 Q56 100 46 108 Z" fill="${GOLD}"${K(2.6)}/><path d="M106 104 Q106 88 88 91 Q84 100 94 108 Z" fill="${GOLD}"${K(2.6)}/><circle cx="44" cy="97" r="2.4" fill="#fff"/><circle cx="96" cy="97" r="2.4" fill="#fff"/>`;
  const hand=tS>=3?GOLD:(hro&&lv>=12?se:sk);
  g+=`<circle cx="34" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  g+=raise?`<circle cx="108" cy="84" r="8.5" fill="${hand}"${K(2.8)}/>`:`<circle cx="106" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  if(W==="shield"){const k=(1+tS*.1).toFixed(2);g+=`<g transform="translate(30 122) scale(${k})">${fxBack(0,-4,tS,"#8fe3ff")}<path d="M-17 -19 L0 -25 L17 -19 Q17 6 0 17 Q-17 6 -17 -19 Z" fill="${se}"${K()}/><path d="M-11 -15 L0 -19 L11 -15 Q11 3 0 11 Q-11 3 -11 -15 Z" fill="${tS>=2?"#ffd23f":sed}"/><polygon points="${starPts(0,-4,7,3)}" fill="${pr}"${K(1.8)}/>${fxFront(0,-4,tS)}</g>`;}
- if(EV)g+=EV.f;
+ if(KT){g+=KT.ov;g+=KT.hb;}
  g+=`<circle cx="34" cy="62" r="8" fill="${sk}"${K()}/><circle cx="106" cy="62" r="8" fill="${sk}"${K()}/>`;
  if(H==="bun")g+=`<circle cx="70" cy="17" r="13" fill="${hc}"${K()}/>`;
  if(H==="afro")g+=`<circle cx="70" cy="46" r="46" fill="url(#${gid}h)"${K()}/><circle cx="34" cy="66" r="17" fill="url(#${gid}h)"${K()}/><circle cx="106" cy="66" r="17" fill="url(#${gid}h)"${K()}/>`;
@@ -1790,10 +1946,10 @@ function heroInner(p,level=1,o={}){
  const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=6&&(p.eyes||"round")!=="cool");
  if(mask)g+=`<path d="M37 57 Q53 49 70 55 Q87 49 103 57 Q105 69 95 72 Q82 74 70 66 Q58 74 45 72 Q35 69 37 57 Z" fill="${shade(pr,-.45)}"${K(2.6)}/><path d="M42 58 Q53 53 64 57" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
  g+=faceSVG(mood,p,fem);
- if(EV&&EV.gem)g+=`<circle cx="70" cy="35" r="3.8" fill="${EV.c1}"${K(1.8)}/><circle cx="69" cy="34" r="1.1" fill="#fff"/>`;
+
  if(spk&&lv>=12)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
- g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
- if(EV&&EV.hd)g+=EV.hd;
+ if(KT)g+=KT.fm;
+ if(KT&&KT.hd&&(KT.sub||HD==="none"||(CLS[o.cls]&&CLS[o.cls].h===HD)))g+=KT.hd;else g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
  if(tW>=3)g+=`<g class="floaty"><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${O}" stroke-width="8"/><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${GOLD}" stroke-width="4"/>${sparkles([[46,-18,4],[94,-18,4],[70,-24,4.5]],"#fff")}</g>`;
  return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
 }
