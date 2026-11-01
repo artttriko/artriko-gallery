@@ -821,6 +821,21 @@ svg.hero,.fx svg{overflow:visible}
 @keyframes cloudsA{to{background-position:240px 0,300px 0}}
 .a-sky:not(.pk)::after{background:radial-gradient(circle,#fff 1.6px,transparent 2.6px) 20px 30px/70px 80px,radial-gradient(circle,#fff6c8 1.2px,transparent 2.2px) 50px 10px/90px 60px;animation:twinkle 2.2s ease-in-out infinite alternate}
 @media (prefers-reduced-motion:reduce){.arena::before,.arena::after,.pk-bg,.pk-bg::after,.pk-foe .hb{animation:none!important}}
+.spl-fl{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.spl-fl span{position:absolute;bottom:-12%;opacity:0;animation:splfloat linear infinite}
+@keyframes splfloat{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.5}85%{opacity:.4}100%{transform:translateY(-115vh) rotate(40deg);opacity:0}}
+.spl-ben{position:relative;margin-bottom:12px;width:min(92vw,520px);height:112px;border-radius:24px;background:rgba(255,255,255,.13);border:2px solid rgba(255,255,255,.32);backdrop-filter:blur(6px);box-shadow:0 8px 28px #0005;text-align:right}
+.spl-bi{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 16px;opacity:0;animation:splben 40s linear infinite}
+.spl-bi b{display:block;color:#ffd23f;font-size:1.15rem;font-weight:900;text-shadow:0 2px 0 var(--o)}
+.spl-bi p{margin:3px 0 0;color:#fff;font-size:.95rem;line-height:1.35;font-weight:600}
+.spl-bic{flex:0 0 auto;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:2rem;background:radial-gradient(circle at 35% 30%,#fff8,var(--c) 70%);border:3px solid var(--o);box-shadow:0 4px 0 var(--o);animation:wig 2.6s ease-in-out infinite}
+@keyframes splben{0%{opacity:0;transform:translateY(14px) scale(.97)}1.6%,11%{opacity:1;transform:none}12.5%,100%{opacity:0;transform:translateY(-12px)}}
+.spl-dots{position:absolute;left:0;right:0;bottom:-18px;display:flex;justify-content:center;gap:6px}
+.spl-dots i{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.3;animation:spldot 40s linear infinite}
+@keyframes spldot{0%{opacity:1;transform:scale(1.4);background:#ffd23f}12.5%,100%{opacity:.3;transform:none;background:#fff}}
+@media (max-height:720px){.spl-die{width:76px;height:76px}.spl-heroes>div{width:min(20vw,84px)}.spl-ben{height:100px}.spl-bi p{font-size:.88rem}.splash{gap:10px}}
+@media (max-width:400px){.spl-bi p{font-size:.86rem}.spl-bic{width:50px;height:50px;font-size:1.7rem}}
+@media (prefers-reduced-motion:reduce){.spl-fl span{display:none}.spl-bi{animation:none}.spl-bi:first-child{opacity:1}.spl-dots{display:none}}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -2091,15 +2106,26 @@ function jingle(){
  bass("C3",t,e*3);lead("E5",q*.5);lead("G5",q*.5);lead("C6",q*.5);lead("E6",e*2,1);
  MU.hold=AC.currentTime+t+.6;
 }
+const BEN=[["🎨","#ff4f8a","מעודד יצירתיות","כל גיבור נולד מהדמיון: מתארים, בוחרים צבעים וחפצים, ומספרים סיפור משלהם."],
+["🧠","#7a5cff","מפתח חשיבה","חידות, חשבון והחלטות קטנות בדרך שמחשלים את המוח, בלי שמרגישים שלומדים."],
+["📖","#2fb96a","מחזק קריאה","מילות קסם ומשפטי קסם בניקוד מלא, שהופכים תרגול קריאה לרגע של ניצחון."],
+["🤝","#ff9f1c","מעודד שיתוף פעולה","מנצחים ביחד: מתאמים, עוזרים אחד לשני, ובכל תחנה גיבור אחר מוביל."],
+["💬","#18a8e0","פותח שיחה","סיפור משותף שמעלה שאלות, צחוק ודמיון, ומשאיר זמן איכות אמיתי בין כולם."],
+["🌙","#5b6cf0","שקט לפני השינה","מצב ערב רגוע, עם סיפור שנגמר בחיוך ובתחושת ביטחון."],
+["💪","#e0306f","מזיז את הגוף","משימות תנועה קצרות עם ספירה לאחור: מאזנים, קופצים, מדמים ומתחממים."],
+["🛡️","#22b8a0","מחזק ערכים","אומץ, חברות והכרת תודה: הסיפורים לא מנצחים בכוח, אלא בלב."]];
+const BEN_ORDER=(()=>{const a=BEN.map((_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;})();
 function vSplash(){
  const hs=(SAVE&&SAVE.heroes||[]).slice(0,3);
  return `<div class="splash" data-a="splashgo" role="button" aria-label="לחצו כדי להתחיל">
  <div class="spl-stars"></div>
+ <div class="spl-fl" aria-hidden="true">${["⭐","🎲","✨","📖","🧩","🐉","💎","🌈"].map((e,i)=>`<span style="left:${6+i*12.5}%;animation-duration:${14+(i%4)*4}s;animation-delay:-${i*2.3}s;font-size:${1.1+(i%3)*.5}rem">${e}</span>`).join("")}</div>
  <div class="spl-logo">
   <svg class="spl-die" viewBox="0 0 120 120" aria-hidden="true"><g transform="rotate(-12 60 60)"><rect x="14" y="16" width="92" height="92" rx="22" fill="${O}"/><rect x="16" y="12" width="88" height="88" rx="20" fill="#ffd23f" stroke="${O}" stroke-width="5"/><circle cx="38" cy="34" r="9" fill="#ff4f8a" stroke="${O}" stroke-width="3"/><circle cx="60" cy="56" r="9" fill="${O}"/><circle cx="82" cy="78" r="9" fill="${O}"/></g></svg>
   <div class="spl-title ol">DREAM</div><div class="spl-by">by ARTRIKO</div>
  </div>
  ${hs.length?`<div class="spl-heroes">${hs.map((h,i)=>`<div style="animation-delay:${.3+i*.15}s">${heroSVG(h,"hero","happy")}</div>`).join("")}</div>`:""}
+ <div class="spl-ben" aria-label="מה מקבלים מההרפתקה">${BEN_ORDER.map((bi,i)=>{const b=BEN[bi];return `<div class="spl-bi" style="--c:${b[1]};animation-delay:${i*5}s"><span class="spl-bic">${b[0]}</span><div><b>${b[2]}</b><p>${b[3]}</p></div></div>`;}).join("")}<div class="spl-dots" aria-hidden="true">${BEN_ORDER.map((_,i)=>`<i style="animation-delay:${i*5}s"></i>`).join("")}</div></div>
  <div class="spl-tap">לחצו כדי להתחיל</div>
  <div class="spl-sub" style="font-size:1.25rem;color:#fff;font-weight:900">הרפתקה בקובייה</div>
  </div>`;
