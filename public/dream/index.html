@@ -107,6 +107,7 @@ textarea{min-height:92px;resize:vertical}
 .clsb b{font-size:1.05rem}.clsb small{font-size:.72rem;line-height:1.15;opacity:.8}
 .clsb[aria-pressed=true]{background:var(--cc);color:#fff;transform:translateY(2px);box-shadow:0 1px 0 var(--o)}
 .clsnote{color:var(--o);margin-top:8px;padding:8px 10px;border-radius:12px;background:#fff8d6;border:2px solid var(--o);font-size:.92rem}
+.pkst{position:absolute;bottom:58px;inset-inline:8px;z-index:3;text-align:center;font-weight:900;font-size:.8rem;border-radius:999px;padding:2px 6px;background:#0008;color:#fff;border:2px solid #fff6}.pkst.on{background:#21b84a;border-color:#fff}
 .clsi{display:block;flex:none}.hcard .clsi{position:absolute;top:48px;inset-inline-start:8px;z-index:2;width:30px;height:30px}
 .clschip{color:var(--o);display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;padding:4px 10px 4px 6px;border-radius:999px;border:2px solid var(--o);background:#fff8d6;font-weight:800;font-size:.9rem}
 .lvlb{position:absolute;top:6px;inset-inline-start:6px;width:38px;height:38px;z-index:2}
@@ -1065,12 +1066,12 @@ function styleRevealed(k,v,xp){return k!=="style"||owned(k,v)||styleOK(xp);}
 
 /* ---------- classes (roles) ---------- */
 const CLS={
- fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1,pow:1},task:["physical","dice"],d:"חזק בקובייה ובמכות",dv:"חָזָק בַּקֻּבִּיָּה וּבַמַּכּוֹת",pl:["כוח","עוצמה"]},
- tank:{m:"שומר",f:"שומרת",mv:"שׁוֹמֵר",fv:"שׁוֹמֶרֶת",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1,hp:1},task:["boss","physical"],d:"עמיד, והבוס מחטיא אותו",dv:"עָמִיד, וְהַבּוֹס מַחְטִיא אוֹתוֹ",pl:["הגנה","לב"]},
- mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1,pow:1},task:["riddle","meet"],d:"חידות וקסם חזק",dv:"חִידוֹת וְקֶסֶם חָזָק",pl:["חוכמה","עוצמה"]},
- archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1,str:1},task:["dice","choice"],d:"מזל ומטרה מדויקת",dv:"מַזָּל וּמַטָּרָה מְדֻיֶּקֶת",pl:["מזל","כוח"]},
- healer:{m:"מרפא",f:"מרפאה",mv:"מְרַפֵּא",fv:"מְרַפְּאָה",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1,luck:1},task:["meet","choice"],d:"לבבות נוספים ומזל",dv:"לְבָבוֹת נוֹסָפִים וּמַזָּל",pl:["לב","מזל"]},
- ninja:{m:"נינג'ה",f:"נינג'ית",mv:"נִינְגָ'ה",fv:"נִינְגָ'ית",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:2},task:["dice","boss"],d:"מכות חזקות במיוחד",dv:"מַכּוֹת חֲזָקוֹת מְאוֹד",pl:["עוצמה"]}};
+ fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1},task:["physical","dice"],d:"חזק בהטלת הקובייה",dv:"חָזָק בְּהַטָּלַת הַקֻּבִּיָּה",pl:["כוח","עוצמה"]},
+ tank:{m:"שומר",f:"שומרת",mv:"שׁוֹמֵר",fv:"שׁוֹמֶרֶת",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1},task:["boss","physical"],d:"הבוס מחטיא אותו יותר",dv:"הַבּוֹס מַחְטִיא אוֹתוֹ יוֹתֵר",pl:["הגנה","לב"]},
+ mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1},task:["riddle","meet"],d:"ניסיון נוסף בחידות",dv:"נִיסָּיוֹן נוֹסָף בַּחִידוֹת",pl:["חוכמה","עוצמה"]},
+ archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1},task:["dice","choice"],d:"הטלה חוזרת נוספת",dv:"הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת",pl:["מזל","כוח"]},
+ healer:{m:"מרפא",f:"מרפאה",mv:"מְרַפֵּא",fv:"מְרַפְּאָה",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1},task:["meet","choice"],d:"לב נוסף בקרב",dv:"לֵב נוֹסָף בַּקְּרָב",pl:["לב","מזל"]},
+ ninja:{m:"נינג'ה",f:"נינג'ית",mv:"נִינְגָ'ה",fv:"נִינְגָ'ית",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:1},task:["dice","boss"],d:"המכה הראשונה חזקה",dv:"הַמַּכָּה הָרִאשׁוֹנָה חֲזָקָה",pl:["עוצמה"]}};
 const CLS_KEYS=["fighter","tank","mage","archer","healer","ninja"];
 function clsOf(h){return CLS[h&&h.cls]||null;}
 function clsName(k,fem,nik){const c=CLS[k];return c?(nik?(fem?c.fv:c.mv):(fem?c.f:c.m)):"";}
@@ -1084,7 +1085,7 @@ function clsIcon(k,w=34){const c=CLS[k];if(!c)return "";const G={
  return `<svg class="clsi" viewBox="0 0 40 40" width="${w}" height="${w}" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="${c.col}" ${K(2.4)}/>${G}</svg>`;}
 function applyCls(p,k,force){const c=CLS[k];if(!c)return p;[["weapon",c.w],["head",c.h],["back",c.b]].forEach(([f,v])=>{if(force||!p[f]||p[f]==="none")p[f]=v;});return p;}
 function clsSig(k,slot,v){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w===v)||(slot==="head"&&c.h===v)||(slot==="back"&&c.b===v));}
-function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;return Math.min(k==="pow"||k==="def"?3:4,raw+b);}
+function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;return Math.min(3,raw+b);}
 function clsMatch(h,type){const c=clsOf(h);return !!c&&c.task.includes(type);}
 function clsLeader(n,hs,type){const base=hs[leaderIdx(n,hs.length)];if(!base||clsMatch(base,type))return base;const fit=hs.filter(h=>clsMatch(h,type));if(!fit.length||n%2)return base;return fit[n%fit.length];}
 function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
@@ -2262,7 +2263,7 @@ function vHero(){
  <section class="panel"><div class="eyebrow">${d.gender==="f"?(d.existing?"עריכת גיבורה":"גיבורה חדשה"):(d.existing?"עריכת גיבור":"גיבור חדש")}</div><h2 class="ol">מי יוצא להרפתקה?</h2>
  <label class="fl">שם הילד או הילדה<input type="text" id="kidName" value="${esc(d.kidName)}" placeholder="למשל: ים" autocomplete="off"></label>
  <div class="chips" role="group" aria-label="בן או בת"><button class="chip" data-a="gender" data-v="m" aria-pressed="${!g}">בן</button><button class="chip" data-a="gender" data-v="f" aria-pressed="${g}">בת</button></div>
- <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${c.d}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote"><b>${clsName(d.cls,g)}:</b> ${CLS[d.cls].d}. ${g?"היא מקבלת":"הוא מקבל"} כלים מתאימים בחינם, ומשימות שמתאימות לתפקיד.</div>`:""}</div>
+ <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${c.d}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote">הכישרון ${g?"שלה":"שלו"} הוא <b>${clsName(d.cls,g)}</b>. ${CLS[d.cls].d}. הכלים של התפקיד כבר מוכנים ${g?"אצלה":"אצלו"}, והמשימות יתאימו ${g?"לה":"לו"}.</div>`:""}</div>
  <label class="fl">איך ${g?"היא":"הוא"} ${g?"מתארת":"מתאר"} את הדמות?<textarea id="desc" placeholder="למשל: לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב, ויש לו פטריות על הראש">${esc(d.desc)}</textarea></label>
  <button class="btn wide" data-a="genhero" ${d.busy?"disabled":""}><span>${d.busy?(d.gender==="f"?"מציירים את הגיבורה...":"מציירים את הגיבור..."):(r?"צרו מחדש מהתיאור":(d.gender==="f"?"צרו את הגיבורה":"צרו את הגיבור"))}</span></button>
  </section>${prev}`;
@@ -2325,7 +2326,7 @@ function vSetup(){
  const s=S.setup;const hs=SAVE.heroes;
  return `${topbar(`<button class="ib" data-a="home">חזרה</button>`)}
  <section class="panel"><div class="eyebrow">הרפתקה חדשה</div><h2 class="ol">מי משחק הערב?</h2><p class="muted small">בחרו בין 1 ל־4 גיבורים. בכל תחנה גיבור אחר מוביל.</p>
- <div class="heroes">${hs.map(h=>hcard(h,`data-a="pickhero" data-id="${h.id}" aria-pressed="${s.heroIds.includes(h.id)}"`,"",true)).join("")}<button class="hcard add" data-a="newhero"><b>+</b>גיבור חדש</button></div></section>
+ <div class="heroes">${hs.map(h=>hcard(h,`data-a="pickhero" data-id="${h.id}" aria-pressed="${s.heroIds.includes(h.id)}"`,s.heroIds.includes(h.id)?`<span class="pkst on">✓ משחק</span>`:`<span class="pkst">לחצו להוספה</span>`,true)).join("")}<button class="hcard add" data-a="newhero"><b>+</b>גיבור חדש</button></div></section>
  <section class="panel"><h3>איזה סוג ערב?</h3>
  <div class="chips">${MODES.map(m=>`<button class="chip" data-a="smode" data-v="${m.id}" aria-pressed="${s.mode===m.id}">${m.l}</button>`).join("")}</div>
  <p class="muted small">${MODES.find(m=>m.id===s.mode).d}</p>
