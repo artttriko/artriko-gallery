@@ -1055,26 +1055,30 @@ const TIER={
  emblem:{bolt:1,moon:1,paw:1,flower:2,note:2,fire:3,crown:3,diamond:4},
  bottom:{shorts:1,jeans:1,sporty:1,striped:2,tutu:2,starry:3,armor:3,rainbow:4},
  style:{nature:4,magic:4}};
-const PRICE={1:3,2:6,3:10,4:16};
+const PRICE={1:4,2:8,3:14,4:22};
 const TIER_N={1:"רגיל",2:"מיוחד",3:"נדיר",4:"אגדי"};
 function tkey(k){return k==="_face"?"face":k;}
 function tierOf(k,v){return (TIER[tkey(k)]||{})[v]||0;}
 function owned(k,v){const u=U();u.owned=u.owned||[];return u.owned.includes(tkey(k)+":"+v);}
-function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;if(S.draft&&clsSig(S.draft.cls,k,v))return false;return tierOf(k,v)>0&&!owned(k,v);}
+function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;if(S.draft&&clsSig(S.draft.cls,k,v,lvInfo(S.draft.xp||0).lv))return false;return tierOf(k,v)>0&&!owned(k,v);}
 function styleOK(xp){return lvInfo(xp||0).lv>=TOPLV;}
 function styleRevealed(k,v,xp){return k!=="style"||owned(k,v)||styleOK(xp);}
 
 /* ---------- classes (roles) ---------- */
 const CLS={
- fighter:{t:"להילחם בגבורה",m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1},task:["physical","dice"],d:"חזק בהטלת הקובייה",dv:"חָזָק בְּהַטָּלַת הַקֻּבִּיָּה",pl:["כוח","עוצמה"]},
- tank:{t:"להגן על החברים",m:"שומר",f:"שומרת",mv:"שׁוֹמֵר",fv:"שׁוֹמֶרֶת",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1},task:["boss","physical"],d:"הבוס מחטיא אותו יותר",dv:"הַבּוֹס מַחְטִיא אוֹתוֹ יוֹתֵר",pl:["הגנה","לב"]},
- mage:{t:"לעשות קסמים",m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1},task:["riddle","meet"],d:"ניסיון נוסף בחידות",dv:"נִיסָּיוֹן נוֹסָף בַּחִידוֹת",pl:["חוכמה","עוצמה"]},
- archer:{t:"לכוון בדיוק למטרה",m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1},task:["dice","choice"],d:"הטלה חוזרת נוספת",dv:"הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת",pl:["מזל","כוח"]},
- healer:{t:"לרפא ולעזור",m:"מרפא",f:"מרפאה",mv:"מְרַפֵּא",fv:"מְרַפְּאָה",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1},task:["meet","choice"],d:"לב נוסף בקרב",dv:"לֵב נוֹסָף בַּקְּרָב",pl:["לב","מזל"]},
- ninja:{t:"לזוז בשקט ובמהירות",m:"נינג'ה",f:"נינג'ית",mv:"נִינְגָ'ה",fv:"נִינְגָ'ית",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:1},task:["dice","boss"],d:"המכה הראשונה חזקה",dv:"הַמַּכָּה הָרִאשׁוֹנָה חֲזָקָה",pl:["עוצמה"]}};
+ fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",tm:"אומץ וגבורה בלחימה",tf:"אומץ וגבורה בלחימה",tmv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",tfv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1},task:["physical","dice"],d:"חזק בהטלת הקובייה",dv:"חָזָק בְּהַטָּלַת הַקֻּבִּיָּה"},
+ tank:{m:"טנק",f:"טנק",mv:"טַנְק",fv:"טַנְק",tm:"עוצמה של הגנה",tf:"עוצמה של הגנה",tmv:"עוֹצְמָה שֶׁל הֲגָנָה",tfv:"עוֹצְמָה שֶׁל הֲגָנָה",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1},task:["boss","physical"],d:"הבוס מחטיא אותו יותר",dv:"הַבּוֹס מַחְטִיא אוֹתוֹ יוֹתֵר"},
+ mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",tm:"שולט בקסמים",tf:"שולטת בקסמים",tmv:"שׁוֹלֵט בְּקְסָמִים",tfv:"שׁוֹלֶטֶת בְּקְסָמִים",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1},task:["riddle","meet"],d:"ניסיון נוסף בחידות",dv:"נִיסָּיוֹן נוֹסָף בַּחִידוֹת"},
+ archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",tm:"דיוק וזריזות",tf:"דיוק וזריזות",tmv:"דִּיּוּק וּזְרִיזוּת",tfv:"דִּיּוּק וּזְרִיזוּת",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1},task:["dice","choice"],d:"הטלה חוזרת נוספת",dv:"הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת"},
+ healer:{m:"הילר",f:"הילרית",mv:"הִילֶר",fv:"הִילֶרִית",tm:"לרפא ולעזור",tf:"לרפא ולעזור",tmv:"לְרַפֵּא וְלַעֲזוֹר",tfv:"לְרַפֵּא וְלַעֲזוֹר",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1},task:["meet","choice"],d:"לב נוסף בקרב",dv:"לֵב נוֹסָף בַּקְּרָב"},
+ ninja:{m:"נינג'ה",f:"נינג'ה",mv:"נִינְגָ'ה",fv:"נִינְגָ'ה",tm:"שקט ומהיר",tf:"שקטה ומהירה",tmv:"שָׁקֵט וּמָהִיר",tfv:"שְׁקֵטָה וּמְהִירָה",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:1},task:["dice","boss"],d:"המכה הראשונה חזקה",dv:"הַמַּכָּה הָרִאשׁוֹנָה חֲזָקָה"}};
+const CLS_DEF=JSON.parse(JSON.stringify(CLS));
+const CLS_REQ={w:1,h:3,b:6};
+function clsApplyOver(){CLS_KEYS.forEach(k=>["m","f","tm","tf","d"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){CLS[k][f]=v.trim();const nf={m:"mv",f:"fv",tm:"tmv",tf:"tfv",d:"dv"}[f];CLS[k][nf]=v.trim();}}));}
 const CLS_KEYS=["fighter","tank","mage","archer","healer","ninja"];
 function clsOf(h){return CLS[h&&h.cls]||null;}
 function clsName(k,fem,nik){const c=CLS[k];return c?(nik?(fem?c.fv:c.mv):(fem?c.f:c.m)):"";}
+function clsTal(k,fem,nik){const c=CLS[k];return c?(nik?(fem?c.tfv:c.tmv):(fem?c.tf:c.tm)):"";}
 function clsIcon(k,w=34){const c=CLS[k];if(!c)return "";const G={
  fighter:`<path d="M9 31 L27 13 M27 13 L31 9 L31 13 L27 13" ${K(2.6)} fill="none"/><path d="M31 31 L13 13" ${K(2.6)} fill="none"/><path d="M8 29 l4 4 M32 29 l-4 4" ${K(2.6)} fill="none"/>`,
  tank:`<path d="M20 8 L31 12 V20 C31 27 26 31 20 34 C14 31 9 27 9 20 V12 Z" fill="#fff" ${K(2.2)}/><path d="M20 12 V30 M12 19 H28" stroke="${c.col}" stroke-width="3" stroke-linecap="round" fill="none"/>`,
@@ -1083,8 +1087,8 @@ function clsIcon(k,w=34){const c=CLS[k];if(!c)return "";const G={
  healer:`<path d="M20 33 C8 25 6 17 10 12 C14 8 18 10 20 14 C22 10 26 8 30 12 C34 17 32 25 20 33Z" fill="#fff" ${K(2.2)}/><path d="M20 15 V27 M14 21 H26" stroke="${c.col}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`,
  ninja:`<polygon points="${starPts(20,20,14,4.6)}" fill="#e8ecf5" ${K(2.2)}/><circle cx="20" cy="20" r="3" fill="${c.col}"/>`}[k];
  return `<svg class="clsi" viewBox="0 0 40 40" width="${w}" height="${w}" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="${c.col}" ${K(2.4)}/>${G}</svg>`;}
-function applyCls(p,k,force){const c=CLS[k];if(!c)return p;[["weapon",c.w],["head",c.h],["back",c.b]].forEach(([f,v])=>{if(force||!p[f]||p[f]==="none")p[f]=v;});return p;}
-function clsSig(k,slot,v){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w===v)||(slot==="head"&&c.h===v)||(slot==="back"&&c.b===v));}
+function applyCls(p,k,force,lv=1){const c=CLS[k];if(!c)return p;[["weapon",c.w,"w"],["head",c.h,"h"],["back",c.b,"b"]].forEach(([f,v,r])=>{if(lv>=CLS_REQ[r]&&(force||!p[f]||p[f]==="none"))p[f]=v;});return p;}
+function clsSig(k,slot,v,lv=1){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w===v&&lv>=CLS_REQ.w)||(slot==="head"&&c.h===v&&lv>=CLS_REQ.h)||(slot==="back"&&c.b===v&&lv>=CLS_REQ.b));}
 function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;return Math.min(3,raw+b);}
 function clsMatch(h,type){const c=clsOf(h);return !!c&&c.task.includes(type);}
 function clsLeader(n,hs,type){const base=hs[leaderIdx(n,hs.length)];if(!base||clsMatch(base,type))return base;const fit=hs.filter(h=>clsMatch(h,type));if(!fit.length||n%2)return base;return fit[n%fit.length];}
@@ -1860,6 +1864,13 @@ function diceFor(c,diff){
  return {sides:20,target:diff==="hard"?15:12};
 }
 function campHeroes(){return SAVE.campaign?SAVE.campaign.heroIds.map(id=>SAVE.heroes.find(h=>h.id===id)).filter(Boolean):[];}
+function diceTarget(c,d,st,P,L){
+ const six=d.sides===6,w=worldIdx(c),n=st.node||0;let ramp=Math.floor(n/3)+w;if(c.age==="3-5")ramp=Math.floor(ramp/2);
+ const base=Math.min(d.sides-(six?1:3),d.target+ramp);
+ const red=(P.plan?2:0)+(P.readBonus?1:0)+(P.itemBonus?1:0)+(st.move&&P.moveDone?1:0);
+ const t=Math.max(six?2:6,base-Math.min(red,six?2:4));
+ return Math.min(d.sides,Math.max(t,(six?2:5)+effS(L,"str")));
+}
 function leaderIdx(n,len){return len?n%len:0;}
 
 /* ---------- math riddles by age, with a visual hint ---------- */
@@ -2263,7 +2274,7 @@ function vHero(){
  <section class="panel"><div class="eyebrow">${d.gender==="f"?(d.existing?"עריכת גיבורה":"גיבורה חדשה"):(d.existing?"עריכת גיבור":"גיבור חדש")}</div><h2 class="ol">מי יוצא להרפתקה?</h2>
  <label class="fl">שם הילד או הילדה<input type="text" id="kidName" value="${esc(d.kidName)}" placeholder="למשל: ים" autocomplete="off"></label>
  <div class="chips" role="group" aria-label="בן או בת"><button class="chip" data-a="gender" data-v="m" aria-pressed="${!g}">בן</button><button class="chip" data-a="gender" data-v="f" aria-pressed="${g}">בת</button></div>
- <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${c.d}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote">${clsName(d.cls,g)}: הכישרון ${g?"שלה":"שלו"} הוא <b>${CLS[d.cls].t}</b>. ${CLS[d.cls].d}. הכלים של התפקיד כבר מוכנים ${g?"אצלה":"אצלו"}, והמשימות יתאימו ${g?"לה":"לו"}.</div>`:""}</div>
+ <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${clsTal(k,g)}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote">${clsName(d.cls,g)}: הכישרון ${g?"שלה":"שלו"} הוא <b>${clsTal(d.cls,g)}</b>. ${CLS[d.cls].d}. הנשק של התפקיד מוכן ${g?"אצלה":"אצלו"} מההתחלה, הכובע נפתח בדרגה 3, וציוד הגב בדרגה 6.</div>`:""}</div>
  <label class="fl">איך ${g?"היא":"הוא"} ${g?"מתארת":"מתאר"} את הדמות?<textarea id="desc" placeholder="למשל: לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב, ויש לו פטריות על הראש">${esc(d.desc)}</textarea></label>
  <button class="btn wide" data-a="genhero" ${d.busy?"disabled":""}><span>${d.busy?(d.gender==="f"?"מציירים את הגיבורה...":"מציירים את הגיבור..."):(r?"צרו מחדש מהתיאור":(d.gender==="f"?"צרו את הגיבורה":"צרו את הגיבור"))}</span></button>
  </section>${prev}`;
@@ -2595,7 +2606,7 @@ function blocks(n,max,c,delay){return `<span class="blks" style="--c:${c||"#4fe3
 function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const ez=ezOn(),LI=lvInfo(H.xp||0),lv=LI.lv,xp=LI.into,left=LI.need-LI.into;
  const T=(a,b)=>ez?b:a;
  return `<div class="lockov" data-a="hinfoclose" role="dialog"><div class="lockbox slide hinfo" style="--tc:${H.params.primary}"><div class="hi-top">${heroSVG(H,"hero","joy")}<div><b class="ol" style="font-size:1.5rem">${esc(H.heroName)}</b><div class="small">${esc(E(H.title||""))}</div><button class="chip" data-a="renameopen" data-id="${H.id}" style="margin-top:6px">✏️ ${T("שינוי שם · 5 💎","שִׁנּוּי שֵׁם · 5 💎")}</button></div></div>
- ${H.cls?`<div class="clsnote" style="display:flex;gap:10px;align-items:center">${clsIcon(H.cls,44)}<div><b>${clsName(H.cls,isF(H),ez)}</b><div class="small">${ez?CLS[H.cls].dv:CLS[H.cls].d}</div></div></div>`:`<button class="chip" data-a="clsfix" data-id="${H.id}">${T("בחרו תפקיד","בַּחֲרוּ תַּפְקִיד")}</button>`}
+ ${H.cls?`<div class="clsnote" style="display:flex;gap:10px;align-items:center">${clsIcon(H.cls,44)}<div><b>${clsName(H.cls,isF(H),ez)}</b><div class="small">${clsTal(H.cls,isF(H),ez)}</div><div class="small">${ez?CLS[H.cls].dv:CLS[H.cls].d}</div></div></div>`:`<button class="chip" data-a="clsfix" data-id="${H.id}">${T("בחרו תפקיד","בַּחֲרוּ תַּפְקִיד")}</button>`}
  <div class="hi-lv"><b>${T("דרגה","דַּרְגָּה")} ${lv} ${T("מתוך","מִתּוֹךְ")} ${TOPLV}</b> ${heartsHTML(H,22)}</div>
  <div class="hi-row"><span class="hi-l">${T("התקדמות","הִתְקַדְּמוּת")}</span>${blocks(xp,LI.need||1,"#ffd23f")}</div>
  <span class="small">${lv>=TOPLV?T("זו הדרגה הגבוהה ביותר!","זוֹ הַדַּרְגָּה הַגְּבוֹהָה בְּיוֹתֵר!"):T(`עוד ${left} נקודות התקדמות לדרגה ${lv+1}`,`עוֹד ${left} נְקֻדּוֹת הִתְקַדְּמוּת לְדַרְגָּה ${lv+1}`)}${lv<TOPLV?T(` · החליפה הנדירה נפתחת בדרגה ${TOPLV}`,` · הַחֲלִיפָה הַנְּדִירָה נִפְתַּחַת בְּדַרְגָּה ${TOPLV}`):""}</span>
@@ -2704,7 +2715,7 @@ function vStation(st,hs,c){
   if(st.move&&!P.moveDone){const m=st.move,k=P.mcount||0;return h+`<div class="panel movebox"><div class="eyebrow">${ezOn()?"מְשִׂימַת גּוּף · כּוּלָּם בְּיַחַד!":"משימת גוף · כולם ביחד!"}</div><div class="parch big" style="text-align:center;font-family:var(--f-disp);font-weight:700">${esc(E(m.t))}${m.n>1?`<div class="mgoal">${ezOn()?`כְּדֵי לַעֲבוֹר: <b>${m.n}</b> ${esc(E(m.u))}!`:`כדי לעבור צריך <b>${m.n}</b> ${esc(m.u)}. סופרים ביחד בקול!`}</div>`:""}</div>${m.n>1?`<button class="counter" data-a="mcount" aria-label="ספירה ${k} מתוך ${m.n}"><b>${k}</b><span>${ezOn()?"מִתּוֹךְ":"מתוך"} ${m.n}</span></button><p class="small muted" style="text-align:center">${esc(E(m.u))}. לחצו על העיגול בכל פעם, וספרו בקול ביחד!</p>`:`<button class="btn wide grn" data-a="mdone"><span>${esc(E(m.u))}</span></button>`}<p class="small" style="text-align:center">מי שמסיים מקבל הנחה של 1 בקובייה.</p></div>`;}
   if(c.read&&c.read!=="off"&&!P.readDone&&(P.readCount||0)<2&&P.roll==null)return h+readBox(st,hs,L,c);
   if(P.readBonus)h+=`<div class="readok slide">${HEART_SVG(28)}<b>הלחש עבד! ${esc(P.readItem?P.readItem.cu.n:"הכישוף")} התבטל, והקובייה צריכה 1 פחות.</b></div>`;
-  const d=diceFor(c,ch.difficulty);const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));const bonus=effS(L,"str");
+  const d=diceFor(c,ch.difficulty);const target=diceTarget(c,d,st,P,L);const bonus=effS(L,"str");
   h+=`<div class="panel dicebox"><div class="need">${esc(E(ch.what||""))}<br>${ezOn()?`צָרִיךְ <b>${target}</b> וּמַעְלָה בַּקּוּבִּיָּה`:`צריך <b>${target}</b> ומעלה בקובייה של ${d.sides}`}${bonus?`<br>${statIcon("str").replace("<svg ",'<svg style="width:18px;height:18px;vertical-align:-3px" ')} ${esc(L.heroName)} ${isF(L)?"מוסיפה":"מוסיף"} <b>+${bonus}</b> כוח`:""}</div>`;
   if(c.dice==="digital"){
    const v=P.roll;const ok=v!=null&&v+bonus>=target;const cls=v==null?"":(ok?"win":"lose");
@@ -2783,7 +2794,7 @@ function bossLv(hs){return Math.max(...hs.map(h=>heroLevel(h)))+1;}
 function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${H.cls?`<small>${clsName(H.cls,isF(H),ezOn())}</small>`:""}${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
 function stLeader(st,hs){const P=S.play;if(st.type==="boss"&&P.bossTurn!=null)return hs[P.bossTurn%hs.length];return hs.find(h=>h.id===st.leaderId)||hs[0];}
 /* ---------- hero hearts (no death: 0 hearts = too tired, a friend can rescue) ---------- */
-function heroHpMax(h){const l=heroLevel(h);return 3+(l>=5?1:0)+(l>=8?1:0)+effS(h,"hp");}
+function heroHpMax(h){const l=heroLevel(h);return 3+(l>=6?1:0)+(l>=12?1:0)+effS(h,"hp");}
 function heroHp(h){return h.hp==null?heroHpMax(h):Math.max(0,Math.min(h.hp,heroHpMax(h)));}
 function hurt(h,n){h.hp=Math.max(0,heroHp(h)-(n||1));}
 const HEALS=["potion","jar","lily","moon"];
@@ -3031,7 +3042,7 @@ function bossAttack(){
  const live=hs.filter(h=>heroHp(h)>0);
  let tg=hs.find(h=>h.id===P.intent&&heroHp(h)>0)||live[Math.floor(Math.random()*live.length)]||hs[0];
  const widx=worldIdx(c);
- const chance=Math.max(.1,(ageGroup(c.age)==="old"?.55:.4)+.08*widx-.1*effS(tg,"def"));
+ const chance=Math.max(.1,(ageGroup(c.age)==="old"?.6:.45)+.08*widx-.08*effS(tg,"def"));
  let atk={target:tg.id,hit:false,blocked:false,frozen:false,by:""},p,v;const nm=tg.heroName;
  if(P.frozen){P.frozen=false;atk.frozen=true;p=`הבוס קפוא ולא יכול להכות! הוא מדלג על התור שלו.`;v=`הַבּוֹס קָפוּא וְלֹא יָכוֹל לְהַכּוֹת! הוּא מְדַלֵּג עַל הַתּוֹר שֶׁלּוֹ.`;}
  else if((P.defend||{})[tg.id]){atk.blocked=true;atk.by="def";p=`המגן של ${nm} עצר את המכה!`;v=`הַמָּגֵן שֶׁל ${nm} עָצַר אֶת הַמַּכָּה!`;}
@@ -3202,7 +3213,7 @@ async function genHero(fix){
   if(!changed){render();toast(local&&local.understood?"זה כבר נראה ככה. אפשר לשנות גם בכוונון הידני למטה":"לא הבנתי את התיקון. כתבו למשל: בלי כתר, בלי סומק, שיער כחול. אפשר גם בכוונון הידני למטה");return;}
   d.fixesLeft=Math.max(0,d.fixesLeft-1);d.fix="";
  }
- if(!fix&&d.cls)applyCls(res.params,d.cls,false);
+ if(!fix&&d.cls)applyCls(res.params,d.cls,false,lvInfo(d.xp||0).lv);
  d.result=res;d.busy=false;d.fresh=true;render();d.fresh=false;
  sfx("win");confetti(30);
  const rv=document.querySelector(".reveal");if(rv)rv.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});
@@ -3275,7 +3286,7 @@ function resolveStation(ok,text,opt={}){
  persist();
  render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});
  sfx(ok?"win":"lose");if(!P.noReward)sfx("chest");if(ok)confetti();
- setTimeout(()=>earn(P.noReward?1:(ok?(P.firstTry?3:2):1)+(P.dupGem||0)),500);
+ {const lucky=(ok&&P.firstTry&&!P.noReward&&Math.random()<.3)?1:0;if(lucky)setTimeout(()=>toast("מזל! יהלום בונוס"),1300);setTimeout(()=>earn(P.noReward?0:(ok?(P.firstTry?2:1):0)+(P.dupGem||0)+lucky),500);}
 }
 function snapStation(){const P=S.play;if(!P||P.idx<0)return;P.snaps=P.snaps||{};if(!P.snaps[P.idx])P.snaps[P.idx]=JSON.stringify({heroes:SAVE.heroes,node:SAVE.campaign.node,mapDone:!!P.mapDone});}
 function restoreSnap(i){const P=S.play;if(!P.snaps||!P.snaps[i])return;const o=JSON.parse(P.snaps[i]);SAVE.heroes=o.heroes;SAVE.campaign.node=o.node;P.mapDone=o.mapDone;persist();}
@@ -3316,7 +3327,7 @@ function rollDice(btn){
  if(P.help){const v2=1+Math.floor(Math.random()*d.sides);P.rollPair=[v,v2];v=Math.max(v,v2);}
  btn.disabled=true;sfx("roll");
  const hs=campHeroes(),L=hs.find(h=>h.id===st.leaderId)||hs[0];
- const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=Math.max(1,Math.min(d.sides,d.target-(P.plan?2:0)-(P.readBonus?1:0)-(P.itemBonus?1:0)-(st.move&&P.moveDone?1:0)));if(v+effS(L,"str")>=target){sfx("pop");confetti(24);}};
+ const done=()=>{if(boss){bossHit(v);return;}P.roll=v;render();const target=diceTarget(SAVE.campaign,d,st,P,L);if(v+effS(L,"str")>=target){sfx("pop");confetti(24);}};
  if(RM){done();return;}
  if(d.sides===6){const cube=$("#cube");if(cube){cube.classList.add("go");requestAnimationFrame(()=>{cube.style.transform=cubeTf(v,2);});}setTimeout(done,1400);}
  else{const el=$("#d20"),sp=$("#d20v");if(el)el.classList.add("rolling");let k=0;const iv=setInterval(()=>{if(sp)sp.textContent=1+Math.floor(Math.random()*20);if(++k>14){clearInterval(iv);done();}},80);}
@@ -3339,7 +3350,7 @@ app.addEventListener("click",e=>{
   case "newhero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft();go("hero");break;
   case "edithero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "gender": S.draft.gender=b.dataset.v;render();break;
-  case "setcls": {const d=S.draft,v=b.dataset.v;d.cls=d.cls===v?null:v;if(d.cls&&d.result){applyCls(d.result.params,d.cls,true);}sfx("pop");render();break;}
+  case "setcls": {const d=S.draft,v=b.dataset.v;d.cls=d.cls===v?null:v;if(d.cls&&d.result){applyCls(d.result.params,d.cls,true,lvInfo(d.xp||0).lv);}sfx("pop");render();break;}
   case "clsfix": S.hinfo=null;S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "pv": S.draft.pv=+b.dataset.v;render();sfx("pop");break;
   case "dress": S.draft.dress=true;S.draft.fresh=false;document.documentElement.style.overflow="hidden";render();sfx("pop");break;
@@ -3429,12 +3440,12 @@ app.addEventListener("click",e=>{
   case "teamroll": {const hs=campHeroes(),T=teamMembers(hs),d=diceFor(SAVE.campaign,"easy");const rolls=T.map(()=>1+Math.floor(Math.random()*d.sides));P.teamRolls=rolls;b.disabled=true;sfx("roll");
    if(RM){teamHit(rolls.reduce((a,x)=>a+x,0));break;}
    let k=0;const iv=setInterval(()=>{T.forEach((_,i)=>{const el=$("#td"+i);if(el){el.textContent=1+Math.floor(Math.random()*d.sides);el.classList.add("spinning");}});if(++k>12){clearInterval(iv);T.forEach((_,i)=>{const el=$("#td"+i);if(el){el.textContent=rolls[i];el.classList.remove("spinning");el.classList.add("landed");}});setTimeout(()=>teamHit(rolls.reduce((a,x)=>a+x,0)),700);}},90);break;}
-  case "bosswin": {const c0=SAVE.campaign,gn=3+worldIdx(c0)+(P.tookHit?0:2);resolveStation(true,null,{boss:true});setTimeout(()=>earn(gn),1300);break;}
+  case "bosswin": {const c0=SAVE.campaign,gn=2+worldIdx(c0)+(P.tookHit?0:1);resolveStation(true,null,{boss:true});setTimeout(()=>earn(gn),1300);break;}
   case "toupgrade": P.phase="upgrade";P.upStep="intro";sfx("lvl");render();confetti(60);break;
   case "upnext": P.upStep="choose";sfx("pop");render();break;
   case "upcont": P.upQueue.shift();P.upPick=null;if(P.upQueue.length){P.upStep="intro";sfx("lvl");render();confetti(40);}else{P.upStep=null;advance();toast("השדרוגים נשמרו!");}break;
   case "pickstat": {const hs=campHeroes(),R=hs.find(h=>h.id===(P.upQueue||[])[0]);if(!R)break;R.stats=R.stats||{str:0,wis:0,luck:0};const k=b.dataset.k;if((R.stats[k]||0)>=3)break;R.stats[k]=(R.stats[k]||0)+1;if(k==="hp"&&R.hp!=null)R.hp=Math.min(heroHpMax(R),(R.hp||0)+1);persist();P.upPick={k,to:R.stats[k]};P.upStep="reveal";sfx("chest");sfx("lvl");render();setTimeout(()=>confetti(50),650);break;}
-  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+effS(L0,"wis")){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
+  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+Math.ceil(effS(L0,"wis")/2)){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
   case "renameopen": S.ren={id:b.dataset.id,val:"",err:""};sfx("pop");render();setTimeout(()=>{const i=$("#renameIn");if(i){i.focus();i.select();}},50);break;
   case "renameno": S.ren=null;render();break;
   case "renameok": {const R=S.ren,H=R&&SAVE.heroes.find(h=>h.id===R.id);if(!H)break;const v=(($("#renameIn")||{}).value||"").trim().replace(/\s+/g," ");
@@ -3494,7 +3505,7 @@ function devKind(){const w=Math.min(screen.width||innerWidth,screen.height||inne
    parent.postMessage({dreamCatalog:out},location.origin);},400);
  }
  if(NOSTAT)return;
- try{sbRest("dream_texts?select=key,value&limit=2000").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{TXO[x.key]=x.value;});}).catch(()=>{});}catch(e){}
+ try{sbRest("dream_texts?select=key,value&limit=2000").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{TXO[x.key]=x.value;});clsApplyOver();}).catch(()=>{});}catch(e){}
  try{sbRest("dream_riddles?select=id,q,opts,ans,hint,young,level&active=eq.true&limit=500").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{if(Array.isArray(x.opts)&&x.opts.length===4&&x.ans>=0&&x.ans<4)DB_R.push(x);});}).catch(()=>{});}catch(e){}
  let sid="";try{sid=sessionStorage.getItem("dream_sid")||"";if(!sid){sid=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2)).slice(0,40);sessionStorage.setItem("dream_sid",sid);}}catch(e){sid=String(Date.now());}
  const dev=devKind();let last=Date.now(),sent=0;

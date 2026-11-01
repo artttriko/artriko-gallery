@@ -92,7 +92,7 @@ function login(){
   <button class="btn pri" data-a="google">כניסה עם Google</button>
   ${S.err?`<div class="err">${esc(S.err)}</div>`:""}</div></div>`;
 }
-const TABS=[["dash","📊","סטטיסטיקות"],["riddles","🧩","מאגר חידות"],["texts","✍️","טקסטים"],["pay","💳","תשלומים"]];
+const TABS=[["dash","📊","סטטיסטיקות"],["riddles","🧩","מאגר חידות"],["texts","✍️","טקסטים"],["roles","🛡️","תפקידים"],["pay","💳","תשלומים"]];
 function shell(inner){
   return `<div class="app"><nav><h1>Dream · ניהול<small>${esc(S.user.email||"")}</small></h1>${TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" data-a="tab" data-t="${t[0]}">${t[1]} ${t[2]}</button>`).join("")}<div class="sp"></div><a class="btn sm" href="/dream/" target="_blank" rel="noopener" style="text-decoration:none;text-align:center">פתיחת המשחק ↗</a><button data-a="out">יציאה</button></nav><main>${inner}</main></div>${S.toast?`<div class="toast">${esc(S.toast)}</div>`:""}`;
 }
@@ -139,6 +139,12 @@ function texts(){
   <div class="row" style="margin-bottom:14px"><input type="text" id="rs" placeholder="חיפוש טקסט..." value="${esc(S.q)}" style="max-width:300px"><span class="tag">${Object.keys(S.over).length} טקסטים ששונו</span></div>
   ${Object.keys(worlds).map(w=>`<details class="w" data-k="${esc(w)}" ${q?"open":""}><summary>🌍 ${esc(w)}</summary>${Object.keys(worlds[w]).map(v=>`<details class="n" data-k="${esc(w+"|"+v)}" ${q?"open":""}><summary>${VL[v]||v}</summary>${Object.keys(worlds[w][v]).map(n=>{const it=worlds[w][v][n].filter(x=>!q||x.text.includes(q)||(S.over[x.key]||"").includes(q));if(!it.length)return"";return `<div class="tx"><b>תחנה ${+n+1}</b> <span class="tag">${esc(it[0].type||"")}</span>${it.map(x=>{const ch=S.over[x.key]!=null;return `<label>${FL[x.field]||x.field} ${ch?`<span class="tag ok">שונה</span>`:""}</label><textarea data-key="${esc(x.key)}" data-orig="${esc(x.text)}">${esc(ch?S.over[x.key]:x.text)}</textarea><div class="row" style="margin-top:6px"><button class="btn sm pri" data-a="tsave" data-key="${esc(x.key)}">שמירה</button>${ch?`<button class="btn sm" data-a="treset" data-key="${esc(x.key)}">חזרה למקור</button>`:""}</div>`;}).join("")}</div>`;}).join("")}</details>`).join("")}</details>`).join("")}`;
 }
+const ROLES={fighter:["לוחם/ת",{m:"לוחם",f:"לוחמת",tm:"אומץ וגבורה בלחימה",tf:"אומץ וגבורה בלחימה",d:"חזק בהטלת הקובייה"}],tank:["טנק",{m:"טנק",f:"טנק",tm:"עוצמה של הגנה",tf:"עוצמה של הגנה",d:"הבוס מחטיא אותו יותר"}],mage:["קוסם/ת",{m:"קוסם",f:"קוסמת",tm:"שולט בקסמים",tf:"שולטת בקסמים",d:"ניסיון נוסף בחידות"}],archer:["קשת/קשתית",{m:"קשת",f:"קשתית",tm:"דיוק וזריזות",tf:"דיוק וזריזות",d:"הטלה חוזרת נוספת"}],healer:["הילר/ית",{m:"הילר",f:"הילרית",tm:"לרפא ולעזור",tf:"לרפא ולעזור",d:"לב נוסף בקרב"}],ninja:["נינג'ה",{m:"נינג'ה",f:"נינג'ה",tm:"שקט ומהיר",tf:"שקטה ומהירה",d:"המכה הראשונה חזקה"}]};
+const RF={m:"שם התפקיד (זכר)",f:"שם התפקיד (נקבה)",tm:"הכישרון (זכר)",tf:"הכישרון (נקבה)",d:"תיאור היתרון במשחק"};
+function roles(){
+  return `<h2>תפקידים</h2><p class="sub">הטקסטים של התפקידים בבחירת הדמות, בכרטיס הגיבור ובמידע על הגיבור. טקסט ששונה מחליף את המקורי. בקריאה למתחילים הניקוד לטקסט ששונה לא אוטומטי, ולכן כדאי לשמור על ניסוחים קצרים.</p>
+  ${Object.keys(ROLES).map(k=>`<details class="w" open><summary>🛡️ ${esc(ROLES[k][0])}</summary><div class="tx">${Object.keys(RF).map(f=>{const key="cls."+k+"."+f,orig=ROLES[k][1][f],ch=S.over[key]!=null;return `<label>${RF[f]} ${ch?`<span class="tag ok">שונה</span>`:""}</label><textarea rows="1" data-key="${esc(key)}" data-orig="${esc(orig)}">${esc(ch?S.over[key]:orig)}</textarea><div class="row" style="margin-top:6px"><button class="btn sm pri" data-a="tsave" data-key="${esc(key)}">שמירה</button>${ch?`<button class="btn sm" data-a="treset" data-key="${esc(key)}">חזרה למקור</button>`:""}</div>`;}).join("")}</div></details>`).join("")}`;
+}
 function pay(){
   return `<h2>תשלומים</h2><p class="sub">הכנה בלבד. בשלב זה האתר חינמי ואין חיבור לסליקה.</p>
   <div class="grid g4"><div class="card kpi pay"><b>₪0</b><span>הכנסות החודש</span></div><div class="card kpi pay"><b>0</b><span>מנויים פעילים</span></div><div class="card kpi pay"><b>0%</b><span>המרה לתשלום</span></div></div>
@@ -150,7 +156,7 @@ function draw(){
   if(String(S.user.email||"").toLowerCase()!==OWNER){R.innerHTML=`<div class="login"><div class="card"><h2>אין הרשאה</h2><p class="sub">העמוד פתוח רק לחשבון המנהל.</p><button class="btn" data-a="out">יציאה</button></div></div>`;return;}
   if(S.admin===null&&!S.err){R.innerHTML=`<div class="login"><p class="sub">טוען...</p></div>`;return;}
   if(S.admin===false||S.err&&!S.admin){R.innerHTML=`<div class="login"><div class="card"><h2>אין הרשאה</h2><p class="sub">${esc(S.user.email||"")} אינו ברשימת המנהלים.${S.err?`<br><span class="err">${esc(S.err)}</span>`:""}</p><button class="btn" data-a="out">יציאה</button></div></div>`;return;}
-  R.innerHTML=shell(S.tab==="dash"?dash():S.tab==="riddles"?riddles():S.tab==="texts"?texts():pay());
+  R.innerHTML=shell(S.tab==="dash"?dash():S.tab==="riddles"?riddles():S.tab==="texts"?texts():S.tab==="roles"?roles():pay());
   R.querySelectorAll("details[data-k]").forEach(d=>{if(S.open[d.dataset.k])d.open=true;});
 }
 document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.k)S.open[d.dataset.k]=d.open;},true);
