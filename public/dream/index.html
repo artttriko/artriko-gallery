@@ -347,8 +347,11 @@ svg.hero,.fx svg{overflow:visible}
 .dizzy i{position:absolute;width:18px;height:18px;background:#ffd23f;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 .dizzy i:nth-child(1){left:31px;top:-9px}.dizzy i:nth-child(2){left:-9px;top:50px}.dizzy i:nth-child(3){left:70px;top:50px}
 @keyframes dzin{to{opacity:1}}
-.flame{animation:flame .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
-@keyframes flame{to{transform:scaleY(1.15) scaleX(.9)}}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes flame{0%,100%{transform:scale(1,1) rotate(0)}18%{transform:scale(.94,1.1) rotate(-3deg)}37%{transform:scale(1.04,.95) rotate(2deg)}56%{transform:scale(.96,1.07) rotate(-1.5deg)}78%{transform:scale(1.03,.97) rotate(2.5deg)}}
+.flhov{animation:flhov 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes flhov{0%,100%{transform:translate(0,0)}50%{transform:translate(1.5px,-3.5px)}}
+@media (prefers-reduced-motion:reduce){.flame,.flhov{animation:none}}
 .orbit2{animation:spin 2.4s linear infinite;transform-box:view-box}
 .floaty{animation:floaty 2.2s ease-in-out infinite}
 @keyframes floaty{50%{transform:translateY(-4px)}}
@@ -1050,6 +1053,8 @@ function tkey(k){return k==="_face"?"face":k;}
 function tierOf(k,v){return (TIER[tkey(k)]||{})[v]||0;}
 function owned(k,v){const u=U();u.owned=u.owned||[];return u.owned.includes(tkey(k)+":"+v);}
 function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;return tierOf(k,v)>0&&!owned(k,v);}
+function styleOK(xp){return lvInfo(xp||0).lv>=TOPLV;}
+function styleRevealed(k,v,xp){return k!=="style"||owned(k,v)||styleOK(xp);}
 function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
 function gems(){return SAVE.gems||0;}
 const GEM=(w=18)=>`<svg viewBox="0 0 24 24" width="${w}" height="${w}" aria-hidden="true"><path d="M5 9 L9 4 H15 L19 9 L12 20 Z" fill="#3ee0ff" stroke="${O}" stroke-width="2" stroke-linejoin="round"/><path d="M5 9 H19 M9 4 L10.5 9 L12 20 L13.5 9 L15 4" fill="none" stroke="${O}" stroke-width="1.2"/><path d="M8 7 l2 -1.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`;
@@ -1061,10 +1066,10 @@ function premiumLocked(k,v){return itemLocked(k,v);}
 const LOCK_SVG=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="12" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/><path d="M8 10 V7 a4 4 0 0 1 8 0 V10" fill="none" stroke="${O}" stroke-width="2.4"/><circle cx="12" cy="16" r="2" fill="${O}"/></svg>`;
 function lockModal(){
  const L=S.lock;if(!L)return "";
- if(L.kind==="item"){const tr=tierOf(L.k,L.v),pr=PRICE[tr],need=pr-gems(),leg=tr===4&&!legendOK(),q={...S.draft.result.params};dSet(q,L.k,L.v);const T=DTABS.find(t=>t.k===L.k)||DTABS[0];
-  return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${L.k==="style"?"silh":""}">${heroInner(q,L.k==="style"?TOPLV:1,{fem:isF(S.draft),mood:"happy"})}</svg></div>
+ if(L.kind==="item"){const tr=tierOf(L.k,L.v),pr=PRICE[tr],need=pr-gems(),leg=(L.k==="style"?!styleOK(S.draft.xp):(tr===4&&!legendOK())),q={...S.draft.result.params};dSet(q,L.k,L.v);const T=DTABS.find(t=>t.k===L.k)||DTABS[0];
+  return `<div class="lockov" role="dialog" aria-label="פתיחת פריט"><div class="lockbox slide"><div class="shopprev t${tr}"><svg viewBox="${T.crop}" aria-hidden="true" class="${styleRevealed(L.k,L.v,S.draft.xp)?"":"silh"}">${heroInner(q,L.k==="style"?TOPLV:1,{fem:isF(S.draft),mood:"happy"})}</svg></div>
   <h3>${esc(dLbl(L.k,L.v))}</h3><p class="tierb t${tr}">${TIER_N[tr]}</p>
-  ${leg?`<p>${L.k==="style"?"סגנון העל נפתח רק בסוף המשחק, אחרי שמסיימים את כל העולמות, וכשהדמות מגיעה לדרגה "+TOPLV+", הדרגה הגבוהה ביותר.":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
+  ${leg?`<p>${L.k==="style"?"סגנון העל נפתח כשהדמות מגיעה לדרגה "+TOPLV+", הדרגה הגבוהה ביותר. עכשיו היא בדרגה "+lvInfo(S.draft.xp||0).lv+".":"פריט אגדי! נפתח רק אחרי שמסיימים את כל העולמות במשחק."}</p>`:`<p>${need>0?`חסרים עוד <b>${need}</b> יהלומים. אוספים אותם במשחק: הצלחה בתחנה, ניצחון על בוס, רגע של לב, וסיום עולם.`:"יש לכם מספיק יהלומים!"}</p>`}
   <button class="btn wide ${need>0||leg?"":"grn"}" data-a="buygem" ${need>0||leg?"disabled":""}><span>פתיחה ב־${pr} יהלומים</span></button>
   <p class="small muted">יש לכם ${gems()} יהלומים</p>
   <details class="pcode" ${L.err?"open":""}><summary>פתיחה עם קוד הורים</summary><input type="text" id="lockcode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="• • • •" dir="ltr" class="${L.err?"shake":""}">${L.err?`<p class="lockerr">הקוד לא נכון. נסו שוב.</p>`:""}<button class="btn sm grn" data-a="lockok"><span>פתיחה עם קוד</span></button></details>
@@ -1534,8 +1539,8 @@ function petSVG(P){
 }
 function hueWrap(svg,h,id){if(!svg||!h)return svg||"";return `<defs><filter id="${id}" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="${h}"/></filter></defs><g filter="url(#${id})">${svg}</g>`;}
 const HUES=[0,40,90,150,200,250,300];
-const TOPLV=12;
-function xpAt(L){return 3*(L-1)+L*(L-1)/2;}
+const TOPLV=20;
+function xpAt(L){return 5*(L-1)+Math.floor((L-1)*(L-1)/4);}
 function lvInfo(xp){let L=1;while(L<TOPLV&&xp>=xpAt(L+1))L++;return {lv:L,into:xp-xpAt(L),need:L>=TOPLV?0:xpAt(L+1)-xpAt(L)};}
 const PROGF=1;
 function stashProg(c){if(!c)return;c.prog=c.prog||{};SAVE.heroes.forEach(h=>{c.prog[h.id]={xp:h.xp||0,stats:h.stats?{...h.stats}:null,items:JSON.parse(JSON.stringify(h.items||[])),hp:h.hp};});}
@@ -1556,9 +1561,9 @@ function heroInner(p,level=1,o={}){
  if(level>=5||power>=7)s+=`<circle class="spin" cx="70" cy="92" r="66" fill="none" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 10"/>`;
  if(level>=4||power>=5)for(let i=0;i<5;i++){const a=i*1.26+.3;s+=`<polygon class="tw" style="animation-delay:${(i*.4).toFixed(1)}s" points="${starPts(70+60*Math.cos(a),80+56*Math.sin(a),5,2)}" fill="#fff"/>`;}
  s+=shadowE();
- if(lv>=5)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
+ if(lv>=6)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
  let g=`<defs><radialGradient id="${gid}f" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="${shade(sk,.28)}"/><stop offset=".68" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${gid}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(pr,.2)}"/><stop offset="1" stop-color="${shade(pr,-.12)}"/></linearGradient><linearGradient id="${gid}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(hc,.25)}"/><stop offset="1" stop-color="${shade(hc,-.12)}"/></linearGradient></defs>`;
- g+=hueWrap(backSVG((hro&&lv>=8&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=8?1:0),p),p.hue_back,gid+"hb");
+ g+=hueWrap(backSVG((hro&&lv>=12&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=12?1:0),p),p.hue_back,gid+"hb");
  if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="url(#${gid}h)"${K()}/>`;
  const BT=p.bottom||"pants",legc=BT==="shorts"?sk:BT==="jeans"?"#3a5fb8":BT==="armor"?"#9aa6c0":"#2e2552";
  g+=limb("M60 130 L58 146",legc,11)+limb("M80 130 L82 146",legc,11);
@@ -1569,32 +1574,32 @@ function heroInner(p,level=1,o={}){
  if(BT==="jeans")g+=`<path d="M56 131 L55 145 M84 131 L85 145" stroke="#9cc0ff" stroke-width="1.4" stroke-dasharray="2 2"/>`;
  if(BT==="rainbow")g+=["#ff4d6d","#ffd23f","#4fe36b","#3ec2ff"].map((c,i)=>`<path d="M53 ${132+i*3.5} H63 M77 ${132+i*3.5} H87" stroke="${c}" stroke-width="3"/>`).join("");
  if(BT==="shorts")g+=`<path d="M45 130 L95 130 L97 141 L72 141 L70 136 L68 141 L43 141 Z" fill="#2e2552"${K(2.6)}/>`;
- g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=8?se:prd)}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=8?se:prd)}"${K(2.8)}/>`+(tL>=3?`<path d="M50 150 h10 M80 150 h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`:"");
+ g+=`<path d="M45 146 h20 a5 5 0 0 1 5 5 v2 a4 4 0 0 1 -4 4 h-23 a3 3 0 0 1 -3 -3 v-3 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=12?se:prd)}"${K(2.8)}/><path d="M75 146 h20 a5 5 0 0 1 5 5 v3 a3 3 0 0 1 -3 3 h-23 a4 4 0 0 1 -4 -4 v-2 a5 5 0 0 1 5 -5z" fill="${tL>=3?GOLD:(hro&&lv>=12?se:prd)}"${K(2.8)}/>`+(tL>=3?`<path d="M50 150 h10 M80 150 h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`:"");
  g+=`<path d="M46 96 Q70 86 94 96 Q102 116 98 134 Q70 142 42 134 Q38 116 46 96 Z" fill="url(#${gid}c)"${K()}/>`;
  g+=`<path d="M47 98 Q40 117 43 132 Q49 135 56 136 Q50 118 54 96 Z" fill="${prd}"/>`;
  g+=`<path d="M86 98 Q93 110 93 122" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3.5" stroke-linecap="round"/>`;
  if((p.bottom||"pants")==="tutu")g+=`<path d="M40 127 Q44 140 50 133 Q55 143 60 134 Q65 144 70 134 Q75 144 80 134 Q85 143 90 133 Q96 140 100 127 Z" fill="${se}" fill-opacity=".9"${K(2.4)}/><path d="M46 129 Q58 136 70 130 Q82 136 94 129" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>`;
  if((p.bottom||"pants")==="skirt")g+=`<path d="M43 126 L97 126 L105 143 Q70 150 35 143 Z" fill="${se}"${K(2.6)}/><path d="M55 129 L51 145 M70 129 V147 M85 129 L89 145" stroke="${shade(se,-.3)}" stroke-width="2.2" stroke-linecap="round"/>`;
  g+=`<path d="M42.5 120 Q70 127 97.5 120 L98 128 Q70 135 42 128 Z" fill="${se}"${K(2.5)}/><rect x="63" y="119" width="14" height="11" rx="3" fill="#ffd23f"${K(2.5)}/>`;
- if(hro&&lv>=8)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
+ if(hro&&lv>=12)g+=`<circle cx="70" cy="106" r="12.5" fill="${prd}"${K(2.4)}/><g transform="translate(70 106) scale(1.25) translate(-70 -106)">${emblemSVG(p.emblem,se,pr)}</g>`;else g+=emblemSVG(p.emblem,se,pr);
  const wt=o.wt!=null?o.wt:(typeof worldTier==="function"?worldTier():0);
  if(wt>=1)g+=`<rect x="28" y="114" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/><rect x="100" y="${W!=="none"?78:114}" width="12" height="7" rx="3" fill="#ffd23f" stroke="${O}" stroke-width="2"/>`;
  if(wt>=2)g+=`<path d="M52 98 L88 98 L86 118 Q70 124 54 118 Z" fill="#d6dde8" fill-opacity=".55" stroke="${O}" stroke-width="2.2"/><path d="M56 101 L84 101" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
  if(tH>=1)g+=`<path d="${heartPath(70,108,5+tH*2.2)}" fill="#ff4f8a" stroke="${tH>=3?"#ffd23f":O}" stroke-width="${tH>=3?2.8:2}"/><ellipse cx="${(67.5-tH*.6).toFixed(1)}" cy="${(105.5-tH*.4).toFixed(1)}" rx="1.8" ry="1.1" fill="#fff" opacity=".85"/>`;
- if(tP>=1)g+=[0,1,2].slice(0,tP).map(k=>`<path class="flame" transform="translate(${[116,124,108][k]} ${[58,66,52][k]}) scale(${(.7+tP*.12).toFixed(2)})" d="M0 0 C-5 -7 -1 -11 0 -16 C3 -11 5 -7 0 0Z" fill="${k?"#ffd23f":"#ff7a1f"}" stroke="${O}" stroke-width="1.6"/>`).join("");
+ if(tP>=1)g+=[0,1,2].slice(0,tP).map(k=>`<g transform="translate(${[124,15,127][k]} ${[104,98,74][k]}) scale(${(1.15+tP*.16).toFixed(2)})"><g class="flhov" style="animation-delay:-${(k*1.1).toFixed(1)}s"><circle cx="0" cy="-8" r="9" fill="#ffb03a" opacity=".18"/><path class="flame" style="animation-delay:-${(k*.37).toFixed(2)}s" d="M0 0 C-5 -7 -1 -11 0 -16 C3 -11 5 -7 0 0Z" fill="${k?"#ffd23f":"#ff7a1f"}" stroke="${O}" stroke-width="1.6"/></g></g>`).join("");
  if(tD>=1)g+=`<circle cx="25" cy="108" r="${8+tD*1.6}" fill="${tD>=3?"#9fe8ff":"#3ec5ff"}" stroke="${tD>=3?"#ffd23f":O}" stroke-width="${tD>=3?3:2.4}"/><polygon points="${starPts(25,108,4+tD,2+tD*.5)}" fill="#fff" opacity=".9"/>`;
  if(wt>=3)s+=`<circle class="spin" cx="70" cy="92" r="74" fill="none" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="2 8" opacity=".9"/>`;
- if(spk&&lv>=5)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
- if(nat&&lv>=8)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
- if(mag&&lv>=8)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
- if(spk&&lv>=8)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
+ if(spk&&lv>=6)g+=`<polygon points="${starPts(55,108,3.4,1.3,4)}" fill="#fff"/><polygon points="${starPts(86,114,3,1.2,4)}" fill="#fff"/><polygon points="${starPts(60,129,2.6,1,4)}" fill="#fff"/>`;
+ if(nat&&lv>=12)g+=`<path d="M43 122 Q56 130 70 124 Q84 130 97 122" fill="none" stroke="#3fa05f" stroke-width="4" stroke-linecap="round"/>`+[[48,124],[62,127],[78,127],[92,124]].map(([x,y],i)=>i%2?`<circle cx="${x}" cy="${y}" r="3.6" fill="#ff7ec8"${K(1.4)}/>`:`<path d="M${x} ${y} q-6 -6 -8 2 q6 2 8 -2 z" fill="#6fd38a"${K(1.4)}/>`).join("");
+ if(mag&&lv>=12)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
+ if(spk&&lv>=12)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
  if(tL>=2)g+=`<g transform="translate(70 124.5)"><circle r="6.5" fill="${GOLD}"${K(2)}/><circle cx="-2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="-2" cy="2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="2" r="2.2" fill="#3ed45e"/></g>`;
  g+=limb("M50 101 Q37 110 34 123",pr,10);
  const raise=W!=="none";
  g+=raise?limb("M90 101 Q104 98 108 88",pr,10):limb("M90 101 Q103 110 106 123",pr,10);
  if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,tS),p.hue_weapon,gid+"hw")}</g>`;
  if(tS>=2)g+=`<path d="M34 104 Q34 88 52 91 Q56 100 46 108 Z" fill="${GOLD}"${K(2.6)}/><path d="M106 104 Q106 88 88 91 Q84 100 94 108 Z" fill="${GOLD}"${K(2.6)}/><circle cx="44" cy="97" r="2.4" fill="#fff"/><circle cx="96" cy="97" r="2.4" fill="#fff"/>`;
- const hand=tS>=3?GOLD:(hro&&lv>=8?se:sk);
+ const hand=tS>=3?GOLD:(hro&&lv>=12?se:sk);
  g+=`<circle cx="34" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  g+=raise?`<circle cx="108" cy="84" r="8.5" fill="${hand}"${K(2.8)}/>`:`<circle cx="106" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  if(W==="shield"){const k=(1+tS*.1).toFixed(2);g+=`<g transform="translate(30 122) scale(${k})">${fxBack(0,-4,tS,"#8fe3ff")}<path d="M-17 -19 L0 -25 L17 -19 Q17 6 0 17 Q-17 6 -17 -19 Z" fill="${se}"${K()}/><path d="M-11 -15 L0 -19 L11 -15 Q11 3 0 11 Q-11 3 -11 -15 Z" fill="${tS>=2?"#ffd23f":sed}"/><polygon points="${starPts(0,-4,7,3)}" fill="${pr}"${K(1.8)}/>${fxFront(0,-4,tS)}</g>`;}
@@ -1605,13 +1610,13 @@ function heroInner(p,level=1,o={}){
  g+=`<circle cx="70" cy="58" r="36" fill="url(#${gid}f)"${K(3.2)}/>`;
  g+=`<path d="M37 66 Q44 92 70 94 Q47 87 42 63 Z" fill="${skd}"/>`;
  g+=hairFront(H,hc,`url(#${gid}h)`,se);
- if(nat&&lv>=5)g+=`<path d="M40 98 q-14 -10 -10 -22 q14 6 10 22 z M100 98 q14 -10 10 -22 q-14 6 -10 22 z" fill="#3ed45e"${K(2.2)}/>`;
- if(mag&&lv>=5)g+=`<g class="orbit"><circle cx="128" cy="92" r="6" fill="#a978ff"${K(2)}/><circle cx="12" cy="92" r="5" fill="#3ee0ff"${K(2)}/><circle cx="70" cy="34" r="4" fill="#ff7ec8"${K(1.6)}/></g>`;
- if(spk&&lv>=5)g+=`<polygon points="${starPts(39,50,6.5,2.8)}" fill="#ff8ad0"${K(2)}/><path d="${heartPath(101,48,5.5)}" fill="#ffd23f"${K(2)}/>`;
- const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=5&&(p.eyes||"round")!=="cool");
+ if(nat&&lv>=6)g+=`<path d="M40 98 q-14 -10 -10 -22 q14 6 10 22 z M100 98 q14 -10 10 -22 q-14 6 -10 22 z" fill="#3ed45e"${K(2.2)}/>`;
+ if(mag&&lv>=6)g+=`<g class="orbit"><circle cx="128" cy="92" r="6" fill="#a978ff"${K(2)}/><circle cx="12" cy="92" r="5" fill="#3ee0ff"${K(2)}/><circle cx="70" cy="34" r="4" fill="#ff7ec8"${K(1.6)}/></g>`;
+ if(spk&&lv>=6)g+=`<polygon points="${starPts(39,50,6.5,2.8)}" fill="#ff8ad0"${K(2)}/><path d="${heartPath(101,48,5.5)}" fill="#ffd23f"${K(2)}/>`;
+ const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=6&&(p.eyes||"round")!=="cool");
  if(mask)g+=`<path d="M37 57 Q53 49 70 55 Q87 49 103 57 Q105 69 95 72 Q82 74 70 66 Q58 74 45 72 Q35 69 37 57 Z" fill="${shade(pr,-.45)}"${K(2.6)}/><path d="M42 58 Q53 53 64 57" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
  g+=faceSVG(mood,p,fem);
- if(spk&&lv>=8)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
+ if(spk&&lv>=12)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
  g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
  if(tW>=3)g+=`<g class="floaty"><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${O}" stroke-width="8"/><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${GOLD}" stroke-width="4"/>${sparkles([[46,-18,4],[94,-18,4],[70,-24,4.5]],"#fff")}</g>`;
  return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
@@ -2138,7 +2143,7 @@ function vSplash(){
 }
 function shopSuggest(){
  const h=(SAVE.heroes||[]).find(x=>!x.demo)||SAVE.heroes[0];if(!h)return "";
- const all=[];DTABS.forEach(T=>{dOpts(T.k).forEach(v=>{const tr=tierOf(T.k,v);if(tr&&!owned(T.k,v)&&dGet(h.params,T.k)!==v&&!(tr===4&&!legendOK()))all.push({T,v,tr,pr:PRICE[tr]});});});
+ const all=[];DTABS.forEach(T=>{dOpts(T.k).forEach(v=>{const tr=tierOf(T.k,v);if(tr&&!owned(T.k,v)&&dGet(h.params,T.k)!==v&&!(T.k==="style"?!styleOK(h.xp):(tr===4&&!legendOK())))all.push({T,v,tr,pr:PRICE[tr]});});});
  if(!all.length)return "";
  const can=all.filter(x=>x.pr<=gems());const pool=can.length?can:all.sort((a,b)=>a.pr-b.pr).slice(0,4);
  const seed=(SAVE.campaign&&SAVE.campaign.sessions||0)+gems();const pick2=[pool[seed%pool.length],pool[(seed+1)%pool.length]].filter((x,i,a)=>x&&a.indexOf(x)===i);
@@ -2209,7 +2214,7 @@ function vHero(){
  const d=S.draft;const r=d.result;const g=isF(d);if(r)r.params.fem=g;
  let prev="";
  if(r){
-  const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,xpAt(5),xpAt(8),xpAt(TOPLV)][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
+  const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,xpAt(6),xpAt(12),xpAt(TOPLV)][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
   prev=`<section class="panel ov"><div class="reveal">${d.fresh?`<div class="rays"></div>`:""}${heroSVG(fake,d.fresh?"hero cheer":"hero",d.fresh?"joy":"happy")}<h2 class="ol">${esc(r.heroName)}</h2>${d.existing&&!d.fresh?`<button class="chip" data-a="renameopen" data-id="${d.id}">✏️ שינוי שם · 5 💎</button>`:""}<div class="muted">${esc(r.title)}</div><div class="catch">"${esc(r.catch)}"</div></div>
   <div class="fl"><span>איך ${g?"היא":"הוא"} ${g?"תיראה":"ייראה"} אחרי שדרוגים?</span><div class="chips">${["עכשיו","רמה 2","רמה 3","רמה מקסימלית"].map((l,i)=>`<button class="chip" data-a="pv" data-v="${i}" aria-pressed="${pv===i}">${l}</button>`).join("")}</div></div>
   <label class="fl">רוצים לשנות משהו? <span class="muted small">${d.fixesLeft===1?"נשאר תיקון אחד":d.fixesLeft===0?"נגמרו התיקונים, אפשר להמשיך בכוונון הידני":"נשארו "+d.fixesLeft+" תיקונים"}</span>
@@ -2267,11 +2272,11 @@ if(!d.origP)d.origP={...d.result.params};
  <div class="dtop"><div style="display:flex;gap:6px;align-items:center"><button class="ib" data-a="dressrand">ערבוב</button>${gemPill()}</div><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
  <div class="dmain">
   <div class="dside">${L.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
-  <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:xpAt(TOPLV),stats:{str:3,wis:3,luck:3}},"hero silh")}<div class="silnote">החליפה הנדירה נחשפת בדרגה ${TOPLV}, הדרגה הגבוהה ביותר</div></div>`:heroSVG(fake,"hero")}</div>
+  <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:xpAt(TOPLV),stats:{str:3,wis:3,luck:3}},"hero "+(styleOK(d.xp)?"":"silh"))}<div class="silnote">${styleOK(d.xp)?"החליפה הנדירה נחשפה! אפשר לפתוח אותה":"החליפה הנדירה נחשפת בדרגה "+TOPLV+", הדרגה הגבוהה ביותר. עכשיו: דרגה "+lvInfo(d.xp||0).lv}</div></div>`:heroSVG(fake,"hero")}</div>
   <div class="dside">${Rt.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
  </div>
- <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"?"הסגנון נחשף בדרגה "+TOPLV+" (הגבוהה ביותר)":esc(dLbl(T.k,opts[i]))}</span></div>
- <div class="dgrid" style="--n:${opts.length<=7?Math.max(4,opts.length):Math.min(7,Math.ceil(opts.length/2))}">${opts.map((v,j)=>{const q={...p};dSet(q,T.k,v);const lk=itemLocked(T.k,v)&&j!==i,tr=tierOf(T.k,v),sil=T.k==="style";return `<button class="dopt ${lk?"plock":""} ${sil?"silh":""} t${tr}" data-a="dpick" data-v="${j}" aria-pressed="${j===i}" aria-label="${esc(dLbl(T.k,v))}${lk?" (נעול)":""}">${lk?`<i class="olock">${LOCK_SVG}</i><i class="oprice">${GEM(13)}${PRICE[tr]}</i>`:""}${T.k==="pet"?`<svg viewBox="-8 100 54 64" aria-hidden="true">${v==="none"?`<path d="M8 120 L40 152 M40 120 L8 152" stroke="#ffffff88" stroke-width="5" stroke-linecap="round"/>`:hueWrap(petSVG(v),q.hue_pet,"pt"+j)}`:`<svg viewBox="${T.crop}" aria-hidden="true">${heroInner(q,T.lv?TOPLV:1,{fem,mood:"happy"})}`}</svg><span>${esc(dLbl(T.k,v))}</span></button>`;}).join("")}</div></div>
+ <div class="dpick"><div class="dhead"><b>${T.l}</b><span>${T.k==="style"&&!styleOK(d.xp)?"הסגנון נחשף בדרגה "+TOPLV+" (הגבוהה ביותר)":esc(dLbl(T.k,opts[i]))}</span></div>
+ <div class="dgrid" style="--n:${opts.length<=7?Math.max(4,opts.length):Math.min(7,Math.ceil(opts.length/2))}">${opts.map((v,j)=>{const q={...p};dSet(q,T.k,v);const lk=itemLocked(T.k,v)&&j!==i,tr=tierOf(T.k,v),sil=T.k==="style"&&!styleRevealed(T.k,v,d.xp);return `<button class="dopt ${lk?"plock":""} ${sil?"silh":""} t${tr}" data-a="dpick" data-v="${j}" aria-pressed="${j===i}" aria-label="${esc(dLbl(T.k,v))}${lk?" (נעול)":""}">${lk?`<i class="olock">${LOCK_SVG}</i><i class="oprice">${GEM(13)}${PRICE[tr]}</i>`:""}${T.k==="pet"?`<svg viewBox="-8 100 54 64" aria-hidden="true">${v==="none"?`<path d="M8 120 L40 152 M40 120 L8 152" stroke="#ffffff88" stroke-width="5" stroke-linecap="round"/>`:hueWrap(petSVG(v),q.hue_pet,"pt"+j)}`:`<svg viewBox="${T.crop}" aria-hidden="true">${heroInner(q,T.lv?TOPLV:1,{fem,mood:"happy"})}`}</svg><span>${esc(dLbl(T.k,v))}</span></button>`;}).join("")}</div></div>
  ${cols?`<div class="dcols">${cols}</div>`:""}
  </div>`;
 }
@@ -3426,7 +3431,7 @@ app.addEventListener("click",e=>{
    if(L.kind==="item"){u.owned=u.owned||[];u.owned.push(tkey(L.k)+":"+L.v);if(S.draft)dSet(S.draft.result.params,L.k,L.v);}
    if(L.kind==="create"){if(S.setup)S.setup.creating=true;}
    persist();sfx("win");confetti(50);toast(L.kind==="map"?"העולם נפתח!":L.kind==="item"?"הפריט נפתח!":"אפשר ליצור עולם!");break;}
-  case "buygem": {const L=S.lock;if(!L||L.kind!=="item")break;const tr=tierOf(L.k,L.v),pr=PRICE[tr];if(gems()<pr||(tr===4&&!legendOK()))break;SAVE.gems=gems()-pr;const u=U();u.owned=u.owned||[];u.owned.push(tkey(L.k)+":"+L.v);if(S.draft)dSet(S.draft.result.params,L.k,L.v);S.lock=null;persist();sfx("win");confetti(60);toast("הפריט נפתח!");break;}
+  case "buygem": {const L=S.lock;if(!L||L.kind!=="item")break;const tr=tierOf(L.k,L.v),pr=PRICE[tr];if(gems()<pr||(L.k==="style"?!styleOK(S.draft&&S.draft.xp):(tr===4&&!legendOK())))break;SAVE.gems=gems()-pr;const u=U();u.owned=u.owned||[];u.owned.push(tkey(L.k)+":"+L.v);if(S.draft)dSet(S.draft.result.params,L.k,L.v);S.lock=null;persist();sfx("win");confetti(60);toast("הפריט נפתח!");break;}
   case "newworld": if(!(S.setup&&S.setup.creating)){S.lock={kind:"create"};render();setTimeout(()=>{const i=$("#lockcode");if(i)i.focus();},60);}else{S.setup.creating=true;render();setTimeout(()=>{const i=$("#cwName");if(i)i.focus();},60);}sfx("pop");break;
   case "cwbase": S.setup.cwBase=b.dataset.v;{const n=$("#cwName"),k=$("#cwKeys");S.setup.cwN=n?n.value:"";S.setup.cwK=k?k.value:"";}render();{const n=$("#cwName"),k=$("#cwKeys");if(n)n.value=S.setup.cwN||"";if(k)k.value=S.setup.cwK||"";}sfx("pop");break;
   case "cwcancel": S.setup.creating=false;render();break;
