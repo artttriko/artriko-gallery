@@ -485,6 +485,7 @@ svg.hero,.fx svg{overflow:visible}
 .bh-npc{flex:0 0 84px}.bh-npc svg{width:100%;height:auto}
 .bedheart p{font-family:var(--f-tale);font-size:1.08rem;line-height:1.55}
 
+.advbox{max-width:640px;width:100%}.advg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.advc{border:4px solid var(--c);border-radius:18px;background:#fff;color:#2a1f5c;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;cursor:pointer}.advc:hover,.advc:focus-visible{transform:translateY(-3px);box-shadow:0 0 0 4px #ffd23f}.advp{width:100%;max-width:150px}.advp svg{width:100%;height:auto}@media(max-width:420px){.advg{gap:6px}.advc{padding:5px}}.synchip{margin-top:6px;background:#fff3c4;border:2px solid #ffd23f;border-radius:12px;padding:5px 9px;color:#5a3d00;font-size:.9rem}.flav{text-align:center;font-style:italic;opacity:.85;margin:4px 0}
 .lockov{position:fixed;inset:0;z-index:80;background:#0b1040cc;display:grid;place-items:center;padding:20px;animation:ovin .2s}
 .lockbox{background:linear-gradient(180deg,var(--panel),var(--panel2));border:3px solid var(--o);border-radius:22px;box-shadow:0 6px 0 var(--o);padding:18px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:center}
 .lockic svg{width:56px;height:56px}
@@ -879,13 +880,13 @@ const ENUM={eyes:["round","big","dot","happy","wink","kawaii","spiral","cool","h
  style:["sparkle","hero","nature","magic"],
  bottom:["pants","skirt","shorts","jeans","sporty","striped","tutu","starry","armor","rainbow","polka","camo","flames","ducks"],
  head:["none","crown","bow","catears","flower","helmet","horns","wizard","unicorn","star","pizza","chicken","icecream","propeller","pot","teacup","medcap"],
- weapon:["none","sword","wand","shield","staff","flower","bow","heartwand","hammer","flamesword","chickrub","banana","lollipop","plunger","baguette","lid","book","slingshot","ladle","fan"],
+ weapon:["none","sword","wand","shield","staff","flower","bow","heartwand","hammer","flamesword","chickrub","banana","lollipop","plunger","baguette","lid","book","slingshot","ladle","fan","woodstaff","daggers"],
  pet:["none","cat","puppy","frog","bunny","parrot","fox","panda","dragon","unicorn","chick","duck","snail","goldfish"],
  back:["none","cape","wings","butterfly","fairy","batwings","jetpack","robotarms","spiderlegs","dragonwings","balloons","floatie","foxtail","umbrella","shell","quiver","scarf"],
  emblem:["star","heart","bolt","moon","paw","flower","note","fire","crown","diamond","smile","donut","pizza","cookie"],
  /* still drawable for older heroes, no longer offered */
  _legacy:["sleepy","star","roundglasses","heartglasses","visor","tiara","bandana","mushrooms","book","owl","bee","backpack","shell","snow"]};
-const LBL={eyes:{crossed:"עיניים מצטלבות",googly:"עיני בובה",dizzy:"סחרחורת",tears:"דמעות של צחוק",monocle:"מונוקל מכובד",round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש",kawaii:"חמודות",roundglasses:"משקפיים עגולים",spiral:"סחרחורת",hearts:"לבבות",heartglasses:"משקפי לב",visor:"מגן עתידני",starglasses:"משקפי כוכב"},mouth:{buck:"שיניים בולטות",zigzag:"פה מתפתל",kiss:"נשיקה",yawn:"פיהוק ענק",braces:"גשר מבריק",smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו",fangs:"ניבי ערפד",mustache:"שפם",bubble:"בועת מסטיק"},hair:{mohawk:"מוהוק",afro:"אפרו ענק",pomp:"בלורית",twinbuns:"שתי פקעות",short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"שומר הקשת",hero:"מגן הלילה",nature:"שומר היער",magic:"קוסם הגלקסיה"},bottom:{polka:"נקודות",camo:"הסוואה",flames:"להבות",ducks:"ברווזונים",pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים",jeans:"ג'ינס",sporty:"ספורט",striped:"פסים",tutu:"טוטו",starry:"כוכבים",armor:"שריון",rainbow:"קשת בענן"},head:{pizza:"משולש פיצה",chicken:"תרנגולת",icecream:"גלידה",propeller:"כובע מדחף",pot:"סיר",teacup:"כוס תה",medcap:"כובע רופא",none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{chickrub:"תרנגולת גומי",banana:"בננה",lollipop:"סוכרייה ענקית",plunger:"פומפה",baguette:"חרב באגט",lid:"מכסה סיר",slingshot:"קלע",ladle:"מצקת מרק",fan:"מניפת נינג'ה",none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן",flower:"פרח קסום",book:"ספר לחשים",flamesword:"חרב להבות"},pet:{chick:"אפרוח",duck:"ברווז",snail:"חילזון",goldfish:"דג זהב",parrot:"תוכי",none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע",bunny:"ארנבון",puppy:"כלבלב",bee:"דבורה",fox:"שועל",panda:"פנדה",unicorn:"חד־קרן"},back:{balloons:"בלונים",floatie:"גלגל ים",foxtail:"זנב שועל",umbrella:"מטרייה",quiver:"אשפת חיצים",scarf:"צעיף מתנופף",robotarms:"זרועות רובוט",spiderlegs:"רגלי עכביש",none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר",backpack:"תרמיל",fairy:"כנפי פיה",shell:"שריון צב",batwings:"כנפי עטלף",jetpack:"תרמיל סילון",dragonwings:"כנפי דרקון"},emblem:{smile:"סמיילי",donut:"סופגנייה",pizza:"פיצה",cookie:"עוגייה",star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל",flower:"פרח",note:"תו מוזיקה",snow:"פתית שלג",fire:"אש",crown:"כתר",diamond:"יהלום"}};
+const LBL={eyes:{crossed:"עיניים מצטלבות",googly:"עיני בובה",dizzy:"סחרחורת",tears:"דמעות של צחוק",monocle:"מונוקל מכובד",round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש",kawaii:"חמודות",roundglasses:"משקפיים עגולים",spiral:"סחרחורת",hearts:"לבבות",heartglasses:"משקפי לב",visor:"מגן עתידני",starglasses:"משקפי כוכב"},mouth:{buck:"שיניים בולטות",zigzag:"פה מתפתל",kiss:"נשיקה",yawn:"פיהוק ענק",braces:"גשר מבריק",smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו",fangs:"ניבי ערפד",mustache:"שפם",bubble:"בועת מסטיק"},hair:{mohawk:"מוהוק",afro:"אפרו ענק",pomp:"בלורית",twinbuns:"שתי פקעות",short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"שומר הקשת",hero:"מגן הלילה",nature:"שומר היער",magic:"קוסם הגלקסיה"},bottom:{polka:"נקודות",camo:"הסוואה",flames:"להבות",ducks:"ברווזונים",pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים",jeans:"ג'ינס",sporty:"ספורט",striped:"פסים",tutu:"טוטו",starry:"כוכבים",armor:"שריון",rainbow:"קשת בענן"},head:{pizza:"משולש פיצה",chicken:"תרנגולת",icecream:"גלידה",propeller:"כובע מדחף",pot:"סיר",teacup:"כוס תה",medcap:"כובע רופא",none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{woodstaff:"מטה עץ ארוך",daggers:"פגיונות ושוריקן",chickrub:"תרנגולת גומי",banana:"בננה",lollipop:"סוכרייה ענקית",plunger:"פומפה",baguette:"חרב באגט",lid:"מכסה סיר",slingshot:"קלע",ladle:"מצקת מרק",fan:"מניפת נינג'ה",none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן",flower:"פרח קסום",book:"ספר לחשים",flamesword:"חרב להבות"},pet:{chick:"אפרוח",duck:"ברווז",snail:"חילזון",goldfish:"דג זהב",parrot:"תוכי",none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע",bunny:"ארנבון",puppy:"כלבלב",bee:"דבורה",fox:"שועל",panda:"פנדה",unicorn:"חד־קרן"},back:{balloons:"בלונים",floatie:"גלגל ים",foxtail:"זנב שועל",umbrella:"מטרייה",quiver:"אשפת חיצים",scarf:"צעיף מתנופף",robotarms:"זרועות רובוט",spiderlegs:"רגלי עכביש",none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר",backpack:"תרמיל",fairy:"כנפי פיה",shell:"שריון צב",batwings:"כנפי עטלף",jetpack:"תרמיל סילון",dragonwings:"כנפי דרקון"},emblem:{smile:"סמיילי",donut:"סופגנייה",pizza:"פיצה",cookie:"עוגייה",star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל",flower:"פרח",note:"תו מוזיקה",snow:"פתית שלג",fire:"אש",crown:"כתר",diamond:"יהלום"}};
 const ICONS=["gem","key","potion","shield","feather","star","scroll","crystal","crown","moon","boots","glove","scarf","snowball","badge","amulet","leaf","lily","frogpend","tooth","jar","oar","beetle","compass","cloud","bell","bag","sparkles","rainbow","note"];
 const ITEM_N={gem:"יהלום נוצץ",key:"מפתח קסום",potion:"שיקוי הכוח",shield:"מגן קטן",feather:"נוצה קלילה",star:"כוכב המזל",scroll:"מגילת סודות",crystal:"גביש מאיר",crown:"כתר קטן",moon:"אבן הירח",boots:"מגפי הרפתקן",glove:"כפפת הגנה",scarf:"צעיף חם",snowball:"כדור קסם זוהר",badge:"סמל האמיץ",amulet:"קמע המזל",leaf:"עלה קסום",lily:"פרח הנהר",frogpend:"תליון הצפרדע",tooth:"שן מבריקה",jar:"צנצנת אור",oar:"משוט הרפתקנים",beetle:"שריון קטן",compass:"מצפן הדרך",cloud:"ענן קטן",bell:"פעמון שמח",bag:"שק הפתעות",sparkles:"אבק נוצץ",rainbow:"אבקת קשת",note:"צליל קסום"};
 const NPC_KEYS=["fox","bunny","panda","parrot","puppy","unicorn","penguin","penguinking","owl","bear","dog","door","wind","queen","frog","grandmafrog","firefly","croc","tree","moon","bird","nightbird","cloud","star","dragon","sprite","stormbeast","fogmonster","thunderbeast"];
@@ -1059,7 +1060,7 @@ const PRICE={1:4,2:8,3:14,4:22};
 const TIER_N={1:"רגיל",2:"מיוחד",3:"נדיר",4:"אגדי"};
 function tkey(k){return k==="_face"?"face":k;}
 function tierOf(k,v){return (TIER[tkey(k)]||{})[v]||0;}
-const EXCL={"weapon:baguette":["fighter",2],"head:pot":["fighter",5],"weapon:lid":["tank",2],"back:shell":["tank",5],"weapon:book":["mage",2],"head:teacup":["mage",5],"weapon:slingshot":["archer",2],"back:quiver":["archer",5],"weapon:ladle":["healer",2],"head:medcap":["healer",5],"weapon:fan":["ninja",2],"back:scarf":["ninja",5]};
+const EXCL={"weapon:baguette":["fighter",2],"head:pot":["fighter",5],"weapon:lid":["tank",2],"back:shell":["tank",5],"weapon:book":["mage",2],"head:teacup":["mage",5],"weapon:slingshot":["archer",2],"back:quiver":["archer",5],"weapon:ladle":["healer",2],"head:medcap":["healer",5],"weapon:fan":["ninja",2],"weapon:woodstaff":["healer",1],"weapon:daggers":["ninja",1],"back:scarf":["ninja",5]};
 function exclOf(k,v){return EXCL[tkey(k)+":"+v]||null;}
 function owned(k,v){const u=U();u.owned=u.owned||[];return u.owned.includes(tkey(k)+":"+v);}
 function itemLocked(k,v){const o=S.draft&&S.draft.origP;if(o&&dGet(o,k)===v)return false;if(S.draft&&clsSig(S.draft.cls,k,v,lvInfo(S.draft.xp||0).lv))return false;{const ex=exclOf(k,v);if(ex){const d=S.draft;return !(d&&d.cls===ex[0]&&lvInfo(d.xp||0).lv>=ex[1]);}}return tierOf(k,v)>0&&!owned(k,v);}
@@ -1068,15 +1069,78 @@ function styleRevealed(k,v,xp){return k!=="style"||owned(k,v)||styleOK(xp);}
 
 /* ---------- classes (roles) ---------- */
 const CLS={
- fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",tm:"אומץ וגבורה בלחימה",tf:"אומץ וגבורה בלחימה",tmv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",tfv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",col:"#ff5a3c",w:"hammer",h:"horns",b:"cape",perk:{str:1},task:["physical","dice"],d:"חזק בהטלת הקובייה",dv:"חָזָק בְּהַטָּלַת הַקֻּבִּיָּה"},
- tank:{m:"טנק",f:"טנק",mv:"טַנְק",fv:"טַנְק",tm:"עוצמה של הגנה",tf:"עוצמה של הגנה",tmv:"עוֹצְמָה שֶׁל הֲגָנָה",tfv:"עוֹצְמָה שֶׁל הֲגָנָה",col:"#3ea0ff",w:"shield",h:"helmet",b:"none",perk:{def:1},task:["boss","physical"],d:"הבוס מחטיא אותו יותר",dv:"הַבּוֹס מַחְטִיא אוֹתוֹ יוֹתֵר"},
- mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",tm:"שולט בקסמים",tf:"שולטת בקסמים",tmv:"שׁוֹלֵט בְּקְסָמִים",tfv:"שׁוֹלֶטֶת בְּקְסָמִים",col:"#a46bff",w:"staff",h:"wizard",b:"none",perk:{wis:1},task:["riddle","meet"],d:"ניסיון נוסף בחידות",dv:"נִיסָּיוֹן נוֹסָף בַּחִידוֹת"},
- archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",tm:"דיוק וזריזות",tf:"דיוק וזריזות",tmv:"דִּיּוּק וּזְרִיזוּת",tfv:"דִּיּוּק וּזְרִיזוּת",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",perk:{luck:1},task:["dice","choice"],d:"הטלה חוזרת נוספת",dv:"הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת"},
- healer:{m:"הילר",f:"הילרית",mv:"הִילֶר",fv:"הִילֶרִית",tm:"לרפא ולעזור",tf:"לרפא ולעזור",tmv:"לְרַפֵּא וְלַעֲזוֹר",tfv:"לְרַפֵּא וְלַעֲזוֹר",col:"#ff7eb6",w:"heartwand",h:"flower",b:"fairy",perk:{hp:1},task:["meet","choice"],d:"לב נוסף בקרב",dv:"לֵב נוֹסָף בַּקְּרָב"},
- ninja:{m:"נינג'ה",f:"נינג'ה",mv:"נִינְגָ'ה",fv:"נִינְגָ'ה",tm:"שקט ומהיר",tf:"שקטה ומהירה",tmv:"שָׁקֵט וּמָהִיר",tfv:"שְׁקֵטָה וּמְהִירָה",col:"#555e78",w:"sword",h:"bandana",b:"batwings",perk:{pow:1},task:["dice","boss"],d:"המכה הראשונה חזקה",dv:"הַמַּכָּה הָרִאשׁוֹנָה חֲזָקָה"}};
+ fighter:{m:"לוחם",f:"לוחמת",mv:"לוֹחֵם",fv:"לוֹחֶמֶת",tm:"אומץ וגבורה בלחימה",tf:"אומץ וגבורה בלחימה",tmv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",tfv:"אֹמֶץ וּגְבוּרָה בִּלְחִימָה",col:"#ff5a3c",w:"sword",h:"horns",b:"cape",s:"אומץ, חרב ולב גדול. כשהסכנה מתקרבת, לוחמים ולוחמות הם הראשונים לצעוד קדימה.",perk:{str:1},task:["physical","dice"],d:"חזק בהטלת הקובייה",dv:"חָזָק בְּהַטָּלַת הַקֻּבִּיָּה"},
+ tank:{m:"שומר",f:"שומרת",mv:"שׁוֹמֵר",fv:"שׁוֹמֶרֶת",tm:"עוצמה של הגנה",tf:"עוצמה של הגנה",tmv:"עוֹצְמָה שֶׁל הֲגָנָה",tfv:"עוֹצְמָה שֶׁל הֲגָנָה",col:"#3ea0ff",w:"hammer",h:"helmet",b:"none",s:"חומה שהולכת על שתי רגליים. הפטיש הגדול והמגן הכבד מגינים על החברים, ומי שעומד מאחורי שומר או שומרת יודע שהמכה לא תגיע אליו.",perk:{def:1},task:["boss","physical"],d:"הבוס מחטיא אותו יותר",dv:"הַבּוֹס מַחְטִיא אוֹתוֹ יוֹתֵר"},
+ mage:{m:"קוסם",f:"קוסמת",mv:"קוֹסֵם",fv:"קוֹסֶמֶת",tm:"שולט בקסמים",tf:"שולטת בקסמים",tmv:"שׁוֹלֵט בְּקְסָמִים",tfv:"שׁוֹלֶטֶת בְּקְסָמִים",col:"#a46bff",w:"staff",h:"wizard",b:"none",s:"הקסם נמצא בכל מקום, ורק קוסמים וקוסמות יודעים להקשיב לו. מטה אחד, כמה מילים נכונות, וחידה סבוכה נפתרת.",perk:{wis:1},task:["riddle","meet"],d:"ניסיון נוסף בחידות",dv:"נִיסָּיוֹן נוֹסָף בַּחִידוֹת"},
+ archer:{m:"קשת",f:"קשתית",mv:"קַשָּׁת",fv:"קַשֶּׁתִית",tm:"דיוק וזריזות",tf:"דיוק וזריזות",tmv:"דִּיּוּק וּזְרִיזוּת",tfv:"דִּיּוּק וּזְרִיזוּת",col:"#3fc46a",w:"bow",h:"bandana",b:"backpack",s:"עין חדה, יד יציבה וחץ אחד בדיוק. קשתים וקשתיות רואים את המטרה הרחוקה ביותר, ותמיד יודעים מתי לשחרר.",perk:{luck:1},task:["dice","choice"],d:"הטלה חוזרת נוספת",dv:"הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת"},
+ healer:{m:"מרפא",f:"מרפאת",mv:"מְרַפֵּא",fv:"מְרַפֵּאת",tm:"לרפא ולעזור",tf:"לרפא ולעזור",tmv:"לְרַפֵּא וְלַעֲזוֹר",tfv:"לְרַפֵּא וְלַעֲזוֹר",col:"#ff7eb6",w:"woodstaff",h:"flower",b:"fairy",s:"כשכולם עייפים, המרפא ממשיך. מטה העץ הארוך מלא בכוח של היער, ובמגע אחד הוא מחזיר לחברים את הכוח והאור.",perk:{hp:1},task:["meet","choice"],d:"לב נוסף בקרב",dv:"לֵב נוֹסָף בַּקְּרָב"},
+ ninja:{m:"נינג'ה",f:"נינג'ית",mv:"נִינְגָ'ה",fv:"נִינְגִ'ית",tm:"שקט ומהיר",tf:"שקטה ומהירה",tmv:"שָׁקֵט וּמָהִיר",tfv:"שְׁקֵטָה וּמְהִירָה",col:"#555e78",w:"sword",h:"bandana",b:"batwings",s:"שקט כמו צל ומהיר כמו רוח. פגיונות ושוריקנים, ואף אחד לא שם לב עד שהמשימה כבר הושלמה.",perk:{pow:1},task:["dice","boss"],d:"המכה הראשונה חזקה",dv:"הַמַּכָּה הָרִאשׁוֹנָה חֲזָקָה"}};
 const CLS_DEF=JSON.parse(JSON.stringify(CLS));
+
+const NODE={"knight":{"p":"fighter","m":"אביר","f":"אבירה","mv":"אָבִיר","fv":"אֲבִירָה","col":"#8fb6ff","mk":"shield","pk":{"def":1},"ab":["guard"],"s":"שריון מבריק, שבועה לממלכה, וחרב שמגינה על כל החברים."},"samurai":{"p":"fighter","m":"סמוראי","f":"סמוראי","mv":"סָמוּרַאי","fv":"סָמוּרַאי","col":"#ff6a4d","mk":"sword","pk":{"pow":1},"ab":["strike"],"s":"אומנות החרב, דרך של שקט וכבוד. חיתוך אחד מדויק שווה מאה מכות."},"musketeer":{"p":"knight","m":"מוסקטיר","f":"מוסקטירית","mv":"מוּסְקֶטִיר","fv":"מוּסְקֶטִירִית","col":"#ffd23f","mk":"star","pk":{"str":1},"ab":["strike"],"s":"סגנון, מהירות וכובע עם נוצה. אחד בשביל כולם, כולם בשביל אחד!"},"magicKnight":{"p":"knight","m":"אביר הקסם","f":"אבירת הקסם","mv":"אֲבִיר הַקֶּסֶם","fv":"אֲבִירַת הַקֶּסֶם","col":"#b58cff","mk":"star","pk":{"wis":1},"ab":["burst"],"s":"שריון שמאיר בסגול, וחרב שמדברת בשפת הקסם. כוח של אביר ותבונה של קוסם."},"fireSamurai":{"p":"samurai","m":"סמוראי האש","f":"סמוראי האש","mv":"סָמוּרַאי הָאֵשׁ","fv":"סָמוּרַאי הָאֵשׁ","col":"#ff7a1f","mk":"flame","pk":{"pow":1},"ab":["burst"],"s":"להבה שרוקדת על הלהב. הקרב הופך להצגה זוהרת."},"iceSamurai":{"p":"samurai","m":"סמוראי הקרח","f":"סמוראי הקרח","mv":"סָמוּרַאי הַקֶּרַח","fv":"סָמוּרַאי הַקֶּרַח","col":"#6fd8ff","mk":"snow","pk":{"def":1},"ab":["freeze"],"s":"להב שקט וקר כמו חורף. הקרח עוצר את הבוס לרגע, וזה כל מה שצריך."},"ironGuard":{"p":"tank","m":"שומר הברזל","f":"שומרת הברזל","mv":"שׁוֹמֵר הַבַּרְזֶל","fv":"שׁוֹמֶרֶת הַבַּרְזֶל","col":"#9aa6c0","mk":"shield","pk":{"hp":1},"ab":["guard"],"s":"חומת ברזל שהולכת על שתי רגליים. הפטיש נוחת, והמגן הכבד עוצר הכול."},"viking":{"p":"tank","m":"ויקינג","f":"ויקינגית","mv":"וִיקִינְג","fv":"וִיקִינְגִית","col":"#d98a3c","mk":"hammer","pk":{"str":1},"ab":["strike"],"s":"רועם, צוחק ואף פעם לא נבהל. פטיש ענק, גלי ים ושירים לפני הקרב."},"ironKnight":{"p":"ironGuard","m":"אביר הברזל","f":"אבירת הברזל","mv":"אֲבִיר הַבַּרְזֶל","fv":"אֲבִירַת הַבַּרְזֶל","col":"#b3bfd2","mk":"crown","pk":{"def":1},"ab":["guardAll"],"s":"שריון ברזל מלוטש מכף רגל ועד ראש. חומה אחת שמגינה על כל הצוות."},"heartKnight":{"p":"ironGuard","m":"אביר הלב","f":"אבירת הלב","mv":"אֲבִיר הַלֵּב","fv":"אֲבִירַת הַלֵּב","col":"#ff6fa8","mk":"heart","pk":{"hp":1},"ab":["mend"],"s":"ברזל בחוץ, לב זהב בפנים. כל הצלחה מרפאה את מי שנפגע."},"snowViking":{"p":"viking","m":"ויקינג השלג","f":"ויקינגית השלג","mv":"וִיקִינְג הַשֶּׁלֶג","fv":"וִיקִינְגִית הַשֶּׁלֶג","col":"#9fe8ff","mk":"snow","pk":{"pow":1},"ab":["freeze"],"s":"בא מהצפון הקפוא. הפטיש מכסה את הקרב בכפור, והבוס נתקע במקום."},"forestViking":{"p":"viking","m":"ויקינג היער","f":"ויקינגית היער","mv":"וִיקִינְג הַיַּעַר","fv":"וִיקִינְגִית הַיַּעַר","col":"#4fc46a","mk":"leaf","pk":{"hp":1},"ab":["mend"],"s":"גדל בין עצים עתיקים. הפטיש מלא בכוח של היער, והחברים מתחזקים לידו."},"iceMage":{"p":"mage","m":"קוסם הקרח","f":"קוסמת הקרח","mv":"קוֹסֵם הַקֶּרַח","fv":"קוֹסֶמֶת הַקֶּרַח","col":"#6fd8ff","mk":"snow","pk":{"wis":1},"ab":["freeze"],"s":"מטה מקרח ולחש שמקפיא את הרגע. בכל פתית שלג מסתתר רמז."},"fireMage":{"p":"mage","m":"קוסם האש","f":"קוסמת האש","mv":"קוֹסֵם הָאֵשׁ","fv":"קוֹסֶמֶת הָאֵשׁ","col":"#ff7a1f","mk":"flame","pk":{"pow":1},"ab":["burst"],"s":"מטה זוהר ולחש שבוער חם. הקסם קופץ ישר אל הקרב."},"frostMage":{"p":"iceMage","m":"קוסם הכפור","f":"קוסמת הכפור","mv":"קוֹסֵם הַכְּפוֹר","fv":"קוֹסֶמֶת הַכְּפוֹר","col":"#bfeaff","mk":"snow","pk":{"wis":1},"ab":["hint"],"s":"כפור עתיק ושקט. כל חידה מקבלת תשובה לפני שמסיימים לשאול."},"snowMage":{"p":"iceMage","m":"קוסם השלג","f":"קוסמת השלג","mv":"קוֹסֵם הַשֶּׁלֶג","fv":"קוֹסֶמֶת הַשֶּׁלֶג","col":"#e8f4ff","mk":"star","pk":{"luck":1},"ab":["lucky"],"s":"סופת שלג של מזל טוב. כל פתית נוחתת בדיוק איפה שצריך."},"lavaMage":{"p":"fireMage","m":"מכשף הלבה","f":"מכשפת הלבה","mv":"מְכַשֵּׁף הַלָּבָה","fv":"מְכַשֶּׁפֶת הַלָּבָה","col":"#ff4d2e","mk":"flame","pk":{"pow":1},"ab":["strike"],"s":"לבה זורמת מהמטה, והקסם פוגע חזק כמו הר געש."},"torchMage":{"p":"fireMage","m":"מכשף הלפיד","f":"מכשפת הלפיד","mv":"מְכַשֵּׁף הַלַּפִּיד","fv":"מְכַשֶּׁפֶת הַלַּפִּיד","col":"#ffb03a","mk":"sun","pk":{"wis":1},"ab":["hint"],"s":"לפיד שמאיר כל פינה חשוכה ומגלה תשובות מוסתרות."},"slinger":{"p":"archer","m":"קלע","f":"קלעית","mv":"קַלָּע","fv":"קַלָּעִית","col":"#c98a4a","mk":"crosshair","pk":{"luck":1},"ab":["lucky"],"s":"קלע קטן, מזל גדול. עוד לפני הזריקה, הוא כבר יודע איפה המטרה."},"arrowWizard":{"p":"archer","m":"אשף חיצים","f":"אשפית חיצים","mv":"אַשַּׁף חִצִּים","fv":"אַשְׁפִּית חִצִּים","col":"#a46bff","mk":"bow","pk":{"wis":1},"ab":["burst"],"s":"חיצים עם קסם בפנים. כל חץ מגיע עם הפתעה זוהרת."},"hawkEye":{"p":"slinger","m":"עין הנץ","f":"עין הנץ","mv":"עֵין הַנֵּץ","fv":"עֵין הַנֵּץ","col":"#ffd23f","mk":"eye","pk":{"str":1},"ab":["strike"],"s":"עיניים שרואות את הפרט הקטן והחשוב. שום נוצה לא מתחבאת מהן."},"sniper":{"p":"slinger","m":"צלף","f":"צלפית","mv":"צַלָּף","fv":"צַלָּפִית","col":"#7d8aa3","mk":"crosshair","pk":{"pow":1},"ab":["strike"],"s":"נשימה אחת, חץ אחד, פגיעה אחת. מחכים לרגע המושלם, והבוס מתנדנד."},"windArcher":{"p":"arrowWizard","m":"קשת רוח","f":"קשתית רוח","mv":"קַשָּׁת רוּחַ","fv":"קַשֶּׁתִית רוּחַ","col":"#9fe8e0","mk":"wind","pk":{"luck":1},"ab":["guard"],"s":"חיצים שרוכבים על הרוח. הם מגיעים מהר ותמיד מוצאים דרך."},"fireArcher":{"p":"arrowWizard","m":"קשת אש","f":"קשתית אש","mv":"קַשָּׁת אֵשׁ","fv":"קַשֶּׁתִית אֵשׁ","col":"#ff7a1f","mk":"flame","pk":{"pow":1},"ab":["strike"],"s":"חץ בוער שמשאיר שובל זוהר. אחריו הכול נראה אחרת."},"heartHealer":{"p":"healer","m":"מרפא הלב","f":"מרפאת הלב","mv":"מְרַפֵּא הַלֵּב","fv":"מְרַפֵּאת הַלֵּב","col":"#ff6fa8","mk":"heart","pk":{"hp":1},"ab":["mend"],"s":"הלב הוא התרופה הכי טובה. כל הצלחה של הצוות מחזירה כוח למי שצריך."},"magicHealer":{"p":"healer","m":"מרפא הקסם","f":"מרפאת הקסם","mv":"מְרַפֵּא הַקֶּסֶם","fv":"מְרַפֵּאת הַקֶּסֶם","col":"#b58cff","mk":"star","pk":{"wis":1},"ab":["guardAll"],"s":"קסם עדין שעוטף את החברים באור. אף אחד לא נשאר פצוע לבד."},"potionMaster":{"p":"heartHealer","m":"מאסטר בשיקויים","f":"מאסטרית בשיקויים","mv":"מַאסְטֶר בְּשִׁקּוּיִים","fv":"מַאסְטֶרִית בְּשִׁקּוּיִים","col":"#4fe3a0","mk":"potion","pk":{"hp":1},"ab":["mend"],"s":"קדרה, עשבים וצבעים מבעבעים. שיקוי אחד ובום, הלבבות מתמלאים."},"spellMaster":{"p":"heartHealer","m":"מאסטר בקסמים","f":"מאסטרית בקסמים","mv":"מַאסְטֶר בִּקְסָמִים","fv":"מַאסְטֶרִית בִּקְסָמִים","col":"#a978ff","mk":"star","pk":{"wis":1},"ab":["hint"],"s":"ספרי לחשים עתיקים. מי שיודע בדיוק מה כל מילה עושה."},"sorcerer":{"p":"magicHealer","m":"מכשף","f":"מכשפה","mv":"מְכַשֵּׁף","fv":"מְכַשֵּׁפָה","col":"#ff5fd0","mk":"bolt","pk":{"pow":1},"ab":["burst"],"s":"ריפוי הוא רק ההתחלה. כשהאור הופך לסופה, גם הבוס מרגיש אותו."},"healerMaster":{"p":"magicHealer","m":"הילר","f":"הילרית","mv":"הִילֶר","fv":"הִילֶרִית","col":"#ffe14d","mk":"plus","pk":{"hp":1},"ab":["guard"],"s":"ההילר הגדול הוא הלב של הצוות. מי שעומד לידו מרגיש שהכול יהיה בסדר."},"sailor":{"p":"ninja","m":"מלח","f":"מלחית","mv":"מַלָּח","fv":"מַלָּחִית","col":"#3ea0ff","mk":"anchor","pk":{"luck":1},"ab":["gem"],"s":"עולה על ספינה בכל נחל, ומוצא אוצרות שאחרים מפספסים."},"snatcher":{"p":"ninja","m":"חטפן","f":"חטפנית","mv":"חַטְפָן","fv":"חַטְפָנִית","col":"#c04dff","mk":"dagger","pk":{"str":1},"ab":["strike"],"s":"ידיים מהירות כמו הברק. מה שנראה כמו קסם הוא פשוט תזמון מושלם."},"pirate":{"p":"sailor","m":"פיראט","f":"פיראטית","mv":"פִּירָאט","fv":"פִּירָאטִית","col":"#ff4d6d","mk":"anchor","pk":{"luck":1},"ab":["lucky"],"s":"דגל על התורן, ים פתוח ואוצר לכל מי ששומר על הצוות."},"captain":{"p":"sailor","m":"קפטן ספינה","f":"קפטן ספינה","mv":"קַפְּטָן סְפִינָה","fv":"קַפְּטָן סְפִינָה","col":"#ffcf2e","mk":"wave","pk":{"def":1},"ab":["guardAll"],"s":"מי שמנהל את הספינה מנהל גם את הצוות. כולם מוגנים תחת הקפטן."},"ninjaMaster":{"p":"snatcher","m":"נינג'ה מאסטר","f":"נינג'ה מאסטר","mv":"נִינְגָ'ה מַאסְטֶר","fv":"נִינְגָ'ה מַאסְטֶר","col":"#7d5cff","mk":"dagger","pk":{"pow":1},"ab":["burst"],"s":"שקט כמו צל. אף אחד לא רואה את המהלך, רק את התוצאה."},"ronin":{"p":"snatcher","m":"רונין","f":"רונין","mv":"רוֹנִין","fv":"רוֹנִין","col":"#e85d3c","mk":"sword","pk":{"str":1},"ab":["guard"],"s":"נינג'ה בלי שבט, ודרך משלו. מכה אחת חזקה, ולב שאף פעם לא נשבר."}};
+const NODE_DEF=JSON.parse(JSON.stringify(NODE));
+const AB_T={"guard":["בתחילת קרב, מגן אישי עוצר מכה אחת","בִּתְחִלַּת קְרָב, מָגֵן אִישִׁי עוֹצֵר מַכָּה אַחַת"],"guardAll":["בתחילת קרב, כל החברים מקבלים מגן","בִּתְחִלַּת קְרָב, כָּל הַחֲבֵרִים מְקַבְּלִים מָגֵן"],"mend":["אחרי כל הצלחה, החבר הפצוע מקבל לב","אַחֲרֵי כָּל הַצְלָחָה, הֶחָבֵר הַפָּצוּעַ מְקַבֵּל לֵב"],"strike":["המכה הראשונה בקרב חזקה יותר","הַמַּכָּה הָרִאשׁוֹנָה בַּקְּרָב חֲזָקָה יוֹתֵר"],"burst":["הקסם הראשון בקרב פוגע חזק יותר","הַקֶּסֶם הָרִאשׁוֹן בַּקְּרָב פּוֹגֵעַ חָזָק יוֹתֵר"],"freeze":["בתחילת קרב, הבוס קפוא ומפסיד תור","בִּתְחִלַּת קְרָב, הַבּוֹס קָפוּא וּמַפְסִיד תּוֹר"],"lucky":["הטלה חוזרת נוספת בכל פרק","הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת בְּכָל פֶּרֶק"],"hint":["ניסיון נוסף בחידות","נִיסָּיוֹן נוֹסָף בַּחִידוֹת"],"gem":["לפעמים יהלום בונוס אחרי הצלחה","לִפְעָמִים יַהֲלוֹם בּוֹנוּס אַחֲרֵי הַצְלָחָה"]};
+const SYNS=[{"id":"wall","req":["tank","healer"],"n":"קו הגנה","nv":"קַו הֲגָנָה","d":"שומר ומרפא ביחד: השומר מקבל מגן בתחילת קרב","dv":"שׁוֹמֵר וּמְרַפֵּא בְּיַחַד: הַשּׁוֹמֵר מְקַבֵּל מָגֵן בִּתְחִלַּת קְרָב"},{"id":"sword","req":["fighter","mage"],"n":"חרב קסומה","nv":"חֶרֶב קְסוּמָה","d":"לוחם וקוסם ביחד: המכה הראשונה בקרב חזקה יותר","dv":"לוֹחֵם וְקוֹסֵם בְּיַחַד: הַמַּכָּה הָרִאשׁוֹנָה בַּקְּרָב חֲזָקָה יוֹתֵר"},{"id":"eye","req":["archer","ninja"],"n":"ירי מדויק","nv":"יֶרִי מְדֻיָּק","d":"קשת ונינג'ה ביחד: הטלה חוזרת נוספת לכולם","dv":"קַשָּׁת וְנִינְגָ'ה בְּיַחַד: הַטָּלָה חוֹזֶרֶת נוֹסֶפֶת לַכֹּל"}];
+const SUB_LV=10,MAS_LV=20;
+function cnOf(k){return NODE[k]||CLS[k]||null;}
+function cnName(k,fem,nik){const n=cnOf(k);return n?(nik?(fem?n.fv:n.mv):(fem?n.f:n.m)):"";}
+function heroNodes(h){const a=[];if(h&&h.sub&&NODE[h.sub])a.push(NODE[h.sub]);if(h&&h.mas&&NODE[h.mas])a.push(NODE[h.mas]);return a;}
+function heroRoleKey(h){return (h&&(h.mas||h.sub||h.cls))||null;}
+function heroRole(h,nik){const k=heroRoleKey(h);return k?cnName(k,isF(h),nik):"";}
+function hasAb(h,id){return heroNodes(h).some(n=>(n.ab||[]).includes(id));}
+function advStage(h){if(!h||!h.cls)return null;const lv=heroLevel(h);if(!h.sub&&lv>=SUB_LV)return "sub";if(h.sub&&!h.mas&&lv>=MAS_LV)return "mas";return null;}
+function advOptions(h){const par=advStage(h)==="sub"?h.cls:h.sub;return Object.keys(NODE).filter(k=>NODE[k].p===par);}
+function advHero(){const hs=SAVE.campaign?campHeroes():SAVE.heroes;return hs.find(h=>advStage(h))||null;}
+function nodePerkText(n,nik){const pl=STATS.reduce((o,x)=>(o[x.k]=x.n,o),{});return Object.keys(n.pk||{}).map(k=>"+"+n.pk[k]+" "+(nik?E(pl[k]):pl[k])).join(", ");}
+function nodeAbText(n,nik){return (n.ab||[]).map(a=>AB_T[a]?AB_T[a][nik?1:0]:"").filter(Boolean).join(". ");}
+function synOn(hs,id){const S0=SYNS.find(x=>x.id===id);if(!S0)return false;const ids=hs.filter(h=>heroHp(h)>0).map(h=>h.cls);return S0.req.every(c=>ids.includes(c));}
+function synList(hs){return SYNS.filter(x=>synOn(hs,x.id));}
+function bossAbilities(hs){
+ const P=S.play;P.stk={};P.bst={};P.synStk=false;P.ward=P.ward||{};let any=false;
+ const add=(id,n)=>{P.ward[id]=(P.ward[id]||0)+n;any=true;};
+ hs.forEach(h=>{if(heroHp(h)>0&&hasAb(h,"guard"))add(h.id,1);});
+ if(hs.some(h=>heroHp(h)>0&&hasAb(h,"guardAll")))hs.forEach(h=>add(h.id,1));
+ if(synOn(hs,"wall"))hs.filter(h=>h.cls==="tank").forEach(h=>add(h.id,1));
+ if(synOn(hs,"sword")){P.synStk=true;any=true;}
+ if(hs.some(h=>heroHp(h)>0&&hasAb(h,"freeze"))){P.frozen=true;any=true;}
+ if(any)setTimeout(()=>toast(ezOn()?"הַיְּכוֹלוֹת הַמְּיֻחָדוֹת מִתְחַיְּלוֹת לִפְעֹל!":"היכולות המיוחדות נכנסות לפעולה!"),500);
+}
+function markSVG(k,col,sc=1,ol=true){const st=ol?` stroke="${O}" stroke-width="${(2.2/sc).toFixed(2)}" stroke-linejoin="round" stroke-linecap="round"`:"";const G={
+ sword:`<path d="M0 -10 L3 3 H-3Z" fill="#fff"${st}/><path d="M-6 3 H6 M0 3 V10" fill="none"${st}/>`,
+ shield:`<path d="M0 -10 L8 -7 V1 Q8 8 0 11 Q-8 8 -8 1 V-7Z" fill="${col}"${st}/>`,
+ flame:`<path d="M0 -11 C6 -5 8 -1 6 4 C5 8 2 10 0 10 C-3 10 -6 7 -6 3 C-6 -1 -2 -3 -1 -7 C0 -5 1 -8 0 -11Z" fill="${col}"${st}/>`,
+ snow:`<path d="M0 -10 V10 M-8.7 -5 L8.7 5 M-8.7 5 L8.7 -5" fill="none" stroke="${O}" stroke-width="${(5/sc).toFixed(2)}" stroke-linecap="round"/><path d="M0 -10 V10 M-8.7 -5 L8.7 5 M-8.7 5 L8.7 -5" fill="none" stroke="${col}" stroke-width="${(2.4/sc).toFixed(2)}" stroke-linecap="round"/>`,
+ leaf:`<path d="M-8 7 Q-9 -7 8 -9 Q9 7 -8 7Z" fill="${col}"${st}/><path d="M-8 7 L5 -5" fill="none"${st}/>`,
+ wind:`<path d="M-10 -4 H3 Q9 -4 9 -8 M-10 1 H7 Q12 1 12 5 M-10 6 H0" fill="none" stroke="${O}" stroke-width="${(5/sc).toFixed(2)}" stroke-linecap="round"/><path d="M-10 -4 H3 Q9 -4 9 -8 M-10 1 H7 Q12 1 12 5 M-10 6 H0" fill="none" stroke="${col}" stroke-width="${(2.4/sc).toFixed(2)}" stroke-linecap="round"/>`,
+ bolt:`<path d="M3 -11 L-7 2 H-1 L-3 11 L7 -3 H1Z" fill="${col}"${st}/>`,
+ heart:`<path d="${heartPath(0,0,9)}" fill="${col}"${st}/>`,
+ star:`<polygon points="${starPts(0,0,10,4.4)}" fill="${col}"${st}/>`,
+ anchor:`<circle cx="0" cy="-7" r="2.6" fill="none"${st}/><path d="M0 -4 V9 M-6 -1 H6 M-8 4 Q-6 10 0 10 Q6 10 8 4" fill="none"${st}/>`,
+ crown:`<path d="M-9 7 L-8 -5 L-3 0 L0 -8 L3 0 L8 -5 L9 7Z" fill="${col}"${st}/>`,
+ potion:`<path d="M-2.5 -10 H2.5 V-4 L8 4 Q9 10 0 10 Q-9 10 -8 4 L-2.5 -4Z" fill="${col}"${st}/>`,
+ eye:`<path d="M-11 0 Q0 -10 11 0 Q0 10 -11 0Z" fill="#fff"${st}/><circle cx="0" cy="0" r="4" fill="${col}"${st}/>`,
+ wave:`<path d="M-11 3 Q-6 -5 0 3 T11 3" fill="none" stroke="${O}" stroke-width="${(5/sc).toFixed(2)}" stroke-linecap="round"/><path d="M-11 3 Q-6 -5 0 3 T11 3" fill="none" stroke="${col}" stroke-width="${(2.4/sc).toFixed(2)}" stroke-linecap="round"/>`,
+ sun:`<circle cx="0" cy="0" r="5" fill="${col}"${st}/><path d="M0 -10 V-7 M0 7 V10 M-10 0 H-7 M7 0 H10 M-7 -7 L-5 -5 M7 7 L5 5 M-7 7 L-5 5 M7 -7 L5 -5" fill="none"${st}/>`,
+ plus:`<path d="M-3 -10 H3 V-3 H10 V3 H3 V10 H-3 V3 H-10 V-3 H-3Z" fill="${col}"${st}/>`,
+ dagger:`<polygon points="${starPts(0,0,10.5,3.4,4)}" fill="${col}"${st}/>`,
+ hammer:`<path d="M-9 -9 H9 V0 H-9Z" fill="${col}"${st}/><path d="M0 0 V11" fill="none"${st}/>`,
+ bow:`<path d="M-4 -10 Q9 0 -4 10 M-4 -10 V10 M-9 0 H7" fill="none"${st}/>`,
+ crosshair:`<circle cx="0" cy="0" r="7" fill="none"${st}/><path d="M0 -11 V-4 M0 4 V11 M-11 0 H-4 M4 0 H11" fill="none"${st}/>`}[k]||`<circle r="7" fill="${col}"${st}/>`;
+ return `<g transform="scale(${sc})">${G}</g>`;}
+function evoTier(lv){return lv>=20?4:lv>=15?3:lv>=10?2:lv>=5?1:0;}
+function evoLayers(o,lv,fem){
+ const base=CLS[o.cls];if(!base)return {b:"",c:"",f:"",t:0};
+ const t=evoTier(lv),sub=NODE[o.sub],mas=NODE[o.mas],c0=base.col,c1=sub?sub.col:c0,c2=mas?mas.col:c1,m1=sub?sub.mk:"star",m2=mas?mas.mk:m1;
+ let b="",c="",f="";
+ if(t>=3)b+=`<circle cx="70" cy="100" r="60" fill="${c1}" opacity=".12"/><ellipse class="glow" cx="70" cy="100" rx="64" ry="66" fill="none" stroke="${c1}" stroke-width="3" stroke-dasharray="3 7"/>`;
+ if(t>=4)b+=`<circle cx="70" cy="96" r="80" fill="${c2}" opacity=".12"/><g class="spin" style="transform-origin:70px 96px">${[0,1,2,3].map(i=>{const a=i*Math.PI/2;return `<g transform="translate(${(70+76*Math.cos(a)).toFixed(1)} ${(96+76*Math.sin(a)).toFixed(1)})">${markSVG(m2,c2,.8)}</g>`;}).join("")}</g>`;
+ if(t>=2)c=`<path d="M50 98 Q32 138 28 158 L112 158 Q108 138 90 98Z" fill="${c1}"${K()}/><path d="M50 98 Q34 130 32 150 M90 98 Q106 130 108 150" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
+ if(t>=1)f+=`<circle cx="47" cy="98" r="7" fill="${c0}"${K(2.4)}/><circle cx="93" cy="98" r="7" fill="${c0}"${K(2.4)}/><path d="M42 97 Q47 92 52 97 M88 97 Q93 92 98 97" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>`;
+ if(t>=2)f+=`<g transform="translate(47 98)">${markSVG(m1,c1,.62,false)}</g>`;
+ return {b,c,f,t,c1,c2,m2,gem:t>=2,hd:t>=4?`<g class="floaty"><g transform="translate(70 -30)">${markSVG(m2,c2,1.5)}</g>${sparkles([[48,-34,4],[92,-34,4],[70,-50,4.5]],"#fff")}</g>`:""};
+}
 const CLS_REQ={w:1,h:3,b:6};
-function clsApplyOver(){CLS_KEYS.forEach(k=>["m","f","tm","tf","d"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){CLS[k][f]=v.trim();const nf={m:"mv",f:"fv",tm:"tmv",tf:"tfv",d:"dv"}[f];CLS[k][nf]=v.trim();}}));}
+function clsApplyOver(){Object.keys(NODE).forEach(k=>["m","f","s"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){NODE[k][f]=v.trim();if(f!=="s")NODE[k][f+"v"]=v.trim();}}));CLS_KEYS.forEach(k=>{const v=TXO["cls."+k+".s"];if(v&&v.trim())CLS[k].s=v.trim();});CLS_KEYS.forEach(k=>["m","f","tm","tf","d"].forEach(f=>{const v=TXO["cls."+k+"."+f];if(v!=null&&v.trim()){CLS[k][f]=v.trim();const nf={m:"mv",f:"fv",tm:"tmv",tf:"tfv",d:"dv"}[f];CLS[k][nf]=v.trim();}}));}
 const CLS_KEYS=["fighter","tank","mage","archer","healer","ninja"];
 function clsOf(h){return CLS[h&&h.cls]||null;}
 function clsName(k,fem,nik){const c=CLS[k];return c?(nik?(fem?c.fv:c.mv):(fem?c.f:c.m)):"";}
@@ -1091,7 +1155,7 @@ function clsIcon(k,w=34){const c=CLS[k];if(!c)return "";const G={
  return `<svg class="clsi" viewBox="0 0 40 40" width="${w}" height="${w}" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="${c.col}" ${K(2.4)}/>${G}</svg>`;}
 function applyCls(p,k,force,lv=1){const c=CLS[k];if(!c)return p;[["weapon",c.w,"w"],["head",c.h,"h"],["back",c.b,"b"]].forEach(([f,v,r])=>{if(lv>=CLS_REQ[r]&&(force||!p[f]||p[f]==="none"))p[f]=v;});return p;}
 function clsSig(k,slot,v,lv=1){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w===v&&lv>=CLS_REQ.w)||(slot==="head"&&c.h===v&&lv>=CLS_REQ.h)||(slot==="back"&&c.b===v&&lv>=CLS_REQ.b));}
-function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;return Math.min(3,raw+b);}
+function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;let v=Math.min(3,raw+b);heroNodes(h).forEach(n=>{v+=(n.pk||{})[k]||0;});return Math.min(5,v);}
 function clsMatch(h,type){const c=clsOf(h);return !!c&&c.task.includes(type);}
 function clsLeader(n,hs,type){const base=hs[leaderIdx(n,hs.length)];if(!base||clsMatch(base,type))return base;const fit=hs.filter(h=>clsMatch(h,type));if(!fit.length||n%2)return base;return fit[n%fit.length];}
 function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
@@ -1368,7 +1432,7 @@ const shadowE=(rx=34)=>`<ellipse cx="70" cy="160" rx="${rx}" ry="6" fill="#000" 
 const smile=(x,y,w=8)=>`<path d="M${x-w} ${y} Q${x} ${y+w} ${x+w} ${y}" fill="none"${K(3)}/>`;
 const VB="0 -28 140 194";
 
-const TIP={book:[0,-22],flamesword:[0,-70],flower:[0,-36],sword:[0,-66],bow:[14,-10],staff:[0,-52],wand:[0,-37],heartwand:[0,-40],hammer:[0,-44],orb:[0,-16]};
+const TIP={woodstaff:[0,-58],daggers:[0,-38],book:[0,-22],flamesword:[0,-70],flower:[0,-36],sword:[0,-66],bow:[14,-10],staff:[0,-52],wand:[0,-37],heartwand:[0,-40],hammer:[0,-44],orb:[0,-16]};
 function heartPath(cx,cy,s){return `M${cx} ${(cy+s*.9).toFixed(1)} C ${(cx-s*1.45).toFixed(1)} ${(cy-s*.1).toFixed(1)} ${(cx-s*.95).toFixed(1)} ${(cy-s*1.25).toFixed(1)} ${cx} ${(cy-s*.45).toFixed(1)} C ${(cx+s*.95).toFixed(1)} ${(cy-s*1.25).toFixed(1)} ${(cx+s*1.45).toFixed(1)} ${(cy-s*.1).toFixed(1)} ${cx} ${(cy+s*.9).toFixed(1)} Z`;}
 function sparkles(pts,col="#fff"){return pts.map(([x,y,r],i)=>`<polygon class="tw" style="animation-delay:${(i*.45).toFixed(2)}s" points="${starPts(x,y,r,r*.42)}" fill="${col}"${K(1.3)}/>`).join("");}
 /* power effects shared by every upgradable item: t = 0..3 */
@@ -1387,6 +1451,8 @@ function weaponSVG(W,se,pr,t=0){
  const [tx,ty]=TIP[W]||[0,0];
  const glowCol=W==="sword"||W==="hammer"||W==="orb"?"#8fe3ff":W==="heartwand"?"#ff7ec8":"#ffd23f";
  let w="";
+ if(W==="woodstaff")w=limb("M0 52 L0 -44","#8b5a3c",5.4)+`<path d="M-9 -42 Q-12 -62 0 -64 Q12 -62 9 -42" fill="none" stroke="${O}" stroke-width="8" stroke-linecap="round"/><path d="M-9 -42 Q-12 -62 0 -64 Q12 -62 9 -42" fill="none" stroke="#a8693c" stroke-width="4.4" stroke-linecap="round"/><path d="${heartPath(0,-50,8)}" fill="${t>=2?"#ff7eb6":"#6fe39a"}"${K(2)}/><path d="M-4 -26 q-11 -3 -11 -12 q11 0 11 12z M5 -18 q11 -3 11 -12 q-11 0 -11 12z" fill="#3ed45e"${K(1.6)}/>`+(t>=3?sparkles([[-14,-58,3.4],[14,-56,3.4]],"#fff"):"");
+ if(W==="daggers")w=[-20,20].map(a=>`<g transform="rotate(${a})"><path d="M-3.4 4 L-3.4 -30 L0 -40 L3.4 -30 L3.4 4Z" fill="${t>=2?"#d6f3ff":"#eaf7ff"}"${K()}/><path d="M0 -8 V-32" stroke="${t>=3?"#ff6fd0":"#9fd8ff"}" stroke-width="2.2" stroke-linecap="round"/><rect x="-7" y="2" width="14" height="4.4" rx="2.2" fill="#555e78"${K(1.8)}/></g>`).join("")+`<g transform="translate(24 -30) rotate(14)"><polygon points="${starPts(0,0,10,3.4,4)}" fill="#cfd6f2"${K(1.8)}/><circle cx="0" cy="0" r="2" fill="#555e78"/></g>`;
  if(W==="chickrub")w=`<path d="M-4 -6 L-4 5 M4 -6 L4 5"${K(2.6)} fill="none"/><ellipse cx="0" cy="-20" rx="12" ry="14" fill="#ffe14d"${K()}/><circle cx="0" cy="-38" r="9" fill="#ffe14d"${K()}/><path d="M8 -39 L18 -35 L8 -31Z" fill="#ff8a1f"${K(1.6)}/><circle cx="3" cy="-40" r="1.8" fill="${O}"/><path d="M-5 -47 Q-3 -55 1 -49 Q5 -54 6 -46Z" fill="#ff3d4e"${K(1.4)}/>`;
  if(W==="banana")w=`<path d="M-9 -2 Q-16 -36 7 -58 Q14 -54 10 -47 Q-2 -33 4 -4Z" fill="#ffe14d"${K()}/><path d="M7 -58 L9 -64"${K(3.4)} fill="none"/><path d="M-6 -12 Q-8 -32 2 -46" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>`;
  if(W==="lollipop")w=limb("M0 6 L0 -32","#fff",4.4)+`<circle cx="0" cy="-47" r="16" fill="#ff7eb6"${K()}/><path d="M0 -47 a3 3 0 0 1 6 0 a7 7 0 0 1 -14 0 a11 11 0 0 1 22 0" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>`;
@@ -1640,6 +1706,7 @@ function heroInner(p,level=1,o={}){
  const fem=o.fem!=null?o.fem:!!p.fem,gid="h"+(gradN++),GOLD="#ffd23f";
  const power=tS+tW+tL,lv=level,sty=p.style||(fem?"sparkle":"hero"),spk=sty==="sparkle",hro=sty==="hero",mag=sty==="magic",nat=sty==="nature";
  let s="";
+ const EV=o.cls?evoLayers(o,lv,fem):null;
  if(lv>=TOPLV&&spk){const RB=["#ff4d6d","#ff9f1c","#ffe14d","#4fe36b","#3ec2ff","#a978ff"];RB.forEach((c,i)=>{const r=90-i*8.5;s+=`<path d="M${70-r} 100 A${r} ${r} 0 0 1 ${70+r} 100" fill="none" stroke="${c}" stroke-width="9"/>`;});s+=`<path d="M-20 100 A90 90 0 0 1 160 100 M27.5 100 A42.5 42.5 0 0 1 112.5 100" fill="none" stroke="${O}" stroke-width="2.4" opacity=".55"/>`;[[-6,98],[146,98]].forEach(([x,y])=>{s+=`<g><circle cx="${x-9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x+9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x}" cy="${y-5}" r="11" fill="#fff"${K(2.4)}/><rect x="${x-17}" y="${y+1}" width="34" height="9" fill="#fff"/></g>`;});}
  if(lv>=TOPLV&&hro)s+=`<path d="M18 160 L96 4 L126 6 Z" fill="#fff6b0" opacity=".2"/><circle class="glow" cx="110" cy="-2" r="27" fill="#fff3a0" opacity=".45"/><circle cx="110" cy="-2" r="20" fill="#fff3a0"${K(2.6)}/><g transform="translate(110 -2) scale(1.35) translate(-70 -106)">${emblemSVG(p.emblem,O,O)}</g>`;
  if(lv>=TOPLV&&mag)s+=`<circle cx="70" cy="80" r="86" fill="#2a1468" opacity=".9"/><circle cx="70" cy="80" r="86" fill="none" stroke="#a978ff" stroke-width="5"/><g class="spin" style="transform-origin:70px 80px"><path d="M70 0 A80 80 0 0 1 150 80 M70 160 A80 80 0 0 1 -10 80" fill="none" stroke="#3ee0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 10"/></g>`+[[20,40,3],[120,30,2.5],[30,120,2],[118,118,3],[70,-2,2.6],[-2,80,2],[142,76,2]].map(([x,y,r])=>`<circle class="tw" cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join("")+`<ellipse cx="70" cy="80" rx="40" ry="10" fill="#ff7ec8" opacity=".35" transform="rotate(-20 70 80)"/>`;
@@ -1647,9 +1714,10 @@ function heroInner(p,level=1,o={}){
  if(level>=2||power>=3)s+=`<circle cx="70" cy="92" r="70" fill="${se}" opacity=".16"/><circle cx="70" cy="92" r="54" fill="${se}" opacity=".18"/>`;
  if(level>=5||power>=7)s+=`<circle class="spin" cx="70" cy="92" r="66" fill="none" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 10"/>`;
  if(level>=4||power>=5)for(let i=0;i<5;i++){const a=i*1.26+.3;s+=`<polygon class="tw" style="animation-delay:${(i*.4).toFixed(1)}s" points="${starPts(70+60*Math.cos(a),80+56*Math.sin(a),5,2)}" fill="#fff"/>`;}
- s+=shadowE();
+ if(EV)s+=EV.b;s+=shadowE();
  if(lv>=6)s+=`<ellipse class="glow" cx="70" cy="158" rx="46" ry="10" fill="none" stroke="${se}" stroke-width="3.5"/><ellipse cx="70" cy="158" rx="38" ry="7" fill="${se}" opacity=".25"/>`;
  let g=`<defs><radialGradient id="${gid}f" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="${shade(sk,.28)}"/><stop offset=".68" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${gid}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(pr,.2)}"/><stop offset="1" stop-color="${shade(pr,-.12)}"/></linearGradient><linearGradient id="${gid}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(hc,.25)}"/><stop offset="1" stop-color="${shade(hc,-.12)}"/></linearGradient></defs>`;
+ if(EV&&EV.c&&(p.back||"none")==="none")g+=EV.c;
  g+=hueWrap(backSVG((hro&&lv>=12&&(p.back||"none")==="none")?"cape":p.back,Math.max(tL,hro&&lv>=12?1:0),p),p.hue_back,gid+"hb");
  if(H==="long")g+=`<path d="M31 56 Q24 112 36 126 Q44 120 52 127 Q61 121 70 127 Q79 121 88 127 Q96 120 104 126 Q116 112 109 56 Z" fill="url(#${gid}h)"${K()}/>`;
  const BT=p.bottom||"pants",legc=BT==="shorts"?sk:BT==="jeans"?"#3a5fb8":BT==="armor"?"#9aa6c0":BT==="polka"?"#ffd9ec":BT==="camo"?"#6b8f45":BT==="ducks"?"#8fd8ff":"#2e2552";
@@ -1688,12 +1756,13 @@ function heroInner(p,level=1,o={}){
  g+=limb("M50 101 Q37 110 34 123",pr,10);
  const raise=W!=="none";
  g+=raise?limb("M90 101 Q104 98 108 88",pr,10):limb("M90 101 Q103 110 106 123",pr,10);
- if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,tS),p.hue_weapon,gid+"hw")}</g>`;
+ if(raise&&W!=="shield")g+=`<g transform="translate(108 84) rotate(16) scale(${(1+tS*.12).toFixed(2)})">${hueWrap(weaponSVG(W,se,pr,Math.max(tS,EV?Math.min(3,EV.t):0)),p.hue_weapon,gid+"hw")}</g>`;
  if(tS>=2)g+=`<path d="M34 104 Q34 88 52 91 Q56 100 46 108 Z" fill="${GOLD}"${K(2.6)}/><path d="M106 104 Q106 88 88 91 Q84 100 94 108 Z" fill="${GOLD}"${K(2.6)}/><circle cx="44" cy="97" r="2.4" fill="#fff"/><circle cx="96" cy="97" r="2.4" fill="#fff"/>`;
  const hand=tS>=3?GOLD:(hro&&lv>=12?se:sk);
  g+=`<circle cx="34" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  g+=raise?`<circle cx="108" cy="84" r="8.5" fill="${hand}"${K(2.8)}/>`:`<circle cx="106" cy="126" r="8.5" fill="${hand}"${K(2.8)}/>`;
  if(W==="shield"){const k=(1+tS*.1).toFixed(2);g+=`<g transform="translate(30 122) scale(${k})">${fxBack(0,-4,tS,"#8fe3ff")}<path d="M-17 -19 L0 -25 L17 -19 Q17 6 0 17 Q-17 6 -17 -19 Z" fill="${se}"${K()}/><path d="M-11 -15 L0 -19 L11 -15 Q11 3 0 11 Q-11 3 -11 -15 Z" fill="${tS>=2?"#ffd23f":sed}"/><polygon points="${starPts(0,-4,7,3)}" fill="${pr}"${K(1.8)}/>${fxFront(0,-4,tS)}</g>`;}
+ if(EV)g+=EV.f;
  g+=`<circle cx="34" cy="62" r="8" fill="${sk}"${K()}/><circle cx="106" cy="62" r="8" fill="${sk}"${K()}/>`;
  if(H==="bun")g+=`<circle cx="70" cy="17" r="13" fill="${hc}"${K()}/>`;
  if(H==="afro")g+=`<circle cx="70" cy="46" r="46" fill="url(#${gid}h)"${K()}/><circle cx="34" cy="66" r="17" fill="url(#${gid}h)"${K()}/><circle cx="106" cy="66" r="17" fill="url(#${gid}h)"${K()}/>`;
@@ -1709,13 +1778,15 @@ function heroInner(p,level=1,o={}){
  const mask=p.mask===true||p.facepaint==="mask"||(p.mask!==false&&hro&&lv>=6&&(p.eyes||"round")!=="cool");
  if(mask)g+=`<path d="M37 57 Q53 49 70 55 Q87 49 103 57 Q105 69 95 72 Q82 74 70 66 Q58 74 45 72 Q35 69 37 57 Z" fill="${shade(pr,-.45)}"${K(2.6)}/><path d="M42 58 Q53 53 64 57" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>`;
  g+=faceSVG(mood,p,fem);
+ if(EV&&EV.gem)g+=`<circle cx="70" cy="35" r="3.8" fill="${EV.c1}"${K(1.8)}/><circle cx="69" cy="34" r="1.1" fill="#fff"/>`;
  if(spk&&lv>=12)g+=`<path d="M33 62 Q34 79 51 82" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/><circle cx="53" cy="82" r="3.6" fill="#3a3456"${K(1.6)}/><rect x="29" y="56" width="9" height="13" rx="4" fill="#ff8ad0"${K(2)}/>`;
  g+=hueWrap(headItem(HD,pr,prd,se,hc,tW),p.hue_head,gid+"hh");
+ if(EV&&EV.hd)g+=EV.hd;
  if(tW>=3)g+=`<g class="floaty"><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${O}" stroke-width="8"/><ellipse cx="70" cy="-16" rx="25" ry="6.5" fill="none" stroke="${GOLD}" stroke-width="4"/>${sparkles([[46,-18,4],[94,-18,4],[70,-24,4.5]],"#fff")}</g>`;
  return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
 }
 function heroLevel(h){return lvInfo(h.xp||0).lv;}
-function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats})}</svg>`;}
+function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats,cls:h.cls,sub:h.sub,mas:h.mas})}</svg>`;}
 function lvlBadge(h){const l=heroLevel(h);return `<svg class="lvlb" viewBox="0 0 40 40" aria-label="דרגה ${l}"><polygon points="${starPts(20,21,18,9)}" fill="#ffd23f"${K(2.5)}/><text x="20" y="27" text-anchor="middle" font-family="Rubik,sans-serif" font-weight="900" font-size="15" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">${l}</text></svg>`;}
 
 /* ---------- characters the heroes meet ---------- */
@@ -2086,6 +2157,7 @@ function render(){
  if(S.lock)app.insertAdjacentHTML("beforeend",lockModal());
  if(S.savePick||S.saveDel!=null)app.insertAdjacentHTML("beforeend",saveModal());
  if(S.hinfo)app.insertAdjacentHTML("beforeend",heroInfo());
+ if(S.adv)app.insertAdjacentHTML("beforeend",advModal());
  if(S.ren)app.insertAdjacentHTML("beforeend",renameBox());
  if(S.info)app.insertAdjacentHTML("beforeend",itemInfo());
  if(S.toast)app.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${esc(S.toast)}</div>`);
@@ -2273,7 +2345,7 @@ function savedGames(){
 function partyPanel(){
  const c=SAVE.campaign;if(!c)return "";const inP=campHeroes(),out=SAVE.heroes.filter(h=>!c.heroIds.includes(h.id));
  const chip=(h,mode)=>{const isIn=mode==="in",dis=isIn?inP.length<2:inP.length>=4;return `<button class="pchip ${mode}" data-a="partytog" data-id="${h.id}" aria-pressed="${isIn}" ${dis?"aria-disabled=\"true\"":""} aria-label="${esc(h.heroName)}, ${isIn?"משחק עכשיו. לחצו כדי להוריד":"לא משחק. לחצו כדי להוסיף"}"><div class="pc-av">${heroSVG(h,"hero")}</div><b>${esc(h.heroName)}</b><small>דרגה ${heroLevel(h)}</small><span class="pc-st">${isIn?"✓ משחק":"לחצו להוספה"}</span></button>`;};
- return `<div class="party"><div class="eyebrow">מי משחק עכשיו? (${inP.length}/4)</div><div class="pchips">${inP.map(h=>chip(h,"in")).join("")}${out.map(h=>chip(h,"out")).join("")}${inP.length<4?`<button class="pchip pnew" data-a="partynew"><span class="pc-plus">+</span><b>חבר חדש מצטרף</b></button>`:""}</div><p class="muted small">חבר שמצטרף מתחיל מדרגה נמוכה, וממשיך איתכם מכאן. אפשר להוריד ולהחזיר חבר בכל רגע.</p></div>`;
+ return `<div class="party"><div class="eyebrow">מי משחק עכשיו? (${inP.length}/4)</div><div class="pchips">${inP.map(h=>chip(h,"in")).join("")}${out.map(h=>chip(h,"out")).join("")}${inP.length<4?`<button class="pchip pnew" data-a="partynew"><span class="pc-plus">+</span><b>חבר חדש מצטרף</b></button>`:""}</div><p class="muted small">חבר שמצטרף מתחיל מדרגה נמוכה, וממשיך איתכם מכאן. אפשר להוריד ולהחזיר חבר בכל רגע.</p>${synList(inP).map(x=>`<div class="synchip">🤝 <b>${ezOn()?x.nv:x.n}</b>: ${ezOn()?x.dv:x.d}</div>`).join("")}</div>`;
 }
 function worldsPanel(){
  const done=U().done;if(!done.length)return "";
@@ -2307,16 +2379,16 @@ function vHome(){
 
 /* hero editor */
 function newDraft(h){
- if(h)return {id:h.id,kidName:h.kidName,gender:h.gender,desc:h.desc,result:{heroName:h.heroName,title:h.title,catch:h.catch,params:{...h.params}},fixesLeft:h.fixesLeft??3,fix:"",busy:false,manual:false,existing:true,demo:!!h.demo,xp:h.xp||0,stats:h.stats||null,cls:h.cls||null,pv:0,fresh:false};
+ if(h)return {id:h.id,kidName:h.kidName,gender:h.gender,desc:h.desc,result:{heroName:h.heroName,title:h.title,catch:h.catch,params:{...h.params}},fixesLeft:h.fixesLeft??3,fix:"",busy:false,manual:false,existing:true,demo:!!h.demo,xp:h.xp||0,stats:h.stats||null,cls:h.cls||null,sub:h.sub||null,mas:h.mas||null,pv:0,fresh:false};
  return {id:null,kidName:"",gender:"m",desc:"",result:null,fixesLeft:3,fix:"",busy:false,manual:false,existing:false,xp:0,stats:null,cls:null,pv:0,fresh:false};
 }
 function vHero(){
  const d=S.draft;const r=d.result;const g=isF(d);if(r)r.params.fem=g;
  let prev="";
  if(r){
-  const pv=d.pv||0;const fake={heroName:r.heroName,params:r.params,xp:pv?[0,xpAt(6),xpAt(12),xpAt(TOPLV)][pv]:d.xp,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
+  const pv=d.pv||0;const pxp=pv?[0,xpAt(5),xpAt(10),xpAt(TOPLV)][pv]:d.xp,k1=d.sub||(d.cls?Object.keys(NODE).find(k=>NODE[k].p===d.cls):null),k2=d.mas||(k1?Object.keys(NODE).find(k=>NODE[k].p===k1):null);const fake={heroName:r.heroName,params:r.params,xp:pxp,cls:d.cls,sub:pv>=2||d.sub?k1:null,mas:pv>=3||d.mas?k2:null,stats:pv?{str:pv,wis:pv,luck:pv}:d.stats};
   prev=`<section class="panel ov"><div class="reveal">${d.fresh?`<div class="rays"></div>`:""}${heroSVG(fake,d.fresh?"hero cheer":"hero",d.fresh?"joy":"happy")}<h2 class="ol">${esc(r.heroName)}</h2>${d.existing&&!d.fresh?`<button class="chip" data-a="renameopen" data-id="${d.id}">✏️ שינוי שם · 5 💎</button>`:""}<div class="muted">${esc(r.title)}</div><div class="catch">"${esc(r.catch)}"</div></div>
-  <div class="fl"><span>איך ${g?"היא":"הוא"} ${g?"תיראה":"ייראה"} אחרי שדרוגים?</span><div class="chips">${["עכשיו","רמה 2","רמה 3","רמה מקסימלית"].map((l,i)=>`<button class="chip" data-a="pv" data-v="${i}" aria-pressed="${pv===i}">${l}</button>`).join("")}</div></div>
+  <div class="fl"><span>איך ${g?"היא":"הוא"} ${g?"תיראה":"ייראה"} אחרי שדרוגים?</span><div class="chips">${["עכשיו","רמה 5","רמה 10","רמה 20"].map((l,i)=>`<button class="chip" data-a="pv" data-v="${i}" aria-pressed="${pv===i}">${l}</button>`).join("")}</div></div>
   <button class="btn wide pnk dressbtn" data-a="dress">${HANGER}<span>חדר הלבשה: עיניים, פה, שיער, בגדים ועוד</span></button>
   ${d.dress?vDress(d,fake):""}
   <button class="btn wide grn" data-a="savehero"><span>${d.existing?"שמרו שינויים":"שמרו את הגיבור"}</span></button>
@@ -2327,7 +2399,7 @@ function vHero(){
  <section class="panel"><div class="eyebrow">${d.gender==="f"?(d.existing?"עריכת גיבורה":"גיבורה חדשה"):(d.existing?"עריכת גיבור":"גיבור חדש")}</div><h2 class="ol">מי יוצא להרפתקה?</h2>
  <label class="fl">שם הילד או הילדה<input type="text" id="kidName" value="${esc(d.kidName)}" placeholder="למשל: ים" autocomplete="off"></label>
  <div class="chips" role="group" aria-label="בן או בת"><button class="chip" data-a="gender" data-v="m" aria-pressed="${!g}">בן</button><button class="chip" data-a="gender" data-v="f" aria-pressed="${g}">בת</button></div>
- <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${clsTal(k,g)}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote">${clsName(d.cls,g)}: הכישרון ${g?"שלה":"שלו"} הוא <b>${clsTal(d.cls,g)}</b>. ${CLS[d.cls].d}. הנשק של התפקיד מוכן ${g?"אצלה":"אצלו"} מההתחלה, הכובע נפתח בדרגה 3, וציוד הגב בדרגה 6.</div>`:""}</div>
+ <div class="fl"><span>${g?"מה התפקיד שלה?":"מה התפקיד שלו?"} <span class="muted small">${d.cls?"":"(לא חובה, אבל כיף)"}</span></span><div class="clsgrid" role="group" aria-label="תפקיד">${CLS_KEYS.map(k=>{const c=CLS[k];return `<button class="clsb" style="--cc:${c.col}" data-a="setcls" data-v="${k}" aria-pressed="${d.cls===k}">${clsIcon(k,40)}<b>${clsName(k,g)}</b><small>${clsTal(k,g)}</small></button>`;}).join("")}</div>${d.cls?`<div class="clsnote"><b>${clsName(d.cls,g)}:</b> ${CLS[d.cls].s}<br><b>הכישרון ${g?"שלה":"שלו"}:</b> ${clsTal(d.cls,g)}. ${CLS[d.cls].d}.<br><span class="small">הנשק של התפקיד מוכן מההתחלה, הכובע נפתח בדרגה 3 וציוד הגב בדרגה 6. ברמות 5, 10, 15 ו־20 הדמות משתדרגת בעיצוב. ברמה 10 בוחרים התמחות, וברמה 20 מאסטר.</span></div>`:""}</div>
  <label class="fl">איך ${g?"היא":"הוא"} ${g?"מתארת":"מתאר"} את הדמות?<textarea id="desc" placeholder="למשל: לוחם דרקונים, עם חרב, הצבעים שלו אדום וצהוב, ויש לו פטריות על הראש">${esc(d.desc)}</textarea></label>
  <button class="btn wide" data-a="genhero" ${d.busy?"disabled":""}><span>${d.busy?(d.gender==="f"?"מציירים את הגיבורה...":"מציירים את הגיבור..."):(r?"צרו מחדש מהתיאור":(d.gender==="f"?"צרו את הגיבורה":"צרו את הגיבור"))}</span></button>
  </section>${prev}`;
@@ -2659,13 +2731,17 @@ function blocks(n,max,c,delay){return `<span class="blks" style="--c:${c||"#4fe3
 function heroInfo(){const H=SAVE.heroes.find(h=>h.id===S.hinfo);if(!H)return "";const ez=ezOn(),LI=lvInfo(H.xp||0),lv=LI.lv,xp=LI.into,left=LI.need-LI.into;
  const T=(a,b)=>ez?b:a;
  return `<div class="lockov" data-a="hinfoclose" role="dialog"><div class="lockbox slide hinfo" style="--tc:${H.params.primary}"><div class="hi-top">${heroSVG(H,"hero","joy")}<div><b class="ol" style="font-size:1.5rem">${esc(H.heroName)}</b><div class="small">${esc(E(H.title||""))}</div><button class="chip" data-a="renameopen" data-id="${H.id}" style="margin-top:6px">✏️ ${T("שינוי שם · 5 💎","שִׁנּוּי שֵׁם · 5 💎")}</button></div></div>
- ${H.cls?`<div class="clsnote" style="display:flex;gap:10px;align-items:center">${clsIcon(H.cls,44)}<div><b>${clsName(H.cls,isF(H),ez)}</b><div class="small">${clsTal(H.cls,isF(H),ez)}</div><div class="small">${ez?CLS[H.cls].dv:CLS[H.cls].d}</div></div></div>`:`<button class="chip" data-a="clsfix" data-id="${H.id}">${T("בחרו תפקיד","בַּחֲרוּ תַּפְקִיד")}</button>`}
+ ${H.cls?(()=>{const g=isF(H),k=heroRoleKey(H),path=[H.cls,H.sub,H.mas].filter(Boolean).map(x=>cnName(x,g,ez)),story=(cnOf(k)||{}).s||CLS[H.cls].s,pk=heroNodes(H).map(n=>n.ab||[]).flat().map(a=>AB_T[a]&&AB_T[a][ez?1:0]);const st=advStage(H);return `<div class="clsnote" style="display:flex;gap:10px;align-items:center">${clsIcon(H.cls,44)}<div><b>${path.join(" ← ")}</b><div class="small">${clsTal(H.cls,g,ez)}</div>${ez?"":`<div class="small">${esc(story)}</div>`}${pk.length?`<div class="small"><b>${T("כוח מיוחד","כֹּחַ מְיֻחָד")}:</b> ${esc(pk.join(" · "))}</div>`:""}</div></div>${st?`<button class="btn sm grn" data-a="advopen" data-id="${H.id}"><span>${st==="sub"?T("בחרו התמחות!","בַּחֲרוּ הִתְמַחוּת!"):T("בחרו מאסטר!","בַּחֲרוּ מַאסְטֶר!")}</span></button>`:`<div class="small muted">${!H.sub?T(`התמחות בדרגה ${SUB_LV}`,`הִתְמַחוּת בְּדַרְגָּה ${SUB_LV}`):!H.mas?T(`מאסטר בדרגה ${MAS_LV}`,`מַאסְטֶר בְּדַרְגָּה ${MAS_LV}`):""}</div>`}`;})():`<button class="chip" data-a="clsfix" data-id="${H.id}">${T("בחרו תפקיד","בַּחֲרוּ תַּפְקִיד")}</button>`}
  <div class="hi-lv"><b>${T("דרגה","דַּרְגָּה")} ${lv} ${T("מתוך","מִתּוֹךְ")} ${TOPLV}</b> ${heartsHTML(H,22)}</div>
  <div class="hi-row"><span class="hi-l">${T("התקדמות","הִתְקַדְּמוּת")}</span>${blocks(xp,LI.need||1,"#ffd23f")}</div>
  <span class="small">${lv>=TOPLV?T("זו הדרגה הגבוהה ביותר!","זוֹ הַדַּרְגָּה הַגְּבוֹהָה בְּיוֹתֵר!"):T(`עוד ${left} נקודות התקדמות לדרגה ${lv+1}`,`עוֹד ${left} נְקֻדּוֹת הִתְקַדְּמוּת לְדַרְגָּה ${lv+1}`)}${lv<TOPLV?T(` · החליפה הנדירה נפתחת בדרגה ${TOPLV}`,` · הַחֲלִיפָה הַנְּדִירָה נִפְתַּחַת בְּדַרְגָּה ${TOPLV}`):""}</span>
- <div class="hi-st">${STATS.map(x=>{const v=effS(H,x.k);return `<div class="hi-s"><div class="hi-row">${statIcon(x.k)}<b class="hi-l">${esc(E(x.n))}</b>${blocks(Math.min(v,3),3,x.c,.2)}</div><span class="small muted">${v?esc(x.d(v)):T("עוד לא שודרג","עוֹד לֹא שֻׁדְרַג")}${((clsOf(H)||{}).perk||{})[x.k]?` · ${T("כולל","כּוֹלֵל")} +${CLS[H.cls].perk[x.k]} ${T("מהתפקיד","מֵהַתַּפְקִיד")}`:""}</span></div>`;}).join("")}</div>
+ <div class="hi-st">${STATS.map(x=>{const v=effS(H,x.k);return `<div class="hi-s"><div class="hi-row">${statIcon(x.k)}<b class="hi-l">${esc(E(x.n))}</b>${blocks(Math.min(v,3),3,x.c,.2)}</div><span class="small muted">${v?esc(x.d(Math.min(v,3))):T("עוד לא שודרג","עוֹד לֹא שֻׁדְרַג")}${((clsOf(H)||{}).perk||{})[x.k]?` · ${T("כולל","כּוֹלֵל")} +${CLS[H.cls].perk[x.k]} ${T("מהתפקיד","מֵהַתַּפְקִיד")}`:""}</span></div>`;}).join("")}</div>
  <div class="eyebrow">${T("החפצים","הַחֲפָצִים")} (${(H.items||[]).length}) · ${T("לחצו על חפץ","לַחֲצוּ עַל חֵפֶץ")}</div><div class="items">${(H.items||[]).slice(-12).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" style="cursor:pointer">${itemIcon(it.icon,it.name)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||`<span>${T("עוד אין","עוֹד אֵין")}</span>`}</div>
  ${H.hearts?`<div>${HEART_MINI} ${T("לבבות שנאספו ברגעי לב","לְבָבוֹת שֶׁנֶּאֶסְפוּ בְּרַגְעֵי לֵב")}: <b>${H.hearts}</b></div>`:""}<button class="btn sm grn" data-a="hinfoclose"><span>${T("סגירה","סְגִירָה")}</span></button></div></div>`;}
+function advModal(){const A=S.adv,H=A&&SAVE.heroes.find(h=>h.id===A.id);if(!H)return "";const st=advStage(H);if(!st)return "";const ez=ezOn(),g=isF(H),opts=advOptions(H),T=(a,b)=>ez?b:a;
+ const card=k=>{const n=NODE[k],fake={...H,sub:st==="sub"?k:H.sub,mas:st==="mas"?k:null,xp:xpAt(st==="sub"?SUB_LV:MAS_LV)},pk=(n.ab||[]).map(a=>AB_T[a]&&AB_T[a][ez?1:0]).filter(Boolean);
+  return `<button class="advc" data-a="advpick" data-v="${k}" style="--c:${n.col}"><div class="advp">${heroSVG(fake,"hero","joy")}</div><b>${esc(cnName(k,g,ez))}</b>${ez?"":`<span class="small">${esc(n.s)}</span>`}<span class="small"><b>${pk.length?esc(pk.join(" · ")):""}</b></span></button>`;};
+ return `<div class="lockov" role="dialog" aria-label="בחירת התמחות"><div class="lockbox slide advbox"><h3>✨ ${esc(H.heroName)} ${T(g?"הגיעה":"הגיע",g?"הִגִּיעָה":"הִגִּיעַ")} ${T("לדרגה","לְדַרְגָּה")} ${heroLevel(H)}!</h3><p>${st==="sub"?T("הגיע הזמן לבחור התמחות. הבחירה משנה את המראה ואת הכוחות.","הִגִּיעַ הַזְּמַן לִבְחֹר הִתְמַחוּת. הַבְּחִירָה מְשַׁנָּה אֶת הַמַּרְאֶה וְאֶת הַכֹּחוֹת."):T("הגיע הזמן לבחור מאסטר, השלב הגבוה ביותר!","הִגִּיעַ הַזְּמַן לִבְחֹר מַאסְטֶר, הַשָּׁלָב הַגָּבוֹהַּ בְּיוֹתֵר!")}</p><div class="advg">${opts.map(card).join("")}</div><p class="small muted">${T("הבחירה סופית.","הַבְּחִירָה סוֹפִית.")}</p><button class="btn sm pnk" data-a="advclose"><span>${T("אחר כך","אַחַר כָּךְ")}</span></button></div></div>`;}
 function renameBox(){const R=S.ren,H=SAVE.heroes.find(h=>h.id===R.id);if(!H)return "";const g=gems(),ok=g>=5;
  return `<div class="lockov" role="dialog" aria-label="שינוי שם"><div class="lockbox slide"><h3>✏️ שינוי שם ל${esc(H.heroName)}</h3><p class="small muted">שינוי שם עולה <b>5 יהלומים</b>. יש לכם ${g} 💎</p>
  <input id="renameIn" maxlength="24" autocomplete="off" value="${esc(R.val||H.heroName)}" style="width:100%;font-size:1.3rem;text-align:center;padding:10px;border-radius:14px;border:3px solid var(--o)">
@@ -2747,6 +2823,7 @@ function vStation(st,hs,c){
  if(st.type==="boss"&&P.phase!=="result")return vBoss(st,hs,c,enter);
  if(P.phase==="read"&&heroHp(L)<=0)return turnHead(L)+rescueBox(L,hs,c);
  let h=turnHead(L);
+ if(P.phase==="read"&&L.cls&&!st.type.startsWith("boss")){const fl={fighter:["החרב נוצצת ומחכה","הַחֶרֶב נוֹצֶצֶת וּמְחַכָּה"],tank:["הפטיש הכבד מוכן","הַפַּטִּישׁ הַכָּבֵד מוּכָן"],mage:["קצה המטה מתחיל לזהור","קְצֵה הַמַּטֶּה מַתְחִיל לִזְהוֹר"],archer:["החץ מונח על הקשת","הַחֵץ מֻנָּח עַל הַקֶּשֶׁת"],healer:["עלי המטה מרשרשים בשקט","עֲלֵי הַמַּטֶּה מְרַשְׁרְשִׁים בְּשֶׁקֶט"],ninja:["הפגיונות מחכים בלי רעש","הַפִּגְיוֹנוֹת מְחַכִּים בְּלִי רַעַשׁ"]}[L.cls];if(fl)h+=`<p class="flav">${fl[ezOn()?1:0]}</p>`;}
  if(P.phase!=="result"&&clsMatch(L,st.type))h+=`<div style="text-align:center"><span class="clschip">${clsIcon(L.cls,26)}<span>${ezOn()?"הַמְּשִׂימָה הַזּוֹ מַתְאִימָה לְ"+clsName(L.cls,isF(L),true):"המשימה הזו מתאימה ל"+clsName(L.cls,isF(L))}</span></span></div>`;
  if(P.phase==="result"){
   const R=P.result;
@@ -2844,7 +2921,7 @@ function ptRun(secs){clearInterval(ptInt);const P=S.play;P.pt={idx:P.idx,ph:"cou
 function teamMembers(hs){return hs.length>1?hs.map(h=>({name:h.heroName,h})):[{name:hs[0].heroName,h:hs[0]},{name:"ההורה",h:null}];}
 function teamTarget(c,n,hs){const d=diceFor(c,"easy");const t=Math.round(n*(d.target-.5));return Math.max(n,t-hs.reduce((a,h)=>a+effS(h,"str"),0));}
 function bossLv(hs){return Math.max(...hs.map(h=>heroLevel(h)))+1;}
-function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${H.cls?`<small>${clsName(H.cls,isF(H),ezOn())}</small>`:""}${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
+function turnHead(H){const pr=H.params.primary||"#ff3d4e";return `<div class="turnhead" style="--tc:${pr};--tc2:${shade(pr,-.35)}"><div class="th-hero">${heroSVG(H,"hero","happy")}</div><div class="th-txt"><small>${isF(H)?"תורה של":"תורו של"}</small><b>${esc(H.heroName)}</b>${H.cls?`<small>${heroRole(H,ezOn())}</small>`:""}${heartsHTML(H,18)}</div><button class="th-info ${S.lvSeen?"seen":""}" data-a="heroinfo" data-id="${H.id}">${ezOn()?"דַּרְגָּה":"דרגה"} ${heroLevel(H)} ▾</button></div>`;}
 function stLeader(st,hs){const P=S.play;if(st.type==="boss"&&P.bossTurn!=null)return hs[P.bossTurn%hs.length];return hs.find(h=>h.id===st.leaderId)||hs[0];}
 /* ---------- hero hearts (no death: 0 hearts = too tired, a friend can rescue) ---------- */
 function heroHpMax(h){const l=heroLevel(h);return 3+(l>=6?1:0)+(l>=12?1:0)+effS(h,"hp");}
@@ -2948,7 +3025,7 @@ function vBoss(st,hs,c,enter){
   Object.assign(P,{bossHp:hpMax,bossRound:0,firstHit:false,bossQ:null,bossQhint:false,bossLine:null,bAtk:null,frozen:false,power:false,tookHit:false,qDone:-1,teamUsed:false,en:{},ward:{}});
   P.bossTurn=Math.max(0,hs.findIndex(h=>h.id===st.leaderId));
   hs.forEach(h=>{P.en[h.id]=enMax(h);});
-  bossNewRound(hs,true);
+  bossNewRound(hs,true);bossAbilities(hs);
  }
  const hp=P.bossHp,ko=hp<=0,live=hs.filter(h=>heroHp(h)>0);
  if(live.length&&!hs.some(x=>x.id===P.intent&&heroHp(x)>0))P.intent=live[Math.floor(Math.random()*live.length)].id;
@@ -3082,7 +3159,7 @@ function bossHit(v,ok){
  P.acted[R.id]=true;
  P.roll=v;P.bossPhase="rolled";P.lastHit=hit;P.lastTeam=false;
  let dmg=act==="magic"?2+(effS(R,"pow")>=3?1:0):1+(effS(R,"pow")>=2?1:0);if(hit&&effS(R,"pow")>=1&&!P.firstHit){dmg+=1;P.firstHit=true;}
- if(hit&&P.power){dmg+=1;P.power=false;}
+ if(hit&&P.power){dmg+=1;P.power=false;}P.stk=P.stk||{};P.bst=P.bst||{};if(hit&&hasAb(R,"strike")&&!P.stk[R.id]){dmg+=1;P.stk[R.id]=true;}if(hit&&P.synStk){dmg+=1;P.synStk=false;}if(hit&&act==="magic"&&hasAb(R,"burst")&&!P.bst[R.id]){dmg+=1;P.bst[R.id]=true;}
  if(hit&&act==="q"){enSet(R,en(R)+1);}
  if(hit)P.bossHp=Math.max(0,P.bossHp-dmg);
  const lines=hit?st.challenge.hit:st.challenge.miss;
@@ -3152,7 +3229,7 @@ function vUpgrade(hs){
 }
 
 /* ---------- effects ---------- */
-const HAND_N={flower:"הפרח הקסום",flamesword:"חרב הלהבות",sword:"החרב",bow:"הקשת",staff:"המטה",wand:"השרביט",heartwand:"שרביט הלב",hammer:"הפטיש",shield:"המגן",none:"כדור האור"};
+const HAND_N={woodstaff:"מטה העץ",daggers:"הפגיונות",flower:"הפרח הקסום",flamesword:"חרב הלהבות",sword:"החרב",bow:"הקשת",staff:"המטה",wand:"השרביט",heartwand:"שרביט הלב",hammer:"הפטיש",shield:"המגן",none:"כדור האור"};
 const HEAD_N={crown:"הכתר",wizard:"כובע הקוסם",helmet:"הקסדה",bandana:"הבנדנה",catears:"אוזני החתול",horns:"הקרניים",mushrooms:"הפטריות",flower:"הפרח",star:"הכוכב",unicorn:"קרן החד־קרן",tiara:"הנזר",bow:"הסרט",none:"נזר הקסם"};
 const BACK_N={none:"הגלימה",cape:"הגלימה",wings:"הכנפיים",butterfly:"כנפי הפרפר",fairy:"כנפי הפיה",batwings:"כנפי העטלף",jetpack:"תרמיל הסילון",robotarms:"זרועות הרובוט",spiderlegs:"רגלי העכביש",dragonwings:"כנפי הדרקון"};
 const STATS=[{k:"str",n:"כוח",slot:h=>HAND_N[h.params.weapon||"none"]||"הפריט ביד",d:l=>ezOn()?`תּוֹסֶפֶת ${l} לְכָל הֲטָלַת קוּבִּיָּה`:`תוספת ${l} לכל הטלת קובייה`,c:"#ff3d4e"},{k:"wis",n:"חוכמה",slot:h=>HEAD_N[h.params.head||"none"]||"הפריט על הראש",d:l=>ezOn()?`${l===1?"נִיסָּיוֹן נוֹסָף":l+" נִסְיוֹנוֹת נוֹסָפִים"} בְּכָל חִידָה`:`${l===1?"ניסיון נוסף":l+" ניסיונות נוספים"} בכל חידה`,c:"#a978ff"},{k:"luck",n:"מזל",slot:h=>BACK_N[h.params.back||"none"]||"הגלימה",d:l=>ezOn()?`${l===1?"הֲטָלָה חוֹזֶרֶת אַחַת":l+" הֲטָלוֹת חוֹזְרוֹת"} בְּכָל פֶּרֶק`:`${l===1?"הטלה חוזרת אחת":l+" הטלות חוזרות"} בכל פרק`,c:"#4fe36b"},
@@ -3163,7 +3240,7 @@ const STAT_ICON={hp:`<path d="M10 18.5 C2 12.5 1 7.5 4 5 C6.5 3 9 4.5 10 6.5 C11
 const statIcon=k=>`<svg viewBox="-1 -1 22 22" aria-hidden="true">${STAT_ICON[k]}</svg>`;
 const statOf=(h,k)=>(h&&h.stats&&h.stats[k])||0;
 function statRow(h){const s=STATS.filter(x=>statOf(h,x.k)>0);return s.length?`<span class="stats">${s.map(x=>`<span title="${x.n}">${statIcon(x.k)}${statOf(h,x.k)}</span>`).join("")}</span>`:"";}
-function luckLeft(h){return effS(h,"luck")-((S.play&&S.play.luckUsed&&S.play.luckUsed[h.id])||0);}
+function luckLeft(h){return effS(h,"luck")+(hasAb(h,"lucky")?1:0)+(SAVE.campaign&&synOn(campHeroes(),"eye")?1:0)-((S.play&&S.play.luckUsed&&S.play.luckUsed[h.id])||0);}
 const HP_ON=`<svg viewBox="0 0 30 30" aria-hidden="true"><path d="M8 22 a6 6 0 0 1 -.5 -12 a8 8 0 0 1 15.5 2 a5 5 0 0 1 0 10 z" fill="#5b4b8a"${K(2.2)}/><path d="M16 19 l-3 5 l4.5 -2 l-2 5" fill="none" stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const hpOff=g=>`<svg ${g?'class="gone" ':""}viewBox="0 0 30 30" aria-hidden="true"><polygon points="${starPts(15,15,13,6)}" fill="#ffd23f"${K(2.2)}/></svg>`;
 function d20HTML(v,cls){return `<div class="d20 ${cls||""}" id="d20"><div class="in"><span id="d20v">${v??"?"}</span></div></div>`;}
@@ -3324,6 +3401,7 @@ function resolveStation(ok,text,opt={}){
  P.noReward=!!opt.noReward;P.answer=opt.answer||"";P.xpInfo=null;P.upQueue=[];
  const hs=campHeroes();const L=hs.find(h=>h.id===st.leaderId)||hs[0];
  P.hurtNow=false;if(L&&!ok&&(st.type==="dice"||P.noReward)){hurt(L,1);P.hurtNow=true;}
+ if(ok){const mh=hs.find(x=>heroHp(x)>0&&hasAb(x,"mend"));if(mh){const tg=hs.filter(x=>heroHp(x)>0&&heroHp(x)<heroHpMax(x)).sort((a,b)=>heroHp(a)-heroHp(b))[0];if(tg){tg.hp=heroHp(tg)+1;setTimeout(()=>toast(ezOn()?`${mh.heroName} ${gd(mh,"רִיפֵּא","רִיפְּאָה")} אֶת ${tg.heroName}!`:`${mh.heroName} ${gd(mh,"ריפא","ריפאה")} את ${tg.heroName}!`),900);}}}
  if(L&&!P.noReward){
   const before=L.xp||0,lf=heroLevel(L);
   const rcv=opt.boss?hs:[L];P.dupGem=0;
@@ -3332,6 +3410,7 @@ function resolveStation(ok,text,opt={}){
   const lvB={};hs.forEach(h=>lvB[h.id]=heroLevel(h));const first=st.type==="riddle"?!P.tries:P.rr!==P.idx;P.firstTry=ok&&first;const bonus=ok?(first?3:1):1;hs.forEach(h=>{h.xp=(h.xp||0)+(opt.boss?2:(h===L?bonus:1));});
   P.upQueue=hs.filter(h=>(heroLevel(h)>lvB[h.id])&&STATS.some(x=>statOf(h,x.k)<3)).map(h=>h.id);
   P.upLv={};hs.forEach(h=>P.upLv[h.id]={from:lvB[h.id],to:heroLevel(h)});
+  P.advQ=hs.filter(h=>advStage(h)).map(h=>h.id);
   const lt=heroLevel(L);
   {const a=lvInfo(before),b=lvInfo(L.xp||0);P.xpInfo={from:a.need?a.into/a.need*100:100,to:lt>lf?100:(b.need?b.into/b.need*100:100),lvlFrom:lf,lvlTo:lt};}
   if(lt>lf)sfx("lvl");
@@ -3339,7 +3418,7 @@ function resolveStation(ok,text,opt={}){
  persist();
  render();window.scrollTo({top:0,behavior:RM?"auto":"smooth"});
  sfx(ok?"win":"lose");if(!P.noReward)sfx("chest");if(ok)confetti();
- {const lucky=(ok&&P.firstTry&&!P.noReward&&Math.random()<.3)?1:0;if(lucky)setTimeout(()=>toast("מזל! יהלום בונוס"),1300);setTimeout(()=>earn(P.noReward?0:(ok?(P.firstTry?2:1):0)+(P.dupGem||0)+lucky),500);}
+ {const lucky=(ok&&P.firstTry&&!P.noReward&&Math.random()<.3)?1:0;if(lucky)setTimeout(()=>toast("מזל! יהלום בונוס"),1300);const gx=(ok&&P.firstTry&&!P.noReward&&hs.some(x=>hasAb(x,"gem"))&&Math.random()<.5)?1:0;setTimeout(()=>earn(P.noReward?0:(ok?(P.firstTry?2:1):0)+(P.dupGem||0)+lucky+gx),500);}
 }
 function snapStation(){const P=S.play;if(!P||P.idx<0)return;P.snaps=P.snaps||{};if(!P.snaps[P.idx])P.snaps[P.idx]=JSON.stringify({heroes:SAVE.heroes,node:SAVE.campaign.node,mapDone:!!P.mapDone});}
 function restoreSnap(i){const P=S.play;if(!P.snaps||!P.snaps[i])return;const o=JSON.parse(P.snaps[i]);SAVE.heroes=o.heroes;SAVE.campaign.node=o.node;P.mapDone=o.mapDone;persist();}
@@ -3403,7 +3482,7 @@ app.addEventListener("click",e=>{
   case "newhero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft();go("hero");break;
   case "edithero": S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "gender": S.draft.gender=b.dataset.v;render();break;
-  case "setcls": {const d=S.draft,v=b.dataset.v;d.cls=d.cls===v?null:v;if(d.cls&&d.result){applyCls(d.result.params,d.cls,true,lvInfo(d.xp||0).lv);}sfx("pop");render();break;}
+  case "setcls": {const d=S.draft,v=b.dataset.v;if(d.sub&&d.cls&&d.cls!==v){toast("אי אפשר להחליף תפקיד אחרי שבחרו התמחות");break;}d.cls=d.cls===v?null:v;if(d.cls&&d.result){applyCls(d.result.params,d.cls,true,lvInfo(d.xp||0).lv);}sfx("pop");render();break;}
   case "clsfix": S.hinfo=null;S.returnTo=S.screen==="setup"?"setup":"home";S.draft=newDraft(SAVE.heroes.find(h=>h.id===b.dataset.id));go("hero");break;
   case "pv": S.draft.pv=+b.dataset.v;render();sfx("pop");break;
   case "dress": S.draft.dress=true;S.draft.fresh=false;document.documentElement.style.overflow="hidden";render();sfx("pop");break;
@@ -3498,7 +3577,7 @@ app.addEventListener("click",e=>{
   case "upnext": P.upStep="choose";sfx("pop");render();break;
   case "upcont": P.upQueue.shift();P.upPick=null;if(P.upQueue.length){P.upStep="intro";sfx("lvl");render();confetti(40);}else{P.upStep=null;advance();toast("השדרוגים נשמרו!");}break;
   case "pickstat": {const hs=campHeroes(),R=hs.find(h=>h.id===(P.upQueue||[])[0]);if(!R)break;R.stats=R.stats||{str:0,wis:0,luck:0};const k=b.dataset.k;if((R.stats[k]||0)>=3)break;R.stats[k]=(R.stats[k]||0)+1;if(k==="hp"&&R.hp!=null)R.hp=Math.min(heroHpMax(R),(R.hp||0)+1);persist();P.upPick={k,to:R.stats[k]};P.upStep="reveal";sfx("chest");sfx("lvl");render();setTimeout(()=>confetti(50),650);break;}
-  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+Math.ceil(effS(L0,"wis")/2)){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
+  case "rwrong": {P.tries=(P.tries||0)+1;const st0=P.chapter.stations[P.idx];const L0=campHeroes().find(h=>h.id===st0.leaderId)||campHeroes()[0];if(P.tries>=3+Math.ceil(effS(L0,"wis")/2)+(hasAb(L0,"hint")?1:0)){const st=st0;resolveStation(false,null,{noReward:true,answer:st.challenge.a});}else{sfx("lose");render();const a=document.querySelector(".arena");if(a)a.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});}break;}
   case "renameopen": S.ren={id:b.dataset.id,val:"",err:""};sfx("pop");render();setTimeout(()=>{const i=$("#renameIn");if(i){i.focus();i.select();}},50);break;
   case "renameno": S.ren=null;render();break;
   case "renameok": {const R=S.ren,H=R&&SAVE.heroes.find(h=>h.id===R.id);if(!H)break;const v=(($("#renameIn")||{}).value||"").trim().replace(/\s+/g," ");
@@ -3508,7 +3587,10 @@ app.addEventListener("click",e=>{
   case "hint": P.hint=true;render();break;
   case "reveal": P.reveal=true;render();break;
   case "choose": {const st=P.chapter.stations[P.idx];const o=st.challenge.options[+b.dataset.i];P.ezRes=EZR[o.label]||null;resolveStation(true,o.result);break;}
-  case "advance": advance();break;
+  case "advance": {const ah=S.play&&advHero();if(ah&&S.advSkip!==S.play.idx){S.adv={id:ah.id};sfx("lvl");render();break;}advance();break;}
+  case "advopen": S.hinfo=null;S.adv={id:b.dataset.id||(advHero()||{}).id};if(!S.adv.id)S.adv=null;sfx("lvl");render();break;
+  case "advclose": S.adv=null;if(S.play)S.advSkip=S.play.idx;render();break;
+  case "advpick": {const A=S.adv,H=A&&SAVE.heroes.find(h=>h.id===A.id);if(!H)break;const k=b.dataset.v,st=advStage(H);if(!st||!advOptions(H).includes(k))break;if(st==="sub")H.sub=k;else H.mas=k;persist();sfx("lvl");confetti(80);const nx=advHero();S.adv=nx&&nx.id!==H.id?{id:nx.id}:(nx?{id:nx.id}:null);render();toast(ezOn()?`${H.heroName} הִתְמַחָּה: ${cnName(k,isF(H),true)}!`:`${H.heroName} ${gd(H,"התמחה","התמחתה")}: ${cnName(k,isF(H))}!`);break;}
   case "endsession": endSession();break;
   case "heroinfo": S.lvSeen=true;S.hinfo=b.dataset.id;sfx("pop");render();break;
   case "hinfoclose": if(e.target.closest(".lockbox")&&!e.target.closest("[data-a=hinfoclose].btn"))break;S.hinfo=null;render();break;
