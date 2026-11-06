@@ -527,7 +527,7 @@ a.mark{text-decoration:none}
 .rv-tag.piece{color:var(--sky)}.rv-tag.lesson{color:var(--pop)}
 .rv-rate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .rv-subj{font-size:13px;color:var(--muted);font-weight:700}
-.rv-body{margin:0;color:var(--paper);line-height:1.6;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.rv-body{margin:0;color:var(--paper);line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
 .rv-body.open{display:block}
 .rv-more-t{align-self:flex-start;background:none;border:0;color:var(--sun);font-weight:800;cursor:pointer;padding:0;margin-top:-6px}
 .rv-ph{display:flex;gap:8px}

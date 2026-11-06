@@ -1791,7 +1791,6 @@ function renderReviews(){
   const list=pub.filter(r=>!RV_TAB||r.kind===RV_TAB);
   $("#rvList").innerHTML=list.slice(0,RV_SHOW).map(rvCard).join("");
   $("#rvMore").hidden=list.length<=RV_SHOW;
-  requestAnimationFrame(()=>document.querySelectorAll(".rv-body").forEach(p=>{const b=p.nextElementSibling;if(b&&p.scrollHeight>p.clientHeight+4)b.hidden=false}));
   renderHome();  renderSpot();
 }
 /* Home: one featured review, a different one on each visit.
@@ -1820,7 +1819,7 @@ function rvCard(r){
     return `<article class="rv-card">
       <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span></header>
       <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(r.subject)}</span>`:""}</div>
-      ${r.body?`<p class="rv-body">${esc(r.body)}</p><button type="button" class="rv-more-t" hidden>עוד</button>`:""}
+      ${r.body?`<p class="rv-body">${esc(r.body)}</p>`:""}
       ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}" aria-label="תמונה ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
       <details class="rv-det"><summary>פירוט הדירוג</summary>${RV_CRIT[r.kind].map(([k,l])=>`<div><span>${l}</span>${starsHTML(r["r_"+k])}</div>`).join("")}</details>
     </article>`}
