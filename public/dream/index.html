@@ -1745,7 +1745,10 @@ const KIT={
  ninjaMaster:{c:"#14161f",a:"#9b30ff",hd:["hood","ninja"],bd:["gi"],fm:"mask",cp:"cloak",fx:"shadow"},
  ronin:{c:"#6b5a44",a:"#c8c8c8",hd:["hat","kasa"],bd:["robe"],fm:"scarf",cp:"cloak"}
 };
-function kitOf(o){return KIT[o.mas]||KIT[o.sub]||KIT[o.cls]||null;}
+function kMix(h1,h2,t){try{const a=parseInt(h1.slice(1),16),b=parseInt(h2.slice(1),16),f=(x,y)=>Math.round(x+(y-x)*t);return "#"+((1<<24)+(f(a>>16,b>>16)<<16)+(f(a>>8&255,b>>8&255)<<8)+f(a&255,b&255)).toString(16).slice(1);}catch(e){return h1;}}
+function kitOf(o){const k=KIT[o.mas]||KIT[o.sub]||KIT[o.cls]||null;if(!k)return null;if(!o.pr&&!o.se)return k;return {...k,c:o.pr?kMix(k.c,o.pr,.35):k.c,a:o.se?kMix(k.a,o.se,.35):k.a};}
+function kCovers(o){const k=kitOf(o);return !!k&&["robe","robeFur","coat","tabard"].includes(k.bd[0]);}
+function dHidden(d,id){if(!d||!d.cls)return false;if(id==="bottom")return kCovers(d);if(id==="head")return !!(d.sub||d.mas);return false;}
 const PA=(d,f,w)=>`<path d="${d}" fill="${f}"${K(w==null?2.6:w)}/>`;
 const mir=(f)=>f(0)+`<g transform="translate(140 0) scale(-1 1)">${f(1)}</g>`;
 function kHead(k,u){const [t,v]=k.hd,c=k.c,a=k.a,d=shade(c,-.3),l=shade(c,.3);let hb="",hd="";
@@ -1863,7 +1866,7 @@ function kFx(k,u){const f=k.fx,a=k.a,c=k.c;if(!f||u<3)return "";
  return sh?pts.slice(0,u>=4?8:5).map(([x,y],i)=>sh(x,y,i)).join(""):"";}
 function kTier(k,u){let s="";const a=k.a;if(u>=1)s+=[[43,97],[97,97]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4" fill="${a}"${K(1.8)}/>`).join("");if(u>=2)s+=`<path d="M70 94 V118" stroke="${a}" stroke-width="2.4" stroke-linecap="round" opacity=".9"/><path d="M52 100 Q70 108 88 100" fill="none" stroke="${a}" stroke-width="2.2" opacity=".8"/>`;if(u>=3)s+=[[43,97],[97,97]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5.6" fill="none" stroke="${a}" stroke-width="2.4"/>`).join("");return s;}
 function kAura(k,u){const a=k.a;let s="";if(u>=3)s+=`<ellipse cx="70" cy="100" rx="58" ry="62" fill="${a}" opacity=".13"/>`;if(u>=4)s+=`<ellipse class="glow" cx="70" cy="100" rx="64" ry="68" fill="none" stroke="${a}" stroke-width="3" stroke-dasharray="4 7"/>`;return s;}
-function kitParts(o,lv,fem){const k=kitOf(o);if(!k)return null;const u=evoTier(lv),H=kHead(k,u);return {c0:k.c,hb:H.hb,hd:H.hd,bd:kBody(k,u,fem),ov:kOver(k,u)+kTier(k,u),fm:kFace(k,u),cp:kCape(k,u),fx:kAura(k,u)+kFx(k,u),sub:!!(o.sub||o.mas)};}
+function kitParts(o,lv,fem){const k=kitOf(o);if(!k)return null;const u=evoTier(lv),H=kHead(k,u);return {c0:k.c,a0:k.a,emb:k.bd[0]!=="tabard",hb:H.hb,hd:H.hd,bd:kBody(k,u,fem),ov:kOver(k,u)+kTier(k,u),fm:kFace(k,u),cp:kCape(k,u),fx:kAura(k,u)+kFx(k,u),sub:!!(o.sub||o.mas)};}
 
 function heroInner(p,level=1,o={}){
  const mood=o.mood||"happy",st=o.stats||{};
@@ -1873,7 +1876,7 @@ function heroInner(p,level=1,o={}){
  const fem=o.fem!=null?o.fem:!!p.fem,gid="h"+(gradN++),GOLD="#ffd23f";
  const power=tS+tW+tL,lv=level,sty=p.style||(fem?"sparkle":"hero"),spk=sty==="sparkle",hro=sty==="hero",mag=sty==="magic",nat=sty==="nature";
  let s="";
- const EV=o.cls?evoLayers(o,lv,fem):null,KT=o.cls?kitParts(o,lv,fem):null;
+ const EV=o.cls?evoLayers(o,lv,fem):null,KT=o.cls?kitParts({...o,pr:o.pr||pr,se:o.se||se},lv,fem):null;
  if(lv>=TOPLV&&spk){const RB=["#ff4d6d","#ff9f1c","#ffe14d","#4fe36b","#3ec2ff","#a978ff"];RB.forEach((c,i)=>{const r=90-i*8.5;s+=`<path d="M${70-r} 100 A${r} ${r} 0 0 1 ${70+r} 100" fill="none" stroke="${c}" stroke-width="9"/>`;});s+=`<path d="M-20 100 A90 90 0 0 1 160 100 M27.5 100 A42.5 42.5 0 0 1 112.5 100" fill="none" stroke="${O}" stroke-width="2.4" opacity=".55"/>`;[[-6,98],[146,98]].forEach(([x,y])=>{s+=`<g><circle cx="${x-9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x+9}" cy="${y+2}" r="9" fill="#fff"${K(2.4)}/><circle cx="${x}" cy="${y-5}" r="11" fill="#fff"${K(2.4)}/><rect x="${x-17}" y="${y+1}" width="34" height="9" fill="#fff"/></g>`;});}
  if(lv>=TOPLV&&hro&&!KT)s+=`<path d="M18 160 L96 4 L126 6 Z" fill="#fff6b0" opacity=".2"/><circle class="glow" cx="110" cy="-2" r="27" fill="#fff3a0" opacity=".45"/><circle cx="110" cy="-2" r="20" fill="#fff3a0"${K(2.6)}/><g transform="translate(110 -2) scale(1.35) translate(-70 -106)">${emblemSVG(p.emblem,O,O)}</g>`;
  if(lv>=TOPLV&&mag)s+=`<circle cx="70" cy="80" r="86" fill="#2a1468" opacity=".9"/><circle cx="70" cy="80" r="86" fill="none" stroke="#a978ff" stroke-width="5"/><g class="spin" style="transform-origin:70px 80px"><path d="M70 0 A80 80 0 0 1 150 80 M70 160 A80 80 0 0 1 -10 80" fill="none" stroke="#3ee0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 10"/></g>`+[[20,40,3],[120,30,2.5],[30,120,2],[118,118,3],[70,-2,2.6],[-2,80,2],[142,76,2]].map(([x,y,r])=>`<circle class="tw" cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join("")+`<ellipse cx="70" cy="80" rx="40" ry="10" fill="#ff7ec8" opacity=".35" transform="rotate(-20 70 80)"/>`;
@@ -1920,7 +1923,7 @@ function heroInner(p,level=1,o={}){
  if(mag&&lv>=12)s+=`<ellipse class="glow" cx="70" cy="158" rx="52" ry="12" fill="none" stroke="#a978ff" stroke-width="3" stroke-dasharray="8 6"/>`;
  if(spk&&lv>=12)g+=`<polygon points="${starPts(47,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/><polygon points="${starPts(93,100,6,2.6)}" fill="#ffd23f"${K(1.8)}/>`;
  if(tL>=2)g+=`<g transform="translate(70 124.5)"><circle r="6.5" fill="${GOLD}"${K(2)}/><circle cx="-2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="-2" r="2.2" fill="#3ed45e"/><circle cx="-2" cy="2" r="2.2" fill="#3ed45e"/><circle cx="2" cy="2" r="2.2" fill="#3ed45e"/></g>`;
- if(KT)g+=KT.bd;
+ if(KT){g+=KT.bd;if(KT.emb)g+=`<g transform="translate(70 108) scale(.82) translate(-70 -106)">${emblemSVG(p.emblem,KT.a0,KT.c0)}</g>`;}
  const armC=KT?KT.c0:pr;g+=limb("M50 101 Q37 110 34 123",armC,10);
  const raise=W!=="none";
  g+=raise?limb("M90 101 Q104 98 108 88",armC,10):limb("M90 101 Q103 110 106 123",armC,10);
@@ -1954,7 +1957,7 @@ function heroInner(p,level=1,o={}){
  return s+`<g class="hb">${g}</g>`+hueWrap(petSVG(p.pet),p.hue_pet,gid+"hp");
 }
 function heroLevel(h){return lvInfo(h.xp||0).lv;}
-function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats,cls:h.cls,sub:h.sub,mas:h.mas,wup:forgeTier(h)})}</svg>`;}
+function heroSVG(h,cls="hero",mood){return `<svg class="${cls}" viewBox="${VB}" role="img" aria-label="${esc(h.heroName)}">${heroInner(h.params,heroLevel(h),{mood,stats:h.stats,cls:h.cls,sub:h.sub,mas:h.mas,wup:forgeTier(h),pr:(h.params||{}).primary,se:(h.params||{}).secondary})}</svg>`;}
 function lvlBadge(h){const l=heroLevel(h);return `<svg class="lvlb" viewBox="0 0 40 40" aria-label="דרגה ${l}"><polygon points="${starPts(20,21,18,9)}" fill="#ffd23f"${K(2.5)}/><text x="20" y="27" text-anchor="middle" font-family="Rubik,sans-serif" font-weight="900" font-size="15" fill="#fff" stroke="${O}" stroke-width="3" paint-order="stroke">${l}</text></svg>`;}
 
 /* ---------- characters the heroes meet ---------- */
@@ -2603,9 +2606,9 @@ function dSide(t,p,fem,on){const q={...p};if(DSAMPLE[t.k]&&(q[t.k]||"none")==="n
 function dRow(key,pal,cur,lbl){return `<div class="drow" aria-label="${lbl}"><b class="drl">${lbl}</b>${pal.map((c,i)=>{const v=key==="skin"?i:c;return `<button class="swatch" style="background:${c}" data-a="mset" data-k="${key}" data-v="${v}" aria-pressed="${cur===v}" aria-label="${lbl}"></button>`;}).join("")}</div>`;}
 function vDress(d,fake){
 if(!d.origP)d.origP={...d.result.params};
- const p=d.result.params,fem=isF(d),tab=d.tab||"eyes",T=DTABS.find(t=>t.id===tab)||DTABS[0];
+ const p=d.result.params,fem=isF(d),tab0=d.tab||"eyes",tab=dHidden(d,tab0)?"eyes":tab0,_t=(d.tab=tab),T=DTABS.find(t=>t.id===tab)||DTABS[0];
  const opts=dOpts(T.k),cur=dGet(p,T.k),i=Math.max(0,opts.indexOf(cur));
- const L=DTABS.slice(0,6),Rt=DTABS.slice(6);
+ const L=DTABS.slice(0,6).filter(t=>!dHidden(d,t.id)),Rt=DTABS.slice(6).filter(t=>!dHidden(d,t.id));
  const arrow=dir=>`<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="${dir>0?"M9 4 L17 12 L9 20":"M15 4 L7 12 L15 20"}" fill="none" stroke="${O}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
  let cols="";
  if(T.col)cols+=dRow(T.col[0],T.col[1],T.col[0]==="skin"?(p.skin??1):(p[T.col[0]]||(T.col[0]==="eye"?"#7a4a24":"")),{eye:"צבע",skin:"עור",hairColor:"צבע",primary:"חולצה"}[T.col[0]]);
