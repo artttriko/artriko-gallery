@@ -883,12 +883,12 @@ const ENUM={eyes:["round","big","dot","happy","wink","kawaii","spiral","cool","h
  bottom:["pants","skirt","shorts","jeans","sporty","striped","tutu","starry","armor","rainbow","polka","camo","flames","ducks"],
  head:["none","crown","bow","catears","flower","helmet","horns","wizard","unicorn","star","pizza","chicken","icecream","propeller","pot","teacup","medcap"],
  weapon:["none","sword","wand","shield","staff","flower","bow","heartwand","hammer","flamesword","chickrub","banana","lollipop","plunger","baguette","lid","book","slingshot","ladle","fan","woodstaff","daggers"],
- pet:["none","cat","puppy","frog","bunny","parrot","fox","panda","dragon","unicorn","chick","duck","snail","goldfish"],
+ pet:["none","cat","puppy","frog","bunny","parrot","fox","panda","dragon","unicorn","chick","duck","snail","goldfish","turtle","volt"],
  back:["none","cape","wings","butterfly","fairy","batwings","jetpack","robotarms","spiderlegs","dragonwings","balloons","floatie","foxtail","umbrella","shell","quiver","scarf"],
  emblem:["star","heart","bolt","moon","paw","flower","note","fire","crown","diamond","smile","donut","pizza","cookie"],
  /* still drawable for older heroes, no longer offered */
  _legacy:["sleepy","star","roundglasses","heartglasses","visor","tiara","bandana","mushrooms","book","owl","bee","backpack","shell","snow"]};
-const LBL={eyes:{crossed:"עיניים מצטלבות",googly:"עיני בובה",dizzy:"סחרחורת",tears:"דמעות של צחוק",monocle:"מונוקל מכובד",round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש",kawaii:"חמודות",roundglasses:"משקפיים עגולים",spiral:"סחרחורת",hearts:"לבבות",heartglasses:"משקפי לב",visor:"מגן עתידני",starglasses:"משקפי כוכב"},mouth:{buck:"שיניים בולטות",zigzag:"פה מתפתל",kiss:"נשיקה",yawn:"פיהוק ענק",braces:"גשר מבריק",smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו",fangs:"ניבי ערפד",mustache:"שפם",bubble:"בועת מסטיק"},hair:{mohawk:"מוהוק",afro:"אפרו ענק",pomp:"בלורית",twinbuns:"שתי פקעות",short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"שומר הקשת",hero:"מגן הלילה",nature:"שומר היער",magic:"קוסם הגלקסיה"},bottom:{polka:"נקודות",camo:"הסוואה",flames:"להבות",ducks:"ברווזונים",pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים",jeans:"ג'ינס",sporty:"ספורט",striped:"פסים",tutu:"טוטו",starry:"כוכבים",armor:"שריון",rainbow:"קשת בענן"},head:{pizza:"משולש פיצה",chicken:"תרנגולת",icecream:"גלידה",propeller:"כובע מדחף",pot:"סיר",teacup:"כוס תה",medcap:"כובע רופא",none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{woodstaff:"מטה עץ ארוך",daggers:"פגיונות ושוריקן",chickrub:"תרנגולת גומי",banana:"בננה",lollipop:"סוכרייה ענקית",plunger:"פומפה",baguette:"חרב באגט",lid:"מכסה סיר",slingshot:"קלע",ladle:"מצקת מרק",fan:"מניפת נינג'ה",none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן",flower:"פרח קסום",book:"ספר לחשים",flamesword:"חרב להבות"},pet:{chick:"אפרוח",duck:"ברווז",snail:"חילזון",goldfish:"דג זהב",parrot:"תוכי",none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע",bunny:"ארנבון",puppy:"כלבלב",bee:"דבורה",fox:"שועל",panda:"פנדה",unicorn:"חד־קרן"},back:{balloons:"בלונים",floatie:"גלגל ים",foxtail:"זנב שועל",umbrella:"מטרייה",quiver:"אשפת חיצים",scarf:"צעיף מתנופף",robotarms:"זרועות רובוט",spiderlegs:"רגלי עכביש",none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר",backpack:"תרמיל",fairy:"כנפי פיה",shell:"שריון צב",batwings:"כנפי עטלף",jetpack:"תרמיל סילון",dragonwings:"כנפי דרקון"},emblem:{smile:"סמיילי",donut:"סופגנייה",pizza:"פיצה",cookie:"עוגייה",star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל",flower:"פרח",note:"תו מוזיקה",snow:"פתית שלג",fire:"אש",crown:"כתר",diamond:"יהלום"}};
+const LBL={eyes:{crossed:"עיניים מצטלבות",googly:"עיני בובה",dizzy:"סחרחורת",tears:"דמעות של צחוק",monocle:"מונוקל מכובד",round:"עגולות",big:"נוצצות",dot:"נקודות",happy:"מחייכות",sleepy:"מנומנמות",star:"כוכבים",wink:"קריצה",cool:"משקפי שמש",kawaii:"חמודות",roundglasses:"משקפיים עגולים",spiral:"סחרחורת",hearts:"לבבות",heartglasses:"משקפי לב",visor:"מגן עתידני",starglasses:"משקפי כוכב"},mouth:{buck:"שיניים בולטות",zigzag:"פה מתפתל",kiss:"נשיקה",yawn:"פיהוק ענק",braces:"גשר מבריק",smile:"חיוך",grin:"צחוק גדול",small:"חיוך קטן",cat:"חתולי",tongue:"לשון בחוץ",smirk:"חיוך ממזרי",o:"וואו",fangs:"ניבי ערפד",mustache:"שפם",bubble:"בועת מסטיק"},hair:{mohawk:"מוהוק",afro:"אפרו ענק",pomp:"בלורית",twinbuns:"שתי פקעות",short:"קצר",long:"ארוך",bob:"קארה",ponytail:"קוקו",braid:"צמה",pigtails:"שתי צמות",spiky:"קוצים",curly:"תלתלים",bun:"פקעת",none:"קירח"},style:{sparkle:"שומר הקשת",hero:"מגן הלילה",nature:"שומר היער",magic:"קוסם הגלקסיה"},bottom:{polka:"נקודות",camo:"הסוואה",flames:"להבות",ducks:"ברווזונים",pants:"מכנסיים",skirt:"חצאית",shorts:"מכנסונים",jeans:"ג'ינס",sporty:"ספורט",striped:"פסים",tutu:"טוטו",starry:"כוכבים",armor:"שריון",rainbow:"קשת בענן"},head:{pizza:"משולש פיצה",chicken:"תרנגולת",icecream:"גלידה",propeller:"כובע מדחף",pot:"סיר",teacup:"כוס תה",medcap:"כובע רופא",none:"בלי",crown:"כתר",tiara:"נזר",unicorn:"קרן חד־קרן",wizard:"כובע קוסם",helmet:"קסדה",bandana:"בנדנה",bow:"סרט",catears:"אוזני חתול",horns:"קרניים",mushrooms:"פטריות",flower:"פרח",star:"כוכב"},weapon:{woodstaff:"מטה עץ ארוך",daggers:"פגיונות ושוריקן",chickrub:"תרנגולת גומי",banana:"בננה",lollipop:"סוכרייה ענקית",plunger:"פומפה",baguette:"חרב באגט",lid:"מכסה סיר",slingshot:"קלע",ladle:"מצקת מרק",fan:"מניפת נינג'ה",none:"בלי",sword:"חרב",bow:"קשת",staff:"מטה",wand:"שרביט כוכב",heartwand:"שרביט לב",hammer:"פטיש",shield:"מגן",flower:"פרח קסום",book:"ספר לחשים",flamesword:"חרב להבות"},pet:{chick:"אפרוח",duck:"ברווז",snail:"חילזון",goldfish:"דג זהב",parrot:"תוכי",none:"בלי",dragon:"דרקון",cat:"חתול",owl:"ינשוף",frog:"צפרדע",bunny:"ארנבון",puppy:"כלבלב",bee:"דבורה",fox:"שועל",panda:"פנדה",unicorn:"חד־קרן",turtle:"צב",volt:"ברקון"},back:{balloons:"בלונים",floatie:"גלגל ים",foxtail:"זנב שועל",umbrella:"מטרייה",quiver:"אשפת חיצים",scarf:"צעיף מתנופף",robotarms:"זרועות רובוט",spiderlegs:"רגלי עכביש",none:"בלי",cape:"גלימה",wings:"כנפי מלאך",butterfly:"כנפי פרפר",backpack:"תרמיל",fairy:"כנפי פיה",shell:"שריון צב",batwings:"כנפי עטלף",jetpack:"תרמיל סילון",dragonwings:"כנפי דרקון"},emblem:{smile:"סמיילי",donut:"סופגנייה",pizza:"פיצה",cookie:"עוגייה",star:"כוכב",heart:"לב",bolt:"ברק",moon:"ירח",paw:"כף רגל",flower:"פרח",note:"תו מוזיקה",snow:"פתית שלג",fire:"אש",crown:"כתר",diamond:"יהלום"}};
 const ICONS=["gem","key","potion","shield","feather","star","scroll","crystal","crown","moon","boots","glove","scarf","snowball","badge","amulet","leaf","lily","frogpend","tooth","jar","oar","beetle","compass","cloud","bell","bag","sparkles","rainbow","note"];
 const ITEM_N={gem:"יהלום נוצץ",key:"מפתח קסום",potion:"שיקוי הכוח",shield:"מגן קטן",feather:"נוצה קלילה",star:"כוכב המזל",scroll:"מגילת סודות",crystal:"גביש מאיר",crown:"כתר קטן",moon:"אבן הירח",boots:"מגפי הרפתקן",glove:"כפפת הגנה",scarf:"צעיף חם",snowball:"כדור קסם זוהר",badge:"סמל האמיץ",amulet:"קמע המזל",leaf:"עלה קסום",lily:"פרח הנהר",frogpend:"תליון הצפרדע",tooth:"שן מבריקה",jar:"צנצנת אור",oar:"משוט הרפתקנים",beetle:"שריון קטן",compass:"מצפן הדרך",cloud:"ענן קטן",bell:"פעמון שמח",bag:"שק הפתעות",sparkles:"אבק נוצץ",rainbow:"אבקת קשת",note:"צליל קסום"};
 const NPC_KEYS=["fox","bunny","panda","parrot","puppy","unicorn","penguin","penguinking","owl","bear","dog","door","wind","queen","frog","grandmafrog","firefly","croc","tree","moon","bird","nightbird","cloud","star","dragon","sprite","stormbeast","fogmonster","thunderbeast"];
@@ -1054,7 +1054,7 @@ const TIER={
  head:{pizza:2,chicken:3,icecream:3,propeller:4,catears:1,flower:1,helmet:1,horns:2,wizard:2,unicorn:3,star:4},
  weapon:{chickrub:2,banana:2,lollipop:3,plunger:4,shield:1,staff:1,flower:1,bow:2,heartwand:2,hammer:3,flamesword:4},
  back:{balloons:2,floatie:3,foxtail:3,umbrella:4,butterfly:1,fairy:1,batwings:2,jetpack:2,robotarms:3,spiderlegs:3,dragonwings:4},
- pet:{chick:2,duck:2,snail:3,goldfish:4,frog:1,bunny:1,parrot:1,fox:2,panda:2,dragon:3,unicorn:4},
+ pet:{chick:2,duck:2,snail:3,goldfish:4,frog:1,bunny:1,parrot:1,fox:2,panda:2,dragon:3,unicorn:4,turtle:2,volt:3},
  emblem:{smile:2,donut:2,pizza:3,cookie:3,bolt:1,moon:1,paw:1,flower:2,note:2,fire:3,crown:3,diamond:4},
  bottom:{polka:2,camo:3,flames:3,ducks:4,shorts:1,jeans:1,sporty:1,striped:2,tutu:2,starry:3,armor:3,rainbow:4},
  style:{nature:4,magic:4}};
@@ -1675,6 +1675,8 @@ function emblemSVG(E,se,pr){
  return `<polygon points="${starPts(70,106,8.5,3.8)}" fill="${se}"${K(2)}/>`;
 }
 function petSVG(P){
+ if(P==="turtle")return `<g class="pet"><g transform="translate(4 0)">${limb("M6 156 L5 150","#7fcf6a",5)}${limb("M28 156 L29 150","#7fcf6a",5)}<path d="M30 150 Q40 150 41 156 Q36 153 30 154Z" fill="#7fcf6a"${K(2)}/><ellipse cx="19" cy="147" rx="16" ry="12" fill="#4fa84a"${K(2.5)}/><path d="M9 142 Q19 134 29 142 M19 135 V158 M10 150 H28" fill="none" stroke="#2f7a34" stroke-width="2" stroke-linecap="round"/><circle cx="19" cy="147" r="3" fill="#8fdc7a"/><circle cx="6" cy="138" r="8.5" fill="#7fcf6a"${K(2.4)}/>${eye(3.5,136,2.6)}${eye(9.5,136,2.6)}<path d="M3 141 Q6.5 144 10 141" fill="none"${K(1.7)}/></g></g>`;
+ if(P==="volt")return `<g class="pet">${limb("M28 152 Q44 156 42 140 Q40 132 34 136","#ffc21f",5)}<circle cx="34" cy="136" r="3.2" fill="#4fc3ff"${K(1.6)}/><ellipse cx="18" cy="148" rx="12" ry="10" fill="#ffd93d"${K(2.5)}/><path d="M9 127 L5 110 L16 121Z M29 127 L33 110 L22 121Z" fill="#ffd93d"${K(2.2)}/><path d="M6 114 L5 110 L9 112Z M32 114 L33 110 L29 112Z" fill="#4fc3ff"/><circle cx="19" cy="131" r="11" fill="#ffd93d"${K(2.5)}/>${eye(14.5,129.5,3.2)}${eye(23.5,129.5,3.2)}<circle cx="9.5" cy="135" r="2.8" fill="#4fc3ff"/><circle cx="28.5" cy="135" r="2.8" fill="#4fc3ff"/><path d="M17 135 Q19 137.5 21 135" fill="none"${K(1.7)}/><path d="M17 143 L21 143 L19 148 L22 148 L17 155 L18.5 149.5 L15.5 149.5Z" fill="#4fc3ff" stroke="#fff" stroke-width=".8"/></g>`;
  if(P==="chick")return `<g class="pet"><ellipse cx="18" cy="148" rx="13" ry="11" fill="#ffe14d"${K(2.5)}/><circle cx="19" cy="130" r="10.5" fill="#ffe14d"${K(2.5)}/>${eye(15,129,3.2)}${eye(24,129,3.2)}<path d="M16 134 L22 134 L19 139Z" fill="#ff9d1f"${K(1.5)}/><path d="M17 120 Q15 113 19 116 M21 120 Q24 112 25 117" fill="none"${K(2)}/></g>`;
  if(P==="duck")return `<g class="pet"><ellipse cx="17" cy="148" rx="14" ry="10" fill="#ffd23f"${K(2.5)}/><path d="M5 148 Q13 139 22 150Z" fill="#f5b800"${K(1.6)}/><circle cx="21" cy="131" r="10.5" fill="#ffd23f"${K(2.5)}/>${eye(18,129,3)}${eye(26,129,3)}<ellipse cx="25" cy="137" rx="9" ry="4" fill="#ff9d1f"${K(1.8)}/></g>`;
  if(P==="snail")return `<g class="pet"><path d="M4 156 Q20 162 38 156 Q40 150 34 150 H9Z" fill="#9be07a"${K(2.4)}/><circle cx="6" cy="148" r="6" fill="#9be07a"${K(2.2)}/><path d="M4 143 L2 133 M9 143 L11 133" fill="none"${K(2)}/><circle cx="2" cy="132" r="2.2" fill="#fff"${K(1.4)}/><circle cx="11" cy="132" r="2.2" fill="#fff"${K(1.4)}/><circle cx="24" cy="140" r="12" fill="#ff9f43"${K(2.5)}/><path d="M24 140 a3 3 0 0 1 6 0 a6 6 0 0 1 -12 0 a9 9 0 0 1 18 0"${K(1.8)} fill="none"/></g>`;
@@ -2192,21 +2194,48 @@ const MATH_H={
  div:["חילוק: כמה פעמים {b} נכנס ב־{p}?","חִלּוּק: כַּמָּה פְּעָמִים {b} נִכְנָס בְּ־{p}?"],
  rate:["דרך = מהירות × זמן.","דֶּרֶךְ = מְהִירוּת × זְמַן."],
  eq:["קודם מחסירים {k} מ־{r}, ואז מחלקים ב־{m}.","קֹדֶם מַחְסִירִים {k} מִ־{r}, וְאָז מְחַלְּקִים בְּ־{m}."]};
+/* more math templates (nikud comes from the dream_nikud table) */
+MATH_T.add.push(...[["הדרקון אסף {a} אבנים בבוקר ועוד {b} אבנים בערב. כמה אבנים יש לו עכשיו?", "", "🪨"], ["הצפרדעים קפצו לבריכה: קודם {a} צפרדעים ואחר כך עוד {b}. כמה צפרדעים יש בבריכה?", "", "🐸"], ["בקערה יש {a} תפוחים אדומים ו־{b} תפוחים ירוקים. כמה תפוחים יש בקערה?", "", "🍎"], ["הקוסמת יצרה {a} בועות, ואחר כך עוד {b} בועות. כמה בועות יש באוויר?", "", "🫧"], ["הילדים מצאו {a} צדפים על החוף ועוד {b} צדפים בים. כמה צדפים יש להם?", "", "🐚"], ["הדבורים הביאו {a} טיפות דבש, ואחריהן הגיעו עוד {b} טיפות. כמה טיפות דבש יש עכשיו?", "", "🍯"], ["על העץ יושבות {a} ציפורים, ועוד {b} ציפורים נוחתות עליו. כמה ציפורים יושבות על העץ?", "", "🐦"], ["הנינג'ה אסף {a} גלילי קלף ועוד {b} גלילים. כמה גלילים יש לו?", "", "📜"], ["בחממה צמחו {a} עגבניות ועוד {b} עגבניות. כמה עגבניות צמחו שם?", "", "🍅"]]);
+MATH_T.sub.push(...[["על העץ היו {a} תפוחים. {b} תפוחים נפלו לאדמה. כמה תפוחים נשארו על העץ?", "", "🍎"], ["לקוסם היו {a} כובעים. הוא נתן {b} כובעים לחברים. כמה כובעים נשארו לו?", "", "🎩"], ["על החוף היו {a} סרטנים. {b} סרטנים נכנסו לים. כמה סרטנים נשארו על החוף?", "", "🦀"], ["בסל היו {a} ביצים. {b} ביצים נשברו. כמה ביצים שלמות נשארו?", "", "🥚"], ["בשמיים עפו {a} בלונים. {b} בלונים התפוצצו. כמה בלונים עדיין עפים?", "", "🎈"], ["בקופסה היו {a} עוגיות. הילדים אכלו {b} עוגיות. כמה עוגיות נשארו?", "", "🍪"], ["בגן היו {a} פרפרים. {b} פרפרים עפו להרים. כמה פרפרים נשארו בגן?", "", "🦋"]]);
+MATH_T.unk.push(...[["בשקית היו {a} סוכריות. אכלנו כמה סוכריות, ונשארו {c}. כמה סוכריות אכלנו?", "", "🍬"], ["בבריכה היו {a} דגים. כמה דגים שחו משם, ונשארו {c}. כמה דגים שחו משם?", "", "🐟"], ["למלכה היו {a} כתרים. היא נתנה כמה כתרים, ונשארו לה {c}. כמה כתרים היא נתנה?", "", "👑"], ["בגינה צמחו {a} פרחים. כמה פרחים נקטפו, ונשארו {c}. כמה פרחים נקטפו?", "", "🌷"], ["היו {a} בלונים. כמה בלונים התפוצצו, ונשארו {c}. כמה בלונים התפוצצו?", "", "🎈"]]);
+MATH_T.mul.push(...[["בכל סל יש {a} תפוחים, ויש {b} סלים. כמה תפוחים יש בסך הכל?", "", "🍎"], ["בכל חבילה יש {a} כוכבים, ויש {b} חבילות. כמה כוכבים יש בסך הכל?", "", "⭐"], ["בכל קן יש {a} ביצים, ויש {b} קנים. כמה ביצים יש בסך הכל?", "", "🥚"], ["בכל מגש יש {a} עוגיות, ויש {b} מגשים. כמה עוגיות יש בסך הכל?", "", "🍪"], ["לכל קוסם יש {a} שרביטים, ויש {b} קוסמים. כמה שרביטים יש להם ביחד?", "", "🪄"]]);
+MATH_T.div.push(...[["יש {p} עוגיות, והן מתחלקות שווה בשווה בין {b} ילדים. כמה עוגיות יקבל כל ילד?", "", "🍪"], ["יש {p} יהלומים, והם מתחלקים שווה בשווה בין {b} שקים. כמה יהלומים יהיו בכל שק?", "", "💎"], ["{p} ציפורים יושבות שווה בשווה על {b} ענפים. כמה ציפורים יושבות על כל ענף?", "", "🐦"], ["לדוב יש {p} צנצנות דבש, והוא מחלק אותן שווה בשווה בין {b} חברים. כמה צנצנות יקבל כל חבר?", "", "🍯"], ["{p} פרחים מסודרים שווה בשווה ב־{b} אגרטלים. כמה פרחים יש בכל אגרטל?", "", "🌸"]]);
+MATH_T.rate.push(...[["הספינה מפליגה במהירות {v} קילומטר בשעה במשך {t} שעות. כמה קילומטרים היא עברה?", "", ""], ["הרכבת הקסומה נוסעת במהירות {v} קילומטר בשעה במשך {t} שעות. כמה קילומטרים היא נסעה?", "", ""], ["הנשר טס במהירות {v} קילומטר בשעה במשך {t} שעות. כמה קילומטרים הוא טס?", "", ""]]);
+MATH_T.eq.push(...[["בחרתי מספר סודי. אם מכפילים אותו ב־{m} ומוסיפים {k}, התוצאה היא {r}. איזה מספר בחרתי?", "", ""], ["לקוסם יש מספר סודי. כפול {m} ועוד {k} שווה {r}. מהו המספר הסודי?", "", ""]]);
+MATH_T.legs=[["כמה רגליים יש ל־{a} כלבים ביחד?", "", "🐕", 4], ["כמה רגליים יש ל־{a} ציפורים ביחד?", "", "🐦", 2], ["כמה רגליים יש ל־{a} עכבישים ביחד?", "", "🕷️", 8], ["כמה רגליים יש ל־{a} פרפרים ביחד?", "", "🦋", 6], ["כמה רגליים יש ל־{a} חתולים ביחד?", "", "🐈", 4], ["כמה רגליים יש ל־{a} נמלים ביחד?", "", "🐜", 6], ["כמה רגליים יש ל־{a} תרנגולות ביחד?", "", "🐔", 2], ["כמה רגליים יש ל־{a} סוסים ביחד?", "", "🐎", 4]];
+MATH_T.half=[["כמה זה חצי מ־{p}?", "", ""], ["מחלקים {p} כוכבים בין שני גמדים, שווה בשווה. כמה כוכבים יקבל כל גמד?", "", ""], ["חצי מ־{p} פרחים הם אדומים. כמה פרחים אדומים יש?", "", ""]];
+MATH_T.dbl=[["כמה זה כפול {a}?", "", ""], ["לכל אחד משני האחים יש {a} יהלומים. כמה יהלומים יש להם ביחד?", "", ""], ["הקוסם הכפיל את {a} הכוכבים שלו. כמה כוכבים יש לו עכשיו?", "", ""]];
+MATH_T.seq=[["איזה מספר בא אחר כך?\n{s}, ...", "", ""], ["השלימו את הסדרה:\n{s}, ...", "", ""], ["מה המספר הבא בשורה?\n{s}, ...", "", ""]];
+MATH_H.legs=["כמה רגליים יש לחיה אחת, ואז סופרים את כולן ביחד.",""];MATH_H.half=["חצי זה לחלק לשניים שווים.",""];MATH_H.dbl=["כפול זה להוסיף את המספר לעצמו.",""];MATH_H.seq=["בדקו בכמה כל מספר גדל או קטן מהקודם.",""];
 function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
 function mfill(t,o){return t.replace(/\{(\w+)\}/g,(m,k)=>o[k]);}
 function mathRiddle(c){
+ c.recM=c.recM||[];let r=null;
+ for(let k=0;k<10;k++){r=mathRiddle1(c);if(!c.recM.includes(r.q))break;}
+ c.recM.push(r.q);if(c.recM.length>24)c.recM.shift();return r;
+}
+function mathRiddle1(c){
  const lv=c.age==="3-5"?0:c.age==="5-7"?1:2;let kind,o={},ans,vis=null;
- if(lv===0){kind=Math.random()<.6?"add":"sub";if(kind==="add"){o.a=rnd(1,4);o.b=rnd(1,5-o.a+1);ans=o.a+o.b;}else{o.a=rnd(3,7);o.b=rnd(1,o.a-1);ans=o.a-o.b;}}
- else if(lv===1){const r=Math.random();kind=r<.35?"add":r<.7?"sub":"unk";if(kind==="add"){o.a=rnd(3,12);o.b=rnd(2,20-o.a);ans=o.a+o.b;}else if(kind==="sub"){o.a=rnd(8,20);o.b=rnd(2,o.a-2);ans=o.a-o.b;}else{o.a=rnd(5,15);ans=rnd(2,o.a-2);o.c=o.a-ans;}}
- else{const r=Math.random();kind=r<.3?"mul":r<.5?"div":r<.75?"rate":"eq";
+ if(lv===0){kind=Math.random()<.6?"add":"sub";if(kind==="add"){o.a=rnd(2,4);o.b=rnd(2,4);ans=o.a+o.b;}else{o.a=rnd(4,8);o.b=rnd(2,o.a-2);ans=o.a-o.b;}}
+ else if(lv===1){const r=Math.random();kind=r<.25?"add":r<.5?"sub":r<.65?"unk":r<.8?"legs":r<.9?"half":"seq";
+  if(kind==="add"){o.a=rnd(3,12);o.b=rnd(2,20-o.a);ans=o.a+o.b;}else if(kind==="sub"){o.a=rnd(8,20);o.b=rnd(2,o.a-2);ans=o.a-o.b;}else if(kind==="unk"){o.a=rnd(5,15);ans=rnd(2,o.a-2);o.c=o.a-ans;}
+  else if(kind==="legs"){o.a=rnd(2,5);}
+  else if(kind==="half"){ans=rnd(2,10);o.p=ans*2;}
+  else{const st=rnd(1,3),s0=rnd(1,10),L=[0,1,2,3].map(i=>s0+st*i);o.s=L.join(", ");ans=s0+st*4;}}
+ else{const r=Math.random();kind=r<.2?"mul":r<.35?"div":r<.5?"rate":r<.65?"eq":r<.75?"legs":r<.85?"dbl":"seq";
   if(kind==="mul"){o.a=rnd(3,9);o.b=rnd(3,9);ans=o.a*o.b;}
   else if(kind==="div"){o.b=rnd(3,9);ans=rnd(3,9);o.p=o.b*ans;}
   else if(kind==="rate"){o.v=rnd(4,12)*5;o.t=rnd(2,6);ans=o.v*o.t;}
+  else if(kind==="legs"){o.a=rnd(3,9);}
+  else if(kind==="dbl"){o.a=rnd(12,60);ans=o.a*2;}
+  else if(kind==="seq"){const w=Math.random();let L;if(w<.4){const st=rnd(2,9),s0=rnd(2,20);L=[0,1,2,3].map(i=>s0+st*i);ans=s0+st*4;}else if(w<.7){const s0=rnd(2,4);L=[s0,s0*2,s0*4,s0*8];ans=s0*16;}else{const st=rnd(2,6),s0=rnd(30,60);L=[0,1,2,3].map(i=>s0-st*i);ans=s0-st*4;}o.s=L.join(", ");}
   else{o.m=rnd(2,6);ans=rnd(3,12);o.k=rnd(2,15);o.r=o.m*ans+o.k;}}
  const T=pick(MATH_T[kind]),H=MATH_H[kind];
+ if(kind==="legs")ans=o.a*T[3];
  if(kind==="add"||kind==="sub"||kind==="unk"||kind==="mul"||kind==="div")vis={k:kind,i:T[2],a:o.a,b:o.b,c:o.c,p:o.p,n:ans};
  const lo=Math.max(0,ans-2),hi=ans+2,h2=["התשובה היא מספר בין "+lo+" ל־"+hi+".","הַתְּשׁוּבָה הִיא מִסְפָּר בֵּין "+lo+" לְ־"+hi+"."];
- return {q:mfill(T[0],o),qv:mfill(T[1],o),a:String(ans),hint:mfill(H[0],o),hintv:mfill(H[1],o),hint2:h2[0],hint2v:h2[1],math:true,vis};
+ const nv=T[1]||EZC[T[0]]||T[0],hv=H[1]||EZC[H[0]]||H[0];
+ return {q:mfill(T[0],o),qv:mfill(nv,o),a:String(ans),hint:mfill(H[0],o),hintv:mfill(hv,o),hint2:h2[0],hint2v:h2[1],math:true,vis};
 }
 function regMath(ch){if(ch&&ch.math&&ch.qv){EZC[ch.q]=ch.qv;if(ch.hint)EZC[ch.hint]=ch.hintv||ch.hint;if(ch.hint2)EZC[ch.hint2]=ch.hint2v||ch.hint2;}}
 function mathVis(ch){
@@ -2220,19 +2249,29 @@ function mathVis(ch){
  return `<div class="mathvis" aria-hidden="true">${h}</div>`;
 }
 function nextRiddle(c,boss){const r0=nextRiddle0(c,Math.min(3,(c.mapsDone||[]).length+1+(boss?1:0)));r0.nopt=optN(c,!!boss);return r0;}
+function seenArr(){
+ if(!SAVE.seenR){let loc=[];try{loc=JSON.parse(localStorage.getItem("dream_seen")||"[]");}catch(e){}SAVE.seenR=Array.isArray(loc)?loc:[];}
+ return SAVE.seenR;
+}
+function markSeen(id,ans){
+ const a=seenArr(),i=a.indexOf(id);if(i>=0)a.splice(i,1);a.push(id);if(a.length>700)a.splice(0,a.length-700);
+ SAVE.recentA=(SAVE.recentA||[]).concat([ans]).slice(-8);
+ try{localStorage.setItem("dream_seen",JSON.stringify(a));}catch(e){}
+}
 function nextRiddle0(c,maxL){
  const yng=ageGroup(c.age)==="young";c.usedR=c.usedR||[];
- if(Math.random()<.5)return mathRiddle(c);
- const all=DB_R.filter(r=>!!r.young===yng);
- if(all.length){
-  let dp=all.map(r=>({...r,i:"d"+r.id})).filter(r=>!c.usedR.includes(r.i));
-  if(!dp.length){c.usedR=c.usedR.filter(x=>String(x)[0]!=="d");dp=all.map(r=>({...r,i:"d"+r.id}));}
-  const lv=x=>x.level||1,ok=dp.filter(x=>lv(x)<=(maxL||3));if(ok.length){const mn=Math.min(...ok.map(lv));dp=ok.filter(x=>lv(x)<=Math.max(mn,Math.min(maxL||3,mn+0)));}
-  const r=pick(dp);c.usedR.push(r.i);const o=r.opts.map(x=>String(x).trim());return {q:r.q,a:o[r.ans],hint:r.hint||"",opts:shuf(o),gone:[],db:true};
- }
- let pool=RIDDLES.map((r,i)=>({...r,i})).filter(r=>(yng?r.y:!r.y)&&!c.usedR.includes(r.i));
- if(!pool.length){c.usedR=[];pool=RIDDLES.map((r,i)=>({...r,i})).filter(r=>yng?r.y:!r.y);}
- const r=pick(pool);c.usedR.push(r.i);return {q:r.q,a:r.a,hint:r.h,opts:shuf([r.a].concat(r.w)),gone:[]};
+ if(Math.random()<.25)return mathRiddle(c);
+ const lim=maxL||3,pool=[];
+ DB_R.forEach(r=>{if(!!r.young===yng&&(r.level||1)<=lim){const o=r.opts.map(x=>String(x).trim());pool.push({id:"d"+String(r.id).slice(0,8),a:o[r.ans],mk:()=>({q:r.q,a:o[r.ans],hint:r.hint||"",opts:shuf(o),gone:[],db:true})});}});
+ RIDDLES.forEach((r,i)=>{if(!!r.y===yng)pool.push({id:"l"+i,a:String(r.a).trim(),mk:()=>({q:r.q,a:r.a,hint:r.h,opts:shuf([r.a].concat(r.w)),gone:[]})});});
+ const seen=seenArr(),ra=(SAVE.recentA||[]).slice(-6);
+ let cand=pool.filter(x=>!ra.includes(x.a));if(!cand.length)cand=pool;
+ const fresh=cand.filter(x=>seen.indexOf(x.id)<0&&!c.usedR.includes(x.id));
+ let r;
+ if(fresh.length)r=pick(fresh);
+ else{const old=cand.slice().sort((x,y)=>seen.indexOf(x.id)-seen.indexOf(y.id));r=pick(old.slice(0,Math.max(5,Math.ceil(old.length/4))));}
+ c.usedR.push(r.id);markSeen(r.id,r.a);
+ return r.mk();
 }
 function fallbackChapter(c,count){
  const hs=campHeroes(),M=campMap(c);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
@@ -3175,7 +3214,8 @@ function mkOpts(ch,wis){
  if(ch.opts&&ch.opts.length){w=ch.opts.map(x=>String(x).trim()).filter(x=>x!==ans);}
  else if(ch.math&&/^\d+$/.test(ans)){const n=+ans;const near=shuf([n-2,n-1,n+1,n+2].filter(x=>x>=0)),far=shuf([n-3,n+3,n+5,n+10,n-5,n+4,n-4,n+7,n+6,n+8].filter(x=>x>=0&&x!==n));w=near.concat(far).map(String);}
  else{w=(Array.isArray(ch.wrong)?ch.wrong:[]).map(x=>String(x).trim());}
- if(!(ch.math&&/^\d+$/.test(ans))||w.length<N-1){
+ if(/^\d+$/.test(ans)&&w.length<N-1){const n=+ans;w=w.concat(shuf([n-2,n-1,n+1,n+2,n-3,n+3,n+5,n+10,n-5,n+4,n+6,n+7].filter(x=>x>=0&&x!==n)).map(String));}
+ if(!/^\d+$/.test(ans)||w.length<N-1){
   const pool=RIDDLES.filter(r=>!!r.y===yng).map(r=>String(r.a).trim()).concat(DB_R.filter(r=>!!r.young===yng).map(r=>String(r.opts[r.ans]).trim()),RIDDLES.filter(r=>!!r.y===yng).flatMap(r=>r.w||[]));
   w=w.concat(shuf(pool),shuf(GENERIC_W));
  }
@@ -3827,6 +3867,7 @@ function devKind(){const w=Math.min(screen.width||innerWidth,screen.height||inne
  }
  if(NOSTAT)return;
  try{sbRest("dream_texts?select=key,value&limit=2000").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{TXO[x.key]=x.value;});clsApplyOver();}).catch(()=>{});}catch(e){}
+ try{sbRest("dream_nikud?select=p,n&n=not.is.null&limit=3000").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{if(x.p&&x.n&&!EZC[x.p])EZC[x.p]=x.n;});}).catch(()=>{});}catch(e){}
  try{sbRest("dream_riddles?select=id,q,opts,ans,hint,young,level&active=eq.true&limit=500").then(r=>r.ok?r.json():[]).then(a=>{(a||[]).forEach(x=>{if(Array.isArray(x.opts)&&x.opts.length===4&&x.ans>=0&&x.ans<4)DB_R.push(x);});}).catch(()=>{});}catch(e){}
  let sid="";try{sid=sessionStorage.getItem("dream_sid")||"";if(!sid){sid=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2)).slice(0,40);sessionStorage.setItem("dream_sid",sid);}}catch(e){sid=String(Date.now());}
  const dev=devKind();let last=Date.now(),sent=0;
