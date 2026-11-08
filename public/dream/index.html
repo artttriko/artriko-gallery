@@ -2317,7 +2317,7 @@ function mathVis(ch){
 /* ===== learning focus: math stories, English (speak + door), Hebrew ===== */
 const NK_SRC=[];function NK(s){if(NK_SRC.indexOf(s)<0)NK_SRC.push(s);return s;}
 const nkv=s=>EZC[s]||s;
-const FOCUS=[{id:"",l:"בלי מיקוד",d:"כל סוגי החידות והמשימות, ביחד."},{id:"math",l:"חשבון",d:"חידות חשבון בסיפור: שיקויים, אוצרות ומסעות. בלי תרגילים יבשים."},{id:"en",l:"אנגלית",d:"מילים באנגלית: מקשיבים, חוזרים אחרי המילה, ופותחים דלתות סודיות בהקלטה."},{id:"he",l:"עברית",d:"אותיות, הפכים, ריבוי, הברות והשלמת משפטים."}];
+const FOCUS=[{id:"",l:"בלי מיקוד",d:"כל סוגי החידות והמשימות, ביחד."},{id:"mix",l:"הכול ביחד",d:"חשבון, אנגלית, עברית וידע כללי, בערבוביה בתוך הסיפור."},{id:"math",l:"חשבון",d:"חידות חשבון בסיפור: שיקויים, אוצרות ומסעות. בלי תרגילים יבשים."},{id:"en",l:"אנגלית",d:"מילים באנגלית: מקשיבים, חוזרים אחרי המילה, ופותחים דלתות סודיות בהקלטה."},{id:"he",l:"עברית",d:"אותיות, הפכים, ריבוי, הברות והשלמת משפטים."}];
 FOCUS.forEach(f=>{NK(f.l);NK(f.d);});
 const ING=[["צפרדעים","f"],["פטריות","f"],["נוצות","f"],["אבנים","f"],["קונכיות","f"],["פרחים","m"],["כוכבים","m"],["פעמונים","m"],["גרגרים","m"],["עלים","m"]];
 const ADJ=[["אדומים","אדומות"],["כתומים","כתומות"],["כחולים","כחולות"],["סגולים","סגולות"],["ירוקים","ירוקות"],["צהובים","צהובות"],["לבנים","לבנות"]];
@@ -2412,6 +2412,7 @@ function focusRiddle(c,boss){
  if(c.focus==="math")return potionRiddle(c);
  if(c.focus==="he")return hebRiddle(c);
  if(c.focus==="en")return engRiddle(c,boss);
+ if(c.focus==="mix"){const k=pick(["math","he","en","gen"]);if(k==="math")return potionRiddle(c);if(k==="he")return hebRiddle(c);if(k==="en")return engRiddle(c,boss);}
  return null;
 }
 function doorHTML(ch,P){
@@ -2428,7 +2429,7 @@ function doorHTML(ch,P){
 function speakBtn(ch){return ch.say?`<div class="speakrow"><button class="btn blu" data-a="say" data-t="${esc(ch.say)}"><span>🔊 ${esc(E(EQ.hear))}</span></button><button class="btn blu" data-a="say" data-t="${esc(ch.say)}" data-slow="1"><span>🐢 ${esc(E(EQ.slow))}</span></button></div>`:"";}
 function bigBox(ch){return ch.big?`<div class="bigword" ${/[a-z]/i.test(ch.big)?`dir="ltr"`:""}>${esc(ch.big)}</div>`:"";}
 
-function nextRiddle(c,boss){const r0=(c.focus&&Math.random()<.65&&focusRiddle(c,boss))||nextRiddle0(c,Math.min(3,(c.mapsDone||[]).length+1+(boss?1:0)));r0.nopt=optN(c,!!boss);return r0;}
+function nextRiddle(c,boss){const r0=(c.focus&&(c.focus==="mix"||Math.random()<.65)&&focusRiddle(c,boss))||nextRiddle0(c,Math.min(3,(c.mapsDone||[]).length+1+(boss?1:0)));r0.nopt=optN(c,!!boss);return r0;}
 function seenArr(){
  if(!SAVE.seenR){let loc=[];try{loc=JSON.parse(localStorage.getItem("dream_seen")||"[]");}catch(e){}SAVE.seenR=Array.isArray(loc)?loc:[];}
  return SAVE.seenR;
@@ -2938,6 +2939,7 @@ function vPlay(){
   ${bed?(()=>{const H=HEART_BED[(c.sessions||0)%HEART_BED.length];return P.endHeart?`<div class="heartok">${HEART_SVG(40)}<b>שומר החלומות קיבל את מה שביקש. לילה טוב!</b></div>`:`<div class="bedheart"><div class="bh-npc">${npcSVG(H.who,c.mapId)}</div><div><b class="tt" style="color:var(--yel);font-size:1.15rem">${esc(E(H.t))}</b><p>${ezText(EZH[H.task]&&EZH[H.task][0],fill(H.read,hs,hs[0],""))}</p></div></div><div class="heartask">${ezOn()&&EZH[H.task]?`<span class="eztext" style="color:inherit">${esc(EZH[H.task][1])}</span>`:esc(fill(H.task,hs,hs[0],""))}</div><button class="btn pnk" data-a="endheart"><span>עשינו!</span></button>`;})():""}</div>
   ${finished?"":(()=>{const nb=BOSS_NODES.find(b=>b>=c.node);const left=nb!=null?nb-c.node:NODES-c.node;const what=nb!=null?"הבוס הבא":"סוף העולם";return `<div class="panel teaser"><div class="eyebrow">בפרק הבא</div><div class="tzrow"><div class="tzbox">${typeBadgeSVG(nb!=null?"boss":"meet")}</div><p><b>עוד ${left===1?"תחנה אחת":left+" תחנות"} עד ${what}!</b><br><span class="muted small">על המפה כבר רואים מה מחכה. מי יודע מה יהיה שם?</span></p></div></div>`;})()}
   <div class="panel"><div class="eyebrow">האוצר של הגיבורים</div>${hs.map(h=>`<div style="display:flex;gap:10px;align-items:center"><div style="flex:0 0 70px">${heroSVG(h,"hero")}</div><div style="min-width:0"><b>${esc(h.heroName)}</b> <span class="muted small">· דרגה ${heroLevel(h)}</span>${heartsOf(h)?` <span class="hcount">${HEART_MINI}${heartsOf(h)}</span>`:""}${h.words?` <span class="hcount" style="color:#ffe58a">לחשים: ${h.words}</span>`:""}${statRow(h)}<div class="items">${(h.items||[]).slice(-6).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" role="button" style="cursor:pointer">${itemIcon(it.icon,it.name)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||`<span>עוד אין</span>`}</div></div></div>`).join("")}</div>
+  ${finished?"":`<div class="panel" style="gap:8px"><div class="eyebrow">במה להתמקד בהמשך המסע?</div><div class="chips">${FOCUS.map(f=>`<button class="chip" data-a="cfocus" data-v="${f.id}" aria-pressed="${(c.focus||"")===f.id}">${f.l}</button>`).join("")}</div></div>`}
   ${finished?"":`<button class="btn wide" data-a="contsession"><span>${ezOn()?"מַמְשִׁיכִים לַפֶּרֶק הַבָּא עַכְשָׁיו":"ממשיכים לפרק הבא עכשיו"}</span></button>`}
   <button class="btn wide grn" data-a="endsession"><span>${finished?"סיימנו להיום":"סיימנו את הפרק להיום"}</span></button>`;
  } else if(P.phase==="upgrade")body=vUpgrade(hs);
