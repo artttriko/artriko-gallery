@@ -1023,7 +1023,8 @@ const ITEM_N={gem:"יהלום נוצץ",key:"מפתח קסום",potion:"שיקו
 const NPC_KEYS=["fox","bunny","panda","parrot","puppy","unicorn","penguin","penguinking","owl","bear","dog","door","wind","queen","frog","grandmafrog","firefly","croc","tree","moon","bird","nightbird","cloud","star","dragon","sprite","stormbeast","fogmonster","thunderbeast"];
 const AGES=[{id:"3-5",l:"3–5"},{id:"5-7",l:"5–7"},{id:"8-10",l:"8–10"},{id:"11+",l:"11+"}];
 const AGE_STYLE={"3-5":"for ages 3-5: very short simple sentences, familiar everyday words, gentle and silly, lots of sounds.","5-7":"for ages 5-7: short sentences, playful and funny, a little suspense, simple riddles.","8-10":"for ages 8-10: NOT babyish. Witty humor, real suspense and a small mystery, clever characters with personality, richer vocabulary, riddles that need real thinking (logic riddles are welcome). No baby talk, no diminutives, don't over-explain. Give the heroes meaningful choices.","11+":"for ages 11-12: never childish. Cool, adventurous tone with sharp humor, mystery and a plot twist, smart puzzles and logic riddles. Treat them like real adventurers with real decisions."};
-const MODES=[{id:"bed",l:"לפני השינה",d:"רגוע, נגמר במנוחה. בלי קפיצות."},{id:"friends",l:"מפגש חברתי או משפחתי",d:"תוסס, כל גיבור מקבל רגע, עם משימות תנועה ומשחקי קפיצות."}];
+const MODES=[{id:"bed",l:"משחק בלי תנועה",d:"רגוע וישוב: בלי משימות תנועה ובלי משחקוני ארקייד, והפרק נגמר בלילה טוב ובמנוחה."},{id:"friends",l:"משחק עם תנועה",d:"תוסס: משימות תנועה, משחקוני ארקייד, וכל גיבור מקבל רגע."}];
+const MODE_NOTE="* מצב בלי תנועה מתאים במיוחד לפני השינה. מצב עם תנועה מתאים גם למפגש חברים או משפחה.";
 const LENGTHS=[{m:5,n:2},{m:10,n:3},{m:15,n:4},{m:20,n:5}];
 const NODES=10;
 const NODE_PTS=[[72,512],[196,486],[286,428],[172,384],[62,330],[156,276],[276,236],[204,176],[92,128],[206,66]];
@@ -2856,7 +2857,7 @@ function vHome(){
   <div class="panel" style="gap:8px"><div class="eyebrow">איך ממשיכים הפעם? (אותו סיפור)</div>
    <div class="chips">${MODES.map(m=>`<button class="chip" data-a="cmode" data-v="${m.id}" aria-pressed="${(c.mode==="active"?"friends":c.mode)===m.id}">${m.l}</button>`).join("")}</div>
    <div class="chips">${FOCUS.map(f=>`<button class="chip" data-a="cfocus" data-v="${f.id}" aria-pressed="${(c.focus||"")===f.id}">${f.l}</button>`).join("")}</div>
-   <p class="muted small" style="margin:0">${esc((MODES.find(m=>m.id===(c.mode==="active"?"friends":c.mode))||MODES[0]).d)}${c.focus?" · "+esc((FOCUS.find(f=>f.id===c.focus)||{}).d||""):""}</p></div>
+   <p class="muted small" style="margin:0">${esc((MODES.find(m=>m.id===(c.mode==="active"?"friends":c.mode))||MODES[0]).d)} ${MODE_NOTE}${c.focus?" · "+esc((FOCUS.find(f=>f.id===c.focus)||{}).d||""):""}</p></div>
   <button class="btn wide grn" data-a="continue"><span>${c.sessions?"המשיכו את ההרפתקה":"התחילו את הפרק הראשון"}</span></button>
   ${partyPanel()}
   <div class="saveacts"><button class="btn sm blu" data-a="newcamp"><span>משחק חדש (${allSaves().length} מתוך ${MAX_SAVES} שמירות)</span></button><button class="btn sm ghost" data-a="savedel" data-i="0" aria-label="מחיקת שמירה"><span>🗑️ מחיקת השמירה הזו</span></button></div></section>`;
@@ -2967,6 +2968,7 @@ function vSetup(){
  <section class="panel"><h3>איזה סוג ערב?</h3>
  <div class="chips">${MODES.map(m=>`<button class="chip" data-a="smode" data-v="${m.id}" aria-pressed="${s.mode===m.id}">${m.l}</button>`).join("")}</div>
  <p class="muted small">${(MODES.find(m=>m.id===s.mode)||MODES[0]).d}</p>
+ <p class="muted small" style="margin-top:2px;opacity:.8">${MODE_NOTE}</p>
  <h3>מיקוד לימוד <span class="muted small">(לא חובה)</span></h3>
  <div class="chips">${FOCUS.map(f=>`<button class="chip" data-a="sfocus" data-v="${f.id}" aria-pressed="${(s.focus||"")===f.id}">${f.l}</button>`).join("")}</div>
  <p class="muted small">${(FOCUS.find(f=>f.id===(s.focus||""))||FOCUS[0]).d}</p>
