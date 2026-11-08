@@ -148,6 +148,7 @@ textarea{min-height:92px;resize:vertical}
 .jx{width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.45);color:#fff;font-size:20px;font-weight:900}
 .jcn{background:rgba(0,0,0,.5);color:#fff;border-radius:20px;padding:6px 12px;font-weight:900;display:flex;align-items:center;gap:4px;direction:ltr}
 .jcn i{width:16px;height:16px;background:#ffd23f;clip-path:polygon(50% 0,62% 36%,100% 38%,70% 60%,80% 100%,50% 76%,20% 100%,30% 60%,0 38%,38% 36%)}
+.jlv{background:rgba(0,0,0,.5);border-radius:20px;padding:4px 10px;font-size:1.05rem;letter-spacing:2px}
 .jhint{color:#fff;background:rgba(0,0,0,.4);border-radius:14px;padding:4px 10px;font-size:.85rem;transition:opacity 1s;direction:rtl}
 .jwrap{width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9;background:#000}
 .jwrap canvas{width:100%;height:100%;display:block}
@@ -940,6 +941,44 @@ svg.hero,.fx svg{overflow:visible}
 .saveinfo{min-width:0}.saveinfo b{display:block;overflow:hidden;text-overflow:ellipsis}
 .saveacts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .btn.ghost{background:transparent;color:#ffd7e4;border:2px solid #ffffff44;box-shadow:none}
+
+/* ===== tablet portrait: end-of-chapter in two columns ===== */
+@media (min-width:700px) and (min-height:900px) and (orientation:portrait){
+ #app[data-screen=play]>.endcols{display:block;column-count:2;column-gap:14px}
+ #app[data-screen=play]>.endcols>*{break-inside:avoid;margin:0 0 10px}
+ #app[data-screen=play]>.endcols>.arena{height:240px}
+}
+/* ===== tablet landscape: use the whole screen, no scrolling ===== */
+.endcols{display:contents}
+@media (min-width:900px) and (min-height:520px) and (orientation:landscape){
+ #app[data-screen=play],#app[data-screen=intro]{max-width:1240px;padding-block:8px 16px}
+ #app[data-screen=play]{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 14px}
+ #app[data-screen=play]>*{flex:1 1 100%;min-width:0}
+ #app[data-screen=play]>.topbar{flex:1 1 340px}
+ #app[data-screen=play]>.playhead{flex:0 1 auto;flex-wrap:nowrap}
+ #app[data-screen=play]>.playhead+.row{flex:1 1 420px}
+ #app[data-screen=play]>.playhead+.row .ib{min-height:34px;height:38px}
+ #app[data-screen=play] .pg-main>.stwrap:has(>.arena){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);column-gap:12px;row-gap:0;align-content:start;align-items:start}
+ #app[data-screen=play] .pg-main>.stwrap:has(>.arena)>*{grid-column:1;margin-bottom:8px}
+ #app[data-screen=play] .pg-main>.stwrap:has(>.arena)>.arena{grid-column:2;grid-row:1/span 6;margin:0;height:clamp(260px,calc(100vh - 190px),520px)}
+ #app[data-screen=play] .playgrid{grid-template-columns:minmax(0,1fr) minmax(200px,22%)!important;gap:12px!important}
+ #app[data-screen=play] .pg-map .mapwrap svg{max-height:calc(100vh - 220px)!important}
+ #app[data-screen=play]>.stwrap:has(>.arena){display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);column-gap:16px;row-gap:0;align-content:start;align-items:start}
+ #app[data-screen=play]>.stwrap:has(>.arena)>*{grid-column:1;margin-bottom:10px}
+ #app[data-screen=play]>.stwrap:has(>.arena)>.arena{grid-column:2;grid-row:1/span 6;margin:0;height:clamp(300px,calc(100vh - 170px),560px)}
+ #app[data-screen=play]>.stwrap:not(:has(>.arena)){max-width:980px;margin-inline:auto;width:100%}
+ #app[data-screen=play]>.mapwrap svg{max-height:30vh;width:100%}
+ #app[data-screen=play] .pg-main{min-width:0}
+ #app[data-screen=play]>.endcols{display:block;column-count:3;column-gap:14px}
+ #app[data-screen=play]>.endcols>*{break-inside:avoid;margin:0 0 10px}
+ #app[data-screen=play]>.endcols>.arena{height:250px}
+ #app[data-screen=intro]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 18px;align-items:start}
+ #app[data-screen=intro]>.topbar{grid-column:1/-1}
+ #app[data-screen=intro]>.panel{grid-column:1;grid-row:2/span 5}
+ #app[data-screen=intro]>:not(.topbar):not(.panel){grid-column:2}
+ #app[data-screen=intro] .arena{height:clamp(240px,calc(100vh - 300px),430px)}
+ #app[data-screen=intro]>.mapwrap svg{max-height:24vh;width:100%}
+}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -1321,7 +1360,7 @@ const CLOSE={
 };
 
 /* ---------- state ---------- */
-let S={screen:"splash",kids:false,showMap:true,toast:null,draft:null,setup:null,play:null,load:null,confirmDel:null};
+let S={screen:"splash",kids:false,showMap:!(innerWidth>=900&&innerHeight>=520&&innerWidth>innerHeight),toast:null,draft:null,setup:null,play:null,load:null,confirmDel:null};
 let SAVE=null;
 const LS="kubiya-save-v1";
 function defaultSave(){
@@ -2589,9 +2628,26 @@ function render(){
  if(S.info)app.insertAdjacentHTML("beforeend",itemInfo());
  if(S.toast)app.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${esc(S.toast)}</div>`);
  after();
+ try{fitScreen();}catch(e){}
  if(typeof gRender==="function")try{gRender();}catch(e){}
  try{const c0=SAVE&&SAVE.campaign;MU.lv=c0&&S.screen==="play"?Math.min(3,Math.floor((c0.node||0)/NODES*4)):0;music(themeNow());}catch(e){}
 }
+
+/* ---------- tablet: keep the whole screen in view, no scrolling ---------- */
+function fitScreen(){
+ const a=document.getElementById("app");if(!a)return;
+ const on=innerWidth>=900&&innerHeight>=520&&innerWidth>innerHeight&&(S.screen==="play"||S.screen==="intro");
+ const root=document.documentElement;
+ const set=z=>{if(z>=.999){a.style.zoom="";a.style.maxWidth="";}else{a.style.zoom=String(z);a.style.maxWidth=Math.floor(innerWidth/z-16)+"px";}};
+ if(!on){a.style.zoom="";a.style.maxWidth="";return;}
+ a.dataset.fit="1";
+ const steps=[1,.96,.92,.88,.84,.8,.76,.72,.68];let hit=steps[steps.length-1];
+ for(const z of steps){set(z);if(root.scrollHeight<=innerHeight+2){hit=z;break;}}
+ set(hit);
+}
+let _fitT=0;function fitSoon(){cancelAnimationFrame(_fitT);_fitT=requestAnimationFrame(()=>{try{fitScreen();}catch(e){}});}
+addEventListener("resize",fitSoon);addEventListener("orientationchange",fitSoon);
+try{new MutationObserver(fitSoon).observe(document.getElementById("app"),{childList:true,subtree:true});}catch(e){}
 function toast(t){if(ezOn())EZUI.forEach(([a,b])=>{t=t.split(a).join(b);});S.toast=t;render();setTimeout(()=>{if(S.toast===t){S.toast=null;const el=document.querySelector(".toast");if(el)el.remove();}},2600);}
 const SND=()=>`<button class="ib" data-a="sound" aria-pressed="${soundOn}" aria-label="${soundOn?"השתקה":"הפעלת צלילים"}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>${soundOn?`<path d="M16 8.5q2.5 3.5 0 7M18.5 6q4.5 6 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`:`<path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`}</svg></button>`;
 function topbar(extra=""){return `<div class="topbar"><button class="brand" data-a="home" aria-label="חזרה למסך הבית" title="חזרה למסך הבית">${LOGO}<span class="wm"><b class="ol">DREAM</b><small>by ARTRIKO</small></span><svg class="homeic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 L12 4 L20.5 11.5 V20 H14.5 V14 H9.5 V20 H3.5 Z" fill="#ffd23f" stroke="#1b1030" stroke-width="2.2" stroke-linejoin="round"/></svg></button><div class="tools">${extra}${["home","play","setup","intro"].includes(S.screen)?`<button class="ib shopb" data-a="quickshop" aria-label="חנות ולבוש">🛍️ ${ezOn()?"חֲנוּת":"חנות"}</button>`:""}${S.screen==="home"||S.screen==="hero"||S.screen==="play"?gemPill():""}${SND()}</div></div>`;}
@@ -2963,7 +3019,7 @@ function vPlay(){
   body=`${narrIntro()}${map}<div class="parch slide"><span class="tt">${esc(E(ch.title))}</span>${ezText(c.node===0&&!(c.sessions)?EASY_UI.open1:EASY_UI.open2,ch.opening.read)}${ezToggle()}</div>${stageBox(ch.opening.stage)}<button class="btn wide grn" data-a="next"><span>יוצאים לדרך!</span></button>`;
  } else if(P.idx>=n){
   const bed=c.mode==="bed";const finished=P.mapDone;
-  body=`<div class="arena a-${c.mapId}" style="display:flex;align-items:flex-end;direction:ltr${bed&&!finished?";background:radial-gradient(120% 80% at 50% 0%,#2a3a7a,#0f1640 80%)":""}"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,bed&&!finished?"hero":"hero cheer",bed&&!finished?"sleep":"joy")).join("")}</div>${finished?`<div class="banner">ניצחון!</div>`:""}</div>
+  body=`<div class="endcols"><div class="arena a-${c.mapId}" style="display:flex;align-items:flex-end;direction:ltr${bed&&!finished?";background:radial-gradient(120% 80% at 50% 0%,#2a3a7a,#0f1640 80%)":""}"><div class="ground"></div><div class="lineup stagger n${Math.min(hs.length,2)}" style="position:relative;z-index:1;width:100%">${hs.map(h=>heroSVG(h,bed&&!finished?"hero":"hero cheer",bed&&!finished?"sleep":"joy")).join("")}</div>${finished?`<div class="banner">ניצחון!</div>`:""}</div>
   <div class="parch slide"><span class="tt">${finished?"הממלכה ניצלה!":(bed?"לילה טוב, גיבורים":"להמשך יבוא...")}</span>${ezText(finished?EASY_UI.fin:bed?EASY_UI.bed:EASY_UI.more,ch.closing.read)}${ezToggle()}</div>${stageBox(ch.closing.stage)}
   ${bed?`<div class="panel"><div class="breath" aria-hidden="true"></div><div class="breathlbl" id="breathlbl">שואפים...</div><p class="muted small" style="text-align:center">שלוש נשימות של דרקון: שואפים באף, ונושפים לאט כמו עשן.</p></div>`:""}
   <div class="panel heartpanel"><div class="eyebrow">ספר האגדות</div><p class="small" style="color:var(--ink-dim)">ספר האגדות של ${esc(campMap(c).name)} כותב את עצמו לבד, אבל בסוף כל פרק חסרה לו שורה אחת, שרק הגיבורים יכולים למלא:</p><p class="sharq">${esc(fill(E(shareQ(c)),hs,hs[0],""))}</p><p class="muted small parent-only">שאלה פתוחה, אין תשובה נכונה. הקשיבו עד הסוף, ושתפו גם אתם רגע משלכם.</p>
@@ -2972,7 +3028,7 @@ function vPlay(){
   <div class="panel"><div class="eyebrow">האוצר של הגיבורים</div>${hs.map(h=>`<div style="display:flex;gap:10px;align-items:center"><div style="flex:0 0 70px">${heroSVG(h,"hero")}</div><div style="min-width:0"><b>${esc(h.heroName)}</b> <span class="muted small">· דרגה ${heroLevel(h)}</span>${heartsOf(h)?` <span class="hcount">${HEART_MINI}${heartsOf(h)}</span>`:""}${h.words?` <span class="hcount" style="color:#ffe58a">לחשים: ${h.words}</span>`:""}${statRow(h)}<div class="items">${(h.items||[]).slice(-6).map(it=>`<span data-a="iteminfo" data-n="${esc(it.name)}" data-i="${it.icon}" role="button" style="cursor:pointer">${itemIcon(it.icon,it.name)}${esc(E(it.name))}${it.used?" ✓":""}</span>`).join("")||`<span>עוד אין</span>`}</div></div></div>`).join("")}</div>
   ${finished?"":`<div class="panel" style="gap:8px"><div class="eyebrow">במה להתמקד בהמשך המסע?</div><div class="chips">${FOCUS.map(f=>`<button class="chip" data-a="cfocus" data-v="${f.id}" aria-pressed="${(c.focus||"")===f.id}">${f.l}</button>`).join("")}</div></div>`}
   ${finished?"":`<button class="btn wide" data-a="contsession"><span>${ezOn()?"מַמְשִׁיכִים לַפֶּרֶק הַבָּא עַכְשָׁיו":"ממשיכים לפרק הבא עכשיו"}</span></button>`}
-  <button class="btn wide grn" data-a="endsession"><span>${finished?"סיימנו להיום":"סיימנו את הפרק להיום"}</span></button>`;
+  <button class="btn wide grn" data-a="endsession"><span>${finished?"סיימנו להיום":"סיימנו את הפרק להיום"}</span></button></div>`;
  } else if(P.phase==="upgrade")body=vUpgrade(hs);
  else if(P.phase==="heart")body=vHeart(hs,c);
  else{const st0=ch.stations[P.idx],Ld=stLeader(st0,hs),tc=(Ld&&Ld.params.primary)||"#ffd23f";const tn=Ld?((ezOn()?(isF(Ld)?"תּוֹרָהּ שֶׁל ":"תּוֹרוֹ שֶׁל "):(isF(Ld)?"תורה של ":"תורו של "))+Ld.heroName).replace(/["\\<>]/g,""):"";const inner=`<div class="stwrap" style="--tc:${tc};--tn:&quot;${esc(tn)}&quot;">${vStation(st0,hs,c)}</div>`;const m=(st0.type==="boss"&&P.phase!=="result"?"":map);body=m?`<div class="playgrid"><div class="pg-main">${inner}</div><div class="pg-map">${m}</div></div>`:inner;}
@@ -3304,7 +3360,7 @@ const JTH={ice:{sky:["#bfe9ff","#eaf8ff"],hill:["#a9d4ee","#8dc1e0"],top:"#f2fbf
  sky:{sky:["#7fc0ff","#ffd6ec"],hill:["#ffffff","#f3eaff"],top:"#fff4c2",body:"#ffb36b",spk:"#ff7ab6",bush:"star"}};
 let JG=null;
 function jOpen(c,L,hs,P){
- const k=(P.jplan&&P.jplan[P.idx]||{}).kind;return k==="catch"?jOpenCatch(c,L,hs,P):k==="lanes"?jOpenLanes(c,L,hs,P):jOpenPlat(c,L,hs,P);
+ const k=(P.jplan&&P.jplan[P.idx]||{}).kind;return k==="catch"?jOpenCatch(c,L,hs,P):k==="lanes"?jOpenLanes(c,L,hs,P):k==="flappy"?jOpenFlappy(c,L,hs,P):k==="whack"?jOpenWhack(c,L,hs,P):jOpenPlat(c,L,hs,P);
 }
 function jOpenPlat(c,L,hs,P){
  if(JG)return;
@@ -3312,7 +3368,7 @@ function jOpenPlat(c,L,hs,P){
  const lv=jGen(tier,seed),th=JTH[c.mapId]||JTH.ice;
  const ov=document.createElement("div");ov.className="jov";ov.setAttribute("role","dialog");ov.setAttribute("aria-label",jt("משחק קפיצות","מִשְׂחַק קְפִיצוֹת"));
  const dashBtn=tier===2?`<button class="jb jd" data-j="dash" aria-label="${jt("זינוק","זִינּוּק")}">⚡</button>`:"";
- ov.innerHTML=`<div class="jbar"><button class="jx" data-j="exit" aria-label="${jt("יציאה","יְצִיאָה")}">✕</button><span class="jcn"><i></i> <b>0</b>/${lv.total}</span><span class="jhint">${jt("רצים לדגל! אפשר גם לסובב את המכשיר","רָצִים לַדֶּגֶל! אֶפְשָׁר גַּם לְסוֹבֵב אֶת הַמַּכְשִׁיר")}</span></div>
+ ov.innerHTML=`<div class="jbar"><button class="jx" data-j="exit" aria-label="${jt("יציאה","יְצִיאָה")}">✕</button><span class="jcn"><i></i> <b>0</b>/${lv.total}</span><span class="jlv" aria-label="${jt("פסילות","פְּסִילוֹת")}">❤️❤️❤️</span><span class="jhint">${jt("רצים לדגל! אפשר גם לסובב את המכשיר","רָצִים לַדֶּגֶל! אֶפְשָׁר גַּם לְסוֹבֵב אֶת הַמַּכְשִׁיר")}</span></div>
  <div class="jwrap"><canvas width="${JW*2}" height="${JH*2}"></canvas></div>
  <div class="jctl"><div class="jlr"><button class="jb" data-j="left" aria-label="${jt("שמאלה","שְׂמֹאלָה")}">◀</button><button class="jb" data-j="right" aria-label="${jt("ימינה","יָמִינָה")}">▶</button></div><div class="jrr">${dashBtn}<button class="jb jj" data-j="jump" aria-label="${jt("קפיצה","קְפִיצָה")}">⬆</button></div></div>
  <div class="jend" hidden></div>`;
@@ -3337,17 +3393,19 @@ function jOpenPlat(c,L,hs,P){
   if(m==="resume"){G.paused=false;ov.querySelector(".jend").hidden=true;G.last=performance.now();}
   if(m==="leave"){jClose(G,false);}
   if(m==="finish"){jClose(G,true);}
+  if(m==="failclose"){jClose(G,false,G.pen);}
  });
  G.P=P;G.idx=P.idx;G.cls=c;
  G.last=performance.now();G.raf=requestAnimationFrame(t=>jLoop(G,t));
  setTimeout(()=>{const h=ov.querySelector(".jhint");if(h)h.style.opacity=0;},5200);
 }
 function jPause(G){if(G.done)return;G.paused=true;G.keys={};G.touch={};const e=G.ov.querySelector(".jend");e.hidden=false;e.innerHTML=`<div class="jcard"><h3>${jt("לעצור?","לַעֲצוֹר?")}</h3><button class="btn wide grn" data-j="resume"><span>${jt("ממשיכים לשחק","מַמְשִׁיכִים לְשַׂחֵק")}</span></button><button class="btn wide ghost" data-j="leave"><span>${jt("יוצאים בלי פרס","יוֹצְאִים בְּלִי פְּרָס")}</span></button></div>`;}
-function jClose(G,reward){
+function jClose(G,reward,pen){
  cancelAnimationFrame(G.raf);removeEventListener("keydown",G.kd);removeEventListener("keyup",G.ku);
  G.ov.remove();document.body.classList.remove("jlock");JG=null;
  const P=S.play;if(P){(P.jd=P.jd||{})[G.idx]=true;}
  if(reward&&G.gain)earn(G.gain);
+ if(pen){SAVE.gems=Math.max(0,gems()-pen);try{persist();}catch(e){}}
  render();
 }
 function jDie(G){
@@ -3414,7 +3472,7 @@ function jWin(G){
  if(G.done)return;G.done=true;G.keys={};G.touch={};sfx("fanfare");
  const frac=G.lv.total?G.coins/G.lv.total:1;G.gain=(G.tier===2?3:2)+(frac>=.7?1:0);
  const e=G.ov.querySelector(".jend");e.hidden=false;
- e.innerHTML=`<div class="jcard"><div class="jstars">${[0,1,2].map(i=>`<span class="${frac>=[0,.4,.75][i]?"on":""}">★</span>`).join("")}</div><h3>${jt("הגעתם לדגל! כל הכבוד!","הִגַּעְתֶּם לַדֶּגֶל! כׇּל הַכָּבוֹד!")}</h3><p>${jt("אספתם","אֲסַפְתֶּם")} ${G.coins} ${jt("מתוך","מִתּוֹךְ")} ${G.lv.total}</p><button class="btn wide grn" data-j="finish"><span>${jt(`לוקחים ${G.gain} יהלומים`,`לוֹקְחִים ${G.gain} יְהָלוֹמִים`)}</span></button></div>`;
+ e.innerHTML=`<div class="jcard"><div class="jstars">${[0,1,2].map(i=>`<span class="${frac>=[0,.4,.75][i]?"on":""}">★</span>`).join("")}</div><h3>${G.wt?jt("הצלחתם! כל הכבוד!","הִצְלַחְתֶּם! כׇּל הַכָּבוֹד!"):jt("הגעתם לדגל! כל הכבוד!","הִגַּעְתֶּם לַדֶּגֶל! כׇּל הַכָּבוֹד!")}</h3><p>${jt("אספתם","אֲסַפְתֶּם")} ${G.coins} ${jt("מתוך","מִתּוֹךְ")} ${G.lv.total}</p><button class="btn wide grn" data-j="finish"><span>${jt(`לוקחים ${G.gain} יהלומים`,`לוֹקְחִים ${G.gain} יְהָלוֹמִים`)}</span></button></div>`;
 }
 function jDraw(G){
  const {cx,lv,p,th,cam}=G;const sx=G.shake>0?(Math.random()-.5)*6:0;
@@ -3454,18 +3512,20 @@ function jLoop(G,t){
  if(JG!==G)return;
  const dt=Math.min(.05,(t-G.last)/1000||0);G.last=t;
  if(!G.paused&&!document.hidden){let acc=dt;while(acc>0){const s=Math.min(acc,1/120);if(!G.done)(G.stepf||jStep)(G,s);else{G.parts.forEach(q=>{q.l-=s;});}acc-=s;}}
- (G.drawf||jDraw)(G);G.raf=requestAnimationFrame(tt=>jLoop(G,tt));
+ (G.drawf||jDraw)(G);jLives(G);G.raf=requestAnimationFrame(tt=>jLoop(G,tt));
 }
 /* ---------- שני משחקונים נוספים: תפיסת כוכבים וריצה בנתיבים ---------- */
+const JKINDS=["plat","catch","flappy","lanes","whack"];
+function jOff(c){let h=0;String(c.mapId||"").split("").forEach(ch=>{h=(h*7+ch.charCodeAt(0))|0;});return Math.abs(h)%JKINDS.length;}
 function jPlan(P,c,hs){
  P.jplan=P.jplan||{};let q=P.jplan[P.idx];
- if(!q){q=P.jplan[P.idx]={kind:["plat","catch","lanes"][(c.jgame||0)%3],hid:hs[(c.jturn||0)%hs.length].id};c.jturn=(c.jturn||0)+1;c.jgame=(c.jgame||0)+1;try{persist();}catch(e){}}
+ if(!q){q=P.jplan[P.idx]={kind:JKINDS[((c.jgame||0)+jOff(c))%JKINDS.length],hid:hs[(c.jturn||0)%hs.length].id};c.jturn=(c.jturn||0)+1;c.jgame=(c.jgame||0)+1;try{persist();}catch(e){}}
  return {q,L:hs.find(h=>h.id===q.hid)||hs[0]};
 }
 function jShell(c,L,P,hint,ctl,total,tier){
  const th=JTH[c.mapId]||JTH.ice;
  const ov=document.createElement("div");ov.className="jov";ov.setAttribute("role","dialog");
- ov.innerHTML=`<div class="jbar"><button class="jx" data-j="exit" aria-label="${jt("יציאה","יְצִיאָה")}">✕</button><span class="jcn"><i></i> <b>0</b>/${total}</span><span class="jhint">${hint}</span></div><div class="jwrap"><canvas width="${JW*2}" height="${JH*2}"></canvas></div><div class="jctl">${ctl}</div><div class="jend" hidden></div>`;
+ ov.innerHTML=`<div class="jbar"><button class="jx" data-j="exit" aria-label="${jt("יציאה","יְצִיאָה")}">✕</button><span class="jcn"><i></i> <b>0</b>/${total}</span><span class="jlv" aria-label="${jt("פסילות","פְּסִילוֹת")}">❤️❤️❤️</span><span class="jhint">${hint}</span></div><div class="jwrap"><canvas width="${JW*2}" height="${JH*2}"></canvas></div><div class="jctl">${ctl}</div><div class="jend" hidden></div>`;
  document.body.appendChild(ov);document.body.classList.add("jlock");
  const cv=ov.querySelector("canvas"),cx=cv.getContext("2d");cx.scale(2,2);
  const img=new Image();let ok=false;
@@ -3481,12 +3541,14 @@ function jShell(c,L,P,hint,ctl,total,tier){
  ov.addEventListener("pointerdown",e=>{const b=e.target.closest("[data-j]");if(!b||!LIST.includes(b.dataset.j))return;e.preventDefault();try{b.setPointerCapture(e.pointerId);}catch(_){}tp(b,true);});
  const up=e=>{const b=e.target.closest&&e.target.closest("[data-j]");if(b)tp(b,false);};
  ov.addEventListener("pointerup",up);ov.addEventListener("pointercancel",up);ov.addEventListener("lostpointercapture",up);
+ ov.addEventListener("pointerdown",e=>{if(!G.tap||G.done||G.paused||e.target.closest("[data-j]"))return;const r=cv.getBoundingClientRect();G.tap((e.clientX-r.left)/r.width*JW,(e.clientY-r.top)/r.height*JH);});
  ov.addEventListener("contextmenu",e=>e.preventDefault());
  ov.addEventListener("click",e=>{const b=e.target.closest("[data-j]");if(!b)return;const m=b.dataset.j;
   if(m==="exit")jPause(G);
   if(m==="resume"){G.paused=false;ov.querySelector(".jend").hidden=true;G.last=performance.now();}
   if(m==="leave")jClose(G,false);
-  if(m==="finish")jClose(G,true);});
+  if(m==="finish")jClose(G,true);
+  if(m==="failclose")jClose(G,false,G.pen);});
  G.raf=requestAnimationFrame(t=>jLoop(G,t));
  setTimeout(()=>{const h=ov.querySelector(".jhint");if(h)h.style.opacity=0;},5200);
  return G;
@@ -3511,7 +3573,7 @@ function jOpenCatch(c,L,hs,P){
  if(JG)return;const tier=jTier(c),goal=[10,14,18][tier];
  const G=jShell(c,L,P,jt("תופסים כוכבים! מזיזים ימינה ושמאלה","תּוֹפְסִים כּוֹכָבִים! מְזִיזִים יָמִינָה וּשְׂמֹאלָה"),`<div class="jlr"><button class="jb" data-j="left" aria-label="${jt("שמאלה","שְׂמֹאלָה")}">◀</button><button class="jb" data-j="right" aria-label="${jt("ימינה","יָמִינָה")}">▶</button></div>`,goal,tier);
  Object.assign(G,{goal,px:JW/2,face:1,items:[],sp:[270,300,330][tier],fall:[95,130,175][tier],gap:[1,.8,.6][tier],bad:[0,.18,.28][tier],spawn:.5,bonk:0});
- G.stepf=jStepCatch;G.drawf=jDrawCatch;
+ G.wt=1;G.stepf=jStepCatch;G.drawf=jDrawCatch;
 }
 function jStepCatch(G,dt){
  G.t+=dt;const K=G.keys,T=G.touch,ax=((K.right||T.right)?1:0)-((K.left||T.left)?1:0);
@@ -3572,9 +3634,103 @@ function jDrawLanes(G){
  cx.fillStyle="rgba(0,0,0,.25)";cx.fillRect(40,JH-18,JW-80,6);cx.fillStyle="#ffd23f";cx.fillRect(40,JH-18,(JW-80)*Math.min(1,d/G.D),6);
  jDrawParts(G);cx.restore();
 }
+
+/* ---------- שלוש פסילות: מי שנכשל שלוש פעמים חוזר למסך הראשי ומפסיד יהלומים ---------- */
+const JLIVES=3;
+function jLives(G){
+ if(G._ld!==G.deaths){G._ld=G.deaths;const e=G.ov.querySelector(".jlv");if(e)e.textContent="❤️".repeat(Math.max(0,JLIVES-G.deaths))+"🖤".repeat(Math.min(JLIVES,G.deaths));}
+ if(!G.done&&G.deaths>=JLIVES)jFail(G);
+}
+function jFail(G){
+ if(G.done)return;G.done=true;G.keys={};G.touch={};sfx("lose");
+ G.pen=Math.min(gems(),[1,2,2][G.tier]||2);
+ const e=G.ov.querySelector(".jend");e.hidden=false;
+ e.innerHTML=`<div class="jcard"><div style="font-size:2.6rem">🖤🖤🖤</div><h3>${jt("נגמרו הפסילות","נִגְמְרוּ הַפְּסִילוֹת")}</h3><p>${G.pen?jt(`הפעם לא הצלחתם, ומפסידים ${G.pen===1?"יהלום אחד":G.pen+" יהלומים"}. בפעם הבאה זה יילך!`,`הַפַּעַם לֹא הִצְלַחְתֶּם, וּמַפְסִידִים ${G.pen===1?"יַהֲלוֹם אֶחָד":G.pen+" יְהָלוֹמִים"}. בַּפַּעַם הַבָּאָה זֶה יֵלֵךְ!`):jt("הפעם לא הצלחתם. בפעם הבאה זה יילך!","הַפַּעַם לֹא הִצְלַחְתֶּם. בַּפַּעַם הַבָּאָה זֶה יֵלֵךְ!")}</p><button class="btn wide grn" data-j="failclose"><span>${jt("חוזרים למשחק","חוֹזְרִים לַמִּשְׂחָק")}</span></button></div>`;
+}
+/* ---------- משחקון ארבע: מרחפים בין העמודים ---------- */
+function jOpenFlappy(c,L,hs,P){
+ if(JG)return;const tier=jTier(c),N=[8,11,14][tier];
+ const G=jShell(c,L,P,jt("לוחצים כדי לרחף למעלה, ועוברים בין העמודים","לוֹחֲצִים כְּדֵי לְרַחֵף לְמַעְלָה, וְעוֹבְרִים בֵּין הָעַמּוּדִים"),`<div></div><div class="jrr"><button class="jb jj" data-j="jump" aria-label="${jt("ריחוף","רִחוּף")}">⬆</button></div>`,N,tier);
+ const R=jRng((String(c.id||"x").split("").reduce((a,ch)=>a*31+ch.charCodeAt(0)|0,3)+(P.idx+5)*811+(c.sessions||0)*23)|0);
+ const gap=[190,160,138][tier],spc=[270,245,225][tier],pil=[];
+ for(let i=0;i<N;i++)pil.push({x:560+i*spc,gy:80+gap/2+R()*(JH-160-gap),w:54,pass:false});
+ Object.assign(G,{N,gap,sp:[115,138,160][tier],grav:[820,950,1060][tier],fl:[300,315,325][tier],pil,y:JH/2,vy:0,inv:0,goal:N});
+ G.flap=()=>{if(G.done||G.paused)return;G.vy=-G.fl;sfx("pop");};
+ G.onpress=m=>{if(m==="jump"||m==="left"||m==="right"||m==="down")G.flap();};
+ G.tap=()=>G.flap();
+ G.wt=1;G.stepf=jStepFlappy;G.drawf=jDrawFlappy;
+}
+function jStepFlappy(G,dt){
+ G.t+=dt;if(G.inv>0)G.inv-=dt;
+ G.vy+=G.grav*dt;if(G.vy>520)G.vy=520;G.y+=G.vy*dt;
+ for(const q of G.pil)q.x-=G.sp*dt;
+ const hx=120;
+ for(const q of G.pil){
+  if(!q.pass&&q.x+q.w<hx-14){q.pass=true;G.coins++;sfx("pop");jCount(G);jBurst(G,hx,G.y-20,"#ffe36b",6);}
+  if(G.inv<=0&&hx+14>q.x&&hx-14<q.x+q.w){if(G.y-34<q.gy-G.gap/2||G.y>q.gy+G.gap/2){jFlapHit(G);return;}}
+ }
+ if(G.inv<=0&&(G.y>JH-8||G.y-34<0)){jFlapHit(G);return;}
+ jParts(G,dt);
+ if(G.coins>=G.N)jWin(G);
+}
+function jFlapHit(G){
+ G.deaths++;G.shake=.25;sfx("lose");jBurst(G,120,G.y-20,"#fff",10);
+ const nx=G.pil.find(q=>!q.pass&&q.x+q.w>100);G.y=nx?nx.gy+16:JH/2;G.vy=0;G.inv=1.1;
+ if(nx&&nx.x<260){const d=260-nx.x;G.pil.forEach(q=>{q.x+=d;});}
+}
+function jDrawFlappy(G){
+ const cx=G.cx,th=G.th;cx.save();cx.setTransform(2,0,0,2,(G.shake>0?(Math.random()-.5)*6:0)*2,0);
+ jBg(G,G.t*G.sp);
+ for(const q of G.pil){const t=q.gy-G.gap/2,b=q.gy+G.gap/2;
+  cx.fillStyle=th.body;cx.fillRect(q.x,0,q.w,t);cx.fillRect(q.x,b,q.w,JH-b);
+  cx.fillStyle=th.top;cx.fillRect(q.x-5,t-14,q.w+10,14);cx.fillRect(q.x-5,b,q.w+10,14);
+  cx.fillStyle="rgba(255,255,255,.25)";cx.fillRect(q.x+8,0,8,t-14);cx.fillRect(q.x+8,b+14,8,JH-b);
+  if(!q.pass)jStar(cx,q.x+q.w/2,q.gy,12);}
+ cx.save();cx.translate(120,G.y);cx.rotate(Math.max(-.4,Math.min(.5,G.vy/700)));cx.translate(-120,-G.y);
+ if(!(G.inv>0&&Math.floor(G.t*14)%2))jHeroAt(G,120,G.y,46,false);cx.restore();
+ jDrawParts(G);cx.restore();
+}
+/* ---------- משחקון חמש: מכים בכוכבים מהחורים ---------- */
+function jOpenWhack(c,L,hs,P){
+ if(JG)return;const tier=jTier(c),goal=[8,12,16][tier];
+ const G=jShell(c,L,P,jt("נוגעים בכוכבים שקופצים מהחורים, ולא בסלעים!","נוֹגְעִים בַּכּוֹכָבִים שֶׁקּוֹפְצִים מֵהַחוֹרִים, וְלֹא בַּסְּלָעִים!"),`<div></div><div></div>`,goal,tier);
+ const holes=[];for(let r=0;r<2;r++)for(let k=0;k<3;k++)holes.push({x:200+k*150,y:160+r*120,t:0,k:"s",life:0});
+ Object.assign(G,{goal,holes,life:[1.7,1.3,1.0][tier],gap:[.95,.75,.58][tier],bad:[0,.25,.35][tier],spawn:.6});
+ G.tap=(x,y)=>{
+  for(const h of G.holes){if(h.t>0&&Math.hypot(x-h.x,y-(h.y-18))<46){h.t=0;
+   if(h.k==="s"){G.coins++;sfx("pop");jBurst(G,h.x,h.y-30,"#ffe36b",8);jCount(G);}
+   else{G.deaths++;G.shake=.2;sfx("lose");jBurst(G,h.x,h.y-30,"#bbb",8);}
+   return;}}
+ };
+ G.wt=1;G.stepf=jStepWhack;G.drawf=jDrawWhack;
+}
+function jStepWhack(G,dt){
+ G.t+=dt;G.spawn-=dt;
+ if(G.spawn<=0){const free=G.holes.filter(h=>h.t<=0);if(free.length){const h=free[Math.floor(Math.random()*free.length)];h.t=G.life;h.life=G.life;h.k=Math.random()<G.bad?"b":"s";}G.spawn=G.gap*(.8+Math.random()*.5);}
+ for(const h of G.holes)if(h.t>0)h.t-=dt;
+ jParts(G,dt);
+ if(G.coins>=G.goal)jWin(G);
+}
+function jDrawWhack(G){
+ const cx=G.cx,th=G.th;cx.save();cx.setTransform(2,0,0,2,(G.shake>0?(Math.random()-.5)*6:0)*2,0);
+ jBg(G,0);cx.fillStyle=th.top;cx.fillRect(0,110,JW,250);cx.fillStyle=th.body;cx.fillRect(0,122,JW,238);
+ for(const h of G.holes){
+  cx.fillStyle="rgba(0,0,0,.35)";cx.beginPath();cx.ellipse(h.x,h.y,48,16,0,0,7);cx.fill();
+  if(h.t>0){const a=Math.min(1,(h.life-h.t)/.18,h.t/.18),up=a*34;
+   cx.save();cx.beginPath();cx.rect(h.x-60,h.y-90,120,90+2);cx.clip();
+   if(h.k==="s")jStar(cx,h.x,h.y-up+4,26);
+   else{cx.translate(h.x,h.y-up+2);cx.fillStyle="#7a7f8c";cx.beginPath();cx.arc(0,-8,22,0,7);cx.fill();cx.fillStyle="#a9afbd";for(let i=0;i<8;i++){const an=i*Math.PI/4;cx.beginPath();cx.moveTo(Math.cos(an)*18,-8+Math.sin(an)*18);cx.lineTo(Math.cos(an)*29,-8+Math.sin(an)*29);cx.lineTo(Math.cos(an+.3)*18,-8+Math.sin(an+.3)*18);cx.fill();}cx.fillStyle="#2a2f3a";cx.fillRect(-9,-14,5,5);cx.fillRect(4,-14,5,5);}
+   cx.restore();}
+  cx.fillStyle=th.top;cx.beginPath();cx.ellipse(h.x,h.y+2,48,14,0,0,3.15);cx.fill();
+ }
+ jHeroAt(G,56,350,44,false);
+ jDrawParts(G);cx.restore();
+}
 function jumpIntro(L,c,kind){
  const tier=jTier(c);let ttl,tx;
  if(kind==="catch"){ttl=["משחקון תפיסה","מִשְׂחַקּוֹן תְּפִיסָה"];tx=tier===0?["תופסים כוכבים שנופלים מהשמיים!","תּוֹפְסִים כּוֹכָבִים שֶׁנּוֹפְלִים מֵהַשָּׁמַיִם!"]:["תופסים כוכבים, ומתחמקים מסלעים שנופלים!","תּוֹפְסִים כּוֹכָבִים, וּמִתְחַמְּקִים מִסְּלָעִים שֶׁנּוֹפְלִים!"];}
+ else if(kind==="flappy"){ttl=["משחקון ריחוף","מִשְׂחַקּוֹן רִחוּף"];tx=["לוחצים כדי לרחף למעלה, ומחליקים בין העמודים בלי לגעת בהם! שלוש פסילות, ונגמר המשחקון.","לוֹחֲצִים כְּדֵי לְרַחֵף לְמַעְלָה, וּמַחֲלִיקִים בֵּין הָעַמּוּדִים בְּלִי לָגַעַת בָּהֶם! שָׁלוֹשׁ פְּסִילוֹת, וְנִגְמָר הַמִּשְׂחַקּוֹן."];}
+ else if(kind==="whack"){ttl=["משחקון חורים","מִשְׂחַקּוֹן חוֹרִים"];tx=tier===0?["נוגעים בכוכבים שקופצים מהחורים, מהר לפני שהם נעלמים!","נוֹגְעִים בַּכּוֹכָבִים שֶׁקּוֹפְצִים מֵהַחוֹרִים, מַהֵר לִפְנֵי שֶׁהֵם נֶעֱלָמִים!"]:["נוגעים בכוכבים שקופצים מהחורים, ולא בסלעים! שלוש פסילות, ונגמר המשחקון.","נוֹגְעִים בַּכּוֹכָבִים שֶׁקּוֹפְצִים מֵהַחוֹרִים, וְלֹא בַּסְּלָעִים! שָׁלוֹשׁ פְּסִילוֹת, וְנִגְמָר הַמִּשְׂחַקּוֹן."];}
  else if(kind==="lanes"){ttl=["משחקון ריצה","מִשְׂחַקּוֹן רִיצָה"];tx=["רצים בשלושה נתיבים: מחליפים נתיב, אוספים כוכבים ועוקפים מכשולים!","רָצִים בִּשְׁלוֹשָׁה נְתִיבִים: מַחֲלִיפִים נָתִיב, אוֹסְפִים כּוֹכָבִים וְעוֹקְפִים מִכְשׁוֹלִים!"];}
  else{ttl=["משחקון קפיצות","מִשְׂחַקּוֹן קְפִיצוֹת"];tx=[["רצים, קופצים ואוספים כוכבים עד הדגל!","רָצִים, קוֹפְצִים וְאוֹסְפִים כּוֹכָבִים עַד הַדֶּגֶל!"],["קופצים מעל השיחים והפערים, ואוספים כוכבים!","קוֹפְצִים מֵעַל הַשִּׂיחִים וְהַפְּעָרִים, וְאוֹסְפִים כּוֹכָבִים!"],["שביל מסוכן! קפיצות מדויקות, פלטפורמות נופלות, וזינוק ⚡ באוויר.","שְׁבִיל מְסֻכָּן! קְפִיצוֹת מְדֻיָּקוֹת, פְּלַטְפוֹרְמוֹת נוֹפְלוֹת, וְזִינּוּק ⚡ בָּאֲוִיר."]][tier];}
  return `<div class="panel jintro" style="text-align:center;align-items:center"><div class="eyebrow">${jt(ttl[0],ttl[1])}</div><div style="width:84px;margin:0 auto">${heroSVG(L,"hero")}</div><p style="font-weight:900;font-size:1.1rem">${jt(isF(L)?"תורה של":"תורו של",isF(L)?"תּוֹרָהּ שֶׁל":"תּוֹרוֹ שֶׁל")} ${esc(L.heroName)} ${jt("לשחק!","לְשַׂחֵק!")}</p><p>${tx[ezOn()?1:0]}</p><button class="btn wide grn" data-a="jstart"><span>${jt("מתחילים!","מַתְחִילִים!")}</span></button><button class="btn wide ghost" data-a="jskip"><span>${jt("מדלגים על המשחקון","מְדַלְּגִים עַל הַמִּשְׂחַקּוֹן")}</span></button></div>`;
