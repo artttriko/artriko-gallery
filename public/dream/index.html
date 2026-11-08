@@ -1010,6 +1010,7 @@ svg.hero,.fx svg{overflow:visible}
 .jzl.used .jring,.jzr.used .jring{opacity:0}
 .jstk{position:fixed;z-index:4;width:calc(92px*var(--jk));height:calc(92px*var(--jk));margin:calc(-46px*var(--jk)) 0 0 calc(-46px*var(--jk));border-radius:50%;border:3px solid rgba(255,255,255,.85);background:rgba(255,255,255,.18);pointer-events:none}
 .jstk i{position:absolute;left:50%;top:50%;width:calc(44px*var(--jk));height:calc(44px*var(--jk));margin:calc(-22px*var(--jk)) 0 0 calc(-22px*var(--jk));border-radius:50%;background:rgba(255,255,255,.7);border:3px solid #fff}
+.dtop>b{white-space:nowrap}.dtop .rcb{white-space:nowrap;flex:0 0 auto;width:auto;height:auto;border-radius:999px;padding:6px 10px;font-size:.85rem}.dtop>div{flex-wrap:nowrap;min-width:0}@media(max-width:700px){.rcl{display:none}}@media(max-width:560px){.dtop>b{display:none}}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -3074,7 +3075,7 @@ if(!d.origP)d.origP={...d.result.params};
  if(T.hue&&(p[T.k]||"none")!=="none")cols+=`<div class="drow" aria-label="צבע הפריט"><b class="drl">צבע</b>${HUES.map(h=>`<button class="swatch ${h?"":"orig"}" style="background:${h?`hsl(${h},85%,58%)`:"conic-gradient(#ff4d6d,#ffd23f,#4fe36b,#3ec2ff,#a978ff,#ff4d6d)"}" data-a="mset" data-k="${T.hue}" data-v="${h}" aria-pressed="${(p[T.hue]||0)===h}" aria-label="${h?"צבע אחר":"צבע מקורי"}"></button>`).join("")}</div>`;
  if(T.col2)cols+=dRow(T.col2[0],T.col2[1],p[T.col2[0]],"צבע 2");
  return `<div class="dress" role="dialog" aria-label="חדר הלבשה">
- <div class="dtop"><div style="display:flex;gap:6px;align-items:center"><button class="ib" data-a="dressrand">ערבוב</button>${gemPill()}${d.existing?(lvInfo(d.xp||0).lv>=MAS_LV?`<button class="chip" data-a="rcopen" data-id="${d.id}">🔄 החלפת תפקיד · 50 💎</button>`:`<button class="chip" data-a="rcnote" style="opacity:.6">🔄 החלפת תפקיד · מדרגה ${MAS_LV}</button>`):""}</div><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
+ <div class="dtop"><div style="display:flex;gap:6px;align-items:center"><button class="ib" data-a="dressrand">ערבוב</button>${gemPill()}${d.existing?(lvInfo(d.xp||0).lv>=MAS_LV?`<button class="chip rcb" data-a="rcopen" data-id="${d.id}">🔄<span class="rcl"> החלפת תפקיד ·</span> 50 💎</button>`:`<button class="chip rcb" data-a="rcnote" style="opacity:.6" aria-label="החלפת תפקיד מדרגה ${MAS_LV}">🔄<span class="rcl"> החלפת תפקיד ·</span> ${MAS_LV}</button>`):""}</div><b class="ol">חדר הלבשה</b><button class="btn sm grn" data-a="dressdone"><span>סיום</span></button></div>
  <div class="dmain">
   <div class="dside">${L.map(t=>dSide(t,p,fem,t.id===tab)).join("")}</div>
   <div class="dstage"><div class="dspot"></div>${tab==="style"?`<div class="silwrap">${heroSVG({...fake,xp:xpAt(TOPLV),stats:{str:3,wis:3,luck:3}},"hero "+(styleOK(d.xp)?"":"silh"))}<div class="silnote">${styleOK(d.xp)?"החליפה הנדירה נחשפה! אפשר לפתוח אותה":"החליפה הנדירה נחשפת בדרגה "+TOPLV+", הדרגה הגבוהה ביותר. עכשיו: דרגה "+lvInfo(d.xp||0).lv}</div></div>`:heroSVG(fake,"hero")}</div>
