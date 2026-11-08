@@ -982,6 +982,19 @@ svg.hero,.fx svg{overflow:visible}
  #app[data-screen=intro] .arena{height:clamp(240px,calc(100vh - 300px),430px)}
  #app[data-screen=intro]>.mapwrap svg{max-height:24vh;width:100%}
 }
+/* ===== worlds 4-6 ===== */
+.a-desert{background:radial-gradient(120% 80% at 50% 0%,#ffe9a8,#f5a85a 78%)}
+.a-ocean{background:linear-gradient(#58d3f0,#0d4d8f 88%)}
+.a-space{background:radial-gradient(120% 80% at 50% 0%,#3b2a8a,#0a0830 80%)}
+.a-desert .ground{background:#f2c77a}.a-ocean .ground{background:#e9d49a}.a-space .ground{background:#6a6f9a}
+.a-desert:not(.pk)::before{background:radial-gradient(circle,rgba(255,240,200,.9) 1.6px,transparent 2.6px) 0 0/70px 60px;animation:dustA 7s linear infinite}
+@keyframes dustA{to{background-position:140px 30px}}
+.a-desert:not(.pk)::after{background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.3) 50%,transparent 65%) 0 0/300% 100%;animation:sheen 6s ease-in-out infinite,snowB 9s linear infinite}
+.a-ocean:not(.pk)::before{background:radial-gradient(circle,transparent 3px,rgba(255,255,255,.75) 3.6px,rgba(255,255,255,.2) 5px,transparent 5.6px) 10px 0/60px 90px,radial-gradient(circle,transparent 2px,rgba(255,255,255,.7) 2.6px,transparent 4px) 40px 40px/80px 110px;animation:bubA 6s linear infinite}
+@keyframes bubA{to{background-position:10px -90px,40px -70px}}
+.a-ocean:not(.pk)::after{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.18) 45%,transparent 60%) 0 0/260% 100%;animation:snowB 10s linear infinite}
+.a-space:not(.pk)::before{background:radial-gradient(circle,#fff 1.4px,transparent 2.2px) 8px 14px/64px 70px,radial-gradient(circle,#ffe9a8 1.2px,transparent 2px) 40px 44px/90px 80px;animation:twinkle 2.4s ease-in-out infinite alternate}
+.a-space:not(.pk)::after{background:radial-gradient(ellipse 80px 30px at 60px 40px,rgba(180,120,255,.28),transparent 70%) 0 0/260px 120px;animation:mistA 30s linear infinite}
 </style>
 
 <div id="app" dir="rtl" lang="he"></div>
@@ -1121,7 +1134,59 @@ const MAPS={
    T("מגדל הכוכבים","meet","פופו הדרקון הקטן יושב בראש המגדל. 'הבאתם את הכוכבים?' הוא שואל בעיניים גדולות. השמיים עוד חשוכים.","דברו בשקט. כבו או עמעמו את האור בחדר.",{ask:"איפה כל אחד מכם רוצה לתלות כוכב בשמיים?"},"אחד אחד, $N {תלה|תלתה|תלו} את הכוכבים, ופופו נשף עליהם אש קטנה וחמה. השמיים מתמלאים אור, וכל הילדים בעולם חולמים חלומות טובים. השמיים ניצלו!","","כתר הכוכבים","crown","dragon","הבאתם את הכוכבים?")
   ]}
 };
-const MAP_ORDER=["ice","swamp","sky"];
+/* ===== עולמות 4-6: מדבר, ים, חלל. קשים יותר, ממשיכים את המסע עד דרגה 20 ===== */
+Object.assign(MAPS,{
+ desert:{name:"ממלכת החול",desc:"golden desert, tall dunes, a small pyramid, a green oasis with palm trees, a camel caravan, a giant sphinx cat, a scorpion guardian",
+  thumb:"#ffd98a",campTitle:"שעון החול האבוד",
+  premise:"פעם, במדבר זהוב וחם, היה נווה קסום עם נחל צלול. את הנחל שמרה הנסיכה שמשית, ובידיה שעון חול ענק שסופר את הזמן של כל המדבר. יום אחד השעון נשבר, החול נשפך לכל הכיוונים, והנחל נעלם. המדבר עצר במקום, בלי זמן ובלי מים. רק גיבורים חזקים ומנוסים במיוחד יכולים לאסוף את החול. ואז {הגיע|הגיעה|הגיעו} לגבול המדבר $N...",
+  goal:"לאסוף את החול של שעון החול ולהחזיר את הנחל לנווה",
+  st:[
+   T("הדיונה הגבוהה","dice","$N {הגיע|הגיעה|הגיעו} אל שולי המדבר. השמש חמה והחול זהוב. מול העיניים עומדת דיונה ענקית, וכל צעד עליה שוקע ונגלש למטה. מי שמטפס מהר מדי... מתגלגל חזרה!","דברו לאט, כאילו חם מאוד, והתנשפו קצת.",{what:"לטפס על הדיונה בלי להחליק",difficulty:"easy"},"צעד, ועוד צעד... $L [טיפס|טיפסה] עד הפסגה, ומשם רואים את כל המדבר הזהוב!","שששש! $L [החליק|החליקה] על החול כמו על מגלשה. עד שהגענו למטה, היה חול בכל מקום!","נעלי חול","boots","camel","לא ממהרים, עולים לאט!"),
+   T("הספינקס החתול","riddle","על אבן גדולה יושב חתול ענק עם כתר זהב, ומביט בכם בעיניים ירוקות. 'מיאו,' הוא אומר, 'אף אחד לא עובר כאן בלי לפתור את החידה של הספינקס!'","קול רך ומגרגר. הוסיפו 'מיאו' בין המשפטים.",{},"'מיאו! חכמים מאוד!' הספינקס מזיז את הזנב, והשביל נפתח.","הספינקס מגרגר ולוחש את התשובה. 'אתן לכם לעבור... אבל רק אחרי שכולם יגידו מיאו!'","קמע החתול","amulet","cat","מיאו! קודם חידה!"),
+   T("הריצה על החול החם","physical","החול כל כך חם, שאי אפשר לדרוך עליו עם כל כף הרגל. צריך לרוץ מהר על קצות האצבעות, עד לצל של הדקל!","התנשפו, ונפנפו בידיים כאילו חם מאוד.",{action:"רוצו במקום על קצות האצבעות, כאילו החול חם מאוד, עד שאספור עד 10!",calm:"לכו לאט על קצות האצבעות בחדר, כאילו החול פושר ונעים."},"הגענו לצל של דקל! החול כבר לא חם, ונושבת רוח קרירה.","","מניפת דקל","leaf","fox","אוי חם! רצים איתי!"),
+   T("שני שבילים במדבר","choice","השביל מתפצל לשניים. שמאלה, מערה קרירה עם ציורים עתיקים על הקירות. ימינה, בריכה קטנה עם מים כחולים ודקלים מסביב.","תנו לילדים להתייעץ ביניהם ולהחליט יחד.",{options:[{label:"נכנסים למערה",result:"על קיר המערה מצוירת מפה קטנה, ומסומן עליה איקס גדול. $N {לקח|לקחה|לקחו} אותה בזהירות."},{label:"הולכים אל הבריכה",result:"המים קרירים ונעימים, ו$N {שתה|שתתה|שתו} לגימה. פתאום כל העייפות נעלמת!"}]},"","","מפת הנווה","scroll","parrot","לאן ממשיכים?"),
+   T("העקרב השומר","boss","בין שתי דיונות עומד עקרב ענק, עם צבתות גדולות וזנב מתולתל. 'צ'ק צ'ק! זה השטח שלי! אף אחד לא עובר, כי אני שומר כאן על החול השבור!'","דברו בקול שורק וחד, והראו צבתות עם הידיים.",{what:"לשכנע את העקרב לשחרר את החול",hpName:"עקשנות",hit:["$L [סיפר|סיפרה] בדיחה על עקרב, והעקרב צוחק עם הצבתות!","$L [עשה|עשתה] ריקוד קטן, והעקרב מנסה לרקוד גם!","$L [הושיט|הושיטה] לעקרב משקה קר, והוא מחייך!"],miss:["צ'ק צ'ק! העקרב מסובב את הזנב ומפספס. עוד ניסיון!","העקרב מפנה גב ומתעלם. לא נורא, ממשיכים!"]},"העקרב מחייך ומשחרר את החול. 'סליחה,' הוא אומר, 'פחדתי שמישהו ייקח אותו. קחו קצת, ואל תשכחו אותי!'","","צבת העקרב","shield","scorpion","צ'ק צ'ק! אף אחד לא עובר!"),
+   T("סופת החול","dice","רוח חמה מרימה ענני חול ענקיים, והכול נהיה צהוב. צריך להתקדם נגד הרוח, צעד אחרי צעד, בלי להיסחף.","נשפו חזק על הילדים, ובקשו שיחזיקו ידיים.",{what:"להתקדם נגד סופת החול",difficulty:"hard"},"$L [התכופף|התכופפה] נמוך, ו$N {התקדם|התקדמה|התקדמו} צעד אחרי צעד, עד שהסופה נחלשה.","הרוח הרימה את הכובעים ואת כל החול! אבל כולם התחבקו חזק, והסופה חלפה.","צעיף חול","scarf","wind","ווּוּש! אני מעיפה אתכם!"),
+   T("רוח המנורה","riddle","בין הדיונות מונחת מנורה זהובה, ומתוכה יוצאת רוח זוהרת. 'אני ממלאת משאלות,' היא לוחשת, 'אבל קודם צריך לפתור את החידה שלי!'","קול מסתורי וקסום, ובסוף כל משפט שרקו קצת.",{},"'משאלה התגשמה!' צועקת הרוח, ושביל של כוכבים זוהרים נפתח בחול.","הרוח צוחקת ולוחשת את התשובה. 'עכשיו אתם יודעים,' היא אומרת, 'וגם זו משאלה.'","מנורת הקסם","gem","sprite","אני ממלאת משאלות... אחרי חידה!"),
+   T("שיירת הגמלים","physical","שיירת גמלים ארוכה עוברת בין הדיונות. כדי להצטרף אליה, צריך ללכת כמו גמל: ברכיים גבוהות, גב כפוף ותנועה מתנדנדת!","הדגימו בעצמכם, הילדים יאהבו.",{action:"לכו כמו גמלים בחדר: גב כפוף, צעדים איטיים ומתנדנדים!",calm:"לכו לאט ובשקט כמו גמל ישן, ונשמו עמוק."},"הגמלים מרימים ראש ומתחילים ללכת איתכם. השיירה מובילה אתכם אל הפירמידה!","","פעמון הגמל","badge","camel","מצטרפים לשיירה?"),
+   T("גולם החול","boss","מולכם קם פתאום גולם עצום מחול, עם עיניים כחולות זוהרות. 'בררררם! אסור להיכנס לארמון! החול שלי, והשעון שלי!'","דברו בקול עמוק ואיטי, ודרכו בכבדות במקום.",{what:"להרגיע את גולם החול",hpName:"זעם חול",hit:["$L [עמד|עמדה] במקום והחזיק חזק, והגולם מתחיל להתפורר מצחוק!","$L [שר|שרה] שיר ערש, והגולם מפהק ומתיישב!","$L [הביא|הביאה] לו כוס מים קרים, והגולם מזיל דמעה של חול!"],miss:["בררם! הגולם מניף יד אבל מחטיא. עוד ניסיון!","הגולם מתפרק ונבנה מחדש, ומתבלבל. ממשיכים!"]},"הגולם מתיישב ונרגע. 'סליחה,' הוא רוטן, 'פחדתי שהשעון ישבר שוב.' הוא פותח את שער הארמון.","","לב הגולם","crystal","golem","בררם! אסור להיכנס!"),
+   T("ארמון החול","meet","בתוך הארמון יושבת הנסיכה שמשית, ובידיה שעון חול שבור. 'החול נשפך,' היא לוחשת, 'והנחל נעלם.' אבל רגע... ל$L יש בקבוק קסום מלא חול זהוב, ושקית קטנה שנוצצת...","האטו, דברו בשקט. תנו לילדים להציע רעיונות.",{ask:"איך נעזור לנסיכה לתקן את שעון החול?"},"$L [מזג|מזגה] את החול בזהירות, והכול חוזר לזרום בתוך השעון! הוא מתחיל לתקתק, והנחל חוזר לנווה. הנסיכה צוחקת: 'המדבר ניצל!'","","כתר החול","crown","princess","אתם תעזרו לי?")
+  ]},
+ ocean:{name:"מעמקי הים",desc:"deep blue ocean, coral reef, bubbles, a friendly turtle, an octopus guardian, a glowing jellyfish, a sunken shell palace and a mermaid queen",
+  thumb:"#5fd0e8",campTitle:"הפנינה שנעלמה",
+  premise:"פעם, מתחת לגלים, חיה מלכת הים, והיא שמרה על פנינה ענקית שמאירה את כל המעמקים. יום אחד הפנינה התגלגלה הרחק, והים נהיה חשוך וקר. הדגים התחבאו, והבועות הפסיקו לרקוד. רק גיבורים אמיצים וחכמים במיוחד יכולים לצלול ולהחזיר אותה. ואז {הגיע|הגיעה|הגיעו} אל החוף $N...",
+  goal:"למצוא את הפנינה ולהאיר מחדש את הים",
+  st:[
+   T("הצלילה הראשונה","dice","$N {הגיע|הגיעה|הגיעו} אל החוף. הגלים מתנפצים, ומתחת למים נראה שער של אלמוגים. כדי לעבור, צריך לעצור נשימה, לצלול ולשחות מתחת לגל גדול!","הכניסו אוויר ללחיים ודברו כמו מתחת למים.",{what:"לצלול מתחת לגל הגדול",difficulty:"easy"},"$L [עצר|עצרה] נשימה, צלל וצללה... ויצא בצד השני עם חיוך ועם צדף קטן ביד.","בלופ! הגל הפיל את $L לקצף, אבל כולם צחקו, והגל גם דחף אותם קדימה!","מסכת צלילה","badge","fish","בלוב! צוללים אחריי!"),
+   T("הצב הזקן","riddle","על סלע שוכב צב ענק, עם קונכייה מלאה בחלזונות. 'לאט לאט,' הוא אומר, 'אף אחד לא עובר כאן בלי לפתור את החידה שלי!'","קול איטי וישן, ולקחו נשימה בין המילים.",{},"'לאט לאט, וחכמים מאוד!' הצב מחייך ומזיז את הקונכייה מהדרך.","הצב מגרד בראש ולוחש את התשובה. 'אתן לכם לעבור... אבל רק אחרי שכולם יתנועעו כמו צבים!'","קונכיית חוכמה","shield","turtle","לאט לאט... קודם חידה!"),
+   T("ריקוד הדגים","physical","להקת דגים צבעונית שוחה סביב הגיבורים. 'מי ששוחה איתנו,' הם מבטיחים, 'נראה לו איפה הפנינה!'","תנועות גל עם הידיים, ובועות בפה.",{action:"שחו באוויר כמו דגים: ידיים כמו סנפירים, ותנועות גל, סביב החדר, עד שאספור עד 10!",calm:"שכבו על הגב ושחו לאט עם הידיים, כמו דג מנומנם."},"הדגים מסתובבים מסביב ומצביעים בסנפיר לכיוון המעמקים. הפנינה שם איפשהו!","","סנפיר קסום","feather","fish","שוחים איתנו?"),
+   T("שני מעברים","choice","שני מעברים מתחת למים. אחד נראה כמו מערה מלאה באלמוגים זוהרים. השני הוא זרם חם שנוסע במהירות.","תנו לילדים להתייעץ ביניהם ולהחליט יחד.",{options:[{label:"נכנסים למערת האלמוגים",result:"האלמוגים זוהרים בכל הצבעים, ו$N {מצא|מצאה|מצאו} ביניהם מפתח קטן שמסתתר בצדף."},{label:"רוכבים על הזרם",result:"ווּוּש! הזרם סוחף את כולם למרחוק, ובדרך אפשר לספור מאה דגים!"}]},"","","מפתח הצדף","key","crab","אני הולך הצידה, ואתם?"),
+   T("התמנון הענק","boss","מתוך הצללים יוצא תמנון ענק עם שמונה זרועות. 'בלוּבּ! אף אחד לא עובר! אספתי את כל הבועות של הים, והן שלי!'","דברו בקול בועתי, והזיזו את הידיים כמו זרועות.",{what:"לשכנע את התמנון לשחרר את הבועות",hpName:"חמדנות",hit:["$L [שיחק|שיחקה] איתו תופסת, והתמנון צוחק בשמונה ידיים!","$L [הראה|הראתה] לו קסם עם צדף, והתמנון מתפעל!","$L [חיבק|חיבקה] זרוע אחת שלו, והתמנון מסמיק!"],miss:["בלוּבּ! התמנון מסתתר מאחורי סלע. עוד ניסיון!","הזרועות מתערבבות אחת בשנייה, והוא מתבלבל. ממשיכים!"]},"התמנון משחרר את הבועות, והן עולות כמו פעמונים. 'סליחה,' הוא אומר, 'פשוט אהבתי אותן. קחו קצת, ושחקו איתי מדי פעם!'","","בועת אומץ","potion","octopus","בלוּבּ! הבועות שלי!"),
+   T("המערבולת","dice","מערבולת ענקית מסתובבת במים ומושכת הכול פנימה. כדי להתקדם, צריך לשחות בכל הכוח נגד הזרם.","סובבו את הידיים במעגלים גדולים.",{what:"לשחות נגד המערבולת",difficulty:"hard"},"$L [שחה|שחתה] בכל הכוח, ו$N {התקדם|התקדמה|התקדמו} צעד אחרי צעד, עד שהמערבולת נרגעה.","המערבולת סובבה את כולם כמו כביסה! אבל בסוף היא נחלשה והשליכה אותם קדימה.","חבל שחייה","scarf","wind","ווּוּוּש! אני מסתובבת!"),
+   T("כוכב הים המנומנם","riddle","על הקרקעית שוכב כוכב ים גדול וצהוב, ומביט בכם בעיניים עגולות. 'אני יודע הכול,' הוא מהרהר, 'אבל אספר רק למי שפותר את החידה שלי!'","קול מנומנם, ופיהוקים בין המשפטים.",{},"'כוכב ים אומר: כל הכבוד!' הוא מרים זרוע ומפנה את הדרך.","כוכב הים מפהק ולוחש את התשובה. 'אל תגלו לאף אחד,' הוא מבקש, 'שאני לא ישן באמת.'","כוכב ים","star","star","זזזז... קודם חידה!"),
+   T("ריקוד המדוזות","physical","מדוזות זוהרות מרחפות סביב הגיבורים, ומאירות את החושך. 'מי שרוקד איתנו,' הן מזמזמות, 'יקבל אור לדרך!'","תנועות רכות ואיטיות, וקול זמזום.",{action:"התנועעו כמו מדוזות: ידיים למעלה ולמטה, גוף רך, ותנועות איטיות בכל החדר!",calm:"עמדו במקום והניפו את הידיים לאט למעלה ולמטה, כמו מדוזה רדומה."},"המדוזות זוהרות בחוזקה ומאירות את השביל אל ארמון הצדפים.","","אור מדוזה","crystal","sprite","זוהרים ורוקדים!"),
+   T("הכריש הגדול","boss","מולכם שוחה כריש ענק עם שיניים לבנות. 'גררר! אני הכי מפחיד בים! אף אחד לא נכנס לארמון בלי לפחד ממני!'","שאגו בקול עמוק, והראו שיניים עם הידיים.",{what:"להפוך את הכריש לחבר",hpName:"גאווה",hit:["$L [חייך|חייכה] אליו בלי פחד, והכריש נבוך!","$L [סיפר|סיפרה] לו בדיחה, והכריש מגחך בשיניים!","$L [ליטף|ליטפה] לו את הסנפיר, והוא מגרגר כמו חתול!"],miss:["גררר! הכריש שוחה סביב ולא מתרשם. עוד ניסיון!","הכריש מנסה להיראות מפחיד, אבל מועד באצבע. ממשיכים!"]},"הכריש מגחך ונכנע. 'טוב, טוב,' הוא אומר, 'אני לא באמת מפחיד, אני סתם בודד.' הוא פותח את שער הארמון.","","שן הכריש","badge","shark","גררר! אף אחד לא עובר!"),
+   T("ארמון הצדפים","meet","בתוך ארמון של צדפים יושבת מלכת הים, עם שיער ירוק־כחול ועיניים עצובות. 'הפנינה שלי נעלמה,' היא לוחשת, 'והים חשוך.' אבל רגע... ל$L יש צדף זוהר קטן, וכוכב ים מנצנץ...","האטו, דברו בשקט. תנו לילדים להציע רעיונות.",{ask:"איך נעזור למלכה למצוא את הפנינה?"},"$L [פתח|פתחה] את הצדף הקטן, ובתוכו... הפנינה! היא התגלגלה לשם ונתקעה. האור חוזר לכל הים, והדגים יוצאים לרקוד. המלכה צוחקת: 'הים ניצל!'","","כתר הפנינה","crown","mermaid","אתם תעזרו לי?")
+  ]},
+ space:{name:"שיר הכוכבים",desc:"outer space, colorful planets, glowing stars, asteroids, a friendly robot, a green alien, a hungry black hole, a spaceship and a giant singing machine",
+  thumb:"#2a1a6a",campTitle:"השיר של הכוכבים",
+  premise:"פעם, הרחק בחלל, שרו הכוכבים שיר לילה טוב לכל היקום. אבל מכונת השירים הענקית של רובי הרובוט התקלקלה, והכוכבים הפסיקו לשיר ועמעמו. עכשיו היקום שקט וחשוך. רק גיבורים אמיצים, חכמים ומנוסים במיוחד יכולים לתקן את המכונה. ואז {הגיע|הגיעה|הגיעו} אל החללית $N...",
+  goal:"לתקן את מכונת השירים ולהחזיר את שיר הכוכבים",
+  st:[
+   T("ההמראה","dice","$N {נכנס|נכנסה|נכנסו} אל חללית קטנה. כדי להמריא צריך ללחוץ על כפתור ההמראה, אבל הכפתור תקוע, והמנוע מרעיש!","ספרו לאחור מעשר, ובסוף עשו קול של מנוע.",{what:"להמריא אל החלל",difficulty:"easy"},"$L [לחץ|לחצה] בדיוק בזמן, והחללית נשפכת לשמיים עם בום קטן!","הבום היה גדול מדי, והחללית קפצה פעמיים לפני שהמריאה! אבל עכשיו כולם בחלל.","קסדת חלל","shield","puppy","הב הב! ספירה לאחור!"),
+   T("החייזר החכם","riddle","על אסטרואיד קטן יושב חייזר ירוק עם עיניים ענקיות. 'בליפ בלופ,' הוא אומר, 'אף אחד לא עובר כאן בלי לפתור את החידה שלי!'","קול גבוה ומצחיק, עם 'בליפ בלופ' בין המשפטים.",{},"'בליפ! חכמים כמו חייזרים!' הוא מנופף באנטנות ומפנה את הדרך.","החייזר מגרד באנטנה ולוחש את התשובה. 'אתן לכם לעבור... אבל רק אחרי שכולם יגידו בליפ בלופ!'","קמע החייזר","amulet","alien","בליפ! קודם חידה!"),
+   T("ההליכה בלי כוח משיכה","physical","בתוך החללית אין כוח משיכה, והכול מרחף! כדי להגיע לדלת, צריך ללכת כמו אסטרונאוטים: צעד איטי וגבוה, וידיים מרחפות.","דברו לאט ומרחפים, כאילו מתחת למים.",{action:"לכו כמו אסטרונאוטים בחדר: צעדים איטיים וגבוהים, ידיים מרחפות, ובכל צעד קפיצה קטנה!",calm:"ריחפו לאט בחדר, ידיים פרושות, כמו אסטרונאוטים מנומנמים."},"הגעתם אל הדלת ומרחפים פנימה. הכול נראה קטן ויפה מכאן.","","נעלי ריחוף","boots","robot","ביפ! מרחפים איתי?"),
+   T("שני שבילים בחלל","choice","השביל בין הכוכבים מתפצל לשניים. אחד עובר דרך אבק זוהר שמנצנץ, והשני עובר ליד כוכב ענק שמסתובב כמו קרוסלה.","תנו לילדים להתייעץ ביניהם ולהחליט יחד.",{options:[{label:"עוברים באבק הזוהר",result:"האבק מנצנץ סביב כולם, ונדבק לבגדים כמו אור קטן."},{label:"עוברים ליד הכוכב המסתובב",result:"הכוכב מסתובב כמו קרוסלה, וכולם צוחקים על כל סיבוב."}]},"","","אבק כוכבים","crystal","star","לאן ממשיכים?"),
+   T("החור השחור הרעב","boss","מולכם מסתובב חור שחור ענק, עם עיניים גדולות ופה פעור. 'מממ... אני רעב!' הוא רוטן. 'אני בולע את כל הכוכבים!'","דברו בקול עמוק, וצפצפו בבטן כאילו היא ריקה.",{what:"להרגיע את החור השחור",hpName:"רעב",hit:["$L [סיפר|סיפרה] לו סיפור מצחיק, והחור מתגלגל מצחוק!","$L [שר|שרה] לו שיר ערש, והחור מפהק!","$L [הביא|הביאה] לו חטיף קוסמי, והוא ממלמל 'מממ'!"],miss:["החור השחור שואף חזק, וכל הכובעים עפים... עוד ניסיון!","הוא מפהק פיהוק ענק, אבל לא נרגע. ממשיכים!"]},"החור השחור משחרר גיהוק קטן ונרדם. 'סליחה,' הוא ממלמל, 'פשוט הייתי רעב.' מאחוריו נראית תחנת הכוכבים.","","מגן כבידה","shield","voidmonster","מממ... אני רעב!"),
+   T("גשם המטאורים","dice","גשם של אבנים זוהרות יורד מהשמיים. כדי להמשיך, צריך להתחמק מכל אחת מהן.","קפצו ממקום למקום, והצביעו על אבנים דמיוניות.",{what:"להתחמק מגשם המטאורים",difficulty:"hard"},"$L [התחמק|התחמקה] מכל אבן, ו$N {עבר|עברה|עברו} את הגשם בלי שריטה!","בום! אבן אחת פגעה בכובע של $L, אבל כולם צחקו וממשיכים הלאה.","שביל המטאור","gem","alien","בליפ! מטאורים!"),
+   T("רובוט השומר","riddle","מול הגיבורים עומד רובוט ענק שנועל את תחנת הכוכבים. עיניו נדלקות בכחול. 'ביפ. נדרשת סיסמה: התשובה לחידה.'","קול רובוטי ושטוח, מילה אחרי מילה.",{},"'ביפ! סיסמה נכונה!' הרובוט מזיז את זרועו, והשער נפתח.","הרובוט מצפצף ולוחש את התשובה. 'עכשיו אתם יודעים,' הוא אומר, 'ביפ ביפ.'","מפתח הרובוט","key","robot","ביפ! נדרשת סיסמה!"),
+   T("ריקוד הלוויינים","physical","כדי להפעיל את המכונה, צריך להסתובב סביבה כמו לוויינים, בסיבובים קבועים, ולצפצף בכל סיבוב!","הדגימו בעצמכם, הילדים יאהבו.",{action:"הסתובבו במעגל סביב חפץ בחדר כמו לוויינים, ובכל סיבוב אמרו ביפ!",calm:"הסתובבו לאט סביב עצמכם כמו כוכב לכת ישן, ונשמו עמוק."},"המכונה מתחילה לזמזם, ואורות קטנים נדלקים אחד אחרי השני.","","לוויין קטן","gem","star","מסתובבים סביבי!"),
+   T("הסופה הקוסמית","boss","בקצה התחנה מתנשא ענן קוסמי אפור וזועף. 'בום! אני הסופה של החלל! אף אחד לא מתקרב למכונת השירים!'","שאגו כמו רעם, ונענעו את הידיים כמו ברקים.",{what:"להרגיע את הסופה הקוסמית",hpName:"סערה",hit:["$L [עמד|עמדה] חזק כמו סלע, והסופה נחלשת!","$L [שר|שרה] שיר שקט, והסופה מתחילה להירגע!","$L [פרש|פרשה] ידיים ועצר ברק שלם!"],miss:["בום! הרעם מסובב את $L כמו סביבון. ממשיכים!","הברקים מנצנצים, אבל אף אחד לא מוותר!"]},"הסופה מתפוגגת והופכת לענן קטן ונחמד. 'סליחה,' היא ממלמלת, 'פשוט פחדתי שהשירים ייעלמו.' מולכם נפתחת מכונת השירים.","","קמע הסופה","gem","thunderbeast","בום! אף אחד לא עובר!"),
+   T("מכונת השירים","meet","ליד מכונת השירים יושב רובי הרובוט, עם ברגים קטנים בידיו. 'המכונה שלי נשברה,' הוא מצפצף בעצב, 'והכוכבים כבר לא שרים.' אבל רגע... ל$L יש מפתח ברגים קסום, ופעמון זוהר...","האטו, דברו בשקט. תנו לילדים להציע רעיונות.",{ask:"איך נעזור לרובי לתקן את מכונת השירים?"},"$L [הידק|הידקה] בורג אחד, ועוד אחד, והמכונה מתחילה לזמזם! הכוכבים מתחילים לשיר, ושיר לילה טוב מתפשט בכל היקום. רובי מוחא כפיים: 'היקום ניצל!'","","כתר הכוכבים","crown","robot","אתם תעזרו לי?")
+  ]}
+});
+
+const MAP_ORDER=["ice","swamp","sky","desert","ocean","space"];
 /* ---------- grown-up versions of the worlds (ages 8+) ---------- */
 const MAPS_OLD={
  ice:{name:"מצודת הכפור",campTitle:"אבן השמש האבודה",goal:"למצוא את אבן השמש ולגלות מי לקח אותה",
@@ -1171,7 +1236,7 @@ const _mapCache={};
 
 /* ---------- locks: test phase opens everything with one parent code ---------- */
 const UNLOCK_CODE="2405";
-const STYLE_TAG={ice:{young:"אגדת חורף מתוקה",old:"תעלומה קפואה"},swamp:{young:"הרפתקת לילה מצחיקה",old:"מסתורין בחושך"},sky:{young:"מסע צבעוני בשמיים",old:"מרדף בין העננים"}};
+const STYLE_TAG={ice:{young:"אגדת חורף מתוקה",old:"תעלומה קפואה"},swamp:{young:"הרפתקת לילה מצחיקה",old:"מסתורין בחושך"},sky:{young:"מסע צבעוני בשמיים",old:"מרדף בין העננים"},desert:{young:"הרפתקת חול וחום",old:"מסע במדבר הבוער"},ocean:{young:"צוללים אל הים",old:"תעלומה במעמקים"},space:{young:"טיול בין הכוכבים",old:"משימה בחלל"}};
 function U(){SAVE.unlocks=SAVE.unlocks||{maps:[],done:[],items:false,create:false};return SAVE.unlocks;}
 function mapOpen(id){if(String(id).startsWith("c_"))return true;const i=MAP_ORDER.indexOf(id);const u=U();return i<=0||u.maps.includes(id)||u.done.includes(MAP_ORDER[i-1]);}
 const PREMIUM_OLD={eyes:["star","cool"],mouth:["cat"],head:["wizard","horns","mushrooms","star"],back:["butterfly"],pet:["dragon","owl"],hair:["curly"],weapon:["hammer"]};
@@ -1290,7 +1355,7 @@ function clsSig(k,slot,v,lv=1){const c=CLS[k];return !!c&&((slot==="weapon"&&c.w
 function effS(h,k){const raw=statOf(h,k),b=((clsOf(h)||{}).perk||{})[k]||0;let v=Math.min(3,raw+b);heroNodes(h).forEach(n=>{v+=(n.pk||{})[k]||0;});return Math.min(5,v);}
 function clsMatch(h,type){const c=clsOf(h);return !!c&&c.task.includes(type);}
 function clsLeader(n,hs,type){const base=hs[leaderIdx(n,hs.length)];if(!base||clsMatch(base,type))return base;const fit=hs.filter(h=>clsMatch(h,type));if(!fit.length||n%2)return base;return fit[n%fit.length];}
-function legendOK(){return MAP_ORDER.every(m=>U().done.includes(m));}
+function legendOK(){return MAP_ORDER.slice(0,3).every(m=>U().done.includes(m));}
 function gems(){return SAVE.gems||0;}
 const GEM=(w=18)=>`<svg viewBox="0 0 24 24" width="${w}" height="${w}" aria-hidden="true"><path d="M5 9 L9 4 H15 L19 9 L12 20 Z" fill="#3ee0ff" stroke="${O}" stroke-width="2" stroke-linejoin="round"/><path d="M5 9 H19 M9 4 L10.5 9 L12 20 L13.5 9 L15 4" fill="none" stroke="${O}" stroke-width="1.2"/><path d="M8 7 l2 -1.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 function gemPill(){return `<span class="gempill" aria-label="${gems()} יהלומים">${GEM(18)}<b>${gems()}</b></span>`;}
@@ -1338,6 +1403,9 @@ function mapOf(id,age){
 
 /* ---------- movement tasks woven into the story (active and friends modes) ---------- */
 const MOVES={
+ desert:[{t:"החול החם! רצים במקום על קצות האצבעות, מהר מהר!",n:15,u:"צעדי ריצה"},{t:"הולכים כמו גמלים: גב כפוף וצעדים מתנדנדים בחדר.",n:12,u:"צעדי גמל"},{t:"סופת חול! מתכופפים נמוך ואז קופצים גבוה, שוב ושוב.",n:10,u:"כפיפות וקפיצה"},{t:"מטפסים על הדיונה: הרמות ברכיים גבוהות במקום.",n:14,u:"הרמות ברכיים"},{t:"העקרב מתקרב! עומדים על רגל אחת בלי ליפול.",n:10,u:"שניות על רגל אחת"}],
+ ocean:[{t:"שוחים עם הדגים! מזיזים את הידיים כמו סנפירים ועוברים בחדר.",n:15,u:"תנועות שחייה"},{t:"צוללים עמוק! מתכופפים עד הרצפה ועולים לאט חזרה.",n:10,u:"צלילות"},{t:"הזרם דוחף אתכם! הולכים צעד אחד קדימה ושניים הצידה, כמו סרטן.",n:12,u:"צעדי סרטן"},{t:"המדוזות רוקדות! מסתובבים לאט סביב עצמכם עם ידיים למעלה.",n:8,u:"סיבובים"},{t:"קופצים מעל הגלים עם ברכיים גבוהות!",n:12,u:"קפיצות גל"}],
+ space:[{t:"הליכה בלי כוח משיכה! צעדים איטיים וגבוהים, ידיים מרחפות.",n:12,u:"צעדי חלל"},{t:"ספירה לאחור להמראה! מתכופפים, וקופצים כמו טיל בעשר.",n:10,u:"קפיצות טיל"},{t:"מתחמקים ממטאורים! קופצים ימינה ושמאלה מהר.",n:14,u:"קפיצות צד"},{t:"מסתובבים כמו לוויין סביב חפץ בחדר.",n:8,u:"סיבובים"},{t:"קפיצות כוכב באוויר: ידיים ורגליים לצדדים!",n:10,u:"קפיצות כוכב"}],
  swamp:[{t:"גחליליות ישנות על השביל! עוברים על קצות האצבעות, בשקט שקט, כדי לא להעיר אותן.",n:12,u:"צעדי חתול"},{t:"הבוץ מושך את הרגליים למטה! עוברים אותו בהרמות ברכיים גבוהות.",n:12,u:"הרמות ברכיים"},{t:"הדבורים של הביצה רוקדות! מחקים אותן ומסתובבים במקום עם ידיים כמו כנפיים.",n:8,u:"סיבובי דבורה"},{t:"גשר מרחף מעל הנחל! הולכים עליו עקב אל אגודל, כמו על חבל, בלי ליפול.",n:10,u:"צעדי חבל"},{t:"ציפור ענקית זורקת פירות באוויר! מתכופפים וקופצים כדי לתפוס אותם.",n:10,u:"קפיצות תפיסה"},{t:"עלי הנופר מתנדנדים, ועל כל אחד יושבת צפרדע. עוברים את האגם רק בקפיצות צפרדע!",n:10,u:"קפיצות צפרדע"},
   {t:"הביצה שורצת תנינים! זחלו כמו תנינים מנקודה אחת בבית לנקודה אחרת, כדי שהתנינים יחשבו שאתם משלהם.",n:1,u:"הגענו!"},
   {t:"מכשפת הביצה הטילה עליכם כישוף! משתחררים ממנו רק בקפיצות על רגל אחת, וסופרים בקול.",n:15,u:"קפיצות על רגל אחת"},
@@ -2159,9 +2227,26 @@ const NPCS={
  dragon:(c)=>{const col="#9b6bff",dk=shade(col,-.25),lt=shade(col,.35);return limb("M92 142 Q122 148 118 124",col,9)+`<polygon points="113,124 124,116 122,130" fill="#ffd23f"${K(2)}/><path d="M48 104 Q12 80 22 58 Q34 82 56 90 Z" fill="${dk}"${K()}/><path d="M92 104 Q128 80 118 58 Q106 82 84 90 Z" fill="${dk}"${K()}/><ellipse cx="54" cy="154" rx="11" ry="7" fill="${col}"${K()}/><ellipse cx="86" cy="154" rx="11" ry="7" fill="${col}"${K()}/><ellipse cx="70" cy="128" rx="30" ry="28" fill="${col}"${K()}/><ellipse cx="70" cy="134" rx="18" ry="18" fill="#ffd96b"/><path d="M50 60 L44 38 L60 52 Z" fill="#ffd23f"${K(2.5)}/><path d="M90 60 L96 38 L80 52 Z" fill="#ffd23f"${K(2.5)}/><circle cx="70" cy="80" r="30" fill="${col}"${K()}/>`+eye(58,76,9)+eye(82,76,9)+`<ellipse cx="70" cy="96" rx="15" ry="9" fill="${lt}"${K(2.5)}/><circle cx="64" cy="94" r="2" fill="${O}"/><circle cx="76" cy="94" r="2" fill="${O}"/><path d="M60 100 Q70 107 80 100" fill="none"${K(2.5)}/><path d="M74 102 L76 107 L78 101.5 Z" fill="#fff"/>`+blush(52,88,90);},
  sprite:(c)=>`<circle class="glow" cx="70" cy="100" r="42" fill="${c}" opacity=".45"/><ellipse cx="44" cy="84" rx="18" ry="10" fill="#fff" fill-opacity=".75" transform="rotate(-25 44 84)"${K(2.5)}/><ellipse cx="96" cy="84" rx="18" ry="10" fill="#fff" fill-opacity=".75" transform="rotate(25 96 84)"${K(2.5)}/><circle cx="70" cy="102" r="26" fill="${c}"${K()}/><circle cx="78" cy="92" r="6" fill="#fff" opacity=".6"/>`+eye(62,102,6.5)+eye(78,102,6.5)+smile(70,113,5)+`<polygon class="tw" points="${starPts(30,130,6,2.4)}" fill="#fff"/><polygon class="tw" style="animation-delay:.7s" points="${starPts(112,124,5,2)}" fill="#fff"/><polygon class="tw" style="animation-delay:1.3s" points="${starPts(104,56,4,1.6)}" fill="#fff"/>`
 };
+Object.assign(NPCS,{
+ camel:()=>limb("M48 128 L46 156","#d9a85c",9)+limb("M62 130 L62 156","#c4934c",9)+limb("M84 130 L84 156","#c4934c",9)+limb("M98 128 L100 156","#d9a85c",9)+`<ellipse cx="72" cy="112" rx="38" ry="24" fill="#e2b66e"${K()}/><path d="M52 98 Q58 74 70 96 Q80 72 92 98 Z" fill="#e2b66e"${K()}/><path d="M104 104 Q124 96 118 66" fill="none" stroke="${O}" stroke-width="20" stroke-linecap="round"/><path d="M104 104 Q124 96 118 66" fill="none" stroke="#e2b66e" stroke-width="14" stroke-linecap="round"/><ellipse cx="116" cy="54" rx="17" ry="13" fill="#e2b66e"${K()}/><ellipse cx="124" cy="60" rx="9" ry="6.5" fill="#f4d9a4"${K(2.2)}/>`+eye(112,50,6)+`<path d="M106 40 L104 30 M114 38 L116 28" stroke="${O}" stroke-width="4" stroke-linecap="round"/><path d="M122 63 Q126 66 130 62" fill="none"${K(2.2)}/>`+blush(104,122,62),
+ scorpion:()=>`<path d="M96 134 Q132 128 128 92 Q126 66 108 62 Q100 66 102 74 Q112 74 116 90 Q118 112 92 122" fill="none" stroke="${O}" stroke-width="18" stroke-linecap="round"/><path d="M96 134 Q132 128 128 92 Q126 66 108 62 Q100 66 102 74 Q112 74 116 90 Q118 112 92 122" fill="none" stroke="#d65a3a" stroke-width="12" stroke-linecap="round"/><path d="M104 60 L96 46 L112 54 Z" fill="#ffd23f"${K(2.5)}/>`+`<path d="M44 140 L30 154 M56 144 L48 158 M84 144 L92 158 M96 140 L110 154" stroke="${O}" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="70" cy="122" rx="34" ry="22" fill="#d65a3a"${K()}/><path d="M50 118 Q70 108 90 118 M52 130 Q70 122 88 130" fill="none" stroke="#b8442a" stroke-width="3"/><path d="M40 108 Q18 100 22 80 Q38 72 46 88 Q34 90 40 100" fill="#e56e48"${K(2.8)}/><path d="M100 108 Q122 100 118 80 Q102 72 94 88 Q106 90 100 100" fill="#e56e48"${K(2.8)}/>`+eye(60,114,6.5)+eye(80,114,6.5)+smile(70,128,7)+blush(52,88,124),
+ golem:()=>`<rect x="32" y="108" width="28" height="48" rx="8" fill="#d9b070"${K()}/><rect x="80" y="108" width="28" height="48" rx="8" fill="#d9b070"${K()}/><rect x="22" y="66" width="96" height="58" rx="16" fill="#e6c283"${K()}/><rect x="8" y="76" width="22" height="46" rx="10" fill="#d9b070"${K()}/><rect x="110" y="76" width="22" height="46" rx="10" fill="#d9b070"${K()}/><rect x="44" y="30" width="52" height="44" rx="12" fill="#efd29a"${K()}/><path d="M34 90 l10 6 l-6 8 M96 88 l8 8" stroke="#b8924e" stroke-width="3" fill="none"/><ellipse cx="58" cy="50" rx="8" ry="9" fill="#9fe8ff"${K(2.5)}/><ellipse cx="82" cy="50" rx="8" ry="9" fill="#9fe8ff"${K(2.5)}/><circle cx="58" cy="50" r="3.2" fill="#1b2147"/><circle cx="82" cy="50" r="3.2" fill="#1b2147"/><path d="M58 64 L82 64" stroke="${O}" stroke-width="4" stroke-linecap="round"/><path d="M55 40 L63 44 M85 40 L77 44" stroke="${O}" stroke-width="3.6" stroke-linecap="round"/>`,
+ fish:()=>`<path d="M104 96 L132 76 L132 118 Z" fill="#ff8a3d"${K()}/><ellipse cx="68" cy="98" rx="42" ry="30" fill="#ffa24a"${K()}/><path d="M50 70 Q66 52 88 70" fill="#ff7a2a"${K()}/><path d="M60 126 Q70 144 84 126 Z" fill="#ff7a2a"${K()}/><path d="M88 80 Q96 98 88 116" fill="none" stroke="#ff7a2a" stroke-width="4"/><path d="M62 82 q4 6 0 12 M72 80 q4 8 0 14" stroke="#ffd2a0" stroke-width="3" fill="none"/>`+eye(48,92,8.5)+`<path d="M34 108 Q42 114 50 108" fill="none"${K(3)}/>`+blush(40,60,102)+`<circle cx="20" cy="70" r="5" fill="#fff" opacity=".7"${K(1.6)}/><circle cx="12" cy="52" r="3.4" fill="#fff" opacity=".7"${K(1.4)}/>`,
+ turtle:()=>`<ellipse cx="42" cy="146" rx="13" ry="9" fill="#7ccf72"${K()}/><ellipse cx="98" cy="146" rx="13" ry="9" fill="#7ccf72"${K()}/><path d="M104 130 Q132 118 122 98" fill="none" stroke="${O}" stroke-width="22" stroke-linecap="round"/><path d="M104 130 Q132 118 122 98" fill="none" stroke="#7ccf72" stroke-width="16" stroke-linecap="round"/><circle cx="122" cy="94" r="15" fill="#7ccf72"${K()}/><path d="M24 138 Q24 80 70 76 Q116 80 116 138 Z" fill="#4aa86a"${K()}/><path d="M70 78 V138 M42 98 Q70 108 98 98 M32 122 Q70 132 108 122" fill="none" stroke="#2d7a4a" stroke-width="3.5"/><path d="M52 88 l8 -4 M80 86 l8 4" stroke="#8fdca0" stroke-width="3" stroke-linecap="round"/>`+eye(126,90,5.5)+`<path d="M122 102 Q128 106 134 100" fill="none"${K(2.4)}/>`,
+ crab:()=>`<path d="M34 128 L20 146 M46 134 L38 154 M94 134 L102 154 M106 128 L120 146" stroke="${O}" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M38 100 Q18 90 22 66 Q38 60 44 76 Q34 78 40 88" fill="#ff6b4d"${K(2.8)}/><path d="M102 100 Q122 90 118 66 Q102 60 96 76 Q106 78 100 88" fill="#ff6b4d"${K(2.8)}/><ellipse cx="70" cy="116" rx="40" ry="26" fill="#ff6b4d"${K()}/><path d="M58 92 L58 80 M82 92 L82 80" stroke="${O}" stroke-width="4" stroke-linecap="round"/>`+eye(58,76,8)+eye(82,76,8)+`<path d="M56 112 Q70 124 84 112" fill="none"${K(3)}/>`+blush(46,94,114)+`<circle cx="62" cy="130" r="2.2" fill="#ffb09e"/><circle cx="78" cy="132" r="2.2" fill="#ffb09e"/>`,
+ octopus:()=>{let t="";[[34,140,22,120],[48,150,38,128],[62,154,58,132],[78,154,82,132],[92,150,102,128],[106,140,118,120]].forEach(([x,y,x2,y2],i)=>{const d=`M${x2} ${y2} Q${x} ${y-10} ${x+(i%2?-6:6)} ${y}`;t+=`<path d="${d}" fill="none" stroke="${O}" stroke-width="16" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#a46ae8" stroke-width="10" stroke-linecap="round"/>`;});return t+`<path d="M28 100 Q24 30 70 28 Q116 30 112 100 Q96 124 70 124 Q44 124 28 100 Z" fill="#a46ae8"${K()}/><circle cx="48" cy="48" r="5" fill="#c9a0ff" opacity=".8"/><circle cx="92" cy="62" r="3.6" fill="#c9a0ff" opacity=".8"/>`+eye(54,84,10)+eye(86,84,10)+`<path d="M58 106 Q70 114 82 106" fill="none"${K(3.2)}/>`+blush(40,100,98);},
+ shark:()=>`<path d="M104 112 L134 90 L128 126 Z" fill="#7a8fb0"${K()}/><path d="M60 82 L70 50 L86 82 Z" fill="#7a8fb0"${K()}/><path d="M16 112 Q16 82 62 80 Q104 80 112 108 Q112 134 70 136 Q22 138 16 112 Z" fill="#8aa0c4"${K()}/><path d="M24 116 Q60 134 108 116 Q100 134 70 136 Q34 136 24 116 Z" fill="#eaf2ff"/><path d="M52 124 l4 -8 l4 8 M64 126 l4 -8 l4 8 M76 126 l4 -8 l4 8 M88 122 l4 -8 l4 8" fill="#fff" stroke="${O}" stroke-width="2" stroke-linejoin="round"/>`+eye(40,100,7.5)+`<path d="M30 92 L50 96" stroke="${O}" stroke-width="3.6" stroke-linecap="round"/><path d="M60 138 L52 150 L72 142 Z" fill="#7a8fb0"${K(2.4)}/>`,
+ robot:()=>`<rect x="42" y="128" width="20" height="26" rx="5" fill="#8a94ab"${K()}/><rect x="78" y="128" width="20" height="26" rx="5" fill="#8a94ab"${K()}/><rect x="30" y="76" width="80" height="58" rx="12" fill="#bcc7e0"${K()}/><rect x="14" y="82" width="16" height="40" rx="7" fill="#8a94ab"${K()}/><rect x="110" y="82" width="16" height="40" rx="7" fill="#8a94ab"${K()}/><circle cx="70" cy="106" r="9" fill="#ffd23f"${K(2.5)}/><rect x="36" y="30" width="68" height="48" rx="14" fill="#cdd6ec"${K()}/><path d="M70 30 V16" stroke="${O}" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="12" r="6" fill="#ff4d5e"${K(2.5)}/><rect x="46" y="42" width="48" height="24" rx="10" fill="#1b2147"/><circle cx="58" cy="54" r="6.5" fill="#6af0ff"/><circle cx="82" cy="54" r="6.5" fill="#6af0ff"/><circle cx="60" cy="52" r="2" fill="#fff"/><circle cx="84" cy="52" r="2" fill="#fff"/><path d="M62 70 H78" stroke="${O}" stroke-width="3" stroke-linecap="round"/>`,
+ alien:()=>`<path d="M56 36 Q50 14 38 10 M84 36 Q90 14 102 10" fill="none" stroke="${O}" stroke-width="5" stroke-linecap="round"/><circle cx="38" cy="10" r="6" fill="#ffd23f"${K(2.5)}/><circle cx="102" cy="10" r="6" fill="#ffd23f"${K(2.5)}/><ellipse cx="54" cy="150" rx="12" ry="7" fill="#5fd06a"${K(2.5)}/><ellipse cx="86" cy="150" rx="12" ry="7" fill="#5fd06a"${K(2.5)}/><ellipse cx="70" cy="122" rx="26" ry="30" fill="#6fe07a"${K()}/><path d="M44 112 Q28 118 30 134 M96 112 Q112 118 110 134" fill="none" stroke="${O}" stroke-width="12" stroke-linecap="round"/><path d="M44 112 Q28 118 30 134 M96 112 Q112 118 110 134" fill="none" stroke="#6fe07a" stroke-width="7" stroke-linecap="round"/><ellipse cx="70" cy="70" rx="38" ry="38" fill="#6fe07a"${K()}/><ellipse cx="52" cy="68" rx="13" ry="17" fill="#fff"${K(2.5)}/><ellipse cx="88" cy="68" rx="13" ry="17" fill="#fff"${K(2.5)}/><ellipse cx="54" cy="70" rx="7" ry="11" fill="${O}"/><ellipse cx="86" cy="70" rx="7" ry="11" fill="${O}"/><circle cx="56" cy="64" r="2.6" fill="#fff"/><circle cx="88" cy="64" r="2.6" fill="#fff"/><path d="M58 92 Q70 102 82 92" fill="none"${K(3)}/>`,
+ voidmonster:()=>`<ellipse cx="70" cy="100" rx="64" ry="18" fill="none" stroke="#b46aff" stroke-width="8" opacity=".75" transform="rotate(-14 70 100)"/><circle cx="70" cy="96" r="44" fill="#14102e"${K()}/><circle cx="70" cy="96" r="30" fill="#05031a"/><path d="M34 100 Q50 70 80 70 M60 122 Q94 124 104 94" fill="none" stroke="#6a4cff" stroke-width="3" opacity=".7"/>`+`<ellipse cx="54" cy="84" rx="9" ry="11" fill="#fff"${K(2.5)}/><ellipse cx="86" cy="84" rx="9" ry="11" fill="#fff"${K(2.5)}/><circle cx="56" cy="86" r="4.4" fill="#ff4d5e"/><circle cx="88" cy="86" r="4.4" fill="#ff4d5e"/><path d="M52 108 Q70 128 88 108 Q70 116 52 108 Z" fill="#fff"${K(2.4)}/><path d="M56 109 l3 5 l3 -5 M78 109 l3 5 l3 -5" fill="#fff" stroke="${O}" stroke-width="1.6"/><path d="M48 70 L62 76 M92 70 L78 76" stroke="#b46aff" stroke-width="4" stroke-linecap="round"/><polygon class="tw" points="${starPts(14,40,5,2)}" fill="#ffe36b"/><polygon class="tw" style="animation-delay:.9s" points="${starPts(126,46,4,1.6)}" fill="#fff"/>`
+});
+const PRINCESS_P={skin:1,hair:"long",hairColor:"#ffb347",primary:"#ffd23f",secondary:"#fff",head:"crown",weapon:"wand",pet:"none",fem:true,eye:"#a06a2a"};
+const MERMAID_P={skin:0,hair:"long",hairColor:"#2bd9b3",primary:"#2fb3d9",secondary:"#c8f5ff",head:"crown",weapon:"wand",pet:"none",fem:true,eye:"#2a8a9a"};
+
 function npcSVG(kind,mapId,cls=""){
  if(kind==="queen")return `<svg class="${cls}" viewBox="${VB}" aria-hidden="true">${heroInner(QUEEN,2,{mood:"happy"})}</svg>`;
- const col={ice:"#7fd6ff",swamp:"#ffe36b",sky:"#ff9ad5"}[mapId]||"#7fd6ff";
+ if(kind==="princess"||kind==="mermaid")return `<svg class="${cls}" viewBox="${VB}" aria-hidden="true">${heroInner(kind==="princess"?PRINCESS_P:MERMAID_P,2,{mood:"happy"})}</svg>`;
+ const col={ice:"#7fd6ff",swamp:"#ffe36b",sky:"#ff9ad5",desert:"#ffd98a",ocean:"#8fe8ff",space:"#c9a0ff"}[mapId]||"#7fd6ff";
  let inner;
  if(["fox","bunny","panda","parrot","puppy","bee","unicorn","cat"].includes(kind))inner=`<g transform="translate(70 152) scale(3) translate(-20 -158)">${petSVG(kind).replace('class="pet','class="')}</g>`;
  else if(kind==="penguinking")inner=NPCS.penguin(col,true);
@@ -2247,10 +2332,38 @@ function mapDecor(id,rnd,W,H){
   for(let i=0;i<20;i++)s+=`<polygon class="tw" style="animation-delay:${(rnd()*2.2).toFixed(2)}s" points="${starPts(rnd()*W,rnd()*H*0.6,4.5,1.8)}" fill="#fff8d6"/>`;
   s+=`<g transform="translate(206 72)"><rect x="-12" y="-46" width="24" height="54" rx="4" fill="#fff6df"${K()}/><path d="M-17 -46 L0 -66 L17 -46 Z" fill="#a978ff"${K()}/><polygon points="${starPts(0,-76,8,3.4)}" fill="#ffd23f"${K(2)}/><circle cx="0" cy="-24" r="5" fill="#a978ff"${K(2)}/></g>`;
  }
+ if(id==="desert"){
+  s+=`<circle cx="70" cy="110" r="46" fill="#fff3b8" opacity=".5"/><circle cx="70" cy="110" r="30" fill="#ffe27a" stroke="#d9a53a" stroke-width="3"/>`;
+  s+=`<path d="M-4 250 Q60 200 130 244 Q200 284 344 226 L344 564 L-4 564 Z" fill="#f0c070" stroke="#c48a3a" stroke-width="3"/><path d="M-4 330 Q90 290 180 330 Q260 366 344 318 L344 564 L-4 564 Z" fill="#f7d18a" stroke="#d29a48" stroke-width="3"/>`;
+  s+=`<g transform="translate(290 232)"><polygon points="-30,0 0,-44 30,0" fill="#e8b560" stroke="#a8742a" stroke-width="3" stroke-linejoin="round"/><polygon points="0,-44 30,0 8,0" fill="#c9923e"/></g><g transform="translate(40 244) scale(.7)"><polygon points="-30,0 0,-44 30,0" fill="#e8b560" stroke="#a8742a" stroke-width="3" stroke-linejoin="round"/></g>`;
+  for(let i=0;i<4;i++){const [x,y]=freeSpot(rnd,W,H,36);s+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M0 0 Q-4 -20 -10 -34 M0 0 Q2 -24 6 -38 M0 0 Q8 -16 18 -26 M0 0 Q-10 -12 -22 -16" stroke="#3a8a3c" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="-2.5" y="-2" width="5" height="12" fill="#8b5a3c"/></g>`;}
+  for(let i=0;i<5;i++){const [x,y]=freeSpot(rnd,W,H,30);s+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><rect x="-4" y="-20" width="8" height="24" rx="4" fill="#4aa85a" stroke="#2a6a36" stroke-width="2.5"/><rect x="-12" y="-14" width="6" height="12" rx="3" fill="#4aa85a" stroke="#2a6a36" stroke-width="2"/><rect x="6" y="-16" width="6" height="12" rx="3" fill="#4aa85a" stroke="#2a6a36" stroke-width="2"/></g>`;}
+  s+=`<ellipse cx="58" cy="420" rx="40" ry="12" fill="#5fc9e8" stroke="#2a8ab0" stroke-width="3"/>`;
+  for(let i=0;i<22;i++)s+=`<circle class="tw" style="animation-delay:${(rnd()*2.2).toFixed(2)}s" cx="${(rnd()*W).toFixed(0)}" cy="${(rnd()*H).toFixed(0)}" r="${(1.2+rnd()*1.8).toFixed(1)}" fill="#fff6d0"/>`;
+  s+=`<g transform="translate(206 74)"><polygon points="-40,10 0,-52 40,10" fill="#f0c36a"${K()}/><polygon points="0,-52 40,10 12,10" fill="#d49a40"/><path d="M-8 10 L-8 -4 Q0 -12 8 -4 L8 10 Z" fill="#6a3a1a"${K(2.5)}/><polygon points="${starPts(0,-62,7,3)}" fill="#ffd23f"${K(2)}/></g>`;
+ }
+ if(id==="ocean"){
+  s+=`<path d="M60 0 L110 200 L20 200 Z M200 0 L250 220 L150 220 Z" fill="#fff" opacity=".1"/>`;
+  s+=`<path d="M-4 280 Q80 240 160 276 Q250 312 344 262 L344 564 L-4 564 Z" fill="#e6cf92" stroke="#a88a4a" stroke-width="3"/><path d="M-4 380 Q100 346 200 378 Q280 402 344 366 L344 564 L-4 564 Z" fill="#f0dca4" stroke="#b89a58" stroke-width="3"/>`;
+  for(let i=0;i<7;i++){const [x,y]=freeSpot(rnd,W,H,34);const c=pick(["#ff6b8a","#ffa24a","#a46ae8","#ff8fc7"]);s+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M0 0 Q-10 -14 -8 -28 M0 0 Q0 -18 2 -34 M0 0 Q10 -14 12 -26" stroke="${O}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M0 0 Q-10 -14 -8 -28 M0 0 Q0 -18 2 -34 M0 0 Q10 -14 12 -26" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;}
+  for(let i=0;i<8;i++){const [x,y]=freeSpot(rnd,W,H,30);s+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M0 0 Q-6 -16 0 -30 Q6 -44 0 -56" stroke="#1f9a5a" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;}
+  for(let i=0;i<4;i++){const [x,y]=freeSpot(rnd,W,H,30);s+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M-12 0 Q-12 -16 0 -16 Q12 -16 12 0 Z" fill="#ffd2e0" stroke="#c46a8a" stroke-width="2.5"/><path d="M-4 0 V-14 M4 0 V-14" stroke="#c46a8a" stroke-width="2"/></g>`;}
+  for(let i=0;i<26;i++)s+=`<circle class="tw" style="animation-delay:${(rnd()*2.2).toFixed(2)}s" cx="${(rnd()*W).toFixed(0)}" cy="${(rnd()*H).toFixed(0)}" r="${(2+rnd()*3).toFixed(1)}" fill="none" stroke="#fff" stroke-width="1.6"/>`;
+  s+=`<g transform="translate(206 76)"><path d="M-34 10 Q-34 -26 0 -34 Q34 -26 34 10 Z" fill="#ffd2e0"${K()}/><path d="M0 -34 V10 M-17 -28 V10 M17 -28 V10" stroke="#c46a8a" stroke-width="2.5"/><circle cx="0" cy="-42" r="9" fill="#fff" stroke="${O}" stroke-width="2.5"/><circle cx="-3" cy="-45" r="3" fill="#fff"/></g>`;
+ }
+ if(id==="space"){
+  for(let i=0;i<46;i++)s+=`<circle class="tw" style="animation-delay:${(rnd()*2.2).toFixed(2)}s" cx="${(rnd()*W).toFixed(0)}" cy="${(rnd()*H).toFixed(0)}" r="${(0.9+rnd()*1.9).toFixed(1)}" fill="${pick(["#fff","#ffe9a8","#bfe0ff"])}"/>`;
+  s+=`<circle cx="52" cy="150" r="30" fill="#ff8a5a" stroke="#a84a2a" stroke-width="3"/><path d="M26 142 Q50 132 78 144 M24 158 Q52 150 80 160" stroke="#ffb98a" stroke-width="4" fill="none" opacity=".8"/>`;
+  s+=`<g transform="translate(292 300)"><ellipse rx="52" ry="12" fill="none" stroke="#e8d27a" stroke-width="5" opacity=".9" transform="rotate(-18)"/><circle r="26" fill="#a97aff" stroke="#5a3aa8" stroke-width="3"/><path d="M-36 6 Q0 24 36 -2" fill="none" stroke="#e8d27a" stroke-width="5" transform="rotate(-18)"/></g>`;
+  s+=`<circle cx="40" cy="420" r="20" fill="#5fd0e8" stroke="#2a7a9a" stroke-width="3"/><circle cx="34" cy="414" r="5" fill="#8fe8f8"/>`;
+  for(let i=0;i<7;i++){const [x,y]=freeSpot(rnd,W,H,30);const r=6+rnd()*8;s+=`<path d="M${(x-r).toFixed(0)} ${y.toFixed(0)} l${(r*.6).toFixed(0)} ${(-r).toFixed(0)} l${(r*1.2).toFixed(0)} ${(r*.3).toFixed(0)} l${(r*.5).toFixed(0)} ${(r*.9).toFixed(0)} l${(-r*.8).toFixed(0)} ${(r*.7).toFixed(0)} Z" fill="#8a8fb0" stroke="#4a4f78" stroke-width="2.5" stroke-linejoin="round"/>`;}
+  for(let i=0;i<5;i++){const [x,y]=freeSpot(rnd,W,H,30);s+=`<polygon points="${starPts(x,y,10,4)}" fill="#ffd23f" stroke="#c98a1a" stroke-width="2" stroke-linejoin="round"/>`;}
+  s+=`<g transform="translate(206 74)"><rect x="-30" y="-22" width="60" height="34" rx="8" fill="#cdd6ec"${K()}/><rect x="-22" y="-14" width="44" height="14" rx="5" fill="#1b2147"/><circle cx="-10" cy="-7" r="3" fill="#6af0ff"/><circle cx="2" cy="-7" r="3" fill="#ffd23f"/><circle cx="14" cy="-7" r="3" fill="#ff4d5e"/><path d="M0 -22 V-40" stroke="${O}" stroke-width="4"/><polygon points="${starPts(0,-46,8,3.4)}" fill="#ffd23f"${K(2)}/><rect x="-42" y="-10" width="12" height="18" fill="#6a8fe0" stroke="${O}" stroke-width="2.5"/><rect x="30" y="-10" width="12" height="18" fill="#6a8fe0" stroke="${O}" stroke-width="2.5"/></g>`;
+ }
  return s;
 }
-const SKY={ice:["#5fb8ff","#e2f4ff"],swamp:["#0f2a44","#1f5e57"],sky:["#7d6bff","#ffc7a8"]};
-const ROAD={ice:"#ffffff",swamp:"#d6b27a",sky:"#fff3c4"};
+const SKY={ice:["#5fb8ff","#e2f4ff"],swamp:["#0f2a44","#1f5e57"],sky:["#7d6bff","#ffc7a8"],desert:["#f5a85a","#ffe9b0"],ocean:["#0d4d8f","#58d3f0"],space:["#0a0830","#4a3a9a"]};
+const ROAD={ice:"#ffffff",swamp:"#d6b27a",sky:"#fff3c4",desert:"#fff0c8",ocean:"#fff6dc",space:"#ffe9a8"};
 function tokenSVG(heroes){
  const n=Math.min(heroes.length,4);let t="";
  heroes.slice(0,4).forEach((h,i)=>{const sc=n>2?.32:.36;const off=(i-(n-1)/2)*(n>2?20:26);t+=`<g transform="translate(${(off-70*sc).toFixed(1)} ${(-158*sc).toFixed(1)}) scale(${sc})">${heroInner(h.params,1,{stats:h.stats})}</g>`;});
@@ -2669,6 +2782,9 @@ const MUS={
  ice:{calm:1,bpm:62,wind:.04,pat:[[0,-1,-1,2,-1,3,-1,-1,4,-1,3,-1,2,-1,-1,-1],[0,-1,2,-1,-1,4,-1,3,-1,-1,2,-1,1,-1,-1,-1]],prog:[[2,"m9"],[-2,"maj7"],[-7,"maj7"],[0,"add9"]],mel:.5,motif:[[[0,4,6],[6,3,4],[10,2,6]],[[2,5,5],[8,4,4],[12,3,4]]]},
  swamp:{calm:1,bpm:70,wind:.014,pat:[[0,-1,1,-1,2,-1,1,-1,3,-1,2,-1,1,-1,0,-1],[0,-1,2,-1,1,-1,3,-1,2,-1,-1,-1,4,-1,-1,-1]],prog:[[-3,"m9"],[-7,"maj7"],[2,"m7"],[4,"sus"]],mel:.35,motif:[[[0,3,2],[2,4,2],[4,3,3],[8,2,6]],[[0,5,3],[4,4,3],[8,3,3],[12,2,4]]]},
  sky:{calm:1,bpm:88,wind:.012,pat:[[0,2,3,-1,4,3,2,-1,3,4,5,-1,4,3,2,-1],[0,-1,2,3,-1,4,-1,5,4,-1,3,-1,2,-1,-1,-1]],prog:[[2,"maj9"],[-1,"m7"],[-5,"maj7"],[-3,"add9"]],mel:.45,motif:[[[0,6,2],[2,7,2],[4,8,4],[8,6,3],[11,5,3]],[[0,5,3],[3,7,3],[6,8,3],[10,6,5]]]},
+ desert:{calm:1,bpm:84,wind:.016,pat:[[0,-1,1,2,-1,1,0,-1,2,-1,3,2,-1,1,0,-1],[0,-1,-1,2,-1,3,-1,2,1,-1,0,-1,1,-1,-1,-1]],prog:[[0,"m7"],[1,"maj7"],[-2,"m7"],[0,"sus"]],mel:.45,motif:[[[0,4,2],[2,5,2],[4,4,2],[6,3,3],[10,4,4]],[[0,5,3],[3,4,2],[5,3,2],[8,2,6]]]},
+ ocean:{calm:1,bpm:64,wind:.03,pat:[[0,-1,-1,2,-1,-1,4,-1,3,-1,-1,2,-1,1,-1,-1],[0,-1,2,-1,3,-1,-1,4,-1,-1,3,-1,2,-1,-1,-1]],prog:[[0,"maj9"],[-5,"maj7"],[-3,"m7"],[-7,"add9"]],mel:.4,motif:[[[0,5,4],[4,4,3],[8,3,6]],[[2,6,3],[6,5,3],[10,4,5]]]},
+ space:{calm:1,bpm:100,wind:.01,pat:[[0,2,4,2,0,2,4,5,4,2,0,2,4,2,0,-1],[0,-1,3,-1,4,-1,3,-1,0,-1,2,-1,4,5,4,-1]],prog:[[0,"m9"],[-4,"maj7"],[-2,"maj9"],[-7,"sus"]],mel:.5,motif:[[[0,6,2],[2,7,2],[4,6,2],[6,8,4],[10,7,3]],[[0,7,2],[2,6,2],[4,5,3],[8,6,6]]]},
  boss:{bpm:150,lw:"square",lv:.024,bv:.06,bars:[0,0,3,-2],lead:[64,0,67,0,70,69,67,0,64,0,63,0,62,0,0,0],bass:[40,40,52,40,40,52,40,52,43,43,55,43,43,55,43,55]},
  bed:{calm:1,bpm:50,pat:[[0,-1,-1,-1,2,-1,-1,-1,3,-1,-1,-1,2,-1,-1,-1],[0,-1,-1,2,-1,-1,4,-1,-1,-1,3,-1,-1,-1,-1,-1]],prog:[[0,"maj7"],[-3,"m7"],[2,"m7"],[-5,"sus"]],mel:.25,soft:1,motif:[[[0,4,8],[8,3,8]],[[2,5,6],[10,4,6]]]}
 };
@@ -2711,7 +2827,7 @@ let NOISE=null;
 function drum(kind,t,vol){if(!NOISE){const len=AC.sampleRate*.3;NOISE=AC.createBuffer(1,len,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;}
  if(kind==="k"){const o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);g.gain.setValueAtTime(vol*2.2,t);g.gain.exponentialRampToValueAtTime(.0001,t+.15);o.connect(g).connect(MU.gain);o.start(t);o.stop(t+.2);return;}
  const src=AC.createBufferSource();src.buffer=NOISE;const f=AC.createBiquadFilter();f.type=kind==="h"?"highpass":"bandpass";f.frequency.value=kind==="h"?7000:1800;const g=AC.createGain();const d=kind==="h"?.04:.12;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);src.connect(f).connect(g).connect(MU.gain);src.start(t);src.stop(t+d+.02);}
-const MINOR={swamp:1,boss:1};
+const MINOR={swamp:1,boss:1,desert:1,space:1};
 function makeParts(name,M,seed){
  const L=M.lead,B=M.bass,root=B.find(x=>x)||48,third=MINOR[name]?3:4;
  const arp=Array.from({length:16},(_,i)=>i%2?0:root+24+[0,third,7,12,7,third,0,-5][(i/2)%8]);
@@ -2989,7 +3105,7 @@ function vSetup(){
  ${s.creating?`<div class="panel slide cwform"><div class="eyebrow">עולם חדש</div>
   <label class="fl">איך קוראים לעולם?<input type="text" id="cwName" maxlength="30" placeholder="למשל: ממלכת הממתקים" autocomplete="off"></label>
   <label class="fl">מילות מפתח: מה יש בעולם הזה?<input type="text" id="cwKeys" maxlength="90" placeholder="למשל: הרי שוקולד, נהר של מיץ, דובוני גומי מדברים" autocomplete="off"></label>
-  <div class="fl"><span>איך העולם ייראה?</span><div class="chips">${MAP_ORDER.map(id=>`<button class="chip" data-a="cwbase" data-v="${id}" aria-pressed="${(s.cwBase||"sky")===id}">${{ice:"שלג וקרח",swamp:"יער ולילה",sky:"שמיים ועננים"}[id]}</button>`).join("")}</div></div>
+  <div class="fl"><span>איך העולם ייראה?</span><div class="chips">${MAP_ORDER.slice(0,3).map(id=>`<button class="chip" data-a="cwbase" data-v="${id}" aria-pressed="${(s.cwBase||"sky")===id}">${{ice:"שלג וקרח",swamp:"יער ולילה",sky:"שמיים ועננים"}[id]}</button>`).join("")}</div></div>
   <div class="row"><button class="btn sm blu" data-a="cwcancel"><span>ביטול</span></button><button class="btn sm grn" data-a="cwsave"><span>צרו את העולם</span></button></div></div>`:""}
  <label class="fl">מה הילדים אוהבים? <span class="muted small">הסיפור ישלב את זה</span><input type="text" id="likes" value="${esc(s.likes)}" placeholder="דרקונים, ממתקים, חתולים, כדורגל..."></label>
  <label class="fl">משימה מיוחדת? <span class="muted small">לא חובה</span><input type="text" id="goal" value="${esc(s.goal)}" placeholder="למשל: להציל את הנסיכה"></label>
@@ -3331,6 +3447,7 @@ function arenaHTML(st,L,mapId,state,enter){
 /* ---------- משחקוני קפיצות (פלטפורמה דו־ממדית) ---------- */
 const JW=640,JH=360,JU=32;
 function jt(a,b){return ezOn()?b:a;}
+function jHard(c){return Math.max(0,worldIdx(c)-2);}
 function jTier(c){return c.age==="3-5"?0:c.age==="5-7"?1:2;}
 function jumpDue(st,c,P){
  if(!c||c.mode==="bed"||st.type==="boss")return false;
@@ -3339,9 +3456,9 @@ function jumpDue(st,c,P){
  return P.idx===1||(P.idx===last&&last>=2&&(campHeroes().length>1||n>=5));
 }
 function jRng(s){let a=s>>>0;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
-function jGen(tier,seed){
+function jGen(tier,seed,hard=0){
  const R=jRng(seed),ri=(a,b)=>a+Math.floor(R()*(b-a+1));
- const cfg=[{len:46,gap:2,spk:0,mov:0,crm:0,dsh:0},{len:72,gap:3,spk:1,sk:2,mov:1,crm:0,dsh:0},{len:104,gap:3,spk:1,sk:3,mov:1,crm:1,dsh:1}][tier];
+ const cfg=[{len:46,gap:2,spk:0,mov:0,crm:0,dsh:0},{len:72,gap:3,spk:1,sk:2,mov:1,crm:0,dsh:0},{len:104,gap:3,spk:1,sk:3,mov:1,crm:1,dsh:1}][tier];cfg.len+=hard*10;
  const L={solids:[],spikes:[],coins:[],cps:[],moving:[],crumble:[],goal:0,w:0,tier};
  let x=0,gy=296;
  const ground=(n,y)=>{L.solids.push({x:x,y:y,w:n*JU,h:JH-y+60,k:"g"});};
@@ -3370,7 +3487,10 @@ function jGen(tier,seed){
 }
 const JTH={ice:{sky:["#bfe9ff","#eaf8ff"],hill:["#a9d4ee","#8dc1e0"],top:"#f2fbff",body:"#6aa8d6",spk:"#b8ecff",bush:"ice"},
  swamp:{sky:["#3d5a3a","#a9c77a"],hill:["#4d6f45","#3c5c38"],top:"#6dbb4a",body:"#5a4630",spk:"#2f5a2a",bush:"thorn"},
- sky:{sky:["#7fc0ff","#ffd6ec"],hill:["#ffffff","#f3eaff"],top:"#fff4c2",body:"#ffb36b",spk:"#ff7ab6",bush:"star"}};
+ sky:{sky:["#7fc0ff","#ffd6ec"],hill:["#ffffff","#f3eaff"],top:"#fff4c2",body:"#ffb36b",spk:"#ff7ab6",bush:"star"},
+ desert:{sky:["#ffe2a0","#fff2cf"],hill:["#f0c070","#e0a850"],top:"#ffd98a",body:"#c98a4a",spk:"#8a5a2a",bush:"thorn"},
+ ocean:{sky:["#8fe8ff","#d9f8ff"],hill:["#4aa8d8","#2a88b8"],top:"#e9d49a",body:"#2a6aa8",spk:"#ff6b8a",bush:"ice"},
+ space:{sky:["#1a1050","#5a3aa8"],hill:["#3a2a78","#2a1c60"],top:"#b6b0e8",body:"#4a3a8a",spk:"#ff4d5e",bush:"star"}};
 let JG=null;
 function jOpen(c,L,hs,P){
  const k=(P.jplan&&P.jplan[P.idx]||{}).kind;return k==="catch"?jOpenCatch(c,L,hs,P):k==="lanes"?jOpenLanes(c,L,hs,P):k==="flappy"?jOpenFlappy(c,L,hs,P):k==="whack"?jOpenWhack(c,L,hs,P):jOpenPlat(c,L,hs,P);
@@ -3378,7 +3498,7 @@ function jOpen(c,L,hs,P){
 function jOpenPlat(c,L,hs,P){
  if(JG)return;
  const tier=jTier(c),seed=(String(c.id||"x").split("").reduce((a,ch)=>a*31+ch.charCodeAt(0)|0,7)+(P.idx+1)*977+(c.node||0)*131+(c.sessions||0)*17)|0;
- const lv=jGen(tier,seed),th=JTH[c.mapId]||JTH.ice;
+ const lv=jGen(tier,seed,jHard(c)),th=JTH[c.mapId]||JTH.ice;
  const ov=document.createElement("div");ov.className="jov";ov.setAttribute("role","dialog");ov.setAttribute("aria-label",jt("משחק קפיצות","מִשְׂחַק קְפִיצוֹת"));
  const dashBtn=tier===2?`<button class="jb jd" data-j="dash" aria-label="${jt("זינוק","זִינּוּק")}">⚡</button>`:"";
  ov.innerHTML=`<div class="jbar"><button class="jx" data-j="exit" aria-label="${jt("יציאה","יְצִיאָה")}">✕</button><span class="jcn"><i></i> <b>0</b>/${lv.total}</span><span class="jlv" aria-label="${jt("פסילות","פְּסִילוֹת")}">❤️❤️❤️</span><span class="jhint">${jt("רצים לדגל! אפשר גם לסובב את המכשיר","רָצִים לַדֶּגֶל! אֶפְשָׁר גַּם לְסוֹבֵב אֶת הַמַּכְשִׁיר")}</span></div>
@@ -3583,7 +3703,7 @@ function jCount(G){const e=G.ov.querySelector(".jcn b");if(e)e.textContent=G.coi
 
 /* משחקון תפיסה: תופסים כוכבים נופלים, מתחמקים מסלעים */
 function jOpenCatch(c,L,hs,P){
- if(JG)return;const tier=jTier(c),goal=[10,14,18][tier];
+ if(JG)return;const tier=jTier(c),goal=[10,14,18][tier]+jHard(c)*(tier+1);
  const G=jShell(c,L,P,jt("תופסים כוכבים! מזיזים ימינה ושמאלה","תּוֹפְסִים כּוֹכָבִים! מְזִיזִים יָמִינָה וּשְׂמֹאלָה"),`<div class="jlr"><button class="jb" data-j="left" aria-label="${jt("שמאלה","שְׂמֹאלָה")}">◀</button><button class="jb" data-j="right" aria-label="${jt("ימינה","יָמִינָה")}">▶</button></div>`,goal,tier);
  Object.assign(G,{goal,px:JW/2,face:1,items:[],sp:[270,300,330][tier],fall:[95,130,175][tier],gap:[1,.8,.6][tier],bad:[0,.18,.28][tier],spawn:.5,bonk:0});
  G.wt=1;G.stepf=jStepCatch;G.drawf=jDrawCatch;
@@ -3662,7 +3782,7 @@ function jFail(G){
 }
 /* ---------- משחקון ארבע: מרחפים בין העמודים ---------- */
 function jOpenFlappy(c,L,hs,P){
- if(JG)return;const tier=jTier(c),N=[8,11,14][tier];
+ if(JG)return;const tier=jTier(c),N=[8,11,14][tier]+jHard(c)*(tier+1);
  const G=jShell(c,L,P,jt("לוחצים כדי לרחף למעלה, ועוברים בין העמודים","לוֹחֲצִים כְּדֵי לְרַחֵף לְמַעְלָה, וְעוֹבְרִים בֵּין הָעַמּוּדִים"),`<div></div><div class="jrr"><button class="jb jj" data-j="jump" aria-label="${jt("ריחוף","רִחוּף")}">⬆</button></div>`,N,tier);
  const R=jRng((String(c.id||"x").split("").reduce((a,ch)=>a*31+ch.charCodeAt(0)|0,3)+(P.idx+5)*811+(c.sessions||0)*23)|0);
  const gap=[190,160,138][tier],spc=[270,245,225][tier],pil=[];
@@ -3705,7 +3825,7 @@ function jDrawFlappy(G){
 }
 /* ---------- משחקון חמש: מכים בכוכבים מהחורים ---------- */
 function jOpenWhack(c,L,hs,P){
- if(JG)return;const tier=jTier(c),goal=[8,12,16][tier];
+ if(JG)return;const tier=jTier(c),goal=[8,12,16][tier]+jHard(c)*(tier+1);
  const G=jShell(c,L,P,jt("נוגעים בכוכבים שקופצים מהחורים, ולא בסלעים!","נוֹגְעִים בַּכּוֹכָבִים שֶׁקּוֹפְצִים מֵהַחוֹרִים, וְלֹא בַּסְּלָעִים!"),`<div></div><div></div>`,goal,tier);
  const holes=[];for(let r=0;r<2;r++)for(let k=0;k<3;k++)holes.push({x:200+k*150,y:160+r*120,t:0,k:"s",life:0});
  Object.assign(G,{goal,holes,life:[1.7,1.3,1.0][tier],gap:[.95,.75,.58][tier],bad:[0,.25,.35][tier],spawn:.6});
@@ -3900,12 +4020,12 @@ const THREAT={
  bite:{good:["shield","beetle","badge"],ic:"🦷",tel:["לנשוך את","לִנְשֹׁךְ אֶת"],lbl:["נשיכה חזקה","נְשִׁיכָה חֲזָקָה"]},
  wind:{good:["boots","leaf","feather"],ic:"🌪️",tel:["לשלוח רוח חזקה על","לִשְׁלֹחַ רוּחַ חֲזָקָה עַל"],lbl:["סערת רוח","סְעָרַת רוּחַ"]},
  hit:{good:["shield","beetle","badge"],ic:"💢",tel:["להכות את","לְהַכּוֹת אֶת"],lbl:["מכה חזקה","מַכָּה חֲזָקָה"]}};
-const NPC_THREAT={bear:"cold",croc:"bite",wind:"wind",cloud:"wind",stormbeast:"wind",fogmonster:"hit",thunderbeast:"wind"};
+const NPC_THREAT={bear:"cold",croc:"bite",wind:"wind",cloud:"wind",stormbeast:"wind",fogmonster:"hit",thunderbeast:"wind",scorpion:"bite",shark:"bite",octopus:"hit",golem:"hit",voidmonster:"hit"};
 const NPC_BG={stormbeast:"blizzard",fogmonster:"fog",thunderbeast:"storm"};
 function threatOf(npc){return THREAT[NPC_THREAT[npc]||"hit"];}
 function isGoodWard(th,icon){return ITEM_ROLE[icon]==="ward"&&(th.good.includes(icon)||icon==="amulet");}
-function worldIdx(c){return Math.min(2,Math.max(0,MAP_ORDER.indexOf(c.mapId)<0?U().done.length:MAP_ORDER.indexOf(c.mapId)));}
-const RARITY=[{k:"rare",n:["פרס נדיר!","פְּרַס נָדִיר!"],st:1},{k:"epic",n:["פרס מיוחד מאוד!","פְּרַס מְיֻחָד מְאוֹד!"],st:2},{k:"legend",n:["פרס אגדי!","פְּרַס אֲגָדִי!"],st:3}];
+function worldIdx(c){return Math.min(MAP_ORDER.length-1,Math.max(0,MAP_ORDER.indexOf(c.mapId)<0?U().done.length:MAP_ORDER.indexOf(c.mapId)));}
+const RARITY=[{k:"rare",n:["פרס נדיר!","פְּרַס נָדִיר!"],st:1},{k:"epic",n:["פרס מיוחד מאוד!","פְּרַס מְיֻחָד מְאוֹד!"],st:2},{k:"legend",n:["פרס אגדי!","פְּרַס אֲגָדִי!"],st:3},{k:"legend",n:["פרס אגדי!","פְּרַס אֲגָדִי!"],st:3},{k:"legend",n:["פרס אגדי!","פְּרַס אֲגָדִי!"],st:3},{k:"legend",n:["פרס אגדי!","פְּרַס אֲגָדִי!"],st:3}];
 function enMax(h){return Math.min(6,4+Math.floor(heroLevel(h)/3));}
 function en(h){const P=S.play;P.en=P.en||{};if(P.en[h.id]==null)P.en[h.id]=enMax(h);return P.en[h.id];}
 function enSet(h,v){const P=S.play;P.en=P.en||{};P.en[h.id]=Math.max(0,Math.min(enMax(h),v));}
@@ -4142,7 +4262,7 @@ function bossAttack(){
  const live=hs.filter(h=>heroHp(h)>0);
  let tg=hs.find(h=>h.id===P.intent&&heroHp(h)>0)||live[Math.floor(Math.random()*live.length)]||hs[0];
  const widx=worldIdx(c);
- const chance=Math.max(.1,(ageGroup(c.age)==="old"?.6:.45)+.08*widx-.08*effS(tg,"def"));
+ const chance=Math.min(.9,Math.max(.1,(ageGroup(c.age)==="old"?.6:.45)+.05*widx-.08*effS(tg,"def")));
  let atk={target:tg.id,hit:false,blocked:false,frozen:false,by:""},p,v;const nm=tg.heroName;
  if(P.frozen){P.frozen=false;atk.frozen=true;p=`הבוס קפוא ולא יכול להכות! הוא מדלג על התור שלו.`;v=`הַבּוֹס קָפוּא וְלֹא יָכוֹל לְהַכּוֹת! הוּא מְדַלֵּג עַל הַתּוֹר שֶׁלּוֹ.`;}
  else if((P.defend||{})[tg.id]){atk.blocked=true;atk.by="def";p=`המגן של ${nm} עצר את המכה!`;v=`הַמָּגֵן שֶׁל ${nm} עָצַר אֶת הַמַּכָּה!`;}
@@ -4377,7 +4497,7 @@ function resolveStation(ok,text,opt={}){
   const rcv=opt.boss?hs:[L];P.dupGem=0;
   if(!opt.boss){const bs=P.chapter.stations.find(x=>x.type==="boss"&&x.node>st.node);if(bs){const th=threatOf(bs.npc),have=partyItems(hs).some(x=>isGoodWard(th,x.it.icon));const usedI=new Set();hs.forEach(h=>(h.items||[]).forEach(x=>usedI.add(x.icon)));const want=th.good.filter(i=>!usedI.has(i));if(!have&&want.length&&!th.good.includes(st.reward.icon)&&Math.random()<.7){const i=want[Math.floor(Math.random()*want.length)];st.reward={name:ITEM_N[i],icon:i};}}}{const used=new Set();rcv.forEach(h=>(h.items||[]).forEach(x=>{used.add(x.icon);}));if(used.has(st.reward.icon)){const fr=ICONS.find(i=>!used.has(i));if(fr)st.reward={name:ITEM_N[fr],icon:fr};else P.dupGem=2;}}
   if(!P.dupGem)rcv.forEach(h=>{h.items=h.items||[];h.items.push({name:st.reward.name,icon:st.reward.icon});if(h.items.length>40)h.items=h.items.slice(-40);});
-  const lvB={};hs.forEach(h=>lvB[h.id]=heroLevel(h));const first=st.type==="riddle"?!P.tries:P.rr!==P.idx;P.firstTry=ok&&first;const bonus=ok?(first?3:1):1;hs.forEach(h=>{h.xp=(h.xp||0)+(opt.boss?2:(h===L?bonus:1));});
+  const lvB={};hs.forEach(h=>lvB[h.id]=heroLevel(h));const first=st.type==="riddle"?!P.tries:P.rr!==P.idx;P.firstTry=ok&&first;const bonus=ok?(first?3:1):1;hs.forEach(h=>{h.xp=(h.xp||0)+(opt.boss?2:(h===L?bonus:1))+(worldIdx(SAVE.campaign)>=3&&(opt.boss||h===L)?1:0);});
   P.upQueue=hs.filter(h=>(heroLevel(h)>lvB[h.id])&&STATS.some(x=>statOf(h,x.k)<3)).map(h=>h.id);
   P.upLv={};hs.forEach(h=>P.upLv[h.id]={from:lvB[h.id],to:heroLevel(h)});
   P.advQ=hs.filter(h=>advStage(h)).map(h=>h.id);
@@ -4411,8 +4531,8 @@ function advance(){
 function nextWorld(c){
  c.mapsDone=c.mapsDone||[];if(!c.mapsDone.includes(c.mapId))c.mapsDone.push(c.mapId);
  if(!c.custom&&!U().done.includes(c.mapId))U().done.push(c.mapId);delete c.custom;
- if(c.mapsDone.length>=3)c.mapsDone=[c.mapId];
- const next=MAP_ORDER.find(m=>!c.mapsDone.includes(m))||MAP_ORDER[(MAP_ORDER.indexOf(c.mapId)+1)%3];
+ if(c.mapsDone.length>=MAP_ORDER.length)c.mapsDone=[c.mapId];
+ const next=MAP_ORDER.find(m=>!c.mapsDone.includes(m))||MAP_ORDER[(MAP_ORDER.indexOf(c.mapId)+1)%MAP_ORDER.length];
  const M=mapOf(next,c.age);c.mapId=next;c.node=0;c.title=M.campTitle;c.goal=M.goal;c.premise=fill(M.premise,campHeroes(),null,M.name);c.log=[];c.nextChapter=null;
  return M;
 }
