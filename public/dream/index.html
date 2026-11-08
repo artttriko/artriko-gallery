@@ -163,6 +163,8 @@ textarea{min-height:92px;resize:vertical}
 .jcard{background:#fff;color:#222;border-radius:22px;padding:20px 22px;text-align:center;max-width:min(92vw,380px);display:flex;flex-direction:column;gap:10px}
 .jcard h3{margin:0;font-size:1.3rem}
 .jstars span{font-size:2.4rem;color:#d7d7e4;margin:0 2px}.jstars span.on{color:#ffc928;text-shadow:0 2px 0 #c58a00}
+.hl{color:#ff6a00;font-weight:900;text-shadow:0 1px 0 rgba(0,0,0,.18);unicode-bidi:isolate;font-size:1.08em}
+.riddle .hl,.need .hl{color:#ff9d2e}
 .pet{animation:bob 1.5s ease-in-out infinite;transform-origin:20px 158px;transform-box:view-box}
 .glow{animation:glow 1.6s ease-in-out infinite}
 .spin{animation:spin 8s linear infinite;transform-origin:70px 92px;transform-box:view-box}
@@ -901,6 +903,8 @@ svg.hero,.fx svg{overflow:visible}
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const hl0=s=>String(s??"").split(/(\d+(?:[.,]\d+)?|[A-Za-z]+(?:['’][A-Za-z]+)?)/).map((x,i)=>i%2?`<b class="hl" dir="ltr">${esc(x)}</b>`:esc(x)).join("");
+const hl=s=>String(s??"").split(/(\u2066[^\u2069]*\u2069)/).map((x,i)=>i%2?`<span dir="ltr" style="unicode-bidi:isolate;white-space:nowrap">${hl0(x.slice(1,-1))}</span>`:hl0(x)).join("");
 const rid=()=>Math.random().toString(36).slice(2,9);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -2333,12 +2337,14 @@ function potionRiddle(c){
  if(kind==="two"){fi=Math.random()<.5?0:1;ans=fi===0?o.a+o.a+o.b:o.a+o.b+o.c;}
  if(kind==="div"&&fi===2){o.a=rnd(2,6);ans=rnd(3,9);o.p=o.a*ans;o.b=0;}
  let frame=PF[kind][fi];
+ let ex;if(kind==="add")ex=o.a+" + "+o.b;else if(kind==="sub")ex=o.a+" − "+o.b;else if(kind==="unk")ex=o.a+" − "+o.c;else if(kind==="mul")ex=o.a+" × "+o.b;else if(kind==="div")ex=o.p+" ÷ "+(fi===2?o.a:o.b);else ex=fi===0?(o.a+" + "+o.a+" + "+o.b):(o.a+" + "+o.b+" + "+o.c);
+ ex="\u2066"+ex+" = ?\u2069";
  if(kind==="add"&&fi===3){o.a=o.a;}
  const q=pfill(frame,o,false),qv=pfill(nkv(frame),o,true);
  const lo=Math.max(0,ans-2),hi=ans+2;
  const n=optN(c,false),w=new Set();[ans-2,ans-1,ans+1,ans+2,ans-3,ans+3,ans+5,ans-5,ans+10,ans+4,ans-4,ans+7,ans+6].filter(x=>x>=0&&x!==ans).forEach(x=>w.add(x));
  const near=[...w].slice(0,n-1).map(String);
- return {q,qv,a:String(ans),hint:PH[kind],hintv:nkv(PH[kind]),hint2:"התשובה היא מספר בין "+lo+" ל־"+hi+".",hint2v:"הַתְּשׁוּבָה הִיא מִסְפָּר בֵּין "+lo+" לְ־"+hi+".",plain:true,opts:shuf([String(ans)].concat(near)),gone:[],nopt:n,vis:null};
+ return {q,qv,a:String(ans),hint:"התרגיל: "+ex,hintv:"הַתַּרְגִּיל: "+ex,hint2:PH[kind],hint2v:nkv(PH[kind]),plain:true,opts:shuf([String(ans)].concat(near)),gone:[],nopt:n,vis:null};
 }
 /* ---- Hebrew ---- */
 const HW="אריה ארנב אבטיח אוטובוס בננה בלון בית ברווז גמל גזר גלידה גשר דג דבורה דלת הר זברה זבוב חתול חלון חסה חמור טלפון טווס יד יונה ירח יער כלב כדור כוכב כיסא לב לימון לחם מטוס מים מטריה נר נמלה נעל סוס ספר סירה סבון עץ עכבר ענן עט פרה פיל פרח פרפר צב צפרדע צבע קוף קשת קרח ראש רכבת שמש שולחן שעון שלג תפוח תפוז תות תרנגול".split(" ");
@@ -2406,7 +2412,7 @@ function doorHTML(ch,P){
 function speakBtn(ch){return ch.say?`<div class="speakrow"><button class="btn blu" data-a="say" data-t="${esc(ch.say)}"><span>🔊 ${esc(E(EQ.hear))}</span></button><button class="btn blu" data-a="say" data-t="${esc(ch.say)}" data-slow="1"><span>🐢 ${esc(E(EQ.slow))}</span></button></div>`:"";}
 function bigBox(ch){return ch.big?`<div class="bigword" ${/[a-z]/i.test(ch.big)?`dir="ltr"`:""}>${esc(ch.big)}</div>`:"";}
 
-function nextRiddle(c,boss){const r0=(c.focus&&focusRiddle(c,boss))||nextRiddle0(c,Math.min(3,(c.mapsDone||[]).length+1+(boss?1:0)));r0.nopt=optN(c,!!boss);return r0;}
+function nextRiddle(c,boss){const r0=(c.focus&&Math.random()<.65&&focusRiddle(c,boss))||nextRiddle0(c,Math.min(3,(c.mapsDone||[]).length+1+(boss?1:0)));r0.nopt=optN(c,!!boss);return r0;}
 function seenArr(){
  if(!SAVE.seenR){let loc=[];try{loc=JSON.parse(localStorage.getItem("dream_seen")||"[]");}catch(e){}SAVE.seenR=Array.isArray(loc)?loc:[];}
  return SAVE.seenR;
@@ -3192,7 +3198,7 @@ function arenaHTML(st,L,mapId,state,enter){
   <div class="fx ${enter?"ent-l":""}">${npcSVG(st.npc||"sprite",mapId,state==="win"?"cheer":"")}</div>
   ${badge}
   <div class="fx ${enter?"ent-r":""}">${heroSVG(L,"hero "+(state==="win"?"cheer":(state==="lose"||state==="retry")?"oops":""),hm)}</div>
-  <div class="bubble ${big?"big":""} ${enter||P.justOpened?"pop":""}">${esc(bub)}</div>
+  <div class="bubble ${big?"big":""} ${enter||P.justOpened?"pop":""}">${big?hl(bub):esc(bub)}</div>
   ${state!=="idle"?`<div class="banner ol ${state==="retry"?"lose":state}">${state==="win"?(st.type==="choice"?(ezOn()?"בְּחִירָה טוֹבָה!":"בחירה טובה!"):st.type==="meet"?(ezOn()?"רַעְיוֹן מְצוּיָּן!":"רעיון מצוין!"):st.type==="physical"?(ezOn()?"כָּל הַכָּבוֹד!":"כל הכבוד!"):(ezOn()?"הַצְלָחָה!":"הצלחה!")):state==="retry"?(ezOn()?"לֹא נָכוֹן!":"לא נכון!"):(ezOn()?"אוּפְּס!":"אופס!")}</div>`:""}
  </div>`;
 }
@@ -3446,7 +3452,7 @@ function vStation(st,hs,c){
  }
  if(st.type==="riddle"){
   const t=P.tries||0,mx=3;
-  if(t>=1)h+=`<div class="parch slide" style="background:#eafff1;box-shadow:inset 0 -6px 0 #c6f0d4,0 6px 0 ${O}"><span class="kind" style="background:${TYPE_COL.riddle}">${ezOn()?(t===1?"רֶמֶז רִאשׁוֹן":"עוֹד רֶמֶז"):(t===1?"רמז ראשון":"עוד רמז")}</span>${esc(t===1?(E(ch.hint)||letterClue(ch.a)):(ch.hint2?E(ch.hint2):letterClue(ch.a)))}${mathVis(ch)}</div>${stageBox(t===1?"קראו את הרמז בקול, ותנו להם לחשוב שוב בלי לעזור.":(t>=mx-1?"זה הניסיון האחרון. אפשר לרמוז עם תנועות ידיים, אבל לא לגלות.":"קראו את הרמז, ותנו להם לחשוב שוב."))}`;
+  if(t>=1)h+=`<div class="parch slide" style="background:#eafff1;box-shadow:inset 0 -6px 0 #c6f0d4,0 6px 0 ${O}"><span class="kind" style="background:${TYPE_COL.riddle}">${ezOn()?(t===1?"רֶמֶז רִאשׁוֹן":"עוֹד רֶמֶז"):(t===1?"רמז ראשון":"עוד רמז")}</span>${hl(t===1?(E(ch.hint)||letterClue(ch.a)):(ch.hint2?E(ch.hint2):letterClue(ch.a)))}${mathVis(ch)}</div>${stageBox(t===1?"קראו את הרמז בקול, ותנו להם לחשוב שוב בלי לעזור.":(t>=mx-1?"זה הניסיון האחרון. אפשר לרמוז עם תנועות ידיים, אבל לא לגלות.":"קראו את הרמז, ותנו להם לחשוב שוב."))}`;
   if(ch.door){h+=doorHTML(ch,P);}
   else{mkOpts(ch,effS(L,"wis"));
   h+=bigBox(ch)+speakBtn(ch)+`<p class="muted small" style="text-align:center">${ezOn()?"בַּחֲרוּ אֶת הַתְּשׁוּבָה הַנְּכוֹנָה:":"בחרו את התשובה הנכונה:"}</p>`+triviaHTML(ch,"st");}
@@ -3680,7 +3686,7 @@ function vBoss(st,hs,c,enter){
  if(ph==="q"){
   if(!P.bossQ){P.bossQ=nextRiddle(c,true);}
   const Q=P.bossQ;regMath(Q);mkOpts(Q,effS(R,"wis"));
-  return panel(`<div class="eyebrow">${T("חידה!","חִידָה!")}</div><div class="riddle" style="color:#fff">${esc(E(Q.q))}</div>${bigBox(Q)}${speakBtn(Q)}${P.bossQhint?`<p class="need">${T("רמז","רֶמֶז")}: ${esc(E(Q.hint)||letterClue(Q.a))}</p>${mathVis(Q)}`:""}${triviaHTML(Q,"boss")}<div class="parent-only">${P.reveal?`<div class="answer ol">${esc(E(Q.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div>`);
+  return panel(`<div class="eyebrow">${T("חידה!","חִידָה!")}</div><div class="riddle" style="color:#fff">${hl(E(Q.q))}</div>${bigBox(Q)}${speakBtn(Q)}${P.bossQhint?`<p class="need">${T("רמז","רֶמֶז")}: ${hl(E(Q.hint)||letterClue(Q.a))}</p>${mathVis(Q)}`:""}${triviaHTML(Q,"boss")}<div class="parent-only">${P.reveal?`<div class="answer ol">${esc(E(Q.a))}</div>`:`<button class="btn sm blu" data-a="reveal"><span>התשובה (רק להורה)</span></button>`}</div>`);
  }
  if(ph==="team"){
   const Tm=teamMembers(hs),tt=teamTarget(c,Tm.length,hs),rolls=P.teamRolls||[];
