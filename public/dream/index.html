@@ -2736,6 +2736,10 @@ function vHome(){
   <div class="mapwrap">${mapSVG(c.mapId,c.node,ch,{win:true,wh:260})}</div>
   <div class="prog" aria-label="תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES}">${Array.from({length:NODES},(_,i)=>`<i class="${i<c.node?"on":""}"></i>`).join("")}</div>
   <p class="muted small">תחנה ${Math.min(c.node+1,NODES)} מתוך ${NODES} · ${c.sessions===1?"פרק אחד שוחק":(c.sessions||0)+" פרקים שוחקו"}${(c.mapsDone||[]).length?` · ${(c.mapsDone||[]).length} עולמות הושלמו`:""}</p>
+  <div class="panel" style="gap:8px"><div class="eyebrow">איך ממשיכים הפעם? (אותו סיפור)</div>
+   <div class="chips">${MODES.map(m=>`<button class="chip" data-a="cmode" data-v="${m.id}" aria-pressed="${(c.mode==="active"?"friends":c.mode)===m.id}">${m.l}</button>`).join("")}</div>
+   <div class="chips">${FOCUS.map(f=>`<button class="chip" data-a="cfocus" data-v="${f.id}" aria-pressed="${(c.focus||"")===f.id}">${f.l}</button>`).join("")}</div>
+   <p class="muted small" style="margin:0">${esc((MODES.find(m=>m.id===(c.mode==="active"?"friends":c.mode))||MODES[0]).d)}${c.focus?" · "+esc((FOCUS.find(f=>f.id===c.focus)||{}).d||""):""}</p></div>
   <button class="btn wide grn" data-a="continue"><span>${c.sessions?"המשיכו את ההרפתקה":"התחילו את הפרק הראשון"}</span></button>
   ${partyPanel()}
   <div class="saveacts"><button class="btn sm blu" data-a="newcamp"><span>משחק חדש (${allSaves().length} מתוך ${MAX_SAVES} שמירות)</span></button><button class="btn sm ghost" data-a="savedel" data-i="0" aria-label="מחיקת שמירה"><span>🗑️ מחיקת השמירה הזו</span></button></div></section>`;
@@ -4099,6 +4103,8 @@ app.addEventListener("click",e=>{
   case "newcamp": S.setup=S.setup||{heroIds:SAVE.heroes.slice(0,1).map(h=>h.id),mode:"bed",age:"5-7",minutes:10,dice:"digital",mapId:"ice",likes:"",goal:""};S.setup.heroIds=S.setup.heroIds.filter(id=>SAVE.heroes.some(h=>h.id===id));go("setup");break;
   case "pickhero": {const id=b.dataset.id,arr=S.setup.heroIds;const i=arr.indexOf(id);if(i>=0)arr.splice(i,1);else if(arr.length<4){arr.push(id);sfx("pop");}else toast("עד 4 גיבורים");render();break;}
   case "smode": S.setup.mode=b.dataset.v;render();break;
+  case "cmode": {const c=SAVE.campaign;if(c){c.mode=b.dataset.v;c.nextChapter=null;persist();}render();break;}
+  case "cfocus": {const c=SAVE.campaign;if(c){c.focus=b.dataset.v;c.nextChapter=null;persist();}render();break;}
   case "sfocus": S.setup.focus=b.dataset.v;render();break;
   case "sage": S.setup.age=b.dataset.v;render();break;
   case "slen": S.setup.minutes=+b.dataset.v;render();break;
