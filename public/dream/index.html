@@ -1248,23 +1248,23 @@ function mapOf(id,age){
 
 /* ---------- movement tasks woven into the story (active and friends modes) ---------- */
 const MOVES={
- swamp:[{t:"עלי הנופר מתנדנדים, ועל כל אחד יושבת צפרדע. עוברים את האגם רק בקפיצות צפרדע!",n:10,u:"קפיצות צפרדע",at:0},
+ swamp:[{t:"גחליליות ישנות על השביל! עוברים על קצות האצבעות, בשקט שקט, כדי לא להעיר אותן.",n:12,u:"צעדי חתול"},{t:"הבוץ מושך את הרגליים למטה! עוברים אותו בהרמות ברכיים גבוהות.",n:12,u:"הרמות ברכיים"},{t:"הדבורים של הביצה רוקדות! מחקים אותן ומסתובבים במקום עם ידיים כמו כנפיים.",n:8,u:"סיבובי דבורה"},{t:"גשר מרחף מעל הנחל! הולכים עליו עקב אל אגודל, כמו על חבל, בלי ליפול.",n:10,u:"צעדי חבל"},{t:"ציפור ענקית זורקת פירות באוויר! מתכופפים וקופצים כדי לתפוס אותם.",n:10,u:"קפיצות תפיסה"},{t:"עלי הנופר מתנדנדים, ועל כל אחד יושבת צפרדע. עוברים את האגם רק בקפיצות צפרדע!",n:10,u:"קפיצות צפרדע"},
   {t:"הביצה שורצת תנינים! זחלו כמו תנינים מנקודה אחת בבית לנקודה אחרת, כדי שהתנינים יחשבו שאתם משלהם.",n:1,u:"הגענו!"},
   {t:"מכשפת הביצה הטילה עליכם כישוף! משתחררים ממנו רק בקפיצות על רגל אחת, וסופרים בקול.",n:15,u:"קפיצות על רגל אחת"},
   {t:"נחשי מים חוסמים את השביל. עוברים מעליהם בקפיצות גבוהות, ברכיים למעלה!",n:10,u:"קפיצות גבוהות"}],
- ice:[{t:"הקרח חלקלק! מתקדמים בצעדי פינגווין, ידיים צמודות לגוף.",n:12,u:"צעדי פינגווין",at:0},
+ ice:[{t:"הדוב הלבן מנסה להרדים אתכם! נשארים ערים בכפיפות ברכיים ובקפיצה גבוהה.",n:7,u:"כפיפות וקפיצה"},{t:"מגלשת קרח ארוכה! מטפסים בחזרה למעלה כמו מטפסי הרים, ידיים ורגליים.",n:12,u:"צעדי טיפוס"},{t:"פתיתי השלג מסתובבים באוויר! מסתובבים סביב עצמכם כמו פתית, לאט ובשיווי משקל.",n:6,u:"סיבובי פתית"},{t:"הדרקון הקטן נושף אוויר חם! מחממים ידיים בשפשוף ורצים במקום.",n:15,u:"צעדי ריצה"},{t:"גשר קרח צר! הולכים עליו עקב אל אגודל, צעד אחרי צעד, בלי ליפול.",n:10,u:"צעדי חבל"},{t:"הקרח חלקלק! מתקדמים בצעדי פינגווין, ידיים צמודות לגוף.",n:12,u:"צעדי פינגווין"},
   {t:"סערת שלג מתקרבת! מתחממים בקפיצות פיסוק.",n:10,u:"קפיצות פיסוק"},
   {t:"כישוף הקיפאון! מי שקופא על רגל אחת עד הסוף, משתחרר.",n:10,u:"שניות על רגל אחת"},
   {t:"מורידים את השלג מהשביל: מתגלגלים על השטיח כמו כדור שלג, או עושים גלגלון.",n:1,u:"התגלגלנו!"}],
- sky:[{t:"כדי לעוף בין האיים צריך כנפיים חזקות. נפנופי ידיים גדולים!",n:15,u:"נפנופי כנפיים"},
-  {t:"הענן מתנדנד! עומדים על רגל אחת בלי ליפול.",n:10,u:"שניות על רגל אחת",at:5},
-  {t:"מטפסים על הקשת: הרמות ברכיים במקום, מהר!",n:12,u:"הרמות ברכיים",at:0},
+ sky:[{t:"הרוח מנשבת חזק! מתכופפים נמוך ואז נפתחים גבוה, כמו עץ שמתנדנד.",n:10,u:"התנדנדויות"},{t:"האיים רחוקים! קופצים מענן לענן, ובכל קפיצה לצד אחר.",n:10,u:"קפיצות ענן"},{t:"פופו אוהב לרקוד! רוקדים עם ידיים למעלה וסופרים כל סיבוב.",n:8,u:"סיבובי ריקוד"},{t:"גשם כוכבים נופל! עומדים על רגל אחת, ידיים פשוטות, ומחליפים רגל.",n:10,u:"החלפות רגל"},{t:"הקשת מתכווצת! עושים צעדי ענק, כל צעד גדול כמו קשת.",n:8,u:"צעדי ענק"},{t:"כדי לעוף בין האיים צריך כנפיים חזקות. נפנופי ידיים גדולים!",n:15,u:"נפנופי כנפיים"},
+  {t:"הענן מתנדנד! עומדים על רגל אחת בלי ליפול.",n:10,u:"שניות על רגל אחת"},
+  {t:"מטפסים על הקשת: הרמות ברכיים במקום, מהר!",n:12,u:"הרמות ברכיים"},
   {t:"הכוכבים מתעוררים רק מקפיצות כוכב: ידיים ורגליים לצדדים!",n:8,u:"קפיצות כוכב"}]
 };
 function assignMoves(ch,c){
  if(!c||c.mode==="bed")return;
  const pool=[...(MOVES[c.mapId]||MOVES.swamp)];const big=ageGroup(c.age)==="old";
- ch.stations.forEach(st=>{if(st.type==="dice"&&!st.move&&pool.length){let j=pool.findIndex(x=>x.at===st.node);if(j<0){const free=pool.map((x,i)=>x.at==null?i:-1).filter(i=>i>=0);j=free.length?pick(free):Math.floor(Math.random()*pool.length);}const m=pool.splice(j,1)[0];st.move={...m,n:m.n>1&&big?Math.round(m.n*1.5):m.n};}});
+ ch.stations.forEach(st=>{if(st.type==="dice"&&!st.move&&pool.length){let j=pool.findIndex(x=>x.at===st.node);if(j<0){const rc=SAVE.recentMoves||[];let free=pool.map((x,i)=>rc.indexOf(x.t)<0?i:-1).filter(i=>i>=0);if(!free.length){free=pool.map((x,i)=>i);SAVE.recentMoves=[];}j=pick(free);}const m=pool.splice(j,1)[0];SAVE.recentMoves=((SAVE.recentMoves||[]).concat(m.t)).slice(-9);st.move={...m,n:m.n>1&&big?Math.round(m.n*1.5):m.n};}});
 }
 
 const CLOSE={
@@ -2437,6 +2437,8 @@ function nextRiddle0(c,maxL){
  c.usedR.push(r.id);markSeen(r.id,r.a);
  return r.mk();
 }
+const OPEN1=["$N {עמד|עמדה|עמדו} בתחילת הדרך. המפה ביד, הלב דופק מהתרגשות, והרוח לוחשת: 'הממלכה מחכה לכם.' שלוש, שתיים, אחת... יוצאים!","בבוקר אחד הגיע ציפור קטנה עם פתק בצורת כוכב: 'צריכים אתכם בדחיפות!' $N {קרא|קראה|קראו} את הפתק, {חייך|חייכה|חייכו}, ו{יצא|יצאה|יצאו} לדרך.","פתאום, באמצע החדר, נפתח שער קטן שמנצנץ בצבעים. מהשער נשמע קול עדין: 'עזרו לנו, בבקשה!' $N {הסתכל|הסתכלה|הסתכלו} אחד על השני, {נשם|נשמה|נשמו} עמוק, ו{קפץ|קפצה|קפצו} פנימה.","בלילה נפלה על הרצפה מפה ישנה, ועליה כתם נוצץ שזז לאט. $N {עקב|עקבה|עקבו} אחרי הכתם, והוא הוביל אותם בדיוק אל ההרפתקה.","ארנבון קטן עם כובע ענק הופיע וצעק: 'אין זמן, אין זמן!' $N {רץ|רצה|רצו} אחריו, בלי לדעת לאן, ו{הגיע|הגיעה|הגיעו} לתחילת ההרפתקה.","ספר ישן נפתח מעצמו, ומתוכו יצא אור חם. 'הגיבורים שלי,' לחש הספר, 'הגיע הזמן.' $N {נכנס|נכנסה|נכנסו} אל האור ו{התחיל|התחילה|התחילו} את המסע."];
+const OPENX=["השמש עולה, ומשהו נוצץ בקצה השביל.","ציפור קטנה עפה מעליהם ומשאירה נוצה צבעונית.","רוח עדינה מביאה ריח של הפתעה.","מרחוק נשמעת מנגינה מוזרה ומצחיקה.","על הקרקע מחכים עקבות קטנות שמובילות קדימה.","כוכב קטן קורץ מהשמיים, אפילו שעדיין יום.","ענן בצורת דרקון מנופף להם לשלום."];
 function fallbackChapter(c,count){
  const hs=campHeroes(),M=campMap(c);const nodes=[];for(let n=c.node;n<Math.min(c.node+count,NODES);n++)nodes.push(n);
  const stations=nodes.map(n=>{
@@ -2450,7 +2452,7 @@ function fallbackChapter(c,count){
  });
  const first=c.node===0;
  const last=c.log&&c.log.length?c.log[c.log.length-1]:"";
- const opening={read:first?fill("$N {עמד|עמדה|עמדו} בתחילת הדרך. המפה ביד, הלב דופק מהתרגשות, והרוח לוחשת: 'הממלכה מחכה לכם.' שלוש, שתיים, אחת... יוצאים!",hs,null,M.name):("בפרק הקודם: "+(last||"הגיבורים יצאו לדרך.")+" ועכשיו, ההרפתקה ממשיכה..."),stage:first?"קראו בקול חגיגי, וספרו לאחור ביחד עם הילדים.":"שאלו את הילדים: מי זוכר מה קרה בפעם הקודמת?"};
+ const opening={read:first?fill(pick(OPEN1),hs,null,M.name):("בפרק הקודם: "+(last||"הגיבורים יצאו לדרך.")+" ועכשיו, ההרפתקה ממשיכה... "+pick(OPENX)),stage:first?"קראו בקול חגיגי, וספרו לאחור ביחד עם הילדים.":"שאלו את הילדים: מי זוכר מה קרה בפעם הקודמת?"};
  const finale=nodes.includes(NODES-1);
  const closing={read:finale?fill("וכך $N {הציל|הצילה|הצילו} את $W. כל היצורים חוגגים, ושמם של הגיבורים נכתב בספר האגדות. אבל ההרפתקאות לא נגמרות כאן... עולם חדש כבר מחכה.",hs,null,M.name):fill(CLOSE[c.mode]||CLOSE.bed,hs,null,M.name),stage:c.mode==="bed"?"דברו לאט ובשקט, ונשמו ביחד עם הילדים.":"עצרו רגע לפני המשפט האחרון. השאירו מתח."};
  return {title:stations[0]?stations[0].title:M.name,opening,stations,closing,recap:stations.map(s=>s.title).join(", ")+".",source:"local"};
@@ -2470,6 +2472,7 @@ World: "${M.name}" (${M.desc}).
 Campaign: "${c.title}". Premise: ${c.premise}
 Quest goal: ${c.goal}
 What happened so far: ${(c.log||[]).join(" ")||"nothing yet, this is the very first chapter."}
+Variety seed (make this chapter feel different from other adventures in the same world): open with this kind of scene: "${pick(["a mysterious letter arrives","a small animal asks for help","a hidden door appears","a funny weather surprise","a market of strange friendly traders","a lost baby creature","a talking map that is a little confused","a glowing trail of footprints"])}"; the first station should NOT be a generic slippery bridge or penguin walk; invent fresh, surprising situations and characters each time.
 Things the kids love (weave them in): ${c.likes||"anything magical"}.
 Heroes (address them by these hero names; use correct Hebrew gender for each, and plural forms when addressing the group):
 ${heroLines}
@@ -3958,7 +3961,7 @@ async function startCampaign(){
  const cm=String(mapId).startsWith("c_")?SAVE.customMaps.find(x=>x.id===mapId):null;if(cm)mapId=cm.base;
  const M=cm?campMap({mapId,age:s.age,custom:cm}):mapOf(mapId,s.age);
  if(SAVE.campaign){stashProg(SAVE.campaign);SAVE.camps=[SAVE.campaign,...(SAVE.camps||[])].slice(0,MAX_SAVES-1);}
- SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode==="active"?"friends":s.mode,focus:s.focus||"",minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
+ SAVE.lastMap=mapId;SAVE.campaign={id:rid(),mapId,custom:cm?{id:cm.id,name:cm.name,keys:cm.keys}:undefined,heroIds:s.heroIds.slice(0,4),age:s.age,mode:s.mode==="active"?"friends":s.mode,focus:s.focus||"",minutes:s.minutes,dice:s.dice,read:s.read||"off",narr:s.narr||"parent",likes:(s.likes.trim()+(cm?" "+cm.keys:"")).trim(),goal:s.goal.trim()||M.goal,title:M.campTitle,premise:"",node:0,sessions:0,log:[],mapsDone:[],usedR:[],nextChapter:null};
  const c=SAVE.campaign;if(s.keep)stashProg(c);else{c.prog={};loadProg(c);}
  c.premise=fill(M.premise,campHeroes(),null,M.name);
  persist();
@@ -4100,7 +4103,8 @@ app.addEventListener("click",e=>{
   case "partyrm": {const c=SAVE.campaign,id=b.dataset.id;if(c&&c.heroIds.length>1){c.heroIds=c.heroIds.filter(x=>x!==id);persist();sfx("pop");render();}break;}
   case "partynew": {if(SAVE.campaign&&SAVE.campaign.heroIds.length<4){S.joinCamp=true;S.returnTo="home";S.draft=newDraft();go("hero");}break;}
   case "replay": S.setup=S.setup||{heroIds:SAVE.heroes.slice(0,1).map(h=>h.id),mode:"bed",age:"5-7",minutes:10,dice:"digital",mapId:"ice",likes:"",goal:""};S.setup.mapId=b.dataset.v;S.setup.heroIds=S.setup.heroIds.filter(id=>SAVE.heroes.some(h=>h.id===id));go("setup");break;
-  case "newcamp": S.setup=S.setup||{heroIds:SAVE.heroes.slice(0,1).map(h=>h.id),mode:"bed",age:"5-7",minutes:10,dice:"digital",mapId:"ice",likes:"",goal:""};S.setup.heroIds=S.setup.heroIds.filter(id=>SAVE.heroes.some(h=>h.id===id));go("setup");break;
+  case "newcamp": {const op=MAP_ORDER.filter(m=>mapOpen(m)),pool=op.filter(m=>m!==(SAVE.lastMap||(SAVE.campaign&&SAVE.campaign.mapId)));S.setup=S.setup||{heroIds:SAVE.heroes.slice(0,1).map(h=>h.id),mode:"bed",age:"5-7",minutes:10,dice:"digital",mapId:"ice",likes:"",goal:""};S.setup.mapId=pick(pool.length?pool:(op.length?op:["ice"]));}
+  S.setup=S.setup||{heroIds:SAVE.heroes.slice(0,1).map(h=>h.id),mode:"bed",age:"5-7",minutes:10,dice:"digital",mapId:"ice",likes:"",goal:""};S.setup.heroIds=S.setup.heroIds.filter(id=>SAVE.heroes.some(h=>h.id===id));go("setup");break;
   case "pickhero": {const id=b.dataset.id,arr=S.setup.heroIds;const i=arr.indexOf(id);if(i>=0)arr.splice(i,1);else if(arr.length<4){arr.push(id);sfx("pop");}else toast("עד 4 גיבורים");render();break;}
   case "smode": S.setup.mode=b.dataset.v;render();break;
   case "cmode": {const c=SAVE.campaign;if(c){c.mode=b.dataset.v;c.nextChapter=null;persist();}render();break;}
