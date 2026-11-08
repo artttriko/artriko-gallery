@@ -165,6 +165,22 @@ textarea{min-height:92px;resize:vertical}
 .jstars span{font-size:2.4rem;color:#d7d7e4;margin:0 2px}.jstars span.on{color:#ffc928;text-shadow:0 2px 0 #c58a00}
 .hl{color:#ff6a00;font-weight:900;text-shadow:0 1px 0 rgba(0,0,0,.18);unicode-bidi:isolate;font-size:1.08em}
 .riddle .hl,.need .hl{color:#ff9d2e}
+@media (min-width:900px) and (orientation:landscape){
+ #app:has(.bk){max-width:1260px}
+ .bk{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,760px) minmax(270px,1.15fr);grid-template-areas:"hd ar sd" "tm ar sd" "tm dl sd";gap:8px 16px;align-items:start}
+ .bk>.turnhead{grid-area:hd;margin:0;padding:6px 8px;gap:4px;flex-direction:column;text-align:center}
+ .bk>.turnhead .th-hero{width:54px;height:60px;flex:0 0 auto}.bk>.turnhead .th-txt{align-items:center}.bk>.turnhead .th-txt b{font-size:1.15rem}.bk>.turnhead .th-info{margin:0;animation:none;padding:2px 10px}
+ .bk>.pk{grid-area:ar}
+ .bk>.pk-team{grid-area:tm;flex-direction:column;flex-wrap:nowrap;align-items:stretch;margin:0}
+ .bk>.pk-dlg{grid-area:dl;margin:0;min-height:3.4em;padding:10px 16px 12px;font-size:clamp(1rem,1.9vw,1.25rem)}
+ .bk>.pk-side{grid-row:1/-1;grid-column:3;height:0;min-height:100%;display:flex;flex-direction:column;gap:8px;min-width:0}
+ .bk .pk-side .stage,.bk .pk-side .panel.mvbox{font-size:.85rem;padding:8px 10px}
+ .bk .pk-side .stage{max-height:8.5em;overflow:auto}
+ .bk .arena.pk,#app .bk .arena.pk,#app[data-screen=play] .bk .arena.pk{height:clamp(280px,56vh,430px);max-width:none}
+ .bk .pk-menu{margin:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bk .pk-panel,.bk .pk-story{margin:0;max-width:none}
+ .bk .pkb{padding:8px 6px 10px}
+}
 .pet{animation:bob 1.5s ease-in-out infinite;transform-origin:20px 158px;transform-box:view-box}
 .glow{animation:glow 1.6s ease-in-out infinite}
 .spin{animation:spin 8s linear infinite;transform-origin:70px 92px;transform-box:view-box}
@@ -3617,6 +3633,10 @@ function bossBruises(dmg,ko){
  return `<div class="pk-dmg">${s}</div>`;
 }
 function vBoss(st,hs,c,enter){
+ const r=vBoss0(st,hs,c,enter),k=r.indexOf("<!--S-->");
+ return k<0?r:'<div class="bk">'+r.slice(0,k)+'<div class="pk-side">'+r.slice(k+8)+'</div></div>';
+}
+function vBoss0(st,hs,c,enter){
  const P=S.play,ch=st.challenge,ez=ezOn(),T=(a,b)=>ez?b:a,th=threatOf(st.npc);
  const hpMax=ch.hp||3,n=hs.length;
  if(P.bossHp==null){
@@ -3673,6 +3693,7 @@ function vBoss(st,hs,c,enter){
  const dlgKey=ph+"|"+(P.bossRound||0)+"|"+P.bossTurn+"|"+(say||sayHTML).length;
  if(sayHTML)h+=`<div class="pk-dlg" role="status"><div>${sayHTML}</div></div>`;
  else if(say)h+=`<div class="pk-dlg" role="status"><span class="tw" data-full="${esc(say)}" data-key="${esc(dlgKey)}">${esc(say)}</span><i class="pk-more" aria-hidden="true">▼</i></div>`;
+ h+="<!--S-->";
  // ---- story (first turn only) ----
  const storyH=(ph==="choose"&&firstEver)?`<details class="pk-story"><summary>📖 ${T("הסיפור","הַסִּפּוּר")}</summary><div class="parch"><span class="kind" style="background:${TYPE_COL.boss}">${T("קרב בוס","קְרַב בּוֹס")} · ${T("תחנה","תַּחֲנָה")} ${st.node+1}</span>${ezText(st.easy||(EASY[c.mapId]||[])[st.node],st.read)}${ezToggle()}</div></details>${stageBox("הקרב בתורות, כמו בפוקימון: לכל גיבור יש אנרגיה, וכל פעולה עולה אנרגיה. אפשר לתקוף, להשתמש בקסם, להתגונן ולהתמלא באנרגיה, לפתוח את התיק ולהשתמש בחפץ, או לעזור לחבר. הבוס מכריז במי הוא עומד לפגוע, וכך אפשר להתגונן או להגן על חבר. חפץ שמתאים לבוס חוסם פעמיים. בכל סיבוב שלישי הבוס שואל חידה.")}`:"";
  // ---- victory ----
