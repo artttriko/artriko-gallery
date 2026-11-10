@@ -129,6 +129,45 @@ async function tryOpenAI(prompt, images) {
   return { err: { status: 502, code: "upstream_error", error: last?.msg || "OpenAI unavailable" } };
 }
 
+// Claude (Anthropic). Used when the admin presses "היעזר בקלוד", and as the last automatic fallback.
+const CLAUDE_MODELS = [process.env.CLAUDE_MODEL, "claude-sonnet-4-5", "claude-sonnet-4-0", "claude-3-5-haiku-latest"].filter(Boolean);
+async function tryClaude(prompt, images) {
+  const key = (process.env.ANTHROPIC_API_KEY || "").trim();
+  if (!key) return { err: { status: 500, code: "no_key", error: "ANTHROPIC_API_KEY is not set" } };
+  const content = [];
+  for (const img of images) {
+    const m = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(img);
+    if (m) content.push({ type: "image", source: { type: "base64", media_type: m[1], data: m[2] } });
+  }
+  content.push({ type: "text", text: prompt + "\n\nReturn only the JSON object, with no other text." });
+  let last = null;
+  for (const model of CLAUDE_MODELS) {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json" },
+      body: JSON.stringify({ model, max_tokens: 2500, messages: [{ role: "user", content }] }),
+    });
+    const text = await r.text();
+    let data = {};
+    try { data = JSON.parse(text); } catch {}
+    if (r.ok) {
+      const out = (data.content || []).map(b => b.text || "").join("");
+      const result = parseJson(out);
+      if (!result) return { err: { status: 502, code: "invalid_json", error: "Could not read the answer" } };
+      return { result, model };
+    }
+    const msg = data?.error?.message || short(text);
+    console.error("Claude error", r.status, model, msg);
+    last = { status: r.status, msg };
+    if (r.status === 404 || (r.status === 400 && /model/i.test(msg))) continue;
+    break;
+  }
+  if (last?.status === 401) return { err: { status: 502, code: "bad_key", error: last.msg } };
+  if (/credit|billing/i.test(last?.msg || "")) return { err: { status: 402, code: "needs_billing", error: last.msg } };
+  if (last?.status === 429 || last?.status === 529) return { err: { status: 429, code: "rate_limited", error: last.msg } };
+  return { err: { status: 502, code: "upstream_error", error: last?.msg || "Claude unavailable" } };
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ code: "method", error: "POST only" });
   const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
@@ -140,11 +179,18 @@ export default async function handler(req, res) {
   }
   const imgs = (Array.isArray(images) ? images : []).slice(0, 3).map(String);
 
+  if (req.body?.provider === "claude") {
+    const c = await tryClaude(prompt, imgs);
+    if (c.result) return res.status(200).json({ result: c.result, model: c.model, provider: "claude" });
+    return res.status(c.err.status).json({ code: c.err.code, error: c.err.error });
+  }
   const g = await tryGemini(prompt, imgs);
   if (g.result) return res.status(200).json({ result: g.result, model: g.model, provider: "gemini" });
   const o = await tryOpenAI(prompt, imgs);
   if (o.result) return res.status(200).json({ result: o.result, model: o.model, provider: "openai", geminiError: g.err.code });
-  // Both unavailable: report Gemini's reason (the site then offers keyword-based suggestions)
+  const c = await tryClaude(prompt, imgs);
+  if (c.result) return res.status(200).json({ result: c.result, model: c.model, provider: "claude", geminiError: g.err.code });
+  // All unavailable: report Gemini's reason (the site then offers keyword-based suggestions)
   return res.status(g.err.status).json({ code: g.err.code, error: g.err.error, openai: o.err.code });
 }
 

@@ -1216,3 +1216,21 @@ footer{flex-wrap:wrap}
 @media (max-width:760px){.social-band .sb-link{padding:16px;min-height:84px}.social-band .sb-link svg{width:38px;height:38px;padding:8px}.social-band .sb-link::after{padding:7px 12px;font-size:14px}}
 @media (max-width:760px){.social-band .sb-link{gap:12px;min-width:0}.social-band .sb-link b{font-size:26px}.social-band .sb-link small{font-size:14px}
   .social-band .sb-link::after{content:"←";width:40px;height:40px;padding:0;display:grid;place-items:center;font-size:20px;flex:none}}
+
+/* ===== New work: spinning pop-color frame + comic "חדש!" starburst ===== */
+@property --nw-a{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card.is-new .frame{border-color:transparent;background:linear-gradient(var(--ink-2),var(--ink-2)) padding-box,conic-gradient(from var(--nw-a),var(--pop),var(--sun),var(--sky),var(--pop)) border-box;animation:nwSpin 3s linear infinite,nwGlow 2.4s ease-in-out infinite}
+@keyframes nwSpin{to{--nw-a:360deg}}
+@keyframes nwGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,210,63,0),0 0 18px rgba(255,59,92,.35)}50%{box-shadow:0 0 0 4px rgba(255,210,63,.18),0 0 34px rgba(46,196,255,.55)}}
+.new-tag{position:absolute;top:8px;inset-inline-start:8px;z-index:5;width:76px;height:76px;display:grid;place-items:center;pointer-events:none;
+  background:var(--pop);color:var(--paper);
+  clip-path:polygon(50% 0,61% 18%,82% 8%,79% 30%,100% 34%,85% 50%,100% 66%,79% 70%,82% 92%,61% 82%,50% 100%,39% 82%,18% 92%,21% 70%,0 66%,15% 50%,0 34%,21% 30%,18% 8%,39% 18%);
+  filter:drop-shadow(3px 3px 0 var(--ink));animation:nwPop .7s cubic-bezier(.2,1.6,.4,1) both,nwWob 1.8s ease-in-out .7s infinite}
+.new-tag b{font-size:17px;font-weight:900;line-height:1;transform:rotate(-12deg);text-shadow:2px 2px 0 var(--ink);margin-top:10px}
+.new-tag i{position:absolute;top:17px;font-style:normal;font-size:10px;font-weight:900;letter-spacing:.08em;color:var(--sun);transform:rotate(-12deg)}
+@keyframes nwPop{from{transform:scale(0) rotate(-90deg)}to{transform:scale(1) rotate(0)}}
+@keyframes nwWob{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.1) rotate(8deg)}}
+.tz-row .new-tag{display:none}
+@media (prefers-reduced-motion:reduce){.card.is-new .frame,.new-tag{animation:none}}
+.pill.ai-claude{border-color:#d97757;color:#f4a27f}
+.pill.ai-claude:hover{background:#d97757;color:var(--ink)}

@@ -156,6 +156,8 @@ const SAMPLES=[
 const forSale=w=>w.section!=="gift"&&w.status==="sale";
 // went from "available" to "not available" in the last 7 days (sold_at is set by a database trigger)
 const justSnatched=w=>w.section!=="gift"&&w.status!=="sale"&&w.soldAt&&Date.now()-w.soldAt<7*864e5;
+// added in the last 10 days: shown with a "new" sticker and a glowing animated frame
+const isNew=w=>!w.example&&w.createdAt&&Date.now()-w.createdAt<10*864e5;
 const toRow=w=>({sort_order:w.order==null?null:+w.order,section:w.section==="gift"?"gift":"collect",mount:w.mount==="wall"?"wall":"stand",id:w.id,name:w.name,height_cm:w.heightCm===""||w.heightCm==null?null:+w.heightCm,figure_cm:+w.figureCm>0?+w.figureCm:null,materials:w.materials||null,status:w.status,summary:w.summary||null,character:w.character||null,category:w.category||null,scale:w.scale||null,tech:w.tech||null,media:w.media,process:Array.isArray(w.process)?w.process:[],created_at:new Date(w.createdAt).toISOString(),updated_at:new Date().toISOString()});
 const fromRow=r=>({order:r.sort_order==null?null:+r.sort_order,section:r.section==="gift"?"gift":"collect",mount:r.mount==="wall"?"wall":"stand",id:r.id,name:r.name,heightCm:r.height_cm==null?"":+r.height_cm,figureCm:r.figure_cm==null?"":+r.figure_cm,materials:r.materials||"",status:r.status,summary:r.summary||"",character:r.character||"",category:r.category||"",scale:r.scale||"",tech:r.tech||"",media:Array.isArray(r.media)?r.media:[],process:Array.isArray(r.process)?r.process.filter(p=>p&&p.url):[],soldAt:r.sold_at?Date.parse(r.sold_at):null,createdAt:Date.parse(r.created_at)});
 async function dbAll(){const {data,error}=await sb.from("works").select("*").order("created_at",{ascending:false});if(error){console.error(error);return null}return data.map(fromRow)}
@@ -343,9 +345,10 @@ function splash(el){const r=el.getBoundingClientRect(),c=["#ff3b5c","#ffd23f","#
     d.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;background:${c[i%4]};--dx:${Math.cos(a)*34}px;--dy:${Math.sin(a)*34}px`;
     layerHost().appendChild(d);setTimeout(()=>d.remove(),650)}}
 function cardHTML(w,short){const nm=short===true?String(w.name||"").split(/\s+[–-]\s+/)[0]:w.name;return `
-    <article class="card" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
+    <article class="card${isNew(w)?" is-new":""}" data-id="${esc(w.id)}" tabindex="0" aria-label="${esc(w.name)}">
       <div class="frame">${S.view==="room"&&w.section!=="gift"?sceneHTML(w):flatHTML(w)}
         ${w.section==="gift"?`<button class="badge remake-b" data-buy="${esc(w.id)}" title="נוצר בהזמנה אישית וכבר אצל מי שהזמין אותו">נוצר בהזמנה אישית</button>`:w.status==="sale"?`<button class="badge sv" data-buy="${esc(w.id)}" data-t="זמין לרכישה"><span>זמין לרכישה</span></button>`:(justSnatched(w)?`<button class="badge remake-b snatched" data-buy="${esc(w.id)}" title="נחטף ממש השבוע. אפשר להזמין גרסה חדשה">🔥 נחטף השבוע!</button>`:`<button class="badge remake-b" data-buy="${esc(w.id)}" title="המקורי לא זמין כרגע, אבל אפשר להזמין גרסה חדשה">נחטף!</button>`)}
+        ${isNew(w)?`<span class="new-tag" aria-label="עבודה חדשה"><i>NEW!</i><b>חדש!</b></span>`:""}
         ${w.example?`<span class="example">דוגמה</span>`:""}
         ${w.process&&w.process.length?`<span class="proc-tag" title="יש תמונות מתהליך העבודה">🛠️ תהליך</span>`:""}
         ${likeBtn(w)}
@@ -1403,17 +1406,17 @@ function showOptions(list,who,state){
   $("#aiOpts").dataset.json=JSON.stringify(list);
   $("#aiState").textContent=state;
 }
-async function suggest(fresh){
+async function suggest(fresh,provider){
   aiCtl?.abort();aiCtl=new AbortController();const my=aiCtl;
   const imgs=S.staged.filter(s=>s.kind==="image"&&s.ready).slice(0,3);
   const hint=$("#aiHint").value.trim();
   if(!imgs.length&&!hint){$("#aiState").textContent="העלה תמונה או כתוב מי הדמות, ואז לחץ \"הצעות חדשות\".";return}
-  $("#aiState").textContent=(imgs.length?`שולח ${imgs.length} תמונות ל־Gemini… `:"כותב לפי הפרטים שכתבת… ")+"(עד דקה)";
-  $("#aiStop").hidden=false;$("#aiRun").disabled=true;
+  $("#aiState").textContent=(imgs.length?`שולח ${imgs.length} תמונות ל־${provider==="claude"?"Claude":"Gemini"}… `:"כותב לפי הפרטים שכתבת… ")+"(עד דקה)";
+  $("#aiStop").hidden=false;$("#aiRun").disabled=true;$("#aiClaude").disabled=true;
   try{
     const images=await Promise.all(imgs.map(s=>shrinkForAI(s.orig)));
     const {data:{session}}=await sb.auth.getSession();
-    const r=await fetch("/api/suggest",{method:"POST",signal:my.signal,headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify({prompt:buildPrompt(images.length>0),images})});
+    const r=await fetch("/api/suggest",{method:"POST",signal:my.signal,headers:{"Content-Type":"application/json",Authorization:"Bearer "+(session?.access_token||"")},body:JSON.stringify({prompt:buildPrompt(images.length>0),images,provider:provider||""})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw {code:j.code||"upstream_error",message:j.error};
     let out=j.result||{};
@@ -1422,25 +1425,27 @@ async function suggest(fresh){
     if(!list.length)throw{code:"invalid_json"};
     applyCategorization(out);
     const who=out.character?`<div class="opt-who"><span>הדמות: <b>${esc(out.character)}</b>${out.confidence?` · ביטחון ${esc(out.confidence)}`:""}</span>${out.seen?`<small>${esc(out.seen)}</small>`:""}<small>לא מדויק? כתוב את הדמות בשדה למעלה ולחץ "הצעות חדשות".</small></div>`:"";
-    const via=j.provider==="openai"?"Gemini היה עמוס, אז ההצעות הגיעו מ־OpenAI. ":"";
+    const via=j.provider==="claude"?(provider==="claude"?"ההצעות נכתבו על ידי Claude. ":"Gemini ו־OpenAI לא היו זמינים, אז ההצעות נכתבו על ידי Claude. "):j.provider==="openai"?"Gemini היה עמוס, אז ההצעות הגיעו מ־OpenAI. ":"";
     showOptions(list,who,via+(images.length?`נשלחו ${images.length} תמונות. `:"")+"בחר הצעה. אפשר לערוך אחרי שהיא נכנסת לטופס.");
   }catch(e){
     const code=e?.name==="AbortError"?"cancelled":e?.code;
     if(my!==aiCtl)return;
     if(code==="cancelled"){$("#aiState").textContent="נעצר.";return}
     if(code==="not_admin"){$("#aiState").textContent="צריך להיות מחובר כמנהל.";return}
+    if(provider==="claude"){$("#aiState").textContent=code==="no_key"?"המפתח של Claude לא מוגדר עדיין ב־Vercel (ANTHROPIC_API_KEY).":code==="needs_billing"?"בחשבון של Claude נגמר הקרדיט. צריך להוסיף קרדיט בחשבון.":code==="rate_limited"?"Claude עמוס כרגע. נסה שוב בעוד דקה.":"Claude לא זמין כרגע. נסה שוב, או לחץ \"הצעות חדשות\".";return}
     // AI unavailable: offer quick suggestions built from the keywords instead
     const why={rate_limited:"Gemini הגיע למגבלת השימוש",no_key:"מפתח ה־AI לא מוגדר",refused:"ה־AI לא כתב הצעה לתמונות האלה",invalid_json:"התשובה מה־AI לא הגיעה בפורמט הנכון"}[code]||"ה־AI לא זמין כרגע";
     const hasWords=$("#aiHint").value.trim()||$("#fName").value.trim();
     const list=localSuggest();
     showOptions(list,`<div class="opt-who"><span>הצעות מהירות לפי מילות מפתח</span><small>${hasWords?"נבנו מהטקסט שכתבת. ":"כדאי לכתוב בשדה למעלה מי הדמות (למשל: באטמן, באסט, צבעים כהים) ולחץ \"הצעות חדשות\". "}לסיווג (קטגוריה, קנה מידה) צריך את ה־AI, אז כדאי לבדוק אותו ידנית.</small></div>`,`${why}, אז הנה הצעות מהירות לפי מילות המפתח. "הצעות חדשות" נותן גרסאות אחרות.`);
-  }finally{if(my===aiCtl){$("#aiStop").hidden=true;$("#aiRun").disabled=false}}
+  }finally{if(my===aiCtl){$("#aiStop").hidden=true;$("#aiRun").disabled=false;$("#aiClaude").disabled=false}}
 }
 $("#aiRun").onclick=()=>{$("#aiRun").classList.remove("solid");suggest(true)};
 $("#aiHint").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();suggest(true)}});
 // typed details after suggestions were shown: remind to refresh so they get woven in
 $("#aiHint").addEventListener("input",()=>{if($("#aiOpts").children.length&&$("#aiHint").value.trim()){$("#aiState").textContent="כדי לשלב את מה שכתבת, לחץ \"הצעות חדשות\" (או Enter).";$("#aiRun").classList.add("solid")}});
 $("#aiStop").onclick=()=>aiCtl?.abort();
+$("#aiClaude").onclick=()=>suggest(true,"claude");
 $("#aiOpts").addEventListener("click",e=>{const b=e.target.closest("[data-use]");if(!b)return;const o=JSON.parse($("#aiOpts").dataset.json||"[]")[+b.dataset.use];if(!o)return;
   $("#fName").value=o.title;$("#fSum").value=o.summary||"";
   document.querySelectorAll(".opt").forEach(x=>{const on=x.dataset.i===b.dataset.use;x.classList.toggle("used",on);const btn=x.querySelector("[data-use]");btn.textContent=on?"✓ נבחרה":"להשתמש בזו";btn.setAttribute("aria-pressed",on)});
