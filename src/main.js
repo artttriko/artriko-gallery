@@ -1412,7 +1412,7 @@ async function suggest(fresh,provider){
   const hint=$("#aiHint").value.trim();
   if(!imgs.length&&!hint){$("#aiState").textContent="העלה תמונה או כתוב מי הדמות, ואז לחץ \"הצעות חדשות\".";return}
   $("#aiState").textContent=(imgs.length?`שולח ${imgs.length} תמונות ל־${provider==="claude"?"Claude":"Gemini"}… `:"כותב לפי הפרטים שכתבת… ")+"(עד דקה)";
-  $("#aiStop").hidden=false;$("#aiRun").disabled=true;$("#aiClaude").disabled=true;
+  $("#aiStop").hidden=false;$("#aiRun").disabled=true;
   try{
     const images=await Promise.all(imgs.map(s=>shrinkForAI(s.orig)));
     const {data:{session}}=await sb.auth.getSession();
@@ -1438,14 +1438,13 @@ async function suggest(fresh,provider){
     const hasWords=$("#aiHint").value.trim()||$("#fName").value.trim();
     const list=localSuggest();
     showOptions(list,`<div class="opt-who"><span>הצעות מהירות לפי מילות מפתח</span><small>${hasWords?"נבנו מהטקסט שכתבת. ":"כדאי לכתוב בשדה למעלה מי הדמות (למשל: באטמן, באסט, צבעים כהים) ולחץ \"הצעות חדשות\". "}לסיווג (קטגוריה, קנה מידה) צריך את ה־AI, אז כדאי לבדוק אותו ידנית.</small></div>`,`${why}, אז הנה הצעות מהירות לפי מילות המפתח. "הצעות חדשות" נותן גרסאות אחרות.`);
-  }finally{if(my===aiCtl){$("#aiStop").hidden=true;$("#aiRun").disabled=false;$("#aiClaude").disabled=false}}
+  }finally{if(my===aiCtl){$("#aiStop").hidden=true;$("#aiRun").disabled=false}}
 }
 $("#aiRun").onclick=()=>{$("#aiRun").classList.remove("solid");suggest(true)};
 $("#aiHint").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();suggest(true)}});
 // typed details after suggestions were shown: remind to refresh so they get woven in
 $("#aiHint").addEventListener("input",()=>{if($("#aiOpts").children.length&&$("#aiHint").value.trim()){$("#aiState").textContent="כדי לשלב את מה שכתבת, לחץ \"הצעות חדשות\" (או Enter).";$("#aiRun").classList.add("solid")}});
 $("#aiStop").onclick=()=>aiCtl?.abort();
-$("#aiClaude").onclick=()=>suggest(true,"claude");
 $("#aiOpts").addEventListener("click",e=>{const b=e.target.closest("[data-use]");if(!b)return;const o=JSON.parse($("#aiOpts").dataset.json||"[]")[+b.dataset.use];if(!o)return;
   $("#fName").value=o.title;$("#fSum").value=o.summary||"";
   document.querySelectorAll(".opt").forEach(x=>{const on=x.dataset.i===b.dataset.use;x.classList.toggle("used",on);const btn=x.querySelector("[data-use]");btn.textContent=on?"✓ נבחרה":"להשתמש בזו";btn.setAttribute("aria-pressed",on)});
