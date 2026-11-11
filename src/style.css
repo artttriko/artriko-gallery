@@ -617,7 +617,7 @@ a.mark{text-decoration:none}
   .hero .cta{display:grid;grid-template-columns:1fr 1fr}
   .hero .cta .big{justify-content:center;padding:12px 10px;font-size:16px}
   .hero-links{gap:6px 14px}
-  .rv-list{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:86%;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-16px;padding:0 16px 8px;scrollbar-width:none}
+  .rv-list{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:86%;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-16px;padding:14px 16px 8px;scrollbar-width:none}
   .rv-list::-webkit-scrollbar{display:none}
   .rv-card{scroll-snap-align:center}
   .rv-bar .pill.solid{width:100%;justify-content:center;margin:0}
@@ -1234,3 +1234,9 @@ footer{flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){.card.is-new .frame,.new-tag{animation:none}}
 .pill.ai-claude{border-color:#d97757;color:#f4a27f}
 .pill.ai-claude:hover{background:#d97757;color:var(--ink)}
+
+/* Reviews from the last 7 days: a "fresh" sticker */
+.rv-card.fresh{position:relative;border-color:var(--sun);box-shadow:4px 4px 0 var(--pop)}
+.rv-fresh{position:absolute;top:-12px;inset-inline-end:14px;z-index:2;background:var(--sun);color:var(--ink);font-weight:900;font-size:13px;padding:4px 12px;border:2px solid var(--ink);border-radius:999px;box-shadow:2px 2px 0 var(--ink);transform:rotate(-4deg);animation:rvFresh 2.2s ease-in-out infinite}
+@keyframes rvFresh{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(2deg) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.rv-fresh{animation:none}}

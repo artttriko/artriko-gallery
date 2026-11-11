@@ -1820,7 +1820,8 @@ function renderSpot(){
 $("#spot").addEventListener("click",e=>{if(e.target.closest("[data-spotph]")){const r=REVIEWS.find(x=>x.id===SPOT_ID);if(r)openViewer(r.photos,0)}});
 function rvCard(r){
     const d=new Date(r.created_at),v=rvAvg(r);
-    return `<article class="rv-card">
+    const fresh=Date.now()-d<7*864e5;
+    return `<article class="rv-card${fresh?" fresh":""}">${fresh?`<span class="rv-fresh">✨ המלצה טרייה!</span>`:""}
       <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span></header>
       <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(r.subject)}</span>`:""}</div>
       ${r.body?`<p class="rv-body">${esc(r.body)}</p>`:""}
