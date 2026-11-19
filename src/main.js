@@ -396,8 +396,8 @@ function renderHome(){
       ${gifts.length?`<div class="tz-row">${gifts.slice(0,3).map(w=>cardHTML(w,true)).join("")}</div>`:""}</section>`;
   if(wsOn){const ph=(T.wsPhotos||[]).slice(0,3);
     P.learn=`<section class="tz tz-ws">
-      <div class="tz-head"><div><span class="ws-eyebrow">${esc(T.wsEyebrow||"סדנאות")}</span><h2 class="sec-title">${two(T.wsTitle)}</h2><p class="tz-text">${esc(first(T.wsText))}</p></div>
-        <a class="pill solid tz-go" href="#learn">לסדנאות ←</a></div>
+      <div class="tz-head"><div><span class="ws-eyebrow">${esc(T.wsEyebrow||"שיעורים")}</span><h2 class="sec-title">${two(T.wsTitle)}</h2><p class="tz-text">${esc(first(T.wsText))}</p></div>
+        <a class="pill solid tz-go" href="#learn">לשיעורים ←</a></div>
       ${ph.length?`<div class="tz-row tz-ph">${ph.map((u,i)=>`<button type="button" data-wsph="${i}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}</section>`}
   if(T.btnGuide!==false)P.guide=`<a class="tz tz-guide" href="#guide"><span class="ws-eyebrow">המדריך לאספנים</span><b>באסט, דיורמה או פסל מלא? מה זה סקייל, ומה ההבדל בין רזין ל־FDM?</b><span class="tz-go-t">לקריאה במדריך ←</span></a>`;
   box.innerHTML=navOrder().filter(k=>k!=="home").map(k=>P[k]||"").join("");
@@ -623,8 +623,8 @@ function openContact(w){
     t=w==="gift"?"היי ARTRIKO 👋\nאשמח לשמוע על ✨ *פריט מיוחד בהתאמה אישית*\nהרעיון שלי: ":"היי ARTRIKO 👋\nאשמח להזמין 🎨 *פסל בהתאמה אישית*\nהדמות שאני רוצה: ";
   }else if(w==="learn"){
     title=TEXTS.wsCta||"אני רוצה ללמוד לצבוע!";
-    note="כדאי לציין אם יש ניסיון קודם, ואם מתאימה הדרכה אישית או סדנה. אחר כך בוחרים איפה נוח לדבר.";
-    t="היי ARTRIKO 👋\nאני רוצה ללמוד לצבוע! 🖌️\nאשמח לשמוע על *הדרכה אישית או סדנה* (איירבראש ומכחולים).";
+    note="כדאי לציין אם יש ניסיון קודם, ובמה רוצים להתמקד: מכחולים, איירבראש או שיוף. אחר כך בוחרים איפה נוח לדבר.";
+    t="היי ARTRIKO 👋\nאני רוצה ללמוד לצבוע! 🖌️\nאשמח לשמוע על *שיעור אישי* (איירבראש, מכחולים או שיוף).";
   }else{
     const notForSale=!!(w&&!forSale(w));
     title=notForSale?pick(SOLD_TITLES):"אני רוצה את זה!";
@@ -662,7 +662,7 @@ function track(kind){if(!S.admin)ping(kind)}
 // chat link, and its WhatsApp button gets its link only during the click, so it is recognised by id.
 document.addEventListener("click",e=>{const a=e.target.closest("a");if(!a)return;const h=a.href||"";
   if(/instagram\.com|ig\.me/.test(h))track("ig");else if(/tiktok\.com/.test(h))track("tt");else if(a.id==="ctWa"||/wa\.me/.test(h))track("wa")},true);
-const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה להדרכה או סדנה"],["guide","כניסה למדריך לאספנים"],["search","שימוש בחיפוש"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
+const EV_LABELS=[["visits","כניסות לאתר"],["work","פתיחת יצירה בגלריה"],["want","לחיצה על \"אני רוצה את זה!\""],["learn","בקשה לשיעור"],["guide","כניסה למדריך לאספנים"],["search","שימוש בחיפוש"],["ig","מעבר לאינסטגרם"],["tt","מעבר לטיקטוק"],["wa","מעבר לוואטסאפ"]];
 /* Activity over time: unique visitors per day / month, busiest hours and weekdays (Israel time) */
 const HE_DAYS=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
 const HE_MONTHS=["ינו׳","פבר׳","מרץ","אפר׳","מאי","יוני","יולי","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"];
@@ -732,7 +732,7 @@ $("#wsPhFile").onchange=async e=>{const files=[...e.target.files].filter(f=>f.ty
       ph.push(await uploadBlob(`workshop/${crypto.randomUUID()}.jpg`,blob,(l,t)=>{$("#wsPhMsg").textContent=`מעלה תמונה ${k+1} מתוך ${files.length}… ${Math.round(l/t*100)}%`}));
     }catch(err){$("#wsPhMsg").textContent="העלאה נכשלה: "+(err.message||err);return}
   }
-  saveWsPhotos(files.length>1?`${files.length} תמונות נוספו לסקשן הסדנאות.`:"התמונה נוספה לסקשן הסדנאות.");
+  saveWsPhotos(files.length>1?`${files.length} תמונות נוספו לסקשן השיעורים.`:"התמונה נוספה לסקשן השיעורים.");
 };
 
 /* ================= Image tools ================= */
@@ -1186,10 +1186,10 @@ const DEFAULT_TEXTS={
   rvThanks:"וואו, תודה על הזמן ועל המילים!\nתודה ענקית ששיתפת את החוויה! 🙏\nאיזה כיף לקרוא. תודה על כל מילה!\nתודה! זה באמת משמח אותי.",
   introLines:DEFAULT_INTRO,studioLines:DEFAULT_STUDIO,
   galNote:"התמונות בגלריה עוברות עריכה קלה של תאורה, צבע ורקע כדי להתאים לתצוגה באתר. ייתכנו הבדלי גוון קלים בין מסכים. הפסל עצמו, כמובן, צבוע ביד ונאמן לעבודה המקורית.",
-  wsEyebrow:"סדנאות והדרכות צביעה",
+  wsEyebrow:"שיעורי צביעה אישיים",
   wsTitle:"מכחול ביד אחת. / איירבראש ביד השנייה.",
-  wsText:"מעבר לפסלים, אני מעביר **הדרכות אישיות וסדנאות** בצביעת פסלים ומיניאטורות. איך מחזיקים, מדללים ומכוונים, ולמה כל שכבה נמצאת בדיוק במקום שלה. מתאים גם למי שעוד לא החזיק איירבראש ביד, וגם למי שכבר צובע ורוצה לעלות רמה.",
-  wsFormats:"הדרכה אישית, אחד על אחד\nסדנה בקבוצה קטנה\nמהצעד הראשון ועד רמה מתקדמת",
+  wsText:"מעבר לפסלים, אני מעביר **שיעורים אישיים** בצביעת פסלים ומיניאטורות. איך מחזיקים, מדללים ומכוונים, ולמה כל שכבה נמצאת בדיוק במקום שלה. מתאים גם למי שעוד לא החזיק איירבראש ביד, וגם למי שכבר צובע ורוצה לעלות רמה.",
+  wsFormats:"שיעור אישי, אחד על אחד\nבנוי לפי מה שחשוב לך: מכחולים, איירבראש או שיוף\nמהצעד הראשון ועד רמה מתקדמת",
   wsAir:"תפעול, ניקוי ותחזוקה\nדילול צבע ולחץ אוויר\nפריימר ושכבות בסיס\nמעברי צבע חלקים\nזניטל: אור וצל מלמעלה\nמיסוך ועבודה עם שבלונות",
   wsBrush:"דריי בראש (Dry Brush)\nווט בלנדינג (Wet Blending)\nווש והצללות (Wash)\nשכבות והדגשות (Layering)\nהדגשת קצוות (Edge Highlight)\nגלייזינג (Glazing)",
   wsCombo:"**ההמלצה שלי: לשלב את שניהם.** האיירבראש בונה את הבסיס, האור והמעברים. המכחול מוסיף את הפרטים, את המבט ואת האופי.",
@@ -1252,7 +1252,7 @@ function renderTexts(){
   if(typeof renderHome==="function"&&S.works.length)renderHome();
   const ph=Array.isArray(T.wsPhotos)?T.wsPhotos:[];
   $("#wsPhotos").hidden=!ph.length;
-  $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהסדנה"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
+  $("#wsPhotos").innerHTML=ph.map((u,i)=>`<button type="button" data-ph="${i}" aria-label="תמונה ${i+1} מהשיעורים"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("");
   // Buttons the admin chose to show
   const vis=(sels,on)=>sels.forEach(x=>{const el=$(x);if(el)el.hidden=!on});
   vis(["#igTop","#igBar","#ctIg","#igGuide","#igBand"],T.btnIg!==false);
@@ -1647,7 +1647,7 @@ $("#igGuide").href=CFG.instagram;$("#ttGuide").href=CFG.tiktok;
 document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{S.filter={cat:b.dataset.goto,tech:"",sale:false};render();location.hash="gallery"});
 
 /* ================= Menu order (set in admin) ================= */
-function navLabels(){return {home:"ראשי",gallery:"גלריה",reviews:"המלצות",gifts:"מעבר לפסלים",learn:"סדנאות",guide:"המדריך לאספנים"}}
+function navLabels(){return {home:"ראשי",gallery:"גלריה",reviews:"המלצות",gifts:"מעבר לפסלים",learn:"שיעורים",guide:"המדריך לאספנים"}}
 function navOrder(){const all=Object.keys(navLabels()),o=(Array.isArray(TEXTS.navOrder)?TEXTS.navOrder:[]).filter(k=>all.includes(k));return [...o,...all.filter(k=>!o.includes(k))]}
 function applyNavOrder(){const nav=$("#secnav");if(!nav)return;navOrder().forEach(k=>{const a=nav.querySelector(`[data-k="${k}"]`);if(a)nav.appendChild(a)});renderNavOrderAdmin()}
 function renderNavOrderAdmin(){const box=$("#navOrder");if(!box)return;const o=navOrder();
@@ -1763,7 +1763,7 @@ const RV_CRIT={
   piece:[["service","שירות","זמינות, תקשורת ויחס"],["reliable","אמינות","עמידה בזמנים ובמה שסוכם"],["pro","מקצועיות","איכות ההדפסה והצביעה"]],
   lesson:[["service","שירות","יחס, סבלנות וזמינות"],["reliable","אמינות","עמידה בזמנים ובמה שהובטח"],["pro","מקצועיות","ידע ויכולת להסביר"]]
 };
-const RV_KIND={piece:"פסל או מתנה",lesson:"הדרכה או סדנה"};
+const RV_KIND={piece:"פסל, הזמנה או רכישה",lesson:"שיעור או הדרכה"};
 const RV_MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
 let REVIEWS=[],RV_TAB="",RV_SHOW=6,RV_ADM="pending";
 const rvAvg=r=>(r.r_service+r.r_reliable+r.r_pro)/3;
@@ -1822,7 +1822,7 @@ function rvCard(r){
     const d=new Date(r.created_at),v=rvAvg(r);
     const fresh=Date.now()-d<7*864e5;
     return `<article class="rv-card${fresh?" fresh":""}">${fresh?`<span class="rv-fresh">✨ המלצה טרייה!</span>`:""}
-      <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span></header>
+      <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"שיעור":"פסל"}</span></header>
       <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(r.subject)}</span>`:""}</div>
       ${r.body?`<p class="rv-body">${esc(r.body)}</p>`:""}
       ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}" aria-label="תמונה ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
@@ -1851,22 +1851,24 @@ function rvOpen(kind){
   Object.assign(RVF,{kind:null,rates:{},photos:[],busy:false,nudge:""});
   $("#rvForm").reset();$("#rvMsg").textContent="";$("#rvCount").textContent="0/700";rvPhotos();
   $("#rvStep1").hidden=false;$("#rvStep2").hidden=true;$("#rvDone").hidden=true;$("#rvDlgTitle").hidden=false;
-  if(kind)rvKind(kind);
+  rvKind(kind==="lesson"?"lesson":"piece");
   $("#rvDlg").showModal();
 }
 function rvKind(k){
-  RVF.kind=k;RVF.rates={};RVF.nudge="";rvNudge();
-  $("#rvStep1").hidden=true;$("#rvStep2").hidden=false;$("#rvKindLbl").textContent=RV_KIND[k];
-  $("#rvSubjLbl").innerHTML=(k==="lesson"?"איזו הדרכה?":"איזה פסל או מתנה?")+" <small>(לא חובה)</small>";
-  $("#rvSubj").placeholder=k==="lesson"?"למשל: איירבראש למתחילים":"למשל: באסט של באטמן";
-  $("#rvBody").placeholder=k==="lesson"?"מה היה הכי שווה בהדרכה?":"איך היה התהליך, ואיך הפסל נראה במציאות?";
+  // both kinds rate the same three things, so stars already given stay when switching
+  RVF.kind=k;RVF.nudge="";rvNudge();
+  $("#rvStep1").hidden=true;$("#rvStep2").hidden=false;
+  $("#rvSwitch").querySelectorAll("[data-sw]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sw===k));
+  $("#rvSubjLbl").innerHTML=(k==="lesson"?"על מה היה השיעור?":"איזה פסל או פריט?")+" <small>(לא חובה)</small>";
+  $("#rvSubj").placeholder=k==="lesson"?"למשל: איירבראש, מכחולים או שיוף":"למשל: באסט של באטמן";
+  $("#rvBody").placeholder=k==="lesson"?"מה היה הכי שווה בשיעור?":"איך היה התהליך, ואיך הפסל נראה במציאות?";
   $("#rvRates").innerHTML=RV_CRIT[k].map(([key,l,hint])=>`<div class="rv-rate-row" data-key="${key}"><div><b>${l}</b><small>${hint}</small></div>
     <div class="rv-stars" role="radiogroup" aria-label="${l}">${[1,2,3,4,5].map(n=>`<button type="button" role="radio" aria-checked="false" data-n="${n}" aria-label="${n} מתוך 5">★</button>`).join("")}</div></div>`).join("");
 }
 function rvPaintRow(row,n){row.querySelectorAll("[data-n]").forEach(b=>{const on=+b.dataset.n<=n;b.classList.toggle("on",on);b.setAttribute("aria-checked",+b.dataset.n===n?"true":"false")})}
 $("#rvWrite").onclick=()=>rvOpen();
 $("#rvDlg").addEventListener("click",e=>{const k=e.target.closest("[data-kind]");if(k){rvKind(k.dataset.kind);return}});
-$("#rvBack").onclick=()=>{$("#rvStep1").hidden=false;$("#rvStep2").hidden=true};
+$("#rvSwitch").addEventListener("click",e=>{const b=e.target.closest("[data-sw]");if(b&&b.dataset.sw!==RVF.kind)rvKind(b.dataset.sw)});
 $("#rvRates").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b)return;const row=b.closest(".rv-rate-row");RVF.rates[row.dataset.key]=+b.dataset.n;rvPaintRow(row,+b.dataset.n);row.classList.remove("need")});
 $("#rvRates").addEventListener("pointerover",e=>{const b=e.target.closest("[data-n]");if(!b||e.pointerType!=="mouse")return;const row=b.closest(".rv-rate-row");row.querySelectorAll("[data-n]").forEach(x=>x.classList.toggle("hov",+x.dataset.n<=+b.dataset.n))});
 $("#rvRates").addEventListener("pointerout",e=>{const row=e.target.closest(".rv-rate-row");if(row)row.querySelectorAll(".hov").forEach(x=>x.classList.remove("hov"))});
@@ -1976,7 +1978,8 @@ if(beatIO){beatScan();new MutationObserver(beatScan).observe(document.body,{chil
 /* artriko.art/?review (the QR on the thank-you card): straight into the "write a review" form, no intro, no delay */
 if(new URLSearchParams(location.search).has("review")){
   history.replaceState(null,"",location.pathname+"#reviews");
-  try{rvOpen("piece")}catch(e){addEventListener("load",()=>rvOpen("piece"),{once:true})}
+  const rk=new URLSearchParams(location.search).get("review")==="lesson"?"lesson":"piece";
+  try{rvOpen(rk)}catch(e){addEventListener("load",()=>rvOpen(rk),{once:true})}
   // a warm, rotating thank-you line on top of the form (worded for everyone)
   // the lines are editable in the admin (texts → rvHi); read on every tick so saved texts apply once they load
   const HI=()=>{const l=String((typeof TEXTS!=="undefined"&&TEXTS.rvHi)||"").split("\n").map(x=>x.trim()).filter(Boolean);return l.length?l:["וואי, תודה רבה על הזמן שלך!"]};

@@ -1240,3 +1240,9 @@ footer{flex-wrap:wrap}
 .rv-fresh{position:absolute;top:-12px;inset-inline-end:14px;z-index:2;background:var(--sun);color:var(--ink);font-weight:900;font-size:13px;padding:4px 12px;border:2px solid var(--ink);border-radius:999px;box-shadow:2px 2px 0 var(--ink);transform:rotate(-4deg);animation:rvFresh 2.2s ease-in-out infinite}
 @keyframes rvFresh{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(2deg) scale(1.08)}}
 @media (prefers-reduced-motion:reduce){.rv-fresh{animation:none}}
+
+/* review form: what the review is about, switched in place (one tap, no extra step) */
+.rv-switch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.rv-switch span{width:100%;font-weight:700;color:var(--muted)}
+.rv-switch button{flex:1 1 140px;padding:10px 12px;border:2px solid var(--line);background:var(--ink);color:var(--paper);font-weight:700;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s}
+.rv-switch button[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--pop)}

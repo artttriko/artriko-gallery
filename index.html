@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ARTRIKO</title>
-<meta name="description" content="ARTRIKO: פסלי אספנות מודפסים וצבועים ביד. גלריה, יצירות זמינות לרכישה, סדנאות והדרכות צביעה באיירבראש ובמכחולים, ומדריך לפסלי אספנות.">
+<meta name="description" content="ARTRIKO: פסלי אספנות מודפסים וצבועים ביד. גלריה, יצירות זמינות לרכישה, שיעורי צביעה אישיים באיירבראש ובמכחולים, ומדריך לפסלי אספנות.">
 <meta property="og:title" content="ARTRIKO">
 <meta property="og:description" content="פסלי אספנות מודפסים וצבועים ביד">
 <meta property="og:image" content="https://artriko-gallery.vercel.app/studio/painter.jpg">
@@ -22,7 +22,7 @@
     <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="secnav" aria-label="תפריט"><span></span><span></span><span></span></button>
     <a class="mark" href="#top" id="homeLogo">ARTRIKO</a>
     <nav class="secnav" id="secnav" aria-label="ניווט באתר">
-      <a href="#top" id="navHome" data-k="home">ראשי</a><a href="#gallery" data-k="gallery">גלריה</a><a href="#reviews" id="navReviews" data-k="reviews">המלצות</a><a href="#gifts" id="navGifts" data-k="gifts">מעבר לפסלים</a><a href="#learn" id="navLearn" data-k="learn">סדנאות</a><a href="#guide" id="navGuide" data-k="guide">המדריך לאספנים</a>
+      <a href="#top" id="navHome" data-k="home">ראשי</a><a href="#gallery" data-k="gallery">גלריה</a><a href="#reviews" id="navReviews" data-k="reviews">המלצות</a><a href="#gifts" id="navGifts" data-k="gifts">מעבר לפסלים</a><a href="#learn" id="navLearn" data-k="learn">שיעורים</a><a href="#guide" id="navGuide" data-k="guide">המדריך לאספנים</a>
     </nav>
     <div class="topnav">
       <a class="gal-btn" href="#gallery" id="galBtn">גלריה</a>
@@ -110,7 +110,7 @@
       <div class="rv-summary" id="rvSummary"></div>
     </div>
     <div class="rv-bar">
-      <div class="seg rv-tabs" id="rvTabs" role="group" aria-label="סוג ההמלצות"><button type="button" data-k="" aria-pressed="true">הכול</button><button type="button" data-k="piece" aria-pressed="false">פסלים ומתנות</button><button type="button" data-k="lesson" aria-pressed="false">הדרכות</button></div>
+      <div class="seg rv-tabs" id="rvTabs" role="group" aria-label="סוג ההמלצות"><button type="button" data-k="" aria-pressed="true">הכול</button><button type="button" data-k="piece" aria-pressed="false">פסלים ומתנות</button><button type="button" data-k="lesson" aria-pressed="false">שיעורים</button></div>
       <button class="pill solid" type="button" id="rvWrite">✍️ לכתוב המלצה</button>
     </div>
     <div class="rv-list" id="rvList"></div>
@@ -317,7 +317,7 @@
 </dialog>
 
 <!-- Contact -->
-<dialog id="wsLb" class="ws-lb" aria-label="תמונה מהסדנה">
+<dialog id="wsLb" class="ws-lb" aria-label="תמונה מהשיעורים">
   <button class="x" data-close aria-label="סגירה">✕</button>
   <img id="wsLbImg" alt="">
   <button class="arrow prev" id="wsLbPrev" type="button" aria-label="הקודמת">›</button>
@@ -347,12 +347,12 @@
     <div class="rv-step" id="rvStep1">
       <p class="note">על מה ההמלצה?</p>
       <div class="rv-kinds">
-        <button type="button" class="rv-kind" data-kind="piece"><span aria-hidden="true">🗿</span><b>פסל או מתנה</b><small>יצירה שהזמנתי או קניתי</small></button>
-        <button type="button" class="rv-kind" data-kind="lesson"><span aria-hidden="true">🎨</span><b>הדרכה או סדנה</b><small>למדתי לצבוע</small></button>
+        <button type="button" class="rv-kind" data-kind="piece"><span aria-hidden="true">🗿</span><b>פסל, הזמנה או רכישה</b><small>יצירה שהזמנתי או קניתי</small></button>
+        <button type="button" class="rv-kind" data-kind="lesson"><span aria-hidden="true">🎨</span><b>שיעור או הדרכה</b><small>למדתי איתו באופן אישי</small></button>
       </div>
     </div>
     <div class="rv-step" id="rvStep2" hidden>
-      <button type="button" class="rv-back" id="rvBack">→ <span id="rvKindLbl"></span> · שינוי</button>
+      <div class="rv-switch" id="rvSwitch" role="group" aria-label="על מה ההמלצה?"><span>על מה ההמלצה?</span><button type="button" data-sw="piece" aria-pressed="true">🗿 פסל, הזמנה או רכישה</button><button type="button" data-sw="lesson" aria-pressed="false">🎨 שיעור או הדרכה</button></div>
       <div class="rv-rates" id="rvRates"></div>
       <label class="rv-f">שם שיוצג<input id="rvName" maxlength="40" autocomplete="given-name" placeholder="למשל: דנה מחיפה" required></label>
       <label class="rv-f"><span id="rvSubjLbl"></span><input id="rvSubj" maxlength="60"></label>
@@ -522,7 +522,7 @@
       <label>מתנות לקבוצות: טקסט (ריק = לא מוצג)<textarea id="xGiftGroup" maxlength="400" style="min-height:70px"></textarea></label>
       <label class="full">איך זה עובד (שורה לכל שלב: כותרת | הסבר)<textarea id="xGiftSteps" maxlength="900" style="min-height:100px"></textarea></label>
       <label class="full">משפט בתחתית עמוד המתנות<input id="xGiftEnd" maxlength="120"></label>
-      <h4 class="full" style="margin:10px 0 0">סדנאות והדרכות צביעה</h4>
+      <h4 class="full" style="margin:10px 0 0">שיעורי צביעה</h4>
       <label>כותרת קטנה<input id="xWsEyebrow" maxlength="60"></label>
       <label>כותרת (עם / בין השורה הלבנה לצהובה)<input id="xWsTitle" maxlength="90"></label>
       <label class="full">פסקה (להדגשה: **מילים**). ריק = הסקשן מוסתר<textarea id="xWsText" maxlength="700"></textarea></label>
@@ -531,7 +531,7 @@
       <label>טכניקות איירבראש (שורה לכל אחת)<textarea id="xWsAir" maxlength="600" style="min-height:140px"></textarea></label>
       <label>טכניקות מכחולים (שורה לכל אחת)<textarea id="xWsBrush" maxlength="600" style="min-height:140px"></textarea></label>
       <label class="full">משפט השילוב (להדגשה: **מילים**)<textarea id="xWsCombo" maxlength="400"></textarea></label>
-      <div class="full"><div class="toolrow"><button type="button" class="pill small" id="wsPhUp">הוספת תמונות מסדנאות</button><input type="file" id="wsPhFile" multiple hidden><span class="note" id="wsPhMsg">התמונות נשמרות מיד ומופיעות בסקשן הסדנאות.</span></div><div id="wsPhList" class="ws-ph-admin"></div></div>
+      <div class="full"><div class="toolrow"><button type="button" class="pill small" id="wsPhUp">הוספת תמונות משיעורים</button><input type="file" id="wsPhFile" multiple hidden><span class="note" id="wsPhMsg">התמונות נשמרות מיד ומופיעות בסקשן השיעורים.</span></div><div id="wsPhList" class="ws-ph-admin"></div></div>
       <h4 class="full" style="margin:10px 0 0">סדר הכפתורים בתפריט</h4>
       <div class="full"><p class="note" style="margin:0 0 6px">החצים משנים את הסדר ונשמרים מיד. אותו סדר קובע גם את סדר הטעימות בדף הבית.</p><div class="nav-order" id="navOrder"></div></div>
       <h4 class="full" style="margin:10px 0 0">כפתורים</h4>
