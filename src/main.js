@@ -1925,7 +1925,7 @@ function renderReviewsAdmin(){
   const n=REVIEWS.filter(r=>r.status==="pending").length;$("#rvPendN").hidden=!n;$("#rvPendN").textContent=n;
   const list=REVIEWS.filter(r=>r.status===RV_ADM);
   $("#rvAdmList").innerHTML=list.map(r=>`<div class="rv-adm-i" data-id="${esc(r.id)}">
-    <div class="rv-adm-h"><b>${esc(r.name)}</b><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"הדרכה":"פסל"}</span>${starsHTML(rvAvg(r))}<small>${new Date(r.created_at).toLocaleDateString("he-IL")}</small></div>
+    <div class="rv-adm-h"><b>${esc(r.name)}</b><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"שיעור":"פסל"}</span>${starsHTML(rvAvg(r))}<small>${new Date(r.created_at).toLocaleDateString("he-IL")}</small></div>
     <small class="note">שירות ${r.r_service} · אמינות ${r.r_reliable} · מקצועיות ${r.r_pro}${r.subject?` · ${esc(r.subject)}`:""}</small>
     ${r.body?`<p>${esc(r.body)}</p>`:""}
     ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:""}
