@@ -3,6 +3,7 @@
 // Photos are uploaded by the browser to the "reviews" bucket first; only their URLs arrive here.
 import { createHash } from "node:crypto";
 
+const fixName = t => String(t ?? "").replace(/(^|[^א-ת])([ולבמשכ]{0,2})סער(?![א-ת])/g, (m, a, p) => a + p + "סהר");
 const clip = (v, n) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, n);
 const star = v => { const n = Math.round(+v); return n >= 1 && n <= 5 ? n : 0; };
 
@@ -15,8 +16,8 @@ export default async function handler(req, res) {
   try { b = (typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body) || {}; } catch {}
   if (b.website) return res.status(200).json({ ok: true }); // hidden field filled in: a bot
   const kind = b.kind === "lesson" ? "lesson" : b.kind === "piece" ? "piece" : null;
-  const name = clip(b.name, 40), subject = clip(b.subject, 60);
-  const body = String(b.body ?? "").trim().slice(0, 700);
+  const name = clip(b.name, 40), subject = fixName(clip(b.subject, 60));
+  const body = fixName(String(b.body ?? "").trim()).slice(0, 700);
   const r1 = star(b.service), r2 = star(b.reliable), r3 = star(b.pro);
   const photos = (Array.isArray(b.photos) ? b.photos : []).slice(0, 3).map(String)
     .filter(u => u.startsWith(`${url}/storage/v1/object/public/reviews/u/`));

@@ -1246,3 +1246,4 @@ footer{flex-wrap:wrap}
 .rv-switch span{width:100%;font-weight:700;color:var(--muted)}
 .rv-switch button{flex:1 1 140px;padding:10px 12px;border:2px solid var(--line);background:var(--ink);color:var(--paper);font-weight:700;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s}
 .rv-switch button[aria-pressed="true"]{background:var(--sun);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--pop)}
+.rv-edit{display:grid;gap:8px;margin-top:8px;border-top:2px dashed var(--line);padding-top:10px}.rv-edit label{display:grid;gap:4px;font-size:13px}.rv-edit input,.rv-edit textarea{font:inherit;padding:8px;color:inherit;background:transparent;border:2px solid var(--line)}

@@ -1812,19 +1812,22 @@ function renderSpot(){
   box.classList.toggle("has-ph",!!ph);
   box.innerHTML=`${ph?`<button type="button" class="spot-ph" data-spotph aria-label="תמונה מההמלצה"><img src="${esc(ph)}" alt="" loading="lazy"></button>`:""}
     <figure class="spot-fig"><span class="spot-mark" aria-hidden="true">”</span>
-      <blockquote>${esc(short)}</blockquote>
-      <figcaption>${starsHTML(rvAvg(r))}<b>${esc(r.name)}</b>${r.subject?`<span class="spot-subj">${esc(r.subject)}</span>`:""}</figcaption>
+      <blockquote>${esc(fixTxt(short))}</blockquote>
+      <figcaption>${starsHTML(rvAvg(r))}<b>${esc(r.name)}</b>${r.subject?`<span class="spot-subj">${esc(fixTxt(r.subject))}</span>`:""}</figcaption>
       <a class="spot-all" href="#reviews">לכל ${pub.length} ההמלצות ←</a></figure>`;
   box.hidden=false;
 }
 $("#spot").addEventListener("click",e=>{if(e.target.closest("[data-spotph]")){const r=REVIEWS.find(x=>x.id===SPOT_ID);if(r)openViewer(r.photos,0)}});
+// The owner's name is סהר (with ה). Visitors often type סער (with ע): fix it silently in the review text
+// (not in the reviewer's own name). Prefix letters ו ל ב מ ש כ are kept; "הסער" is left alone (it can mean "the storm").
+const fixTxt=t=>String(t??"").replace(/(^|[^א-ת])([ולבמשכ]{0,2})סער(?![א-ת])/g,(m,a,p)=>a+p+"סהר");
 function rvCard(r){
     const d=new Date(r.created_at),v=rvAvg(r);
     const fresh=Date.now()-d<7*864e5;
     return `<article class="rv-card${fresh?" fresh":""}">${fresh?`<span class="rv-fresh">✨ המלצה טרייה!</span>`:""}
       <header><span class="rv-av" aria-hidden="true">${esc((r.name||"?").trim().charAt(0))}</span><div><b>${esc(r.name)}</b><small>${RV_MONTHS[d.getMonth()]} ${d.getFullYear()}</small></div><span class="rv-tag ${r.kind}">${r.kind==="lesson"?"שיעור":"פסל"}</span></header>
-      <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(r.subject)}</span>`:""}</div>
-      ${r.body?`<p class="rv-body">${esc(r.body)}</p>`:""}
+      <div class="rv-rate">${starsHTML(v)}${r.subject?`<span class="rv-subj">${esc(fixTxt(r.subject))}</span>`:""}</div>
+      ${r.body?`<p class="rv-body">${esc(fixTxt(r.body))}</p>`:""}
       ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}" aria-label="תמונה ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
       <details class="rv-det"><summary>פירוט הדירוג</summary>${RV_CRIT[r.kind].map(([k,l])=>`<div><span>${l}</span>${starsHTML(r["r_"+k])}</div>`).join("")}</details>
     </article>`}
@@ -1926,13 +1929,23 @@ function renderReviewsAdmin(){
     <small class="note">שירות ${r.r_service} · אמינות ${r.r_reliable} · מקצועיות ${r.r_pro}${r.subject?` · ${esc(r.subject)}`:""}</small>
     ${r.body?`<p>${esc(r.body)}</p>`:""}
     ${r.photos.length?`<div class="rv-ph">${r.photos.map((u,i)=>`<button type="button" data-rvph="${esc(r.id)}" data-i="${i}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:""}
-    <div class="row">${r.status!=="approved"?`<button type="button" class="pill small solid" data-rv="approved">אישור ופרסום</button>`:""}${r.status!=="hidden"?`<button type="button" class="pill small" data-rv="hidden">הסתרה</button>`:""}<button type="button" class="pill small danger" data-rv="delete">מחיקה</button></div>
+    <div class="row">${r.status!=="approved"?`<button type="button" class="pill small solid" data-rv="approved">אישור ופרסום</button>`:""}${r.status!=="hidden"?`<button type="button" class="pill small" data-rv="hidden">הסתרה</button>`:""}<button type="button" class="pill small" data-rv="edit">✏️ עריכה</button><button type="button" class="pill small danger" data-rv="delete">מחיקה</button></div>
   </div>`).join("")||`<p class="note">${RV_ADM==="pending"?"אין המלצות שמחכות לאישור.":"אין כאן המלצות."}</p>`;
 }
 $("#rvAdmTabs").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(!b)return;RV_ADM=b.dataset.s;$("#rvAdmTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderReviewsAdmin()});
 $("#rvAdmList").addEventListener("click",async e=>{
   const ph=e.target.closest("[data-rvph]");if(ph){const r=REVIEWS.find(x=>x.id===ph.dataset.rvph);if(r)openViewer(r.photos,+ph.dataset.i);return}
   const b=e.target.closest("[data-rv]");if(!b)return;const id=b.closest("[data-id]").dataset.id,a=b.dataset.rv;
+  if(a==="edit"){const r=REVIEWS.find(x=>x.id===id);if(!r)return;const box=b.closest("[data-id]");
+    box.querySelector(".rv-edit")?.remove();
+    const f=document.createElement("div");f.className="rv-edit";
+    f.innerHTML=`<label>שם<input data-f="name" maxlength="40" value="${esc(r.name||"")}"></label><label>נושא<input data-f="subject" maxlength="60" value="${esc(r.subject||"")}"></label><label>הטקסט<textarea data-f="body" rows="5" maxlength="700">${esc(r.body||"")}</textarea></label><p class="note">השינוי נשמר בלי שום סימן באתר, והמבקר לא רואה שערכת.</p><div class="row"><button type="button" class="pill small solid" data-rv="save">שמירה</button><button type="button" class="pill small" data-rv="cancel">ביטול</button></div>`;
+    box.appendChild(f);f.querySelector("textarea").focus();return}
+  if(a==="cancel"){b.closest(".rv-edit").remove();return}
+  if(a==="save"){const ed=b.closest(".rv-edit"),v=k=>ed.querySelector(`[data-f="${k}"]`).value.replace(/[ \t]+/g," ").trim();
+    const upd={name:v("name"),subject:v("subject"),body:v("body")};if(!upd.name){toast("חסר שם");return}
+    const {error}=await sb.from("reviews").update(upd).eq("id",id);if(error){toast("השמירה נכשלה");return}
+    toast("ההמלצה עודכנה");loadReviews();return}
   if(a==="delete"){if(!confirm("למחוק את ההמלצה לצמיתות?"))return;const r=REVIEWS.find(x=>x.id===id);
     const {error}=await sb.from("reviews").delete().eq("id",id);if(error){toast("המחיקה נכשלה");return}
     const paths=(r?.photos||[]).map(u=>u.split("/object/public/reviews/")[1]).filter(Boolean);if(paths.length)sb.storage.from("reviews").remove(paths);
