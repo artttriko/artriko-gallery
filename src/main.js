@@ -1977,8 +1977,9 @@ if(beatIO){beatScan();new MutationObserver(beatScan).observe(document.body,{chil
 
 /* artriko.art/?review (the QR on the thank-you card): straight into the "write a review" form, no intro, no delay */
 if(new URLSearchParams(location.search).has("review")){
-  history.replaceState(null,"",location.pathname+"#reviews");
+  // read the kind BEFORE the address is cleaned (after replaceState the query string is gone)
   const rk=new URLSearchParams(location.search).get("review")==="lesson"?"lesson":"piece";
+  history.replaceState(null,"",location.pathname+"#reviews");
   try{rvOpen(rk)}catch(e){addEventListener("load",()=>rvOpen(rk),{once:true})}
   // a warm, rotating thank-you line on top of the form (worded for everyone)
   // the lines are editable in the admin (texts → rvHi); read on every tick so saved texts apply once they load
